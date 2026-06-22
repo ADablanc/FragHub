@@ -330,6 +330,12 @@
             <div style="border: 1px solid var(--border); border-radius: 12px; padding: 1rem; background: rgba(248,250,252,0.5); display: flex; justify-content: center;">
                 <div id="instrument-chart" style="width: 100%; max-width: 800px; height: 500px;"></div>
             </div>
+        <div class="card" style="margin-top: 1.5rem; margin-bottom: 2rem;">
+            <h2>Dataset Columns Completion</h2>
+            <div style="border: 1px solid var(--border); border-radius: 12px; padding: 1rem; background: rgba(248,250,252,0.5); display: flex; justify-content: center; overflow-x: auto;">
+                <div id="columns-chart" style="width: 100%; min-height: 500px;"></div>
+            </div>
+            <p style="text-align: center; font-size: 0.8rem; color: #64748b; margin-top: 1rem;">Shows the number of non-null values for each metadata column in the final dataset.</p>
         </div>
         <p style="text-align: center; font-size: 0.8rem; color: #94a3b8; margin-top: 1rem;">Note: Interactive charts require an internet connection to load the Plotly.js library.</p>
         </div>
@@ -583,6 +589,38 @@
                 hoverinfo: "label+value+percent parent"
             }];
             Plotly.newPlot('npclassifier-chart', data_np, layout, {displayModeBar: false, responsive: true});
+        }
+
+        var columnsData = {COLUMNS_DATA};
+        if (columnsData && columnsData.length > 0) {
+            columnsData.sort(function(a, b) { return b.count - a.count; });
+            var colNames = columnsData.map(function(d) { return d.column; });
+            var colCounts = columnsData.map(function(d) { return d.count; });
+            var colPcts = columnsData.map(function(d) { return d.percentage.toFixed(1) + '%'; });
+
+            var traceCol = {
+                x: colNames,
+                y: colCounts,
+                type: 'bar',
+                text: colPcts,
+                textposition: 'auto',
+                marker: {
+                    color: colCounts,
+                    colorscale: 'Blues',
+                    reversescale: true
+                }
+            };
+
+            var layoutCol = {
+                margin: {b: 150},
+                xaxis: { tickangle: -45, automargin: true },
+                yaxis: { title: 'Non-null Count' },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: '#334155', family: 'Inter' }
+            };
+
+            Plotly.newPlot('columns-chart', [traceCol], layoutCol, {displayModeBar: false, responsive: true});
         }
     </script>
 </body>

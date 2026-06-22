@@ -18,7 +18,8 @@ once_cell = "1.19" # <--- Ajoute ceci !
 sha2 = "0.10.8" # <-- AJOUTER CECI
 hex = "0.4.3"   # <-- AJOUTER CECI
 chrono = "0.4.45"
-polars = { version = "0.39.2", features = ["parquet", "lazy"] }
+polars = { version = "0.41.2", features = ["parquet", "lazy", "dtype-categorical"] }
+hashbrown = { version = "0.14", features = ["raw"] }
 
 [profile.release]
 lto = "fat"

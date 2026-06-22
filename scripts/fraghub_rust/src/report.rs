@@ -454,6 +454,49 @@ pub fn generate_report_processing(
     
     html = html.replace("{UPSET_DATA}", &upset_json);
 
+    let final_cols = vec!["FILENAME", "FILEHASH", "PREDICTED", "SPLASH", "SPECTRUMID", "RESOLUTION", "SYNON", "IONIZATION", "MSLEVEL", "FRAGMENTATIONMODE", "NAME", "PRECURSORMZ", "EXACTMASS", "AVERAGEMASS", "PRECURSORTYPE", "INSTRUMENTTYPE", "INSTRUMENT", "SMILES", "INCHI", "INCHIKEY", "COLLISIONENERGY", "FORMULA", "RT", "IONMODE", "COMMENT", "ENTROPY", "CLASSYFIRE_SUPERCLASS", "CLASSYFIRE_CLASS", "CLASSYFIRE_SUBCLASS", "NPCLASS_PATHWAY", "NPCLASS_SUPERCLASS", "NPCLASS_CLASS", "NUM PEAKS", "PEAKS_LIST"];
+    let mut col_counts: std::collections::HashMap<&str, usize> = std::collections::HashMap::new();
+    let mut total_spectra_count = 0;
+
+    let all_spectra_3 = pos_lc.iter()
+        .chain(pos_lc_insilico.iter())
+        .chain(pos_gc.iter())
+        .chain(pos_gc_insilico.iter())
+        .chain(neg_lc.iter())
+        .chain(neg_lc_insilico.iter())
+        .chain(neg_gc.iter())
+        .chain(neg_gc_insilico.iter());
+
+    for spec in all_spectra_3 {
+        total_spectra_count += 1;
+        for &col in &final_cols {
+            if col == "NUM PEAKS" || col == "PEAKS_LIST" {
+                if !spec.peaks.is_empty() {
+                    *col_counts.entry(col).or_insert(0) += 1;
+                }
+            } else if let Some(val) = spec.metadata.get(col) {
+                let s = val.trim();
+                let lower = s.to_lowercase();
+                if !s.is_empty() && lower != "nan" && lower != "not found" && lower != "unknown" {
+                    *col_counts.entry(col).or_insert(0) += 1;
+                }
+            }
+        }
+    }
+
+    let mut col_stats_json = Vec::new();
+    for &col in &final_cols {
+        let count = *col_counts.get(col).unwrap_or(&0);
+        let pct = if total_spectra_count > 0 { (count as f64 / total_spectra_count as f64) * 100.0 } else { 0.0 };
+        col_stats_json.push(serde_json::json!({
+            "column": col,
+            "count": count,
+            "percentage": pct
+        }));
+    }
+    let col_stats_str = serde_json::to_string(&col_stats_json).unwrap_or_else(|_| "[]".to_string());
+    html = html.replace("{COLUMNS_DATA}", &col_stats_str);
+
     let file_name = format!("report_{}.html", date_str);
     let report_path = Path::new(&output_directory).join(file_name);
     let mut file = File::create(report_path)?;

@@ -137,17 +137,24 @@ pub fn json_to_dict_processing(
 
                     if let Some(meta) = v["compound"].get(0).and_then(|c| c["metaData"].as_array()) {
                         for item in meta {
-                            if !item["computed"].as_bool().unwrap_or(false) {
-                                if let Some(name) = item["name"].as_str() {
-                                    let name_lower = name.to_lowercase();
-                                    if name_lower == "molecular formula" ||
-                                       name_lower == "smiles" ||
-                                       name_lower == "inchi" ||
-                                       name_lower == "inchikey" {
-                                        if let Some(val) = item["value"].as_str() {
-                                            metadata.insert(name_lower, val.to_string());
-                                        }
-                                    }
+                            if let Some(name) = item["name"].as_str() {
+                                let name_lower = name.to_lowercase();
+                                if let Some(val) = item["value"].as_str() {
+                                    metadata.insert(name_lower, val.to_string());
+                                } else if let Some(val) = item["value"].as_f64() {
+                                    metadata.insert(name_lower, val.to_string());
+                                }
+                            }
+                        }
+                    }
+
+                    // Extraction de la classification (MoNA utilise ClassyFire par défaut)
+                    if let Some(classifications) = v["compound"].get(0).and_then(|c| c["classification"].as_array()) {
+                        for item in classifications {
+                            if let Some(name) = item["name"].as_str() {
+                                let name_lower = format!("classyfire_{}", name.to_lowercase().replace(" ", "_"));
+                                if let Some(val) = item["value"].as_str() {
+                                    metadata.insert(name_lower, val.to_string());
                                 }
                             }
                         }
@@ -159,20 +166,10 @@ pub fn json_to_dict_processing(
                         for item in meta {
                             if let Some(name) = item["name"].as_str() {
                                 let name_lower = name.to_lowercase();
-                                if name_lower == "instrument" ||
-                                   name_lower == "instrument type" ||
-                                   name_lower == "ms level" ||
-                                   name_lower == "ionization" ||
-                                   name_lower == "retention time" ||
-                                   name_lower == "ionization mode" ||
-                                   name_lower == "precursor type" ||
-                                   name_lower == "collision energy" ||
-                                   name_lower == "precursor m/z" {
-                                    if let Some(val) = item["value"].as_str() {
-                                        metadata.insert(name_lower, val.to_string());
-                                    } else if let Some(val) = item["value"].as_f64() {
-                                        metadata.insert(name_lower, val.to_string());
-                                    }
+                                if let Some(val) = item["value"].as_str() {
+                                    metadata.insert(name_lower, val.to_string());
+                                } else if let Some(val) = item["value"].as_f64() {
+                                    metadata.insert(name_lower, val.to_string());
                                 }
                             }
                         }
@@ -186,6 +183,10 @@ pub fn json_to_dict_processing(
                                 break;
                             }
                         }
+                    }
+
+                    if let Some(splash) = v.get("splash").and_then(|s| s.get("splash")).and_then(|s| s.as_str()) {
+                        metadata.insert("splash".to_string(), splash.to_string());
                     }
 
                     if let Some(spec) = v["spectrum"].as_str() {
@@ -215,6 +216,18 @@ pub fn json_to_dict_processing(
                                 } else if val.is_number() || val.is_boolean() {
                                     metadata.insert(k.to_lowercase(), val.to_string());
                                 }
+                            }
+                        }
+                    }
+                    
+                    // Extraction flexible de CollisionEnergy du nom pour GNPS via Regex compilée
+                    if let Some(name) = metadata.get("compound_name").cloned() {
+                        if let Some(caps) = crate::globals_vars::GNPS_COLLISION_ENERGY_EXTRACT_PATTERN.captures(&name) {
+                            if let Some(energy_match) = caps.get(1) {
+                                let energy = energy_match.as_str().to_string();
+                                let real_name = crate::globals_vars::GNPS_COLLISION_ENERGY_EXTRACT_PATTERN.replace(&name, " ").to_string();
+                                metadata.insert("compound_name".to_string(), real_name.trim().to_string());
+                                metadata.insert("collision_energy".to_string(), energy.trim().to_string());
                             }
                         }
                     }

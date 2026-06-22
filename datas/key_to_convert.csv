@@ -247,3 +247,13 @@ targetgaspressure;targetgaspressure
 title;title
 unpd_id;spectrumid
 inchi_aux;inchikey
+splash;splash
+total exact mass;exactmass
+exact mass;exactmass
+retention time;rt
+spectral entropy;entropy
+normalized entropy;entropy
+molecular formula;formula
+classyfire_superclass;classyfire_superclass
+classyfire_class;classyfire_class
+classyfire_subclass;classyfire_subclass

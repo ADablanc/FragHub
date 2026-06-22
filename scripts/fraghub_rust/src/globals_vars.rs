@@ -87,3 +87,6 @@ pub static EMPTY_PATTERN: Lazy<Regex> = Lazy::new(|| {
 // ======================================================================================================================
 
 pub static GC_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?i)\bGC\b").unwrap());
+
+// Regex pour extraire Collision Energy du Compound_Name (ex: GNPS, supporte 20-30, 102040/13334, 10 20 30)
+pub static GNPS_COLLISION_ENERGY_EXTRACT_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?i)(?:\W|_)*collision[-\s_]?energy[\s:=]*(\d+(?:[\s.,\-/]+\d+)*\s*(?:eV|V)?)(?:\W|_)*").unwrap());
