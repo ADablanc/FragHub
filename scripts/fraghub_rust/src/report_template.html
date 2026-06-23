@@ -304,7 +304,13 @@
                 </ul>
             </div>
         </div>
-                        <div class="card" style="margin-top: 1.5rem; margin-bottom: 2rem;">
+        <div class="card" style="margin-top: 1.5rem; margin-bottom: 2rem;">
+            <h2>Databases Distribution</h2>
+            <div style="border: 1px solid var(--border); border-radius: 12px; padding: 1rem; background: rgba(248,250,252,0.5); display: flex; justify-content: center;">
+                <div id="database-chart" style="width: 100%; max-width: 800px; height: 500px;"></div>
+            </div>
+        </div>
+        <div class="card" style="margin-top: 1.5rem; margin-bottom: 2rem;">
             <h2>Chemical Ontologies Distribution</h2>
             <div class="grid" style="margin-bottom: 0;">
                 <div style="border: 1px solid var(--border); border-radius: 12px; padding: 1rem; background: rgba(248,250,252,0.5);">
@@ -318,11 +324,11 @@
             </div>
 
         <div class="card" style="margin-top: 1.5rem; margin-bottom: 2rem;">
-            <h2>Files Intersections (UpSet Plot)</h2>
+            <h2>Databases Intersections (UpSet Plot)</h2>
             <div style="border: 1px solid var(--border); border-radius: 12px; padding: 1rem; background: rgba(248,250,252,0.5); display: flex; justify-content: center; overflow-x: auto;">
                 <div id="upset-chart" style="width: 100%; min-height: 500px;"></div>
             </div>
-            <p style="text-align: center; font-size: 0.8rem; color: #64748b; margin-top: 1rem;">Shows the number of unique spectra intersecting between files.</p>
+            <p style="text-align: center; font-size: 0.8rem; color: #64748b; margin-top: 1rem;">Shows the number of unique spectra intersecting between databases.</p>
         </div>
         
             <div class="card" style="margin-top: 1.5rem; margin-bottom: 2rem;">
@@ -545,6 +551,11 @@
         var np_values = {NP_VALUES};
         var np_ids = {NP_IDS};
 
+        var db_labels = {DB_LABELS};
+        var db_parents = {DB_PARENTS};
+        var db_values = {DB_VALUES};
+        var db_ids = {DB_IDS};
+
         var layout = {
             margin: {l: 0, r: 0, b: 0, t: 0},
             sunburstcolorway: ["#0ea5e9", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#06b6d4", "#f97316"],
@@ -589,6 +600,25 @@
                 hoverinfo: "label+value+percent parent"
             }];
             Plotly.newPlot('npclassifier-chart', data_np, layout, {displayModeBar: false, responsive: true});
+        }
+
+        var db_display_labels = db_labels ? db_labels.map(function(l) { return l.toUpperCase() === "NOT FOUND" ? '<b><span style="color:#ef4444;">NOT FOUND</span></b>' : l; }) : [];
+        var db_marker_colors = db_labels ? db_labels.map(function(l) { return l.toUpperCase() === "NOT FOUND" ? '#334155' : null; }) : [];
+
+        if (db_labels && db_labels.length > 0) {
+            var data_db = [{
+                type: "sunburst",
+                ids: db_ids,
+                labels: db_display_labels,
+                parents: db_parents,
+                values: db_values,
+                branchvalues: "total",
+                marker: { colors: db_marker_colors },
+                textinfo: "label+percent parent",
+                insidetextorientation: "radial",
+                hoverinfo: "label+value+percent parent"
+            }];
+            Plotly.newPlot('database-chart', data_db, layout, {displayModeBar: false, responsive: true});
         }
 
         var columnsData = {COLUMNS_DATA};

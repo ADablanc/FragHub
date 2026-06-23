@@ -251,13 +251,16 @@ pub fn generate_report_processing(
     let mut cf_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
     let mut np_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
     let mut inst_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+    let mut db_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
 
     let root_cf = "ClassyFire";
     let root_np = "NPClassifier";
     let root_inst = "Instrument";
+    let root_db = "Databases";
 
     cf_counts.insert(root_cf.to_string(), 0);
     np_counts.insert(root_np.to_string(), 0);
+    db_counts.insert(root_db.to_string(), 0);
 
     let mut cf_parents: std::collections::HashMap<String, String> = std::collections::HashMap::new();
     let mut cf_labels: std::collections::HashMap<String, String> = std::collections::HashMap::new();
@@ -265,11 +268,17 @@ pub fn generate_report_processing(
     let mut np_parents: std::collections::HashMap<String, String> = std::collections::HashMap::new();
     let mut np_labels: std::collections::HashMap<String, String> = std::collections::HashMap::new();
 
+    let mut db_parents: std::collections::HashMap<String, String> = std::collections::HashMap::new();
+    let mut db_labels: std::collections::HashMap<String, String> = std::collections::HashMap::new();
+
     cf_parents.insert(root_cf.to_string(), "".to_string());
     cf_labels.insert(root_cf.to_string(), root_cf.to_string());
 
     np_parents.insert(root_np.to_string(), "".to_string());
     np_labels.insert(root_np.to_string(), root_np.to_string());
+
+    db_parents.insert(root_db.to_string(), "".to_string());
+    db_labels.insert(root_db.to_string(), root_db.to_string());
 
     let clean_str = |s: &str| -> String {
         let t = s.trim().trim_matches('"').trim().to_string();
@@ -320,6 +329,15 @@ pub fn generate_report_processing(
         *np_counts.entry(n1).or_insert(0) += 1;
         *np_counts.entry(n2).or_insert(0) += 1;
         *np_counts.entry(n3).or_insert(0) += 1;
+
+        let db_name = clean_str(spec.metadata.get("DATABASE_NAME").map(|s| s.as_str()).unwrap_or(""));
+        let p1_db = format!("{}|{}", root_db, db_name);
+
+        db_labels.insert(p1_db.clone(), db_name);
+        db_parents.insert(p1_db.clone(), root_db.to_string());
+
+        *db_counts.entry(root_db.to_string()).or_insert(0) += 1;
+        *db_counts.entry(p1_db).or_insert(0) += 1;
 
         let t_marque = capitalize_words(spec.metadata.get("TREE_MARQUE").map(|s| s.as_str()).unwrap_or("NOT FOUND"));
         let t_modele = capitalize_words(spec.metadata.get("TREE_MODELE").map(|s| s.as_str()).unwrap_or("NOT FOUND"));
@@ -388,6 +406,19 @@ pub fn generate_report_processing(
         }
     }
 
+    let mut db_ids_list = Vec::new();
+    let mut db_labels_list = Vec::new();
+    let mut db_parents_list = Vec::new();
+    let mut db_values_list = Vec::new();
+
+    for (id, val) in &db_counts {
+        if *val == 0 { continue; }
+        db_ids_list.push(id.clone());
+        db_labels_list.push(db_labels.get(id).cloned().unwrap_or_else(|| "".to_string()));
+        db_parents_list.push(db_parents.get(id).cloned().unwrap_or_else(|| "".to_string()));
+        db_values_list.push(*val);
+    }
+
     let cf_labels_json = serde_json::to_string(&cf_labels_list).unwrap_or_else(|_| "[]".to_string());
     let cf_parents_json = serde_json::to_string(&cf_parents_list).unwrap_or_else(|_| "[]".to_string());
     let cf_values_json = serde_json::to_string(&cf_values_list).unwrap_or_else(|_| "[]".to_string());
@@ -398,6 +429,11 @@ pub fn generate_report_processing(
     let np_values_json = serde_json::to_string(&np_values_list).unwrap_or_else(|_| "[]".to_string());
     let np_ids_json = serde_json::to_string(&np_ids_list).unwrap_or_else(|_| "[]".to_string());
 
+    let db_labels_json = serde_json::to_string(&db_labels_list).unwrap_or_else(|_| "[]".to_string());
+    let db_parents_json = serde_json::to_string(&db_parents_list).unwrap_or_else(|_| "[]".to_string());
+    let db_values_json = serde_json::to_string(&db_values_list).unwrap_or_else(|_| "[]".to_string());
+    let db_ids_json = serde_json::to_string(&db_ids_list).unwrap_or_else(|_| "[]".to_string());
+
     html = html.replace("{CF_LABELS}", &cf_labels_json);
     html = html.replace("{CF_PARENTS}", &cf_parents_json);
     html = html.replace("{CF_VALUES}", &cf_values_json);
@@ -407,6 +443,11 @@ pub fn generate_report_processing(
     html = html.replace("{NP_PARENTS}", &np_parents_json);
     html = html.replace("{NP_VALUES}", &np_values_json);
     html = html.replace("{NP_IDS}", &np_ids_json);
+
+    html = html.replace("{DB_LABELS}", &db_labels_json);
+    html = html.replace("{DB_PARENTS}", &db_parents_json);
+    html = html.replace("{DB_VALUES}", &db_values_json);
+    html = html.replace("{DB_IDS}", &db_ids_json);
 
     let inst_labels_json = serde_json::to_string(&inst_labels).unwrap_or_else(|_| "[]".to_string());
     let inst_parents_json = serde_json::to_string(&inst_parents).unwrap_or_else(|_| "[]".to_string());
@@ -419,10 +460,9 @@ pub fn generate_report_processing(
     html = html.replace("{INST_IDS}", &inst_ids_json);
     
     
-    
-        let mut combinations_map: std::collections::HashMap<Vec<String>, usize> = std::collections::HashMap::new();
-    let mut spec_to_files: std::collections::HashMap<String, std::collections::HashSet<String>> = std::collections::HashMap::new();
-    let mut file_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+    let mut combinations_map: std::collections::HashMap<Vec<String>, usize> = std::collections::HashMap::new();
+    let mut spec_to_dbs: std::collections::HashMap<String, std::collections::HashSet<String>> = std::collections::HashMap::new();
+    let mut db_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
 
     let all_spectra_2 = pos_lc.iter()
         .chain(pos_lc_insilico.iter())
@@ -436,28 +476,27 @@ pub fn generate_report_processing(
     for spec in all_spectra_2 {
         let splash = spec.metadata.get("SPLASH").map(|s| s.as_str()).unwrap_or("");
         let inchikey = spec.metadata.get("INCHIKEY").map(|s| s.as_str()).unwrap_or("");
-        let filename = spec.metadata.get("FILENAME").map(|s| s.as_str()).unwrap_or("Unknown").to_string();
+        let dbname = spec.metadata.get("DATABASE_NAME").map(|s| s.as_str()).unwrap_or("Unknown").to_string();
         
         let id = format!("{}_{}", splash, inchikey);
-        spec_to_files.entry(id).or_default().insert(filename.clone());
-        *file_counts.entry(filename).or_insert(0) += 1;
+        spec_to_dbs.entry(id).or_default().insert(dbname.clone());
+        *db_counts.entry(dbname).or_insert(0) += 1;
     }
 
-    // Keep top 30 files to avoid matrix explosion in frontend, while keeping it 'standard'
-    let mut files_vec: Vec<(String, usize)> = file_counts.into_iter().collect();
-    files_vec.sort_by(|a, b| b.1.cmp(&a.1));
-    let top_files: std::collections::HashSet<String> = files_vec.into_iter().take(30).map(|(f, _)| f).collect();
+    let mut dbs_vec: Vec<(String, usize)> = db_counts.into_iter().collect();
+    dbs_vec.sort_by(|a, b| b.1.cmp(&a.1));
+    let top_dbs: std::collections::HashSet<String> = dbs_vec.into_iter().take(30).map(|(f, _)| f).collect();
 
-    for (_, files) in spec_to_files {
-        let mut sorted_files: Vec<String> = files.into_iter().filter(|f| top_files.contains(f)).collect();
-        if sorted_files.is_empty() { continue; }
-        sorted_files.sort();
-        *combinations_map.entry(sorted_files).or_insert(0) += 1;
+    for (_, dbs) in spec_to_dbs {
+        let mut sorted_dbs: Vec<String> = dbs.into_iter().filter(|f| top_dbs.contains(f)).collect();
+        if sorted_dbs.is_empty() { continue; }
+        sorted_dbs.sort();
+        *combinations_map.entry(sorted_dbs).or_insert(0) += 1;
     }
 
     let mut upset_data = Vec::new();
-    for (files, count) in combinations_map {
-        upset_data.push(serde_json::json!({"sets": files, "count": count}));
+    for (dbs, count) in combinations_map {
+        upset_data.push(serde_json::json!({"sets": dbs, "count": count}));
     }
     let upset_json = serde_json::to_string(&upset_data).unwrap_or_else(|_| "[]".to_string());
     

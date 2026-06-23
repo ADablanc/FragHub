@@ -38,6 +38,7 @@ pub fn msp_to_dict_processing(
     rust_strings: Vec<String>,
     keys_dict: HashMap<String, String>,
     keys_list: Vec<String>,
+    db_name: String,
     progress_callback: Option<PyObject>,
     total_items_callback: Option<PyObject>,
     prefix_callback: Option<PyObject>,
@@ -132,6 +133,7 @@ pub fn msp_to_dict_processing(
                     }
                 }
             }
+            spec.metadata.insert("DATABASE_NAME".to_string(), db_name.clone());
 
             spec.peaks = parsed.peaks;
 

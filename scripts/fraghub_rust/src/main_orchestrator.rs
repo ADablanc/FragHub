@@ -78,6 +78,9 @@ pub fn main_orchestrator(
     let input_paths_any = parameters_dict.get_item("input_directory")?.unwrap();
     let input_paths: Vec<String> = input_paths_any.extract()?;
 
+    let input_db_names_any = parameters_dict.get_item("input_db_names")?.unwrap();
+    let input_db_names: std::collections::HashMap<String, String> = input_db_names_any.extract().unwrap_or_default();
+
     let reset_updates_val: f64 = parameters_dict.get_item("reset_updates")?.unwrap().extract()?;
     if reset_updates_val == 1.0 {
         reset_updates(output_directory.clone())?;
@@ -90,7 +93,7 @@ pub fn main_orchestrator(
 
     // STEP 1: PARSING
     let tuple_res = parsing_to_dict_processing(
-        py, input_paths.clone(),
+        py, input_paths.clone(), input_db_names.clone(),
         progress_callback.clone(), total_items_callback.clone(),
         prefix_callback.clone(), item_type_callback.clone(), step_callback.clone()
     )?;

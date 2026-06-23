@@ -84,6 +84,7 @@ pub fn load_and_parse_csv(
     csv_files: Vec<String>,
     keys_dict: HashMap<String, String>,
     keys_list: Vec<String>,
+    input_db_names: std::collections::HashMap<String, String>,
     progress_callback: Option<PyObject>,
     total_items_callback: Option<PyObject>,
     prefix_callback: Option<PyObject>,
@@ -99,6 +100,7 @@ pub fn load_and_parse_csv(
     let mut processed_files = 0;
 
     for file_path in csv_files {
+        let db_name = input_db_names.get(&file_path).cloned().unwrap_or_else(|| "Unknown".to_string());
         let file_hash = generate_file_hash(&file_path);
         let filename = std::path::Path::new(&file_path)
             .file_name()
@@ -126,6 +128,7 @@ pub fn load_and_parse_csv(
 
             spec.metadata.insert("FILENAME".to_string(), filename.clone());
             spec.metadata.insert("FILEHASH".to_string(), file_hash.clone());
+            spec.metadata.insert("DATABASE_NAME".to_string(), db_name.clone());
 
             for (i, field) in record.iter().enumerate() {
                 if i >= headers.len() { continue; }

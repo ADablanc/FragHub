@@ -60,6 +60,7 @@ socket_app = socketio.ASGIApp(sio, other_asgi_app=app)
 
 class FragHubParams(BaseModel):
     input_directory: list
+    input_db_names: dict = Field(default_factory=dict)
     output_directory: str
     normalize_intensity: float
     remove_peak_above_precursormz: float

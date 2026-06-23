@@ -36,6 +36,7 @@ pub fn mgf_to_dict_processing(
     final_mgf: Vec<String>,
     keys_dict: HashMap<String, String>,
     keys_list: Vec<String>,
+    db_name: String,
     progress_callback: Option<PyObject>,
     total_items_callback: Option<PyObject>,
     prefix_callback: Option<PyObject>,
@@ -110,6 +111,7 @@ pub fn mgf_to_dict_processing(
                     }
                 }
             }
+            spec.metadata.insert("DATABASE_NAME".to_string(), db_name.clone());
 
             // Ajout de la liste de pics
             spec.peaks = parsed.peaks.into_iter().map(|p| (p[0], p[1])).collect();

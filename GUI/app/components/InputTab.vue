@@ -68,13 +68,25 @@
                     <v-list-item-title class="text-body-2">{{ name }}</v-list-item-title>
 
                     <template v-slot:append>
-                      <v-btn
-                          icon="mdi-delete"
-                          variant="text"
-                          color="error"
-                          size="small"
-                          @click="removeFile(index)"
-                      ></v-btn>
+                      <div class="d-flex align-center">
+                        <v-combobox
+                            v-model="parameters.input_db_names[parameters.input_directory[index]]"
+                            :items="['MoNA', 'GNPS', 'MassBank', 'HMDB', 'NIST', 'Respect']"
+                            label="Database Name"
+                            density="compact"
+                            variant="outlined"
+                            hide-details
+                            class="mr-4"
+                            style="width: 200px;"
+                        ></v-combobox>
+                        <v-btn
+                            icon="mdi-delete"
+                            variant="text"
+                            color="error"
+                            size="small"
+                            @click="removeFile(index)"
+                        ></v-btn>
+                      </div>
                     </template>
 
                   </v-list-item>
@@ -124,7 +136,11 @@ const browseFiles = async () => {
     const selectedFiles = await window.electronAPI.selectFiles()
     if (selectedFiles && selectedFiles.length > 0) {
       if (!parameters.value.input_directory) parameters.value.input_directory = []
+      if (!parameters.value.input_db_names) parameters.value.input_db_names = {}
       parameters.value.input_directory = [...parameters.value.input_directory, ...selectedFiles]
+      selectedFiles.forEach(f => {
+         if (!parameters.value.input_db_names[f]) parameters.value.input_db_names[f] = 'Unknown'
+      })
     }
   } else {
     if (fileInput.value) {
@@ -138,17 +154,26 @@ const handleFileChange = (event) => {
   if (files.length > 0) {
     const newNames = files.map(f => f.name)
     if (!parameters.value.input_directory) parameters.value.input_directory = []
+    if (!parameters.value.input_db_names) parameters.value.input_db_names = {}
     parameters.value.input_directory = [...parameters.value.input_directory, ...newNames]
+    newNames.forEach(name => {
+      if (!parameters.value.input_db_names[name]) parameters.value.input_db_names[name] = 'Unknown'
+    })
   }
   event.target.value = ''
 }
 
 const removeFile = (index) => {
+  const filePath = parameters.value.input_directory[index]
   parameters.value.input_directory.splice(index, 1)
+  if (parameters.value.input_db_names && parameters.value.input_db_names[filePath]) {
+    delete parameters.value.input_db_names[filePath]
+  }
 }
 
 const clearAll = () => {
   parameters.value.input_directory = []
+  parameters.value.input_db_names = {}
 }
 </script>
 

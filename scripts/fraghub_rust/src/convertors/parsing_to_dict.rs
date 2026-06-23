@@ -30,6 +30,7 @@ use crate::spectrum::Spectrum;
 pub fn parsing_to_dict_processing(
     py: Python,
     input_paths: Vec<String>,
+    input_db_names: std::collections::HashMap<String, String>,
     progress_callback: Option<PyObject>,
     total_items_callback: Option<PyObject>,
     prefix_callback: Option<PyObject>,
@@ -67,12 +68,13 @@ pub fn parsing_to_dict_processing(
         if let Some(cb) = &step_callback { let _ = cb.call1(py, ("-- PARSING JSON TO DICT --",)); }
 
         for file in json_files {
+            let db_name = input_db_names.get(&file).cloned().unwrap_or_else(|| "Unknown".to_string());
             let rust_strings = match load_spectrum_list_json(py, &file, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone()) {
                 Ok(t) => t,
                 Err(_) => load_spectrum_list_json_2(py, &file, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?,
             };
 
-            let dict_list = json_to_dict_processing(py, rust_strings, keys_dict.clone(), keys_list.clone(), progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+            let dict_list = json_to_dict_processing(py, rust_strings, keys_dict.clone(), keys_list.clone(), db_name, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
 
             final_json.extend(dict_list);
         }
@@ -86,8 +88,9 @@ pub fn parsing_to_dict_processing(
         if let Some(cb) = &step_callback { let _ = cb.call1(py, ("-- PARSING MSP TO DICT --",)); }
 
         for file in msp_files {
+            let db_name = input_db_names.get(&file).cloned().unwrap_or_else(|| "Unknown".to_string());
             let rust_strings = load_spectrum_list_from_msp(py, &file, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
-            let dict_list = msp_to_dict_processing(py, rust_strings, keys_dict.clone(), keys_list.clone(), progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+            let dict_list = msp_to_dict_processing(py, rust_strings, keys_dict.clone(), keys_list.clone(), db_name, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
 
             final_msp.extend(dict_list);
         }
@@ -100,14 +103,12 @@ pub fn parsing_to_dict_processing(
         py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
         if let Some(cb) = &step_callback { let _ = cb.call1(py, ("-- PARSING MGF TO DICT --",)); }
 
-        let mut mgf_spectra = Vec::new();
         for file in mgf_files {
+            let db_name = input_db_names.get(&file).cloned().unwrap_or_else(|| "Unknown".to_string());
             let spectra = load_spectrum_list_from_mgf(py, &file, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
-            mgf_spectra.extend(spectra);
+            let dict_list = mgf_to_dict_processing(py, spectra, keys_dict.clone(), keys_list.clone(), db_name, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+            final_mgf.extend(dict_list);
         }
-        let dict_list = mgf_to_dict_processing(py, mgf_spectra, keys_dict.clone(), keys_list.clone(), progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
-
-        final_mgf.extend(dict_list);
     }
 
     // ======================================================
@@ -118,7 +119,7 @@ pub fn parsing_to_dict_processing(
         py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
         if let Some(cb) = &step_callback { let _ = cb.call1(py, ("-- PARSING CSV TO DICT --",)); }
 
-        final_csv = load_and_parse_csv(py, csv_files, keys_dict, keys_list, progress_callback, total_items_callback, prefix_callback, item_type_callback)?;
+        final_csv = load_and_parse_csv(py, csv_files, keys_dict, keys_list, input_db_names, progress_callback, total_items_callback, prefix_callback, item_type_callback)?;
     }
 
     Ok((final_msp, final_csv, final_json, final_mgf))
