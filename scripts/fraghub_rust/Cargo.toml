@@ -11,7 +11,7 @@ crate-type = ["cdylib"]
 pyo3 = { version = "0.21.2", features = ["extension-module"] }
 csv = "1.3"
 rayon = "1.10.0"
-serde_json = "1.0"
+serde_json = { version = "1.0", features = ["preserve_order"] }
 serde = { version = "1.0", features = ["derive"] }
 regex = "1.10"
 once_cell = "1.19" # <--- Ajoute ceci !

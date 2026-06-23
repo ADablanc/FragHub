@@ -240,7 +240,7 @@ pub fn writting_csv_processing(
 /// * `PyResult<()>` : Succès ou erreur IO.
 #[allow(clippy::too_many_arguments)]
 pub fn writting_json_processing(
-    py: Python, update: bool, pos_lc_df: Vec<Spectrum>, pos_gc_df: Vec<Spectrum>, neg_lc_df: Vec<Spectrum>, neg_gc_df: Vec<Spectrum>, pos_lc_df_insilico: Vec<Spectrum>, pos_gc_df_insilico: Vec<Spectrum>, neg_lc_df_insilico: Vec<Spectrum>, neg_gc_df_insilico: Vec<Spectrum>, output_directory: &str, progress_callback: Option<PyObject>, total_items_callback: Option<PyObject>, prefix_callback: Option<PyObject>, item_type_callback: Option<PyObject>,
+    py: Python, update: bool, pos_lc_df: Vec<Spectrum>, pos_gc_df: Vec<Spectrum>, neg_lc_df: Vec<Spectrum>, neg_gc_df: Vec<Spectrum>, pos_lc_df_insilico: Vec<Spectrum>, pos_gc_df_insilico: Vec<Spectrum>, neg_lc_df_insilico: Vec<Spectrum>, neg_gc_df_insilico: Vec<Spectrum>, ordered_columns: Vec<String>, output_directory: &str, progress_callback: Option<PyObject>, total_items_callback: Option<PyObject>, prefix_callback: Option<PyObject>, item_type_callback: Option<PyObject>,
 ) -> PyResult<()> {
 
     let tasks = vec![
@@ -302,8 +302,7 @@ pub fn writting_json_processing(
 
             let mut file = file_res.map_err(|e| e.to_string())?;
 
-            let first_spec = &data_list[0];
-            let columns: Vec<String> = first_spec.metadata.keys().cloned().collect();
+            let columns: Vec<String> = ordered_columns.clone();
 
             let len = data_list.len();
             let mut local_processed = 0;
@@ -312,11 +311,12 @@ pub fn writting_json_processing(
                 let mut map = serde_json::Map::new();
 
                 for col in &columns {
-                    if col == "PEAKS_LIST" || col == "NUM PEAKS" { continue; }
+                    if col == "PEAKS_LIST" || col == "NUM PEAKS" || col.starts_with("TREE_") { continue; }
 
                     let mut val_str = "NaN".to_string();
                     if let Some(val) = spec.metadata.get(col) {
-                        if !val.is_empty() && !val.eq_ignore_ascii_case("nan") { val_str = val.clone(); }
+                        let clean_val = val.replace("\"", "");
+                        if !clean_val.is_empty() && !clean_val.eq_ignore_ascii_case("nan") { val_str = clean_val; }
                     }
 
                     if col == "MSLEVEL" { if let Ok(num) = val_str.parse::<i64>() { map.insert(col.clone(), serde_json::json!(num)); continue; } }

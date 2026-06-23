@@ -138,7 +138,7 @@ pub fn main_orchestrator(
     if let Some(cb) = &progress_callback { cb.call1(py, (1,))?; }
     py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
-    let ordered_columns_str = vec!["FILENAME", "FILEHASH", "PREDICTED", "SPLASH", "SPECTRUMID", "RESOLUTION", "SYNON", "IONIZATION", "MSLEVEL", "FRAGMENTATIONMODE", "NAME", "PRECURSORMZ", "EXACTMASS", "AVERAGEMASS", "PRECURSORTYPE", "INSTRUMENTTYPE", "INSTRUMENT", "SMILES", "INCHI", "INCHIKEY", "COLLISIONENERGY", "FORMULA", "RT", "IONMODE", "COMMENT", "ENTROPY", "CLASSYFIRE_SUPERCLASS", "CLASSYFIRE_CLASS", "CLASSYFIRE_SUBCLASS", "NPCLASS_PATHWAY", "NPCLASS_SUPERCLASS", "NPCLASS_CLASS", "NUM PEAKS", "PEAKS_LIST"];
+    let ordered_columns_str = vec!["FILENAME", "DATABASE_NAME", "FILEHASH", "PREDICTED", "SPLASH", "SPECTRUMID", "RESOLUTION", "SYNON", "IONIZATION", "MSLEVEL", "FRAGMENTATIONMODE", "NAME", "PRECURSORMZ", "EXACTMASS", "AVERAGEMASS", "PRECURSORTYPE", "INSTRUMENTTYPE", "INSTRUMENT", "SMILES", "INCHI", "INCHIKEY", "COLLISIONENERGY", "FORMULA", "RT", "IONMODE", "COMMENT", "ENTROPY", "CLASSYFIRE_SUPERCLASS", "CLASSYFIRE_CLASS", "CLASSYFIRE_SUBCLASS", "NPCLASS_PATHWAY", "NPCLASS_SUPERCLASS", "NPCLASS_CLASS", "NUM PEAKS", "PEAKS_LIST"];
     let ordered_columns: Vec<String> = ordered_columns_str.into_iter().map(|s| s.to_string()).collect();
 
     // STEP 3: DUPLICATAS
@@ -355,7 +355,7 @@ pub fn main_orchestrator(
             if let Some(cb) = &step_callback { cb.call1(py, ("--  WRITING JSON --",))?; }
             py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
-            writting_json_processing(py, update, pos_lc_df.clone(), pos_gc_df.clone(), neg_lc_df.clone(), neg_gc_df.clone(), pos_lc_in_silico_df.clone(), pos_gc_in_silico_df.clone(), neg_lc_in_silico_df.clone(), neg_gc_in_silico_df.clone(), &output_directory, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+            writting_json_processing(py, update, pos_lc_df.clone(), pos_gc_df.clone(), neg_lc_df.clone(), neg_gc_df.clone(), pos_lc_in_silico_df.clone(), pos_gc_in_silico_df.clone(), neg_lc_in_silico_df.clone(), neg_gc_in_silico_df.clone(), ordered_columns.clone(), &output_directory, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
         }
 
         if let Some(cb) = &deletion_callback {
