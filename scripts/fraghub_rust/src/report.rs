@@ -132,10 +132,19 @@ pub fn generate_report_processing(
         if total_deletions > 0 { (val as f64 / total_deletions as f64) * 100.0 } else { 0.0 }
     };
 
+    let parts: Vec<&str> = date_str.split("__").collect();
+    let display_date = if parts.len() == 2 {
+        let d = parts[0].replace("_", "-");
+        let t = parts[1].replace("_", ":");
+        format!("{} at {}", d, t)
+    } else {
+        date_str.replace("_", " ")
+    };
+
     let mut html = String::from(include_str!("report_template.html"));
     html = html.replace("{TOTAL_TIME}", &total_time_str);
 
-    html = html.replace("{DATE}", &date_str.replace("_", " ").replace("  ", " at "));
+    html = html.replace("{DATE}", &display_date);
     html = html.replace("{MSP}", &msp_files);
     html = html.replace("{JSON}", &json_files);
     html = html.replace("{CSV}", &csv_files);
@@ -263,8 +272,8 @@ pub fn generate_report_processing(
     np_labels.insert(root_np.to_string(), root_np.to_string());
 
     let clean_str = |s: &str| -> String {
-        let t = s.trim().to_string();
-        if t.is_empty() || t.to_lowercase() == "nan" { "Unknown".to_string() } else { t }
+        let t = s.trim().trim_matches('"').trim().to_string();
+        if t.is_empty() || t.to_lowercase() == "nan" || t.to_lowercase() == "unknown" { "NOT FOUND".to_string() } else { t }
     };
 
     for spec in all_spectra {

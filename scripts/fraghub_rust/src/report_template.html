@@ -113,7 +113,7 @@
     <div class="container">
         <div class="header">
             <h1>FragHub Processing Report</h1>
-            <p>Generated on: {DATE}</p>
+            <p>Generated on: {DATE} &nbsp;•&nbsp; Total Processing Time: <strong>{TOTAL_TIME}</strong></p>
         </div>
 
         <div class="grid">
@@ -185,17 +185,17 @@
                         <span class="bar-label" style="color: var(--danger); bottom: calc({PCT_DEL}% + 0.5rem);">{TOTAL_DEL}</span>
                         <div class="bar-tooltip" style="bottom: calc({PCT_DEL}% + 2rem);">{TOTAL_DEL} Deleted Spectra</div>
                         <div class="bar stack-bar" style="height: {PCT_DEL}%;">
-                            <div class="stack-segment" style="height: {H_PEAKS}%; background: #ef4444;"><span class="seg-tooltip" style="border-color:#ef4444;">no_peaks_list: {V_PEAKS}</span></div>
-                            <div class="stack-segment" style="height: {H_SMILES}%; background: #f97316;"><span class="seg-tooltip" style="border-color:#f97316;">no_smiles_no_inchi_no_inchikey: {V_SMILES}</span></div>
-                            <div class="stack-segment" style="height: {H_PRECURSOR}%; background: #eab308;"><span class="seg-tooltip" style="border-color:#eab308;">no_precursor_mz: {V_PRECURSOR}</span></div>
-                            <div class="stack-segment" style="height: {H_ADDUCT}%; background: #84cc16;"><span class="seg-tooltip" style="border-color:#84cc16;">no_or_bad_adduct: {V_ADDUCT}</span></div>
-                            <div class="stack-segment" style="height: {H_ENTROPY}%; background: #10b981;"><span class="seg-tooltip" style="border-color:#10b981;">low_entropy_score: {V_ENTROPY}</span></div>
-                            <div class="stack-segment" style="height: {H_MIN_PEAKS}%; background: #06b6d4;"><span class="seg-tooltip" style="border-color:#06b6d4;">minimum_peaks_not_requiered: {V_MIN_PEAKS}</span></div>
-                            <div class="stack-segment" style="height: {H_ABOVE_PREC}%; background: #3b82f6;"><span class="seg-tooltip" style="border-color:#3b82f6;">all_peaks_above_precursor_mz: {V_ABOVE_PREC}</span></div>
-                            <div class="stack-segment" style="height: {H_RANGE}%; background: #6366f1;"><span class="seg-tooltip" style="border-color:#6366f1;">no_peaks_in_mz_range: {V_RANGE}</span></div>
-                            <div class="stack-segment" style="height: {H_HIGH_PEAKS}%; background: #8b5cf6;"><span class="seg-tooltip" style="border-color:#8b5cf6;">minimum_high_peaks_not_requiered: {V_HIGH_PEAKS}</span></div>
-                            <div class="stack-segment" style="height: {H_DUP}%; background: #d946ef;"><span class="seg-tooltip" style="border-color:#d946ef;">duplicatas_removed: {V_DUP}</span></div>
-                            <div class="stack-segment" style="height: {H_PREV}%; background: #f43f5e;"><span class="seg-tooltip" style="border-color:#f43f5e;">previously_cleaned: {V_PREV}</span></div>
+                            <div class="stack-segment" style="height: {H_PEAKS}%; background: #ef4444;"><span class="seg-tooltip" style="border-color:#ef4444;">No peaks list: {V_PEAKS}</span></div>
+                            <div class="stack-segment" style="height: {H_SMILES}%; background: #f97316;"><span class="seg-tooltip" style="border-color:#f97316;">No SMILES / InChIKey: {V_SMILES}</span></div>
+                            <div class="stack-segment" style="height: {H_PRECURSOR}%; background: #eab308;"><span class="seg-tooltip" style="border-color:#eab308;">No precursor m/z: {V_PRECURSOR}</span></div>
+                            <div class="stack-segment" style="height: {H_ADDUCT}%; background: #84cc16;"><span class="seg-tooltip" style="border-color:#84cc16;">No or bad adduct: {V_ADDUCT}</span></div>
+                            <div class="stack-segment" style="height: {H_ENTROPY}%; background: #10b981;"><span class="seg-tooltip" style="border-color:#10b981;">Low entropy score: {V_ENTROPY}</span></div>
+                            <div class="stack-segment" style="height: {H_MIN_PEAKS}%; background: #06b6d4;"><span class="seg-tooltip" style="border-color:#06b6d4;">Minimum peaks not required: {V_MIN_PEAKS}</span></div>
+                            <div class="stack-segment" style="height: {H_ABOVE_PREC}%; background: #3b82f6;"><span class="seg-tooltip" style="border-color:#3b82f6;">All peaks above precursor m/z: {V_ABOVE_PREC}</span></div>
+                            <div class="stack-segment" style="height: {H_RANGE}%; background: #6366f1;"><span class="seg-tooltip" style="border-color:#6366f1;">No peaks in m/z range: {V_RANGE}</span></div>
+                            <div class="stack-segment" style="height: {H_HIGH_PEAKS}%; background: #8b5cf6;"><span class="seg-tooltip" style="border-color:#8b5cf6;">Minimum high peaks not required: {V_HIGH_PEAKS}</span></div>
+                            <div class="stack-segment" style="height: {H_DUP}%; background: #d946ef;"><span class="seg-tooltip" style="border-color:#d946ef;">Duplicates removed: {V_DUP}</span></div>
+                            <div class="stack-segment" style="height: {H_PREV}%; background: #f43f5e;"><span class="seg-tooltip" style="border-color:#f43f5e;">Previously cleaned: {V_PREV}</span></div>
                         </div>
                         <span class="bar-title" style="color: var(--danger);">Deleted</span>
                     </div>
@@ -212,17 +212,17 @@
 
             <h3 style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;">Deletion Reasons Breakdown</h3>
             <div class="legend-grid">
-                <div class="legend-item"><div class="legend-color" style="background:#ef4444;"></div><span><strong>{V_PEAKS}</strong> no_peaks_list</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#f97316;"></div><span><strong>{V_SMILES}</strong> no_smiles_no_inchi_no_inchikey</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#eab308;"></div><span><strong>{V_PRECURSOR}</strong> no_precursor_mz</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#84cc16;"></div><span><strong>{V_ADDUCT}</strong> no_or_bad_adduct</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#10b981;"></div><span><strong>{V_ENTROPY}</strong> low_entropy_score</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#06b6d4;"></div><span><strong>{V_MIN_PEAKS}</strong> minimum_peaks_not_requiered</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#3b82f6;"></div><span><strong>{V_ABOVE_PREC}</strong> all_peaks_above_precursor_mz</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#6366f1;"></div><span><strong>{V_RANGE}</strong> no_peaks_in_mz_range</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#8b5cf6;"></div><span><strong>{V_HIGH_PEAKS}</strong> minimum_high_peaks_not_requiered</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#d946ef;"></div><span><strong>{V_DUP}</strong> duplicatas_removed</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#f43f5e;"></div><span><strong>{V_PREV}</strong> previously_cleaned</span></div>
+                <div class="legend-item"><div class="legend-color" style="background:#ef4444;"></div><span><strong>{V_PEAKS}</strong> No peaks list</span></div>
+                <div class="legend-item"><div class="legend-color" style="background:#f97316;"></div><span><strong>{V_SMILES}</strong> No SMILES / InChIKey</span></div>
+                <div class="legend-item"><div class="legend-color" style="background:#eab308;"></div><span><strong>{V_PRECURSOR}</strong> No precursor m/z</span></div>
+                <div class="legend-item"><div class="legend-color" style="background:#84cc16;"></div><span><strong>{V_ADDUCT}</strong> No or bad adduct</span></div>
+                <div class="legend-item"><div class="legend-color" style="background:#10b981;"></div><span><strong>{V_ENTROPY}</strong> Low entropy score</span></div>
+                <div class="legend-item"><div class="legend-color" style="background:#06b6d4;"></div><span><strong>{V_MIN_PEAKS}</strong> Minimum peaks not required</span></div>
+                <div class="legend-item"><div class="legend-color" style="background:#3b82f6;"></div><span><strong>{V_ABOVE_PREC}</strong> All peaks above precursor m/z</span></div>
+                <div class="legend-item"><div class="legend-color" style="background:#6366f1;"></div><span><strong>{V_RANGE}</strong> No peaks in m/z range</span></div>
+                <div class="legend-item"><div class="legend-color" style="background:#8b5cf6;"></div><span><strong>{V_HIGH_PEAKS}</strong> Minimum high peaks not required</span></div>
+                <div class="legend-item"><div class="legend-color" style="background:#d946ef;"></div><span><strong>{V_DUP}</strong> Duplicates removed</span></div>
+                <div class="legend-item"><div class="legend-color" style="background:#f43f5e;"></div><span><strong>{V_PREV}</strong> Previously cleaned</span></div>
             </div>
         </div>
 
@@ -596,7 +596,7 @@
             columnsData.sort(function(a, b) { return b.count - a.count; });
             var colNames = columnsData.map(function(d) { return d.column; });
             var colCounts = columnsData.map(function(d) { return d.count; });
-            var colPcts = columnsData.map(function(d) { return d.percentage.toFixed(1) + '%'; });
+            var colPcts = columnsData.map(function(d) { return d.count === 0 ? '<span style="color:#cbd5e1">' + d.percentage.toFixed(1) + '%</span>' : d.percentage.toFixed(1) + '%'; });
 
             var traceCol = {
                 x: colNames,
