@@ -13,6 +13,7 @@ from pydantic import BaseModel, Field, ConfigDict
 import sys
 import os
 import fraghub_rust
+import rdkit_worker  # Ensure PyInstaller bundles it for Rust to use
 
 parameters_dict = {}
 

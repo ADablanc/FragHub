@@ -1,6 +1,8 @@
 {
   "name": "FragHub",
-  "version": "1.5.0",
+  "version": "2.0.0",
+  "description": "A powerful tool designed to standardize, filter, and organize mass spectrometry (MS) data from Open Mass Spectra Libraries (OMSLs)",
+  "author": "Axel Dablanc",
   "main": "electron/main.js",
   "type": "module",
   "private": true,
