@@ -18,7 +18,7 @@ pub fn ontologies_completion_processing(
 ) -> PyResult<Vec<Spectrum>> {
 
     // --- Step 1: Initialization ---
-    if let Some(cb) = &prefix_callback { cb.call1(py, ("updating ontologies (Rust):",))?; }
+    if let Some(cb) = &prefix_callback { cb.call1(py, ("Updating ontologies:",))?; }
     if let Some(cb) = &item_type_callback { cb.call1(py, ("rows",))?; }
 
     // On sauvegarde l'ordre des colonnes

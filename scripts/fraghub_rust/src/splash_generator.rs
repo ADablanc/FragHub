@@ -118,7 +118,7 @@ pub fn generate_splash_processing(
 
     // ⚠️ ORDRE CRITIQUE POUR L'INTERFACE VUE.JS
     if let Some(cb) = &total_items_callback { cb.call1(py, (total,))?; }
-    if let Some(cb) = &prefix_callback { cb.call1(py, (format!("generating SPLASH for [{}]:", filename),))?; }
+    if let Some(cb) = &prefix_callback { cb.call1(py, (format!("Generating SPLASH IDs for [{}]:", filename),))?; }
     if let Some(cb) = &item_type_callback { cb.call1(py, ("spectra",))?; }
 
     let chunk_size = 2000;

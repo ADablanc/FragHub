@@ -52,7 +52,7 @@
     },
     "mac": {
       "target": "dmg",
-      "icon": "app/assets/FragHub_Python_icon.icns"
+      "icon": "app/assets/FragHub_icon.icns"
     }
   }
 }

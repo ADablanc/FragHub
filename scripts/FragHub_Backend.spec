@@ -32,7 +32,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['GUI/assets/FragHub_Python_icon.icns'],
+    icon=['GUI/assets/FragHub_icon.icns'],
 )
 coll = COLLECT(
     exe,
@@ -46,6 +46,6 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name='FragHub_Backend.app',
-    icon='GUI/assets/FragHub_Python_icon.icns',
+    icon='GUI/assets/FragHub_icon.icns',
     bundle_identifier=None,
 )

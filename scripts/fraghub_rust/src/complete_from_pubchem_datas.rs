@@ -19,7 +19,7 @@ pub fn complete_from_pubchem_datas(
 ) -> PyResult<Vec<Spectrum>> {
 
     // --- Step 1: Initialization ---
-    if let Some(cb) = &prefix_callback { cb.call1(py, ("enriching data from PubChem (Rust):",))?; }
+    if let Some(cb) = &prefix_callback { cb.call1(py, ("Enriching data from PubChem:",))?; }
     if let Some(cb) = &item_type_callback { cb.call1(py, ("rows",))?; }
 
     let total_items = spectrum_list.len();

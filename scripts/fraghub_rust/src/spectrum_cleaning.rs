@@ -179,7 +179,7 @@ pub fn spectrum_cleaning_processing(
     }
 
     if let Some(cb) = &progress_callback { cb.call1(py, (total_items,))?; }
-    if let Some(cb) = &prefix_callback { cb.call1(py, ("writing deletion logs...",))?; }
+    if let Some(cb) = &prefix_callback { cb.call1(py, ("Writing deletion logs...",))?; }
 
     let final_list = py.allow_threads(|| {
         // 4. Écriture des CSV de suppression

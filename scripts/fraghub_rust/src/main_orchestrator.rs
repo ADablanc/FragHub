@@ -106,14 +106,14 @@ pub fn main_orchestrator(
     let final_mgf = tuple_res.3;
 
     if final_msp.is_empty() && final_csv.is_empty() && final_json.is_empty() && final_mgf.is_empty() {
-        if let Some(cb) = &deletion_callback { cb.call1(py, ("-- THERE IS NO FILES TO PROCESS --",))?; }
+        if let Some(cb) = &deletion_callback { cb.call1(py, ("No files to process",))?; }
         if let Some(cb) = &completion_callback { cb.call1(py, ("--- TOTAL TIME ... ---",))?; }
         return Ok(0);
     }
 
     // STEP 2: SPLASH KEY
     py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
-    if let Some(cb) = &step_callback { cb.call1(py, ("-- GENERATING SPLASH UNIQUE ID --",))?; }
+    if let Some(cb) = &step_callback { cb.call1(py, ("Generating SPLASH IDs",))?; }
     py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
     let final_msp = if !final_msp.is_empty() { generate_splash_processing(py, final_msp, "MSP".to_string(), progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())? } else { final_msp };
@@ -142,7 +142,7 @@ pub fn main_orchestrator(
     let ordered_columns: Vec<String> = ordered_columns_str.into_iter().map(|s| s.to_string()).collect();
 
     // STEP 3: DUPLICATAS
-    if let Some(cb) = &step_callback { cb.call1(py, ("-- REMOVING DUPLICATAS --",))?; }
+    if let Some(cb) = &step_callback { cb.call1(py, ("Removing Duplicates",))?; }
     py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
     let tuple_dup = remove_duplicatas_processing(
@@ -161,7 +161,7 @@ pub fn main_orchestrator(
     // STEP 4: UPDATES
     let mut update = false;
     py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
-    if let Some(cb) = &step_callback { cb.call1(py, ("-- CHECKING FOR UPDATES --",))?; }
+    if let Some(cb) = &step_callback { cb.call1(py, ("Checking for Updates",))?; }
     py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
     let tuple_up = check_for_update_processing(
@@ -184,7 +184,7 @@ pub fn main_orchestrator(
 
         // STEP 5: CLEANING
         py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
-        if let Some(cb) = &step_callback { cb.call1(py, ("-- CLEANING SPECTRUMS --",))?; }
+        if let Some(cb) = &step_callback { cb.call1(py, ("Cleaning Spectrums",))?; }
         py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
         // Convert parameters to native map
@@ -221,14 +221,14 @@ pub fn main_orchestrator(
         }
 
         if spectrum_list.is_empty() {
-            if let Some(cb) = &deletion_callback { cb.call1(py, ("-- THERE IS NO SPECTRUMS TO PROCESS AFTER CLEANING --",))?; }
+            if let Some(cb) = &deletion_callback { cb.call1(py, ("No spectrums to process after cleaning",))?; }
             return Ok(0);
         }
         check_stop_flag()?;
 
         // STEP 6: MOLS DERIVATIONS (RDKit in Rust)
         py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
-        if let Some(cb) = &step_callback { cb.call1(py, ("--  MOLS DERIVATION AND MASS CALCULATION --",))?; }
+        if let Some(cb) = &step_callback { cb.call1(py, ("RDKit Derivation and Mass Calculation",))?; }
         py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
         spectrum_list = process_mols(
@@ -246,7 +246,7 @@ pub fn main_orchestrator(
 
         // STEP 7: PUBCHEM
         py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
-        if let Some(cb) = &step_callback { cb.call1(py, ("--  COMPLETING FROM PUBCHEM DATAS --",))?; }
+        if let Some(cb) = &step_callback { cb.call1(py, ("Completing from PubChem Datas",))?; }
         py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
         spectrum_list = complete_from_pubchem_datas(
@@ -256,7 +256,7 @@ pub fn main_orchestrator(
 
         // STEP 8: ONTOLOGIES
         py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
-        if let Some(cb) = &step_callback { cb.call1(py, ("--  ONTOLOGIES COMPLETION --",))?; }
+        if let Some(cb) = &step_callback { cb.call1(py, ("Ontologies Completion",))?; }
         py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
         spectrum_list = ontologies_completion_processing(
@@ -268,7 +268,7 @@ pub fn main_orchestrator(
         let calculate_de_novo: f64 = parameters_dict.get_item("calculate_de_novo")?.map(|v| v.extract().unwrap_or(0.0)).unwrap_or(0.0);
         if calculate_de_novo == 1.0 {
             py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
-            if let Some(cb) = &step_callback { cb.call1(py, ("-- DE NOVO CALCULATIONS --",))?; }
+            if let Some(cb) = &step_callback { cb.call1(py, ("De Novo Calculations",))?; }
             py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
             spectrum_list = de_novo_calculation_processing(
@@ -281,7 +281,7 @@ pub fn main_orchestrator(
 
         // STEP 10: SPLITTING
         py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
-        if let Some(cb) = &step_callback { cb.call1(py, ("--  SPLITTING SPECTRUMS --",))?; }
+        if let Some(cb) = &step_callback { cb.call1(py, ("Splitting Spectrums",))?; }
         py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
         let tuple_split = master_splitter(
@@ -317,7 +317,7 @@ pub fn main_orchestrator(
         let msp_val: f64 = parameters_dict.get_item("msp")?.map(|v| v.extract().unwrap_or(0.0)).unwrap_or(0.0);
         if msp_val == 1.0 {
             py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
-            if let Some(cb) = &step_callback { cb.call1(py, ("--  CONVERTING CSV TO MSP --",))?; }
+            if let Some(cb) = &step_callback { cb.call1(py, ("Converting CSV to MSP",))?; }
             py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
             let tuple_msp = spectra_to_msp_processing(py, pos_lc_df.clone(), pos_lc_in_silico_df.clone(), pos_gc_df.clone(), pos_gc_in_silico_df.clone(), neg_lc_df.clone(), neg_lc_in_silico_df.clone(), neg_gc_df.clone(), neg_gc_in_silico_df.clone(), progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
@@ -335,7 +335,7 @@ pub fn main_orchestrator(
         let csv_val: f64 = parameters_dict.get_item("csv")?.map(|v| v.extract().unwrap_or(0.0)).unwrap_or(0.0);
         if csv_val == 1.0 {
             py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
-            if let Some(cb) = &step_callback { cb.call1(py, ("--  WRITING CSV --",))?; }
+            if let Some(cb) = &step_callback { cb.call1(py, ("Writing CSV",))?; }
             py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
             writting_csv_processing(py, pos_lc_df.clone(), pos_gc_df.clone(), neg_lc_df.clone(), neg_gc_df.clone(), pos_lc_in_silico_df.clone(), pos_gc_in_silico_df.clone(), neg_lc_in_silico_df.clone(), neg_gc_in_silico_df.clone(), ordered_columns.clone(), &output_directory, update, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
@@ -343,7 +343,7 @@ pub fn main_orchestrator(
 
         if msp_val == 1.0 {
             py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
-            if let Some(cb) = &step_callback { cb.call1(py, ("--  WRITING MSP --",))?; }
+            if let Some(cb) = &step_callback { cb.call1(py, ("Writing MSP",))?; }
             py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
             writting_msp_processing(py, pos_lc_msp.clone(), pos_lc_insilico_msp.clone(), pos_gc_msp.clone(), pos_gc_insilico_msp.clone(), neg_lc_msp.clone(), neg_lc_insilico_msp.clone(), neg_gc_msp.clone(), neg_gc_insilico_msp.clone(), &output_directory, update, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
@@ -352,7 +352,7 @@ pub fn main_orchestrator(
         let json_val: f64 = parameters_dict.get_item("json")?.map(|v| v.extract().unwrap_or(0.0)).unwrap_or(0.0);
         if json_val == 1.0 {
             py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
-            if let Some(cb) = &step_callback { cb.call1(py, ("--  WRITING JSON --",))?; }
+            if let Some(cb) = &step_callback { cb.call1(py, ("Writing JSON",))?; }
             py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
             writting_json_processing(py, update, pos_lc_df.clone(), pos_gc_df.clone(), neg_lc_df.clone(), neg_gc_df.clone(), pos_lc_in_silico_df.clone(), pos_gc_in_silico_df.clone(), neg_lc_in_silico_df.clone(), neg_gc_in_silico_df.clone(), ordered_columns.clone(), &output_directory, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
@@ -367,7 +367,7 @@ pub fn main_orchestrator(
 
         // STEP 12: REPORT
         py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
-        if let Some(cb) = &step_callback { cb.call1(py, ("-- GENERATING REPORT --",))?; }
+        if let Some(cb) = &step_callback { cb.call1(py, ("Generating Report",))?; }
         py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
         let current_datetime = Local::now().format("%d_%m_%Y__%H_%M_%S").to_string();

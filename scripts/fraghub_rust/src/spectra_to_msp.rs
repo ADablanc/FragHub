@@ -72,7 +72,7 @@ pub fn spectra_to_msp_processing(
 
     let total_items: usize = tasks.iter().map(|l| l.len()).sum();
 
-    if let Some(cb) = &prefix_callback { cb.call1(py, ("Converting all CSV to MSP (Multithreaded):",))?; }
+    if let Some(cb) = &prefix_callback { cb.call1(py, ("Converting to MSP format:",))?; }
     if let Some(cb) = &item_type_callback { cb.call1(py, ("rows",))?; }
     if let Some(cb) = &total_items_callback { cb.call1(py, (total_items, 0))?; }
 

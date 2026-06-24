@@ -26,7 +26,7 @@ pub fn check_for_update_processing(
 
     // ⚠️ ORDRE CRITIQUE POUR L'INTERFACE VUE.JS
     if let Some(cb) = &total_items_callback { cb.call1(py, (total_items,))?; }
-    if let Some(cb) = &prefix_callback { cb.call1(py, ("checking for updates:",))?; }
+    if let Some(cb) = &prefix_callback { cb.call1(py, ("Checking for updates:",))?; }
     if let Some(cb) = &item_type_callback { cb.call1(py, ("spectra",))?; }
 
     // 1. Lire le fichier updates.json existant
@@ -75,7 +75,7 @@ pub fn check_for_update_processing(
 
     // ⚠️ GARANTIE DU 100% DE L'ÉTAPE 2
     if let Some(cb) = &progress_callback { cb.call1(py, (total_items,))?; }
-    if let Some(cb) = &prefix_callback { cb.call1(py, ("saving updates & logs...",))?; }
+    if let Some(cb) = &prefix_callback { cb.call1(py, ("Saving updates and logs...",))?; }
 
     let (final_list, update, deleted_count) = py.allow_threads(|| {
         // 3. Écrire les doublons supprimés dans le CSV

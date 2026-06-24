@@ -108,7 +108,7 @@ function createMainWindow() {
     // Chargement via le protocole personnalisé
     mainWindow.loadURL('app://-/index.html');
 
-    mainWindow.webContents.openDevTools({ mode: 'detach' });
+    // mainWindow.webContents.openDevTools({ mode: 'detach' });
 
     mainWindow.once('ready-to-show', () => {
         mainWindow._nuxtReady = true

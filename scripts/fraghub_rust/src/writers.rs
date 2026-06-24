@@ -49,7 +49,7 @@ pub fn writting_msp_processing(
     let total_items: usize = tasks.iter().map(|(list, _, _)| list.len()).sum();
     if total_items == 0 { return Ok(()); }
 
-    if let Some(cb) = &prefix_callback { cb.call1(py, ("Writing all MSP files (Multithreaded):",))?; }
+    if let Some(cb) = &prefix_callback { cb.call1(py, ("Writing MSP files:",))?; }
     if let Some(cb) = &item_type_callback { cb.call1(py, ("spectra",))?; }
     if let Some(cb) = &total_items_callback { cb.call1(py, (total_items, 0))?; }
 
@@ -131,7 +131,7 @@ pub fn writting_csv_processing(
     let total_items: usize = tasks.iter().map(|(list, _, _)| list.len()).sum();
     if total_items == 0 { return Ok(()); }
 
-    if let Some(cb) = &prefix_callback { cb.call1(py, ("Writing all CSV files (Multithreaded):",))?; }
+    if let Some(cb) = &prefix_callback { cb.call1(py, ("Writing CSV files:",))?; }
     if let Some(cb) = &item_type_callback { cb.call1(py, ("rows",))?; }
     if let Some(cb) = &total_items_callback { cb.call1(py, (total_items, 0))?; }
 
@@ -211,7 +211,7 @@ pub fn writting_csv_processing(
             }
 
             if let Some(ref cb) = prefix_cb {
-                Python::with_gil(|py| { let _ = cb.call1(py, (format!("flushing {} to disk...", filename),)); });
+                Python::with_gil(|py| { let _ = cb.call1(py, (format!("Writing {} to disk...", filename),)); });
             }
 
             wtr.flush().map_err(|e| e.to_string())?;
@@ -257,7 +257,7 @@ pub fn writting_json_processing(
     let total_items: usize = tasks.iter().map(|(list, _, _)| list.len()).sum();
     if total_items == 0 { return Ok(()); }
 
-    if let Some(cb) = &prefix_callback { cb.call1(py, ("Writing all JSON files (Multithreaded):",))?; }
+    if let Some(cb) = &prefix_callback { cb.call1(py, ("Writing JSON files:",))?; }
     if let Some(cb) = &item_type_callback { cb.call1(py, ("rows",))?; }
     if let Some(cb) = &total_items_callback { cb.call1(py, (total_items, 0))?; }
 
@@ -395,7 +395,7 @@ pub fn writting_json_processing(
             }
 
             if let Some(ref cb) = prefix_cb {
-                Python::with_gil(|py| { let _ = cb.call1(py, (format!("flushing {} to disk...", filename),)); });
+                Python::with_gil(|py| { let _ = cb.call1(py, (format!("Writing {} to disk...", filename),)); });
             }
 
             file.write_all(b"]").map_err(|e| e.to_string())?;

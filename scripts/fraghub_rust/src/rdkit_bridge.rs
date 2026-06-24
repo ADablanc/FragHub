@@ -23,7 +23,7 @@ pub fn process_mols(
     item_type_callback: Option<PyObject>,
 ) -> PyResult<Vec<Spectrum>> {
 
-    if let Some(cb) = &prefix_callback { cb.call1(py, ("derivation and calculation (RDKit via Rust):",))?; }
+    if let Some(cb) = &prefix_callback { cb.call1(py, ("Deriving and calculating properties:",))?; }
     if let Some(cb) = &item_type_callback { cb.call1(py, ("rows",))?; }
 
     let total = spectrum_list.len();
@@ -49,7 +49,7 @@ pub fn process_mols(
         }
     }
 
-    if let Some(cb) = &prefix_callback { cb.call1(py, ("RDKit Multi-Core processing...",))?; }
+    if let Some(cb) = &prefix_callback { cb.call1(py, ("Processing molecules...",))?; }
 
     // 2. Traitement Python par lot via multiprocessing.Pool (contourne le GIL)
     let total_unique = unique_mols.len();
@@ -70,7 +70,7 @@ pub fn process_mols(
     let cache_dict_obj = worker_mod.call_method1("run_parallel", (unique_mols_vec, prog_cb))?;
     let cache: HashMap<String, HashMap<String, String>> = cache_dict_obj.extract()?;
 
-    if let Some(cb) = &prefix_callback { cb.call1(py, ("applying RDKit results to all spectra...",))?; }
+    if let Some(cb) = &prefix_callback { cb.call1(py, ("Applying calculations to spectra...",))?; }
     if let Some(cb) = &total_items_callback { cb.call1(py, (total, 0))?; }
 
     // 3. Appliquer les résultats en Rust à vitesse maximale

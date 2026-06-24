@@ -57,7 +57,7 @@ The core logic of the application is developed in Python. For Electron to run it
 2. Run the following command:
 
 ```bash
-pyinstaller --noconfirm --onedir --noconsole --icon="GUI/assets/FragHub_Python_icon.ico" --name="FragHub_Backend" --add-data="../datas;datas" --add-data="GUI/assets;GUI/assets" --hidden-import=uvicorn.logging --hidden-import=uvicorn.loops --hidden-import=uvicorn.loops.auto --hidden-import=uvicorn.protocols.http.auto --hidden-import=uvicorn.protocols.websockets.auto FragHub.py
+uv run pyinstaller --noconfirm --onedir --noconsole --icon="GUI/assets/FragHub_icon.ico" --name="FragHub_Backend" --add-data="../datas;datas" --add-data="GUI/assets;GUI/assets" --hidden-import=uvicorn.logging --hidden-import=uvicorn.loops --hidden-import=uvicorn.loops.auto --hidden-import=uvicorn.protocols.http.auto --hidden-import=uvicorn.protocols.websockets.auto FragHub.py
 ```
 
 > **📌 Important notes regarding the Backend:**

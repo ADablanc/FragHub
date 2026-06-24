@@ -292,7 +292,7 @@ pub fn de_novo_calculation_processing(
     item_type_callback: Option<PyObject>,
 ) -> PyResult<Vec<Spectrum>> {
 
-    if let Some(cb) = &prefix_callback { cb.call1(py, ("Calculating de novo formulas (Rust):",))?; }
+    if let Some(cb) = &prefix_callback { cb.call1(py, ("Calculating de novo formulas:",))?; }
     if let Some(cb) = &item_type_callback { cb.call1(py, ("spectra",))?; }
 
     let total_items = spectrum_list.len();

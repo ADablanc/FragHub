@@ -1,14 +1,12 @@
-Windows: pyinstaller  --windowed --icon=GUI/assets/FragHub_Python_icon.ico --name=FragHub_Windows_2.0.0_x64 --add-data="../datas;datas" --add-data="GUI/assets;GUI/assets" FragHub.py
+Windows: pyinstaller  --windowed --icon=GUI/assets/FragHub_icon.ico --name=FragHub_Windows_2.0.0_x64 --add-data="../datas;datas" --add-data="GUI/assets;GUI/assets" FragHub.py
 
-pyinstaller --noconfirm --onedir --noconsole --icon="GUI/assets/FragHub_Python_icon.ico" --name="FragHub_Backend" --add-data="../datas;datas" --add-data="GUI/assets;GUI/assets" --hidden-import=uvicorn.logging --hidden-import=uvicorn.loops --hidden-import=uvicorn.loops.auto --hidden-import=uvicorn.protocols.http.auto --hidden-import=uvicorn.protocols.websockets.auto FragHub.py
+pyinstaller --noconfirm --onedir --noconsole --icon="GUI/assets/FragHub_icon.ico" --name="FragHub_Backend" --add-data="../datas;datas" --add-data="GUI/assets;GUI/assets" --hidden-import=uvicorn.logging --hidden-import=uvicorn.loops --hidden-import=uvicorn.loops.auto --hidden-import=uvicorn.protocols.http.auto --hidden-import=uvicorn.protocols.websockets.auto FragHub.py
 
-macOS: pyinstaller --onefile --windowed --icon=GUI/assets/FragHub_Python_icon.icns --name=FragHub_macOS_2.0.0_arm64 --add-data="../datas:datas" --add-data="GUI/assets:GUI/assets" FragHub.py
+macOS: pyinstaller --onefile --windowed --icon=GUI/assets/FragHub_icon.icns --name=FragHub_macOS_2.0.0_arm64 --add-data="../datas:datas" --add-data="GUI/assets:GUI/assets" FragHub.py
 
-pyinstaller --noconfirm --onedir --noconsole --icon="GUI/assets/FragHub_Python_icon.ico" --name="FragHub_Backend" --add-data="../datas:datas" --add-data="GUI/assets:GUI/assets" --hidden-import=uvicorn.logging --hidden-import=uvicorn.loops --hidden-import=uvicorn.loops.auto --hidden-import=uvicorn.protocols.http.auto --hidden-import=uvicorn.protocols.websockets.auto FragHub.py
+pyinstaller --noconfirm --onedir --noconsole --icon="GUI/assets/FragHub_icon.ico" --name="FragHub_Backend" --add-data="../datas:datas" --add-data="GUI/assets:GUI/assets" --hidden-import=uvicorn.logging --hidden-import=uvicorn.loops --hidden-import=uvicorn.loops.auto --hidden-import=uvicorn.protocols.http.auto --hidden-import=uvicorn.protocols.websockets.auto FragHub.py
 
-Linux: pyinstaller  --windowed --icon=GUI/assets/FragHub_Python_icon.ico --name=FragHub_Linux_2.0.0_x64 --add-data="../datas:datas" --add-data="GUI/assets:GUI/assets" FragHub.py
-
-
+Linux: pyinstaller  --windowed --icon=GUI/assets/FragHub_icon.ico --name=FragHub_Linux_2.0.0_x64 --add-data="../datas:datas" --add-data="GUI/assets:GUI/assets" FragHub.py
 
 
 
@@ -18,6 +16,8 @@ Linux: pyinstaller  --windowed --icon=GUI/assets/FragHub_Python_icon.ico --name=
 
 
 
-Windows: pyinstaller --onefile --windowed --icon="setup_gui/assets/FragHub_Python_icon.ico" --add-data "setup_gui/assets;setup_gui/assets" --add-data "FragHub_Windows_2.0.0_x64.zip;." --name=FragHub_2.0.0_setup_windows_x64 Setup.py
 
-Linux: pyinstaller --onefile --windowed --icon="setup_gui/assets/FragHub_Python_icon.ico" --add-data "setup_gui/assets:setup_gui/assets" --add-data "FragHub_Linux_2.0.0_x64.zip:." --name=FragHub_2.0.0_setup_Linux_x64 Setup.py
+
+Windows: pyinstaller --onefile --windowed --icon="setup_gui/assets/FragHub_icon.ico" --add-data "setup_gui/assets;setup_gui/assets" --add-data "FragHub_Windows_2.0.0_x64.zip;." --name=FragHub_2.0.0_setup_windows_x64 Setup.py
+
+Linux: pyinstaller --onefile --windowed --icon="setup_gui/assets/FragHub_icon.ico" --add-data "setup_gui/assets:setup_gui/assets" --add-data "FragHub_Linux_2.0.0_x64.zip:." --name=FragHub_2.0.0_setup_Linux_x64 Setup.py
