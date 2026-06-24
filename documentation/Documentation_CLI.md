@@ -15,7 +15,7 @@ To trigger the CLI mode, you **must** append the `--cli` flag when executing Fra
 
 ### Running from source (Python)
 ```bash
-python scripts/FragHub.py --cli --input_directory "data/input" --output_directory "data/output"
+uv run python scripts/FragHub.py --cli --input_directory "data/input" --output_directory "data/output"
 ```
 
 ### Running the compiled binary
@@ -139,7 +139,7 @@ Specify which formats you want FragHub to generate at the end of the processing 
 ### 1. Simple Execution (Default Settings)
 Runs FragHub with all the default filters enabled (mirroring the GUI defaults).
 ```bash
-python scripts/FragHub.py \
+uv run python scripts/FragHub.py \
   --cli \
   --input_directory "/path/to/my_library.msp" \
   --output_directory "/path/to/output_folder"
@@ -148,7 +148,7 @@ python scripts/FragHub.py \
 ### 2. Disabling Specific Outputs
 Runs FragHub but only outputs JSON files, disabling MSP and CSV generation.
 ```bash
-python scripts/FragHub.py \
+uv run python scripts/FragHub.py \
   --cli \
   --input_directory "/path/to/my_library.mgf" \
   --output_directory "/path/to/output_folder" \
@@ -160,7 +160,7 @@ python scripts/FragHub.py \
 ### 3. Strict Custom Filtering
 Runs FragHub with very strict entropy and high-peak rules, and enforces a reset of previous project caches.
 ```bash
-python scripts/FragHub.py \
+uv run python scripts/FragHub.py \
   --cli \
   --input_directory "/data/raw/batch1/" "/data/raw/batch2/" \
   --output_directory "/data/processed/" \

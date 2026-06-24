@@ -11,17 +11,18 @@ Avant de commencer, assurez-vous que les outils suivants sont installés sur vot
 * **Python 3.12** : [Télécharger Python 3.12](https://www.python.org/downloads/release/python-3128/).
 
 ### Initialisation de l'environnement Python
-Pour isoler les dépendances du projet, il est nécessaire de créer un environnement virtuel (si ce n'est pas déjà fait). Ouvrez votre terminal dans le dossier contenant le code Python et exécutez les commandes suivantes :
+Pour isoler les dépendances du projet et les gérer de manière optimale, nous utilisons `uv`. Ouvrez votre terminal dans le dossier contenant le code Python et exécutez les commandes suivantes :
 
 ```bash
-# 1. Création de l'environnement virtuel (à faire une seule fois)
-python3 -m venv .venv
+# 1. Installation de uv (si ce n'est pas déjà fait)
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# 2. Activation de l'environnement virtuel
+# 2. Synchronisation de l'environnement et installation des dépendances
+# Cela va créer automatiquement le dossier .venv et récupérer les dépendances via pyproject.toml / uv.lock
+uv sync
+
+# 3. Activation de l'environnement virtuel
 source .venv/bin/activate
-
-# 3. Installation des bibliothèques requises
-pip install -r requirements.txt
 ```
 
 ---

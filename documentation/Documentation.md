@@ -11,20 +11,22 @@ Before you begin, make sure the following tools are installed on your machine:
 *   **Python 3.12**: [Download Python 3.12](https://www.python.org/downloads/release/python-3128/).
 
 ### Python Environment Initialization
-To isolate project dependencies, you need to create a virtual environment (if not already done). Open your terminal in the folder containing the Python code and run the following commands:
+To isolate project dependencies and manage them efficiently, we use `uv`. Open your terminal in the folder containing the Python code and run the following commands:
 
 ```bash
-# 1. Create the virtual environment (only once)
-python -m venv .venv
+# 1. Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+# On Windows, you can use: powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 
-# 2. Activate the virtual environment
+# 2. Sync the environment and install dependencies
+# This automatically creates the .venv and resolves the dependencies from pyproject.toml / uv.lock
+uv sync
+
+# 3. Activate the virtual environment
 # On Windows:
 .venv\Scripts\activate
 # On macOS / Linux:
 source .venv/bin/activate
-
-# 3. Install the required libraries
-pip install -r requirements.txt
 ```
 
 ---

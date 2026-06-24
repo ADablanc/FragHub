@@ -1,6 +1,6 @@
 # Developer Documentation: FragHub
 
-This guide details the steps required to set up the development environment, compile the Python backend, and generate the Electron application installer on macOS.
+This guide details the steps required to set up the development environment, compile the Python backend, and generate the Electron application installer on Linux.
 
 ---
 
@@ -11,17 +11,18 @@ Before you begin, make sure the following tools are installed on your machine:
 * **Python 3.12**: [Download Python 3.12](https://www.python.org/downloads/release/python-3128/).
 
 ### Python Environment Initialization
-To isolate project dependencies, you need to create a virtual environment (if not already done). Open your terminal in the folder containing the Python code and run the following commands:
+To isolate project dependencies and manage them efficiently, we use `uv`. Open your terminal in the folder containing the Python code and run the following commands:
 
 ```bash
-# 1. Create the virtual environment (only once)
-python3 -m venv .venv
+# 1. Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# 2. Activate the virtual environment
+# 2. Sync the environment and install dependencies
+# This automatically creates the .venv and resolves the dependencies from pyproject.toml / uv.lock
+uv sync
+
+# 3. Activate the virtual environment
 source .venv/bin/activate
-
-# 3. Install the required libraries
-pip install -r requirements.txt
 ```
 
 ---
@@ -42,13 +43,6 @@ cd GUI
 npm install
 ```
 
-> ⚠️ **IMPORTANT NOTE FOR MACOS: ELECTRON INSTALLATION BUG**
-> It has been observed that the standard `npm install` command currently fails on macOS when installing Electron. To work around this issue, you must install Electron manually into your `node_modules` directly from the official Git repository.
-> You can use the following command (still in the `GUI` folder):
-> ```bash
-> npm install git+[https://github.com/electron/electron.git](https://github.com/electron/electron.git)
-> ```
-
 ---
 
 ## 3. Backend Compilation (Python)
@@ -56,7 +50,7 @@ npm install
 The core logic of the application is developed in Python. For Electron to run it autonomously, it must be packaged with PyInstaller.
 
 1. Navigate to the `scripts` folder.
-2. Run the following command (note the use of `:` as separator for macOS):
+2. Run the following command (note the use of `:` as separator for Linux):
 
 ```bash
 pyinstaller --noconfirm --onedir --noconsole --icon="GUI/assets/FragHub_Python_icon.icns" --name="FragHub_Backend" --add-data="../datas:datas" --add-data="GUI/assets:GUI/assets" --hidden-import=uvicorn.logging --hidden-import=uvicorn.loops --hidden-import=uvicorn.loops.auto --hidden-import=uvicorn.protocols.http.auto --hidden-import=uvicorn.protocols.websockets.auto FragHub.py
@@ -64,8 +58,7 @@ pyinstaller --noconfirm --onedir --noconsole --icon="GUI/assets/FragHub_Python_i
 
 > **📌 Important notes regarding the Backend:**
 > * **Versioning:** Remember to adapt the `--name=FragHub_Backend` argument to match the current version number if the application evolves.
-> * **Icon:** On macOS, the standard icon format is `.icns`.
-> * **Generated files:** PyInstaller will create the compiled backend as a folder or `.app` bundle (including the executable and the `_internal` folder) in `scripts/dist/FragHub_Backend`.
+> * **Generated files:** PyInstaller will create the compiled backend as a folder (including the executable and the `_internal` folder) in `scripts/dist/FragHub_Backend`.
 > * ⚠️ **Golden rule:** This PyInstaller command **must be re-run every time you modify a Python source file or external data such as databases**.
 
 ---
@@ -99,8 +92,8 @@ npm run generate
 > * **Generated files:** The compiled Front-End code will be placed in the hidden `.output/public/` folder.
 > * ⚠️ **Golden rule:** The `npm run generate` command **must be re-run every time you modify Front-End code** (`.vue` files, `main.js`, etc.) before launching the installer creation.
 
-3. Launch the final Electron installer build for macOS:
+3. Launch the final Electron installer build for Linux:
 ```bash
-npm run build:electron -- --mac
+npm run build:electron -- --linux
 ```
-> * **Generated files:** Once the process is complete, the macOS installer (`.dmg` file) ready for distribution will be located in the `dist_electron/` folder, at the root of your `GUI` folder.
+> * **Generated files:** Once the process is complete, the Linux installer (`.AppImage` or `.deb` file) ready for distribution will be located in the `dist_electron/` folder, at the root of your `GUI` folder.
