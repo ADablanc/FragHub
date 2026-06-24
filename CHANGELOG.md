@@ -7,6 +7,10 @@ All notable changes to this project will be documented in this file.
   - **Recursive Directory Parsing**: Added input resolution in CLI mode to automatically scan entire folder structures and batch-process valid MS files.
   - **Backend Modernization**: Updated the FastAPI Python backend to use modern `lifespan` handlers, resolving deprecation warnings, and upgraded Pydantic schemas to v2 standards (`ConfigDict`).
   - **Agnostic Callback System**: Built a robust event bridge allowing the Rust engine to safely stream asynchronous progress logs to both the CLI terminal and the Electron/Nuxt GUI via WebSockets.
+  - **Toolchain Migration**: Transitioned the entire Python environment and dependency management to `uv`, significantly speeding up setup and resolving packaging constraints with PyInstaller across OS environments.
+  - **Interactive Reporting**: Developed a comprehensive HTML execution report incorporating interactive Sunburst and UpSetPlot charts that summarize dataset evolution after processing.
+  - **UI/UX & Logs Polishing**: Disabled the automatic launch of Electron Developer Tools at startup, unified the application icons, and drastically cleaned/standardized all the real-time progress steps displayed during processing.
+  - **Packaging Fixes**: Resolved Python multiprocessing freeze issues when packaging the Rust-RDKit bridge with PyInstaller, and updated Electron metadata.
 
 - **31_05_2026**:
   - modernizing GUI and desktop integration with Nuxt 4 + electron.js 
