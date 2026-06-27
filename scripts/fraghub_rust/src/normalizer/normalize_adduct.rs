@@ -1,6 +1,35 @@
 // src/normalizer/normalize_adduct.rs
 use std::collections::HashMap;
 
+
+/// Standardise l'ordre des éléments d'un adduit après la partie M
+/// Par exemple: 2M-2H+Ca-H devient 2M+Ca-2H-H (trié de manière déterministe)
+pub fn standardize_adduct_key(adduct: &str) -> String {
+    let first_sign_idx = adduct.find(|c| c == '+' || c == '-');
+    match first_sign_idx {
+        Some(idx) => {
+            let (base, rest) = adduct.split_at(idx);
+            let mut parts: Vec<String> = Vec::new();
+            let mut current_part = String::new();
+            for c in rest.chars() {
+                if c == '+' || c == '-' {
+                    if !current_part.is_empty() {
+                        parts.push(current_part.clone());
+                    }
+                    current_part.clear();
+                }
+                current_part.push(c);
+            }
+            if !current_part.is_empty() {
+                parts.push(current_part);
+            }
+            parts.sort_unstable();
+            format!("{}{}", base, parts.join(""))
+        }
+        None => adduct.to_string(),
+    }
+}
+
 /// Normalise la forme de l'adduct (ex: "[M+H]+" au lieu de "M+H").
 ///
 /// Pour un développeur Python : Remarquez comment le `NormalizerContext` est passé par référence (`&super::NormalizerContext`).
@@ -29,10 +58,12 @@ pub fn normalize_adduct(mut metadata_dict: HashMap<String, String>, context: &su
             cleaned.pop(); // Retire très efficacement le dernier caractère de la chaîne.
         }
 
-        // On consulte le contexte (dictionnaires python transférés en RAM Rust)
-        if let Some(canonical) = context.adduct_pos.get(&cleaned) {
+        let standard_key = standardize_adduct_key(&cleaned);
+
+        // On consulte le contexte avec la clé standardisée
+        if let Some(canonical) = context.adduct_pos.get(&standard_key) {
             metadata_dict.insert("PRECURSORTYPE".to_string(), canonical.clone());
-        } else if let Some(canonical) = context.adduct_neg.get(&cleaned) {
+        } else if let Some(canonical) = context.adduct_neg.get(&standard_key) {
             metadata_dict.insert("PRECURSORTYPE".to_string(), canonical.clone());
         } else {
             metadata_dict.insert("PRECURSORTYPE".to_string(), cleaned);

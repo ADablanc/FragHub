@@ -99,12 +99,15 @@ pub fn load_internal_databases(_py: Python, base_dir: &str) -> PyResult<()> {
                     let massdiff_str = record.get(idx_massdiff).unwrap_or("0.0");
                     let massdiff: f64 = massdiff_str.parse().unwrap_or(0.0);
                     let ionmode = record.get(idx_ionmode).unwrap_or("");
+                    let standard_known = crate::normalizer::normalize_adduct::standardize_adduct_key(&known);
                     if ionmode == "positive" {
-                        adduct_dict_pos.insert(known.clone(), default.clone());
-                        adduct_massdiff_dict_pos.insert(default.clone(), massdiff);
+                        // On insère uniquement la version standardisée.
+                        // "or_insert" garantit que la PREMIÈRE ligne lue dans le CSV est conservée.
+                        adduct_dict_pos.entry(standard_known).or_insert(default.clone());
+                        adduct_massdiff_dict_pos.entry(default.clone()).or_insert(massdiff);
                     } else if ionmode == "negative" {
-                        adduct_dict_neg.insert(known.clone(), default.clone());
-                        adduct_massdiff_dict_neg.insert(default.clone(), massdiff);
+                        adduct_dict_neg.entry(standard_known).or_insert(default.clone());
+                        adduct_massdiff_dict_neg.entry(default.clone()).or_insert(massdiff);
                     }
                 }
             }

@@ -3,10 +3,10 @@
 
 a = Analysis(
     ['FragHub.py'],
-    pathex=[],
+    pathex=['/Users/adablanc/Documents/PROJETS/FragHub/scripts'],
     binaries=[],
     datas=[('../datas', 'datas'), ('GUI/assets', 'GUI/assets')],
-    hiddenimports=['uvicorn.logging', 'uvicorn.loops', 'uvicorn.loops.auto', 'uvicorn.protocols.http.auto', 'uvicorn.protocols.websockets.auto'],
+    hiddenimports=['uvicorn.logging', 'uvicorn.loops', 'uvicorn.loops.auto', 'uvicorn.protocols.http.auto', 'uvicorn.protocols.websockets.auto', 'rdkit_worker'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
