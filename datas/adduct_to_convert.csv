@@ -128,7 +128,7 @@ M-SO3-H;[(M-SO3)-H]-;-80.964076;negative
 3M-H;[3M-H]-;-1.007276;negative
 3M-H+Cl;[3M-H+Cl]2-;33.962125;negative
 3M-H+Cl_37Cl1;[3M-H+Cl]2-_37Cl1;35.959175;negative
-M-;[M]-;0;negative
+M-;[M]*-;0.00054858;negative
 M+2Cl;[M+2Cl]2-;69.938802;negative
 M+2Cl_37Cl1;[M+2Cl]2-_37Cl1;71.935852;negative
 M+2Cl_37Cl2;[M+2Cl]2-_37Cl2;73.932902;negative
@@ -397,7 +397,7 @@ M-SO3+H;[(M-SO3)+H]+;-78.949524;positive
 3M+Na+K;[3M+Na+K]2+;61.952379;positive
 3M-H+2Ca;[3M-H+2Ca]2+;77.908434;positive
 3M-H+Ca;[3M-H+Ca]+;38.954217;positive
-M+;[M]+;0;positive
+M+;[M]*+;-0.00054858;positive
 M+2H;[M+2H]2+;2.014552;positive
 M+2H-CH3;[M+2H-CH3]2+;-13.008948;positive
 M+2K;[M+2K]2+;77.926316;positive

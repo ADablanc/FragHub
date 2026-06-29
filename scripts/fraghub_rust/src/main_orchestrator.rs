@@ -23,6 +23,7 @@ use crate::writers::{writting_csv_processing, writting_msp_processing, writting_
 use crate::report::generate_report_processing;
 use crate::set_projects::{init_project, reset_updates};
 use crate::deletion_report::DeletionReport;
+use crate::mz_correction::mz_correction_processing;
 
 /// La "Tour de Contrôle" de l'application Rust.
 ///
@@ -240,6 +241,23 @@ pub fn main_orchestrator(
         if let Some(cb) = &deletion_callback {
             let report = &deletion_report;
             cb.call1(py, (format!("No smiles, no inchi, no inchikey (updated): {}", report.no_smiles_no_inchi_no_inchikey),))?;
+        }
+
+        check_stop_flag()?;
+
+        // STEP 6.5: MASS & ADDUCT CORRECTION
+        py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
+        if let Some(cb) = &step_callback { cb.call1(py, ("Mass & Adduct Correction",))?; }
+        py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
+
+        spectrum_list = mz_correction_processing(
+            py, spectrum_list, &mut deletion_report,
+            progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone()
+        )?;
+
+        if let Some(cb) = &deletion_callback {
+            let report = &deletion_report;
+            cb.call1(py, (format!("Deleted by mz mismatch (NO_MATCH): {}", report.no_or_bad_adduct),))?;
         }
 
         check_stop_flag()?;

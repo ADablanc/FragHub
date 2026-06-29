@@ -32,6 +32,8 @@ pub mod set_projects;
 pub mod deletion_report;
 pub mod rdkit_bridge;
 pub mod main_orchestrator;
+pub mod mz_correction;
+pub mod adduct_mass_calculator;
 
 #[pymodule]
 fn fraghub_rust(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
