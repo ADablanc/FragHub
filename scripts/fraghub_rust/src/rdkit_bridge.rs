@@ -59,7 +59,7 @@ pub fn process_mols(
         }
     }
 
-    if let Some(cb) = &prefix_callback { cb.call1(py, ("RDKit Multi-Core processing...",))?; }
+    if let Some(cb) = &prefix_callback { cb.call1(py, ("RDKit calculation",))?; }
 
     // 2. Traitement Python par lot via multiprocessing.Pool (contourne le GIL)
     let total_unique = unique_mols.len();
