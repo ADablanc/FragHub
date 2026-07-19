@@ -119,7 +119,7 @@ fn format_hill_system(composition: &HashMap<&str, u32>) -> String {
 }
 
 // Moteur de traitement d'un spectre individuel
-fn process_spectrum_peaks(formula: &str, peaks_list_str: &str, ppm_tol: f64) -> String {
+fn process_spectrum_peaks(formula: &str, peaks_list_str: &str, ppm_tol: f64, ion_mode: &str) -> String {
     let mut max_comp: HashMap<String, u32> = HashMap::new();
     let mut present_elements: HashSet<String> = HashSet::new();
 
@@ -169,7 +169,8 @@ fn process_spectrum_peaks(formula: &str, peaks_list_str: &str, ppm_tol: f64) -> 
         let mz_str = parts[0];
         let intensity_str = parts[1];
         let mz: f64 = mz_str.parse().unwrap_or(0.0);
-        let target_mass = mz - proton_mass;
+        let is_neg = ion_mode.to_uppercase().contains("N") || ion_mode.to_uppercase().contains("-");
+        let target_mass = if is_neg { mz + proton_mass } else { mz - proton_mass };
 
         let min_mass = target_mass * (1.0 - ppm_tol / 1_000_000.0);
         let max_mass = target_mass * (1.0 + ppm_tol / 1_000_000.0);
@@ -245,7 +246,12 @@ fn process_spectrum_peaks(formula: &str, peaks_list_str: &str, ppm_tol: f64) -> 
                 for (idx, &cnt) in comp.iter().enumerate() {
                     ion_comp.insert(elements_to_test[idx].as_str(), cnt);
                 }
-                *ion_comp.entry("H").or_insert(0) += 1;
+                if is_neg {
+                    let entry = ion_comp.entry("H").or_insert(0);
+                    if *entry > 0 { *entry -= 1; }
+                } else {
+                    *ion_comp.entry("H").or_insert(0) += 1;
+                }
 
                 let error_ppm = ((current_mass - target_mass) / target_mass) * 1_000_000.0;
 
@@ -308,6 +314,7 @@ pub fn de_novo_calculation_processing(
         py.allow_threads(|| {
             chunk.par_iter_mut().for_each(|spec| {
                 let formula = spec.metadata.get("FORMULA").cloned().unwrap_or_default();
+                let ion_mode = spec.metadata.get("IONMODE").cloned().unwrap_or_default();
 
                 // Format the native peaks back to String to reuse the de novo logic (temporarily)
                 let mut peaks_list = String::with_capacity(spec.peaks.len() * 20);
@@ -317,7 +324,7 @@ pub fn de_novo_calculation_processing(
                 }
 
                 if !formula.is_empty() && !peaks_list.is_empty() && peaks_list != "nan" {
-                    let updated_peaks = process_spectrum_peaks(&formula, &peaks_list, ppm_tol);
+                    let updated_peaks = process_spectrum_peaks(&formula, &peaks_list, ppm_tol, &ion_mode);
                     spec.metadata.insert("PEAKS_LIST".to_string(), updated_peaks);
                 }
             });
@@ -328,4 +335,59 @@ pub fn de_novo_calculation_processing(
     }
 
     Ok(spectrum_list)
+}
+
+pub fn is_valid_peak(formula: &str, target_mass: f64, ppm_tol: f64) -> bool {
+    let mut max_comp: HashMap<String, u32> = HashMap::new();
+    let mut present_elements: HashSet<String> = HashSet::new();
+
+    for caps in FORMULA_PATTERN.captures_iter(formula) {
+        let el = caps.get(1).unwrap().as_str().to_string();
+        let count = caps.get(2).unwrap().as_str().parse::<u32>().unwrap_or(1);
+        if get_atom_mass(&el).is_some() { max_comp.insert(el.clone(), count); }
+        present_elements.insert(el);
+    }
+
+    let mut elements_to_test: Vec<String> = max_comp.keys().cloned().collect();
+    if elements_to_test.is_empty() { return false; }
+
+    elements_to_test.sort_by(|a, b| {
+        let mass_a = get_atom_mass(a).unwrap();
+        let mass_b = get_atom_mass(b).unwrap();
+        mass_a.partial_cmp(&mass_b).unwrap().reverse()
+    });
+
+    let simple_atoms = ["C", "H", "N", "O", "P", "S"];
+    let is_simple = present_elements.iter().all(|el| simple_atoms.contains(&el.as_str()));
+
+    let c_idx = elements_to_test.iter().position(|x| x == "C");
+    let h_idx = elements_to_test.iter().position(|x| x == "H");
+    let n_idx = elements_to_test.iter().position(|x| x == "N");
+    let o_idx = elements_to_test.iter().position(|x| x == "O");
+    let p_idx = elements_to_test.iter().position(|x| x == "P");
+    let s_idx = elements_to_test.iter().position(|x| x == "S");
+
+    let element_masses: Vec<f64> = elements_to_test.iter().map(|el| get_atom_mass(el).unwrap()).collect();
+    let proton_mass = get_atom_mass("H").unwrap();
+
+    if target_mass <= 0.0 { return false; }
+
+    let min_mass = target_mass * (1.0 - ppm_tol / 1_000_000.0);
+    let max_mass = target_mass * (1.0 + ppm_tol / 1_000_000.0);
+
+    let max_counts: Vec<u32> = elements_to_test.iter().enumerate().map(|(idx, el)| {
+        let max_by_mass = (max_mass / element_masses[idx]) as u32;
+        std::cmp::min(*max_comp.get(el).unwrap_or(&0), max_by_mass)
+    }).collect();
+
+    let mut max_remaining_masses = vec![0.0; elements_to_test.len() + 1];
+    for i in (0..elements_to_test.len()).rev() {
+        max_remaining_masses[i] = max_remaining_masses[i + 1] + (max_counts[i] as f64 * element_masses[i]);
+    }
+
+    let mut results = Vec::new();
+    let mut composition = vec![0; elements_to_test.len()];
+    generate_combinations(0, 0.0, &mut composition, &element_masses, &max_counts, min_mass, max_mass, &max_remaining_masses, &mut results);
+
+    !results.is_empty()
 }

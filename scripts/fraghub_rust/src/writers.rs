@@ -149,7 +149,7 @@ pub fn writting_csv_processing(
             let is_append = update && file_path.exists();
 
             let file = OpenOptions::new().write(true).create(true).append(is_append).truncate(!is_append).open(&file_path).map_err(|e| e.to_string())?;
-            let mut wtr = WriterBuilder::new().delimiter(b'\t').quote(b'"').has_headers(!is_append).from_writer(file);
+            let mut wtr = WriterBuilder::new().delimiter(b';').quote(b'"').has_headers(!is_append).from_writer(file);
 
             if !is_append {
                 wtr.write_record(&ordered_columns).map_err(|e| e.to_string())?;

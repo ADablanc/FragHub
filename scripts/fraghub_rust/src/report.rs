@@ -121,7 +121,9 @@ pub fn generate_report_processing(
         deletion_report.minimum_peaks_not_requiered +
         deletion_report.all_peaks_above_precursor_mz +
         deletion_report.no_peaks_in_mz_range +
-        deletion_report.minimum_high_peaks_not_requiered;
+        deletion_report.minimum_high_peaks_not_requiered +
+        deletion_report.low_resolution_ms2 +
+        deletion_report.ms2_chemical_crash;
 
     let total_input = total_spectra + total_deletions;
     let max_h = if total_input > 0 { total_input as f64 } else { 1.0 };
@@ -199,6 +201,10 @@ pub fn generate_report_processing(
     html = html.replace("{V_DUP}", &deletion_report.duplicatas_removed.to_string());
     html = html.replace("{H_PREV}", &calc_h(deletion_report.previously_cleaned).to_string());
     html = html.replace("{V_PREV}", &deletion_report.previously_cleaned.to_string());
+    html = html.replace("{H_LOW_RES}", &calc_h(deletion_report.low_resolution_ms2).to_string());
+    html = html.replace("{V_LOW_RES}", &deletion_report.low_resolution_ms2.to_string());
+    html = html.replace("{H_CRASH}", &calc_h(deletion_report.ms2_chemical_crash).to_string());
+    html = html.replace("{V_CRASH}", &deletion_report.ms2_chemical_crash.to_string());
 
 
     let lc_pos_tot = pos_lc_len + pos_lc_in_len;

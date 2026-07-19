@@ -292,6 +292,17 @@ pub fn main_orchestrator(
             spectrum_list = de_novo_calculation_processing(
                 py, spectrum_list, &params_f64, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone()
             )?;
+
+            if let Some(cb) = &deletion_callback {
+                let report = &deletion_report;
+                let msg = format!(
+                    "Low resolution MS2: {}\n                MS2 chemical crash (De Novo): {}",
+                    report.low_resolution_ms2,
+                    report.ms2_chemical_crash
+                );
+                cb.call1(py, (msg,))?;
+            }
+
             check_stop_flag()?;
         }
 

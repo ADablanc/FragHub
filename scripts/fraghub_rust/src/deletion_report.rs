@@ -19,4 +19,6 @@ pub struct DeletionReport {
     pub no_peaks_in_mz_range: usize,
     pub minimum_high_peaks_not_requiered: usize,
     pub no_or_bad_adduct: usize,
+    pub low_resolution_ms2: usize,
+    pub ms2_chemical_crash: usize,
 }

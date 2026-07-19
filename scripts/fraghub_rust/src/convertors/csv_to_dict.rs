@@ -110,50 +110,91 @@ pub fn load_and_parse_csv(
 
         let separator = detect_separator(&file_path);
 
-        let mut rdr = csv::ReaderBuilder::new()
-            .delimiter(separator)
-            .has_headers(true)
-            .from_path(&file_path)
-            .map_err(|e| pyo3::exceptions::PyIOError::new_err(e.to_string()))?;
+        // COMPTAGE RAPIDE DES LIGNES (très rapide via BufReader)
+        let total_records = py.allow_threads(|| {
+            let f = std::fs::File::open(&file_path).map_err(|e| e.to_string())?;
+            let mut reader = std::io::BufReader::with_capacity(1024 * 1024, f);
+            let mut count = 0;
+            let mut buf = Vec::new();
+            while let Ok(n) = std::io::BufRead::read_until(&mut reader, b'\n', &mut buf) {
+                if n == 0 { break; }
+                count += 1;
+                buf.clear();
+            }
+            Ok::<usize, String>(if count > 0 { count - 1 } else { 0 })
+        }).map_err(|e| pyo3::exceptions::PyIOError::new_err(e))?;
 
-        let headers: Vec<String> = rdr.headers()
-            .map_err(|e| pyo3::exceptions::PyIOError::new_err(e.to_string()))?
-            .iter()
-            .map(|h| h.to_lowercase())
-            .collect();
+        if let Some(cb) = &total_items_callback { let _ = cb.call1(py, (total_records, 0)); }
+        if let Some(cb) = &prefix_callback { let _ = cb.call1(py, (format!("Parsing {}", filename),)); }
+        if let Some(cb) = &item_type_callback { let _ = cb.call1(py, ("rows",)); }
 
-        for result in rdr.records() {
-            let record = result.map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))?;
-            let mut spec = Spectrum::default();
+        let mut local_result = py.allow_threads(|| {
+            let mut inner_result_list = Vec::new();
+            
+            let mut rdr = csv::ReaderBuilder::new()
+                .delimiter(separator)
+                .has_headers(true)
+                .from_path(&file_path)
+                .map_err(|e| e.to_string())?;
 
-            spec.metadata.insert("FILENAME".to_string(), filename.clone());
-            spec.metadata.insert("FILEHASH".to_string(), file_hash.clone());
-            spec.metadata.insert("DATABASE_NAME".to_string(), db_name.clone());
+            let headers: Vec<String> = rdr.headers()
+                .map_err(|e| e.to_string())?
+                .iter()
+                .map(|h| h.to_lowercase())
+                .collect();
 
-            for (i, field) in record.iter().enumerate() {
-                if i >= headers.len() { continue; }
-                let header = &headers[i];
+            let mut current_row = 0;
+            let mut last_update = std::time::Instant::now();
 
-                if header == "peaks" || header == "peaks_list" {
-                    spec.peaks = parse_peak_list_native(field);
-                    continue;
-                }
+            for result in rdr.records() {
+                current_row += 1;
+                let record = result.map_err(|e| e.to_string())?;
+                let mut spec = Spectrum::default();
 
-                if let Some(mapped_key) = keys_dict.get(header) {
-                    if keys_list.contains(mapped_key) {
-                        spec.metadata.insert(mapped_key.clone(), field.to_string());
+                spec.metadata.insert("FILENAME".to_string(), filename.clone());
+                spec.metadata.insert("FILEHASH".to_string(), file_hash.clone());
+                spec.metadata.insert("DATABASE_NAME".to_string(), db_name.clone());
+
+                for (i, field) in record.iter().enumerate() {
+                    if i >= headers.len() { continue; }
+                    let header = &headers[i];
+
+                    if header == "peaks" || header == "peaks_list" {
+                        spec.peaks = parse_peak_list_native(field);
+                        continue;
+                    }
+
+                    if let Some(mapped_key) = keys_dict.get(header) {
+                        if keys_list.contains(mapped_key) {
+                            spec.metadata.insert(mapped_key.clone(), field.to_string());
+                        }
                     }
                 }
-            }
 
-            for key in &keys_list {
-                if !spec.metadata.contains_key(key) && key != "PEAKS_LIST" {
-                    spec.metadata.insert(key.clone(), "".to_string());
+                for key in &keys_list {
+                    if !spec.metadata.contains_key(key) && key != "PEAKS_LIST" {
+                        spec.metadata.insert(key.clone(), "".to_string());
+                    }
+                }
+
+                inner_result_list.push(spec);
+
+                // Update progress every 500ms
+                if last_update.elapsed() > std::time::Duration::from_millis(500) {
+                    if let Some(cb) = &progress_callback {
+                        // cb is a PyObject, but we are inside allow_threads, so we need a Python block
+                        // Wait, we can't acquire the GIL here easily unless we use Python::with_gil
+                        Python::with_gil(|py| {
+                            let _ = cb.call1(py, (current_row,));
+                        });
+                    }
+                    last_update = std::time::Instant::now();
                 }
             }
-
-            result_list.push(spec);
-        }
+            Ok::<Vec<Spectrum>, String>(inner_result_list)
+        }).map_err(|e| pyo3::exceptions::PyIOError::new_err(e))?;
+        
+        result_list.append(&mut local_result);
 
         processed_files += 1;
         if let Some(cb) = &progress_callback { let _ = cb.call1(py, (processed_files,)); }

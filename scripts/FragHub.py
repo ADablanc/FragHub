@@ -109,6 +109,8 @@ current_total_items = 0  # <-- Nouvelle variable globale
 
 def progress_callback(*args):
     global last_emit_time, current_total_items
+    if global_stop_flag:
+        raise Exception("Process stopped by user.")
     if args:
         # Si on atteint 100%, on remet le chrono à zéro pour FORCER l'envoi
         if args[0] >= current_total_items:
@@ -189,8 +191,12 @@ def execute_main_safely():
         if str(e) == "Process stopped by user.":
             if deletion_callback:
                 deletion_callback("\n-- PROCESS INTERRUPTED BY USER --")
+            if completion_callback:
+                completion_callback("Process stopped by user.")
         else:
             traceback.print_exc()
+            if completion_callback:
+                completion_callback(f"Error: {str(e)}")
 
 @app.post("/run-analysis")
 async def run_analysis(params: FragHubParams, background_tasks: BackgroundTasks):
