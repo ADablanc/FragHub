@@ -107,6 +107,8 @@ def emit_to_frontend(event, data):
             pass
 
 # --- CALLBACKS ---
+deferred_deletion = None
+deferred_report = False
 current_total_items = 0  # <-- Nouvelle variable globale
 
 def progress_callback(*args):
@@ -136,7 +138,20 @@ def item_type_callback(*args):
     if args: emit_to_frontend('item_type', args[0])
 
 def step_callback(*args):
-    if args: emit_to_frontend('step', args[0])
+    global deferred_report
+    if args:
+        if args[0] == "Generating Report" and parameters_dict.get("mzspeclib_json", 0.0) == 1.0:
+            deferred_report = True
+            return
+        emit_to_frontend('step', args[0])
+
+def deletion_callback(*args):
+    global deferred_deletion
+    if args:
+        if parameters_dict.get("mzspeclib_json", 0.0) == 1.0:
+            deferred_deletion = args[0]
+            return
+        emit_to_frontend('deletion', args[0])
 
 def completion_callback(*args):
     if args:
@@ -144,9 +159,6 @@ def completion_callback(*args):
             emit_to_frontend('completion', {'message': args[0], 'report_path': args[1]})
         else:
             emit_to_frontend('completion', {'message': args[0], 'report_path': None})
-
-def deletion_callback(*args):
-    if args: emit_to_frontend('deletion', args[0])
 
 # --- GESTION DU STOP ---
 global_stop_flag = False
@@ -217,6 +229,12 @@ def execute_main_safely():
                 if completion_callback:
                     completion_callback(f"Warning: mzSpecLib JSON conversion failed: {cv_e}")
                 return # Si on retourne ici, on n'affiche pas le TOTAL TIME
+
+        # On envoie maintenant les étapes qu'on avait différées
+        if deferred_deletion:
+            emit_to_frontend('deletion', deferred_deletion)
+        if deferred_report:
+            emit_to_frontend('step', "Generating Report")
 
         # Une fois tout terminé, on envoie la vraie fin de process au GUI
         if completion_callback and rust_completion_data:
