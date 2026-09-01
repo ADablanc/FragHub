@@ -106,6 +106,7 @@ const parameters = useState('parameters', () => ({
   csv: 1.0,
   msp: 1.0,
   json: 1.0,
+  mzspeclib_json: 1.0,
   reset_updates: 0.0
 }))
 

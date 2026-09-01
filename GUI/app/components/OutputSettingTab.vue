@@ -37,7 +37,8 @@ const parameters = useState('parameters')
 const formats = [
   { label: 'CSV', key: 'csv' },
   { label: 'MSP', key: 'msp' },
-  { label: 'JSON', key: 'json' }
+  { label: 'JSON', key: 'json' },
+  { label: 'mzSpecLib (JSON)', key: 'mzspeclib_json' }
 ]
 
 // Initialisation des valeurs par défaut à 1.0 (ON) comme dans le script Python

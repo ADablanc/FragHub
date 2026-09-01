@@ -98,7 +98,7 @@ pub fn spectra_to_msp_processing(
 
                     let _ = write!(
                         &mut spectrum,
-                        "NAME: {}\nPRECURSORMZ: {}\nPRECURSORTYPE: {}\nFORMULA: {}\nINCHIKEY: {}\nINCHI: {}\nSMILES: {}\nRT: {}\nIONMODE: {}\nINSTRUMENTTYPE: {}\nINSTRUMENT: {}\nCOLLISIONENERGY: {}\nEXACTMASS: {}\nIONIZATION: {}\nMSLEVEL: {}\nCOMMENT: FILENAME={}; DATABASE_NAME={}; FILEHASH={}; PREDICTED={}; SPLASH={}; SPECTRUMID={}; RESOLUTION={}; SYNON={}; FRAGMENTATIONMODE={}; AVERAGEMASS={}; ENTROPY={}; ONTOLOGIES = \"CLASSYFIRE_SUPERCLASS={}, CLASSYFIRE_CLASS = {}, CLASSYFIRE_SUBCLASS = {}, NPCLASS_PATHWAY = {}, NPCLASS_SUPERCLASS = {}, NPCLASS_CLASS = {}\"\nNUM PEAKS: {}\n",
+                        "NAME: {}\nPRECURSORMZ: {}\nPRECURSORTYPE: {}\nFORMULA: {}\nINCHIKEY: {}\nINCHI: {}\nSMILES: {}\nRT: {}\nIONMODE: {}\nINSTRUMENTTYPE: {}\nINSTRUMENT: {}\nCOLLISIONENERGY: {}\nEXACTMASS: {}\nIONIZATION: {}\nMSLEVEL: {}\nDISSOCIATIONMETHOD: {}\nAVERAGEMASS: {}\nENTROPY: {}\nCLASSYFIRE_SUPERCLASS: {}\nCLASSYFIRE_CLASS: {}\nCLASSYFIRE_SUBCLASS: {}\nNPCLASS_PATHWAY: {}\nNPCLASS_SUPERCLASS: {}\nNPCLASS_CLASS: {}\nCOMMENT: FILENAME={}; DATABASE_NAME={}; FILEHASH={}; PREDICTED={}; SPLASH={}; SPECTRUMID={}; RESOLUTION={}; SYNON={}\nNUM PEAKS: {}\n",
                         get_string(spec, "NAME"),
                         get_string(spec, "PRECURSORMZ"),
                         get_string(spec, "PRECURSORTYPE"),
@@ -114,12 +114,17 @@ pub fn spectra_to_msp_processing(
                         get_string(spec, "EXACTMASS"),
                         get_string(spec, "IONIZATION"),
                         get_string(spec, "MSLEVEL"),
-                        get_string(spec, "FILENAME"), get_string(spec, "DATABASE_NAME"), get_string(spec, "FILEHASH"), get_string(spec, "PREDICTED"),
-                        get_string(spec, "SPLASH"), get_string(spec, "SPECTRUMID"), get_string(spec, "RESOLUTION"),
-                        get_string(spec, "SYNON"), get_string(spec, "FRAGMENTATIONMODE"), get_string(spec, "AVERAGEMASS"),
-                        get_string(spec, "ENTROPY"), get_string(spec, "CLASSYFIRE_SUPERCLASS"), get_string(spec, "CLASSYFIRE_CLASS"),
-                        get_string(spec, "CLASSYFIRE_SUBCLASS"), get_string(spec, "NPCLASS_PATHWAY"), get_string(spec, "NPCLASS_SUPERCLASS"),
+                        get_string(spec, "FRAGMENTATIONMODE"), // Note: internal col is still FRAGMENTATIONMODE
+                        get_string(spec, "AVERAGEMASS"),
+                        get_string(spec, "ENTROPY"),
+                        get_string(spec, "CLASSYFIRE_SUPERCLASS"),
+                        get_string(spec, "CLASSYFIRE_CLASS"),
+                        get_string(spec, "CLASSYFIRE_SUBCLASS"),
+                        get_string(spec, "NPCLASS_PATHWAY"),
+                        get_string(spec, "NPCLASS_SUPERCLASS"),
                         get_string(spec, "NPCLASS_CLASS"),
+                        get_string(spec, "FILENAME"), get_string(spec, "DATABASE_NAME"), get_string(spec, "FILEHASH"), get_string(spec, "PREDICTED"),
+                        get_string(spec, "SPLASH"), get_string(spec, "SPECTRUMID"), get_string(spec, "RESOLUTION"), get_string(spec, "SYNON"),
                         get_string(spec, "NUM PEAKS")
                     );
 

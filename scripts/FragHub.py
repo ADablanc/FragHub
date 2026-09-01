@@ -3,6 +3,7 @@ import socketio
 import uvicorn
 import multiprocessing
 import traceback
+import mzspeclib_converter
 import time
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, BackgroundTasks
@@ -82,6 +83,7 @@ class FragHubParams(BaseModel):
     csv: float
     msp: float
     json_enabled: float = Field(alias='json')
+    mzspeclib_json: float = Field(alias='mzspeclib_json', default=1.0)
     reset_updates: float
 
     model_config = ConfigDict(populate_by_name=True)
@@ -174,7 +176,13 @@ async def init_data():
 # --- EXÉCUTION ---
 def execute_main_safely():
     try:
-        # Appel direct de la fonction Rust (remplace l'ancien MAIN.py)
+        # We need to capture the completion data from Rust so it doesn't close the GUI early
+        rust_completion_data = None
+        def proxy_completion_callback(msg, report_path=""):
+            nonlocal rust_completion_data
+            rust_completion_data = (msg, report_path)
+
+        # Appel direct de la fonction Rust
         fraghub_rust.main_orchestrator(
             parameters_dict,
             progress_callback,
@@ -182,10 +190,38 @@ def execute_main_safely():
             prefix_callback,
             item_type_callback,
             step_callback,
-            completion_callback,
+            proxy_completion_callback,
             deletion_callback,
             get_stop_flag
         )
+        
+        # Si l'utilisateur a cliqué sur stop ou s'il y a eu une erreur précoce dans Rust
+        if rust_completion_data and rust_completion_data[0] == "Process stopped by user":
+            if completion_callback:
+                completion_callback(rust_completion_data[0], rust_completion_data[1])
+            return
+
+        # ── Intégration de mzspeclib pour la conversion propre en mzSpecLib.json ──
+        if parameters_dict.get("mzspeclib_json", 0.0) == 1.0:
+            try:
+                mzspeclib_converter.convert_all_msp(
+                    parameters_dict["output_directory"],
+                    step_cb=step_callback,
+                    prefix_cb=prefix_callback,
+                    progress_cb=progress_callback,
+                    total_items_cb=total_items_callback
+                )
+            except Exception as cv_e:
+                with open("scratch/mzspeclib_error.log", "w") as f:
+                    f.write(str(cv_e) + "\n" + traceback.format_exc())
+                if completion_callback:
+                    completion_callback(f"Warning: mzSpecLib JSON conversion failed: {cv_e}")
+                return # Si on retourne ici, on n'affiche pas le TOTAL TIME
+
+        # Une fois tout terminé, on envoie la vraie fin de process au GUI
+        if completion_callback and rust_completion_data:
+            completion_callback(rust_completion_data[0], rust_completion_data[1])
+
     except Exception as e:
         # Gestion de l'interruption utilisateur spécifiée dans Rust
         if str(e) == "Process stopped by user.":
@@ -231,6 +267,7 @@ if __name__ == "__main__":
         parser.add_argument("--csv", type=str, choices=['yes', 'no'], default='yes')
         parser.add_argument("--msp", type=str, choices=['yes', 'no'], default='yes')
         parser.add_argument("--json", type=str, choices=['yes', 'no'], default='yes')
+        parser.add_argument("--mzspeclib_json", type=str, choices=['yes', 'no'], default='yes')
         parser.add_argument("--reset_updates", type=str, choices=['yes', 'no'], default='no')
         
         # Valeurs numériques (seuils, tolérances)
@@ -270,12 +307,13 @@ if __name__ == "__main__":
         yes_no_keys = [
             'normalize_intensity', 'remove_peak_above_precursormz', 'check_minimum_peak_requiered',
             'reduce_peak_list', 'remove_spectrum_under_entropy_score', 'keep_mz_in_range',
-            'check_minimum_of_high_peaks_requiered', 'calculate_de_novo', 'csv', 'msp', 'json', 'reset_updates'
+            'check_minimum_of_high_peaks_requiered', 'calculate_de_novo', 'csv', 'msp', 'json', 'mzspeclib_json', 'reset_updates'
         ]
         for key in yes_no_keys:
             args_dict[key] = 1.0 if args_dict[key] == 'yes' else 0.0
             
         args_dict['input_directory'] = resolved_files
+        args_dict['input_db_names'] = {}
         parameters_dict.update(args_dict)
         
         if not args.quiet:

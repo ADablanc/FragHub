@@ -155,6 +155,7 @@ pub fn generate_report_processing(
     html = html.replace("{OUT_CSV}", if get_bool("csv") { "YES" } else { "NO" });
     html = html.replace("{OUT_MSP}", if get_bool("msp") { "YES" } else { "NO" });
     html = html.replace("{OUT_JSON}", if get_bool("json") { "YES" } else { "NO" });
+    html = html.replace("{OUT_MZSPECLIB_JSON}", if get_bool("mzspeclib_json") { "YES" } else { "NO" });
 
     html = html.replace("{V1}", get_bool_str("normalize_intensity")).replace("{C1}", get_class_str("normalize_intensity"));
     html = html.replace("{V2}", get_bool_str("remove_peak_above_precursormz")).replace("{C2}", get_class_str("remove_peak_above_precursormz"));
