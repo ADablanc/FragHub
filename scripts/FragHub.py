@@ -26,8 +26,8 @@ else:
 is_cli_mode = "--cli" in sys.argv
 is_quiet_mode = "--quiet" in sys.argv
 
-# Redirection forcée de la sortie standard et d'erreur vers un fichier (SAUF en mode CLI)
-if not is_cli_mode:
+# Redirection forcée de la sortie standard et d'erreur vers un fichier (UNIQUEMENT si packagé avec PyInstaller)
+if getattr(sys, 'frozen', False) and not is_cli_mode:
     log_path = os.path.join(os.path.expanduser("~"), "fraghub_debug.txt")
     sys.stdout = open(log_path, 'w')
     sys.stderr = sys.stdout

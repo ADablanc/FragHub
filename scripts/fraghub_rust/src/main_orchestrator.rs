@@ -19,7 +19,7 @@ use crate::normalize_to_not_found::normalize_to_not_found_processing;
 use crate::splitter::master_splitter;
 
 use crate::spectra_to_msp::spectra_to_msp_processing;
-use crate::writers::{writting_csv_processing, writting_msp_processing, writting_json_processing};
+use crate::writers::{writting_csv_processing, writting_msp_processing, writting_json_processing, writting_mzspeclib_json_processing};
 use crate::report::generate_report_processing;
 use crate::set_projects::{init_project, reset_updates};
 use crate::deletion_report::DeletionReport;
@@ -385,6 +385,8 @@ pub fn main_orchestrator(
             py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
             writting_json_processing(py, update, pos_lc_df.clone(), pos_gc_df.clone(), neg_lc_df.clone(), neg_gc_df.clone(), pos_lc_in_silico_df.clone(), pos_gc_in_silico_df.clone(), neg_lc_in_silico_df.clone(), neg_gc_in_silico_df.clone(), ordered_columns.clone(), &output_directory, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+            writting_mzspeclib_json_processing(py, update, pos_lc_df.clone(), pos_gc_df.clone(), neg_lc_df.clone(), neg_gc_df.clone(), pos_lc_in_silico_df.clone(), pos_gc_in_silico_df.clone(), neg_lc_in_silico_df.clone(), neg_gc_in_silico_df.clone(), ordered_columns.clone(), &output_directory, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+
         }
 
         if let Some(cb) = &deletion_callback {

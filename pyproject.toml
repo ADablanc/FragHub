@@ -16,6 +16,7 @@ dependencies = [
     "ijson",
     "llvmlite",
     "macholib",
+    "mzspeclib>=1.0.7",
     "numba",
     "numpy",
     "packaging",
