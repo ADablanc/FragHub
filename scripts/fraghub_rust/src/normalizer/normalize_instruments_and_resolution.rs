@@ -51,12 +51,16 @@ fn search_text(parts: &[String]) -> String {
 /// IONIZATION) n'était pas vue, et le même instrument donnait "LC-FT" depuis le JSON et "LC-ESI-FT" depuis le MSP.
 /// COMMENT n'est utilisé que si tous ces champs sont vides : sinon, une date ("2020") ou le nom
 /// de la chromatographie ("Waters Acquity") pouvaient être pris pour le modèle ou la marque.
+/// Dans COMMENT, les nombres décimaux sont retirés avant la recherche : les masses calculées du MSP MoNA
+/// ("computed [M+Cl]-=365.526952788") donnaient le mot "365" (AB SCIEX API 365, donc "LC-QQQ") à des spectres
+/// sans aucune information d'instrument. Les modèles d'appareils sont des entiers ou des mots (6530, API 3200).
 fn clean_spectrum_instrument_info(metadata_dict: &HashMap<String, String>) -> String {
     let get = |k: &str| metadata_dict.get(k).map(|s| s.as_str()).unwrap_or("");
     let parts: Vec<String> = ["INSTRUMENT", "INSTRUMENTTYPE", "IONIZATION", crate::globals_vars::INSTRUMENT_HINTS_KEY]
         .iter().map(|k| clean_field(get(k))).collect();
     if parts.iter().all(|p| p.trim().is_empty()) {
-        search_text(&[clean_field(get("COMMENT"))])
+        static DECIMAL: Lazy<Regex> = Lazy::new(|| Regex::new(r"[-+]?(?:\d+\.\d+|\d+(?:\.\d+)?[eE][-+]?\d+)").unwrap());
+        search_text(&[clean_field(&DECIMAL.replace_all(get("COMMENT"), " "))])
     } else {
         search_text(&parts)
     }
@@ -336,6 +340,20 @@ mod tests {
         let text = clean_spectrum_instrument_info(&[("COMMENT", "instrument=Orbitrap")]
             .iter().map(|(k, v)| (k.to_string(), v.to_string())).collect());
         assert_eq!(text, ". instrument orbitrap .");
+    }
+
+    #[test]
+    fn masses_du_commentaire_mona_pas_prises_pour_un_modele() {
+        // Extrait réel du MSP MoNA (1001249) : aucune information d'instrument, mais des masses calculées
+        let comment = r#""computed [M+Cl]-=365.526952788" "computed [2M+H]+=2000.0123" "computed mass error=-5.040000132794376E-7" "MoNA Rating=3.333333333333333" "origin=natural_products_neg.msp""#;
+        let text = clean_spectrum_instrument_info(&[("COMMENT", comment)].iter().map(|(k, v)| (k.to_string(), v.to_string())).collect());
+        assert!(!contains_word(&text, "365"), "{text}");
+        assert!(!contains_word(&text, "2000"), "{text}");
+        assert!(!contains_word(&text, "333333333333333"), "{text}");
+        // Un modèle écrit en entier dans le commentaire reste visible
+        let text = clean_spectrum_instrument_info(&[("COMMENT", "instrument=API 3200; rating=4.5")]
+            .iter().map(|(k, v)| (k.to_string(), v.to_string())).collect());
+        assert!(contains_word(&text, "3200") && contains_word(&text, "api"), "{text}");
     }
 
     #[test]

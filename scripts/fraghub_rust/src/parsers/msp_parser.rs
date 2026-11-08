@@ -90,6 +90,8 @@ fn parse_msp_spectrum(spectrum: &str, keys_dict: &HashMap<String, String>) -> Op
             }
 
             let mut new_matches = Vec::new();
+            // Positions (dans new_matches) des champs lus DANS le champ Comments
+            let mut from_comments: HashSet<usize> = HashSet::new();
             let mut valid_comments = true;
             for (k, v) in metadata_matches {
                 if crate::globals_vars::COMMENT_PATTERN.is_match(&k) {
@@ -109,6 +111,7 @@ fn parse_msp_spectrum(spectrum: &str, keys_dict: &HashMap<String, String>) -> Op
                                 }
                             }
                             if count == 2 {
+                                from_comments.insert(new_matches.len());
                                 new_matches.push((g_k, g_v));
                                 found_sub = true;
                             }
@@ -141,11 +144,22 @@ fn parse_msp_spectrum(spectrum: &str, keys_dict: &HashMap<String, String>) -> Op
                 // gardée seulement à défaut d'une valeur d'origine (comme en JSON, où MoNA la marque "computed").
                 let computed_values: HashSet<&str> = fields.iter()
                     .filter(|(c, _, _)| *c).map(|(_, _, v)| v.trim()).filter(|v| !v.is_empty()).collect();
+                // MSP MoNA (reconnu à son champ "MoNA Rating" dans les Comments) : la ligne "ExactMass:" donne la
+                // masse CALCULÉE par MoNA ("total exact mass", marquée "computed" en JSON) ; la masse d'origine du
+                // déposant est dans les Comments ("exact mass=..."). Si elle y est, la ligne d'en-tête ne sert que
+                // de repli (comme en JSON). Les autres MSP ne sont pas concernés.
+                let is_mona = from_comments.iter().any(|&i| fields.get(i).map_or(false, |(_, k, _)| k == "mona rating"));
+                let maps_to = |k: &str, key: &str| keys_dict.get(k).map_or(false, |m| m == key);
+                let exactmass_in_comments = is_mona && fields.iter().enumerate()
+                    .any(|(i, (c, k, v))| from_comments.contains(&i) && !*c && maps_to(k, "EXACTMASS") && !v.trim().is_empty());
                 let mut moved: Vec<(String, String)> = Vec::new();
-                for (is_computed, k, v) in &fields {
+                for (idx, (is_computed, k, v)) in fields.iter().enumerate() {
                     let same_as_computed = !*is_computed && !computed_values.is_empty()
-                        && keys_dict.get(k).map_or(false, |m| m == "PRECURSORMZ")
+                        && maps_to(k, "PRECURSORMZ")
                         && computed_values.contains(v.trim());
+                    let mona_header_exactmass = exactmass_in_comments && !*is_computed && !from_comments.contains(&idx)
+                        && maps_to(k, "EXACTMASS");
+                    let same_as_computed = same_as_computed || mona_header_exactmass;
                     if *is_computed {
                         computed.push((k.clone(), v.clone()));
                     } else if same_as_computed {
@@ -303,6 +317,20 @@ mod tests {
         assert_eq!(mapped(spec3, &k)["PRECURSORMZ"], "1746.20819");
         // Sans Comments : inchangé
         assert_eq!(mapped("FILENAME: a.msp\nName: X\nPrecursorMZ: 300.1\nNum Peaks: 1\n100 1\n", &k)["PRECURSORMZ"], "300.1");
+    }
+
+    #[test]
+    fn exactmass_mona_d_origine_prise_dans_les_comments() {
+        let k = [("exactmass", "EXACTMASS"), ("exact mass", "EXACTMASS"), ("db", "SPECTRUMID"), ("mona rating", "MONA_RATING")];
+        // Extrait réel du MSP MoNA (MoNA039726) : ExactMass = masse calculée, "exact mass=" = masse d'origine
+        let spec = "FILENAME: mona.msp\nName: X\nDB#: MoNA039726\nExactMass: 232.14947115799998\nComments: \"exact mass=232.149471\" \"MoNA Rating=5.0\"\nNum Peaks: 1\n100 1\n";
+        assert_eq!(mapped(spec, &k)["EXACTMASS"], "232.149471");
+        // Sans masse d'origine dans les Comments (LipidBlast2022_006705) : la ligne d'en-tête reste
+        let spec2 = "FILENAME: mona.msp\nName: X\nExactMass: 1747.21600773\nComments: \"origin=a.msp\" \"MoNA Rating=5.0\"\nNum Peaks: 1\n100 1\n";
+        assert_eq!(mapped(spec2, &k)["EXACTMASS"], "1747.21600773");
+        // Autre MSP (pas de "MoNA Rating") : inchangé, l'en-tête gagne comme avant
+        let spec3 = "FILENAME: a.msp\nName: X\nExactMass: 232.1494712\nComments: \"exact mass=232.15\"\nNum Peaks: 1\n100 1\n";
+        assert_eq!(mapped(spec3, &k)["EXACTMASS"], "232.1494712");
     }
 
     #[test]
