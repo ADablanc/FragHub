@@ -62,12 +62,18 @@ pub fn mgf_to_dict_processing(
         let parsed_chunk: Vec<ParsedSpectrum> = chunk.par_iter().filter_map(|spectrum| {
             // Attention : Assurez-vous d'avoir bien retiré le "?" dans globals_vars.rs
             // pour METADATA_PEAK_LIST_SPLIT_PATTERN_MGF comme discuté précédemment !
-            if let Some(caps) = crate::globals_vars::METADATA_PEAK_LIST_SPLIT_PATTERN_MGF.captures(spectrum) {
-                let metadata_str = caps.get(1).map_or("", |m| m.as_str());
-                let peaks_str = caps.get(2).map_or("", |m| m.as_str());
+            {
+                // Spectre sans pics : métadonnées lues, liste de pics vide ; il est ensuite supprimé avec le motif
+                // « peaks list is empty » (écrit dans DELETED_SPECTRUMS) au lieu d'être écarté ici sans trace.
+                let caps = crate::globals_vars::METADATA_PEAK_LIST_SPLIT_PATTERN_MGF.captures(spectrum);
+                let peaks_str = caps.as_ref().and_then(|c| c.get(2)).map_or("", |m| m.as_str());
+                // Sans pics, tout le bloc (jusqu'à sa dernière ligne, même sans retour à la ligne final)
+                let metadata_str = if peaks_str.trim().is_empty() { spectrum.as_str() }
+                    else { caps.as_ref().and_then(|c| c.get(1)).map_or(spectrum.as_str(), |m| m.as_str()) };
 
-                if !metadata_str.is_empty() && !peaks_str.is_empty() {
+                if !metadata_str.trim().is_empty() {
                     let mut metadata_dict = RawMetadata::default();
+                    let mut real_fields = 0usize;
 
                     // Extraction des métadonnées
                     for m in crate::globals_vars::METADATA_PATTERN_MGF.captures_iter(metadata_str) {
@@ -75,11 +81,13 @@ pub fn mgf_to_dict_processing(
                         let v_raw = m.get(2).unwrap().as_str();
 
                         let k = crate::globals_vars::METADATA_FIELDS_NAME_PATTERN.replace_all(k_raw, "").to_lowercase().trim().to_string();
+                        if k != "filename" && k != "filehash" { real_fields += 1; }
                         let v = crate::globals_vars::METADATA_STRIP_VALUE_PATTERN.replace_all(v_raw, "").to_string();
                         metadata_dict.insert(k, v);
                     }
 
-                    if !metadata_dict.is_empty() {
+                    // Au moins un champ en plus du nom et de l'empreinte du fichier (ajoutés par le lecteur)
+                    if real_fields > 0 {
                         let mut peaks_array = Vec::new();
 
                         // Extraction des pics
@@ -89,10 +97,8 @@ pub fn mgf_to_dict_processing(
                             peaks_array.push(vec![mz, int]);
                         }
 
-                        // Si on a des métadonnées ET des pics, on valide le spectre
-                        if !peaks_array.is_empty() {
-                            return Some(ParsedSpectrum { metadata: metadata_dict, peaks: peaks_array });
-                        }
+                        // Métadonnées présentes : spectre gardé, même sans pics (supprimé plus tard avec son motif)
+                        return Some(ParsedSpectrum { metadata: metadata_dict, peaks: peaks_array });
                     }
                 }
             }

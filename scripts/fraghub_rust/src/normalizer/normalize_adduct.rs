@@ -202,6 +202,20 @@ mod tests {
         assert_eq!(adduct("", "positive"), "");
     }
 
+    #[test]
+    fn adduit_d_un_nom_vide_comme_0_toujours_lu() {
+        // MGF GNPS (CCMSLIB00016152613) : nom "0 [M-H]-", pas de champ d'adduit ; "0 ..." est une valeur vide
+        let ctx = context_reel_reduit();
+        let m: HashMap<String, String> = [("NAME", "0 [M-H]-"), ("PRECURSORTYPE", ""), ("IONMODE", "Negative"), ("FILENAME", "ALL_GNPS.mgf"),
+            ("INCHI", "InChI=1S/C10H14N5O6P/c1-5-3-15(10(17)12-9(5)16)8-2-6(13-14-11)7(21-8)4-20-22(18)19/h3,6-8,22H,2,4H2,1H3,(H,18,19)(H,12,16,17)"),
+            ("PRECURSORMZ", "330.06"), ("SMILES", ""), ("INCHIKEY", ""), ("INSTRUMENTTYPE", ""), ("MSLEVEL", "2")]
+            .iter().map(|(a, b)| (a.to_string(), b.to_string())).collect();
+        let mut reason = None;
+        let out = crate::normalizer::values_normalizer::normalize_values(m, &mut reason, &ctx).expect("gardé");
+        assert_eq!(out["PRECURSORTYPE"], "[M-H]-");
+        assert_eq!(out["NAME"], "");
+    }
+
     fn context_reel_reduit() -> super::super::NormalizerContext {
         // Quelques adduits des tables, sous leur clé standardisée (comme loading_db.rs)
         let mut pos = HashMap::new();

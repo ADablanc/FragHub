@@ -103,6 +103,9 @@ pub static REPAIR_INCHI_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?i)^\s
 // Ancré au début : un SMILES ne peut pas commencer par un chiffre, et un SMILES stéréo
 // contenant "/C/" n'est plus confondu avec un InChI.
 pub static INCHI_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?i)^\s*(?:InChI=)*1S?/\S+").unwrap());
+/// InChI complet et seul : version, couche formule (lettres, chiffres, points), puis couches sans espace.
+/// "InChI=1S/C10H13N5O5/c... [M-H]-" (InChI suivi d'un adduit, GNPS INCHI_AUX) ne passe pas.
+pub static INCHI_STRICT_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?i)^\s*(?:InChI=)?1S?/[A-Z0-9.]+(?:/\S*)*\s*$").unwrap());
 
 // Match smiles
 pub static SMILES_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?i)[^J][a-z0-9@+\-\[\]\(\)\\/%=#$]{6,}").unwrap());

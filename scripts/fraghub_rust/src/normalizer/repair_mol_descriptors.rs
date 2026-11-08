@@ -52,6 +52,37 @@ fn strip_quotes(v: &str) -> &str {
     s
 }
 
+/// Le texte a-t-il vraiment la forme d'un SMILES ? Hors crochets, seules les lettres des atomes du
+/// sous-ensemble organique sont permises (B, C, N, O, P, S, F, Cl, Br, I et b, c, n, o, p, s) ; entre
+/// crochets, tout atome ([Na+], [C@@H], [nH]...). Chiffres et symboles de liaison, cycles, charges et
+/// stéréo permis ; pas d'espace. "ZZORFUFYDOWNEF-UHFFFAOYAR" (Z, R, U, Y...) ou un nom ne passent pas.
+fn looks_like_smiles(s: &str) -> bool {
+    let s = s.trim();
+    if s.is_empty() { return false; }
+    let chars: Vec<char> = s.chars().collect();
+    let mut i = 0;
+    let mut atoms = 0;
+    while i < chars.len() {
+        let c = chars[i];
+        match c {
+            '[' => {
+                let close = match chars[i..].iter().position(|&x| x == ']') { Some(p) => i + p, None => return false };
+                if close == i + 1 { return false; }
+                atoms += 1;
+                i = close + 1;
+                continue;
+            }
+            'C' if chars.get(i + 1) == Some(&'l') => { atoms += 1; i += 2; continue; }
+            'B' if chars.get(i + 1) == Some(&'r') => { atoms += 1; i += 2; continue; }
+            'B' | 'C' | 'N' | 'O' | 'P' | 'S' | 'F' | 'I' | 'b' | 'c' | 'n' | 'o' | 'p' | 's' => atoms += 1,
+            '0'..='9' | '(' | ')' | '=' | '#' | '$' | '/' | '\\' | '@' | '+' | '-' | '.' | '%' | ':' | '*' | '~' => {}
+            _ => return false,
+        }
+        i += 1;
+    }
+    atoms > 0
+}
+
 pub fn repair_mol_descriptors(mut metadata_dict: HashMap<String, String>) -> HashMap<String, String> {
     for key in ["SMILES", "INCHI", "INCHIKEY"] {
         if let Some(v) = metadata_dict.get(key) {
@@ -77,52 +108,67 @@ pub fn repair_mol_descriptors(mut metadata_dict: HashMap<String, String>) -> Has
     }
 
     // --- Logique de réparation croisée (Cross-Field Repair) ---
-    // En Rust, on modifie directement le dictionnaire via `.insert()` au lieu de passer par l'opérateur `[]` de Python.
+    // Une valeur rangée dans le mauvais champ n'est déplacée que si elle a vraiment la forme attendue
+    // (looks_like_smiles, INCHI_STRICT_PATTERN, INCHIKEY_FULL_PATTERN) ET si le bon champ est vide (ou, pour
+    // l'InChIKey, ne contient pas d'InChIKey valide) : elle n'écrase jamais une valeur du fichier. Elle est
+    // toujours retirée du mauvais champ ; RDKit recalcule ensuite ce qui manque à partir de la structure.
+    // Cas réels : MoNA EMBL-MCF "inchikey = ZZORFUFYDOWNEF-UHFFFAOYAR" (InChIKey abîmée) prise pour un SMILES
+    // et écrasant le bon SMILES ; GNPS JSON INCHI_AUX = "InChI=... [M-H]-" écrasant le bon InChI.
+    let empty = |d: &HashMap<String, String>, k: &str| d.get(k).map_or(true, |v| v.trim().is_empty());
 
     // 1. SMILES trouvé dans le champ INCHI
-    // `&inchi` emprunte la variable pour que l'expression régulière la lise sans la détruire.
-    if crate::globals_vars::SMILES_PATTERN.is_match(&inchi) &&
-        !crate::globals_vars::INCHI_PATTERN.is_match(&inchi) &&
-        !crate::globals_vars::INCHIKEY_FULL_PATTERN.is_match(&inchi)
+    if looks_like_smiles(&inchi) && !crate::globals_vars::INCHI_PATTERN.is_match(&inchi)
+        && !crate::globals_vars::INCHIKEY_FULL_PATTERN.is_match(&inchi)
     {
-        metadata_dict.insert("SMILES".to_string(), inchi.clone());
+        if empty(&metadata_dict, "SMILES") {
+            metadata_dict.insert("SMILES".to_string(), inchi.clone());
+        }
         metadata_dict.insert("INCHI".to_string(), String::new());
     }
 
     // 2. SMILES trouvé dans le champ INCHIKEY
-    if crate::globals_vars::SMILES_PATTERN.is_match(&inchikey) &&
-        !crate::globals_vars::INCHI_PATTERN.is_match(&inchikey) &&
-        !crate::globals_vars::INCHIKEY_PATTERN.is_match(&inchikey)
+    if looks_like_smiles(&inchikey) && !crate::globals_vars::INCHI_PATTERN.is_match(&inchikey)
+        && !crate::globals_vars::INCHIKEY_PATTERN.is_match(&inchikey)
     {
-        metadata_dict.insert("SMILES".to_string(), inchikey.clone());
+        if empty(&metadata_dict, "SMILES") {
+            metadata_dict.insert("SMILES".to_string(), inchikey.clone());
+        }
         metadata_dict.insert("INCHIKEY".to_string(), String::new());
     }
 
     // 3. INCHI trouvé dans le champ SMILES
     if crate::globals_vars::INCHI_PATTERN.is_match(&smiles) {
-        metadata_dict.insert("INCHI".to_string(), smiles.clone());
+        if crate::globals_vars::INCHI_STRICT_PATTERN.is_match(&smiles) && empty(&metadata_dict, "INCHI") {
+            metadata_dict.insert("INCHI".to_string(), smiles.clone());
+        }
         metadata_dict.insert("SMILES".to_string(), String::new());
     }
 
-    // 4. INCHI trouvé dans le champ INCHIKEY : déplacé dans INCHI seulement si INCHI est vide ; sinon il
-    //    n'écrase pas l'InChI du fichier (GNPS JSON : INCHI_AUX = "InChI=... [M-H]-", parfois d'une autre
-    //    molécule, écrasait le bon InChI et le spectre était supprimé). L'InChIKey est recalculée par RDKit.
+    // 4. INCHI trouvé dans le champ INCHIKEY (GNPS JSON : INCHI_AUX = "InChI=... [M-H]-", parfois d'une autre
+    //    molécule : pas un InChI valide à cause de l'adduit, il est seulement retiré)
     if crate::globals_vars::INCHI_PATTERN.is_match(&inchikey) {
-        if metadata_dict.get("INCHI").map_or(true, |v| v.trim().is_empty()) {
+        if crate::globals_vars::INCHI_STRICT_PATTERN.is_match(&inchikey) && empty(&metadata_dict, "INCHI") {
             metadata_dict.insert("INCHI".to_string(), inchikey.clone());
         }
         metadata_dict.insert("INCHIKEY".to_string(), String::new());
     }
 
+    let has_key = |d: &HashMap<String, String>| d.get("INCHIKEY")
+        .map_or(false, |v| crate::globals_vars::INCHIKEY_FULL_PATTERN.is_match(v));
+
     // 5. INCHIKEY trouvé dans le champ INCHI
     if crate::globals_vars::INCHIKEY_FULL_PATTERN.is_match(&inchi) {
-        metadata_dict.insert("INCHIKEY".to_string(), inchi.clone());
+        if !has_key(&metadata_dict) {
+            metadata_dict.insert("INCHIKEY".to_string(), inchi.trim().to_string());
+        }
         metadata_dict.insert("INCHI".to_string(), String::new());
     }
 
     // 6. INCHIKEY trouvé dans le champ SMILES
     if crate::globals_vars::INCHIKEY_FULL_PATTERN.is_match(&smiles) {
-        metadata_dict.insert("INCHIKEY".to_string(), smiles.clone());
+        if !has_key(&metadata_dict) {
+            metadata_dict.insert("INCHIKEY".to_string(), smiles.trim().to_string());
+        }
         metadata_dict.insert("SMILES".to_string(), String::new());
     }
 
@@ -197,6 +243,37 @@ mod tests {
         let out = repair_mol_descriptors(meta("", "", good));
         assert_eq!(out["INCHI"], good);
         assert_eq!(out["INCHIKEY"], "");
+    }
+
+    #[test]
+    fn inchikey_abimee_pas_prise_pour_un_smiles() {
+        // Cas réel MoNA JSON (EMBL_MCF_2_0_HRMS_Library000498) : InChIKey abîmée du déposant
+        let smiles = "COc1cc(nc(n1)OC)NS(=O)(=O)c2ccc(cc2)N";
+        let out = repair_mol_descriptors(meta(smiles, "", "ZZORFUFYDOWNEF-UHFFFAOYAR"));
+        assert_eq!(out["SMILES"], smiles);
+        // Une vraie valeur mal rangée est déplacée seulement si le bon champ est vide
+        let out = repair_mol_descriptors(meta("", "", smiles));
+        assert_eq!(out["SMILES"], smiles);
+        assert_eq!(out["INCHIKEY"], "");
+        let out = repair_mol_descriptors(meta("CCO", "", "OCC"));
+        assert_eq!(out["SMILES"], "CCO");
+        assert_eq!(out["INCHIKEY"], "");
+        // InChIKey dans INCHI : ne remplace pas une InChIKey valide
+        let out = repair_mol_descriptors(meta("CCO", "AAAAAAAAAAAAAA-BBBBBBBBBB-N", "LFQSCWFLJHTTHZ-UHFFFAOYSA-N"));
+        assert_eq!(out["INCHIKEY"], "LFQSCWFLJHTTHZ-UHFFFAOYSA-N");
+        assert_eq!(out["INCHI"], "");
+    }
+
+    #[test]
+    fn forme_d_un_smiles() {
+        for ok in ["CCO", "c1ccccc1", "C[C@@H](N)C(=O)O", "[Na+].[Cl-]", "OC(=O)C(Cl)Br", "C/C=C\\C", "[nH]1cccc1", "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"] {
+            assert!(looks_like_smiles(ok), "{ok}");
+        }
+        for bad in ["ZZORFUFYDOWNEF-UHFFFAOYAR", "LFQSCWFLJHTTHZ-UHFFFAOYSA-N", "Caffeine", "N/A", "InChI=1S/C2H6O", "C C O", "", "[Na+"] {
+            assert!(!looks_like_smiles(bad), "{bad}");
+        }
+        assert!(crate::globals_vars::INCHI_STRICT_PATTERN.is_match("InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"));
+        assert!(!crate::globals_vars::INCHI_STRICT_PATTERN.is_match("InChI=1S/C10H13N5O5/c11-8 [M-H]-"));
     }
 
     #[test]

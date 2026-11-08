@@ -27,13 +27,18 @@ use std::path::Path;
 /// Longueur d'un InChIKey standard (ex. "PGWQMEOSXZWQQQ-UHFFFAOYSA-N").
 const STANDARD_KEY_LEN: usize = 27;
 
-/// Conversion d'une cellule Polars en texte : même règle que l'ancien `read_parquet_to_dict_of_dicts`.
+/// Conversion d'une cellule Polars en texte : même règle que l'ancien `read_parquet_to_dict_of_dicts`, sauf
+/// pour les colonnes en catégorie (ontologies : NPCLASS_*, CLASSYFIRE_*) : leur affichage Polars ajoutait des
+/// guillemets ("\"Alkaloids\"", "\"NOT FOUND\""), recopiés tels quels dans les sorties. On prend le texte seul.
 pub fn valeur_en_texte(val: AnyValue) -> String {
     match val {
         AnyValue::String(s) => s.to_string(),
         AnyValue::StringOwned(s) => s.to_string(),
         AnyValue::Null => "".to_string(),
-        _ => val.to_string(),
+        _ => match val.get_str() {
+            Some(s) => s.to_string(),
+            None => val.to_string(),
+        },
     }
 }
 
@@ -238,7 +243,8 @@ mod tests {
                                 AnyValue::String(s) => s.to_string(),
                                 AnyValue::StringOwned(s) => s.to_string(),
                                 AnyValue::Null => "".to_string(),
-                                _ => val.to_string(),
+                                // Seule différence voulue avec l'ancienne version : catégories sans guillemets
+                                _ => val.get_str().map(|s| s.to_string()).unwrap_or_else(|| val.to_string()),
                             };
                             if header == key_col {
                                 key_val = val_clean.clone();
@@ -335,6 +341,8 @@ mod tests {
         assert_eq!(db.value(c, db.column_id("NAME").unwrap()), None); // colonne absente du fichier 2
         assert_eq!(db.value(c, db.column_id("SMILES").unwrap()).as_deref(), Some("CCO"));
         assert!(db.locate("CLE-COURTE").is_some());
+        // Classe en catégorie (ligne du doublon gagnant) : texte sans guillemets
+        assert_eq!(db.value(a, db.column_id("NPCLASS_PATHWAY").unwrap()).as_deref(), Some("Terpenoids"));
 
         let _ = fs::remove_dir_all(&dir);
     }

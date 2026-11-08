@@ -230,7 +230,9 @@ fn parse_json_spectrum(json_str: &str) -> Option<ParsedJsonSpectrum> {
                 break;
             }
         }
-        if !matched { return None; }
+        // Pas de champ de pics : spectre gardé avec une liste vide, supprimé ensuite avec le motif « peaks list
+        // is empty » (écrit dans DELETED_SPECTRUMS) au lieu d'être écarté ici sans trace
+        let _ = matched;
 
         if let Some(obj) = v.as_object() {
             for (k, val) in obj {

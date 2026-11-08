@@ -34,7 +34,9 @@ fn parse_decimal(s: &str) -> f64 {
 /// Ligne de pics au format NIST : plusieurs pics séparés par « ; » (`85 999; 86 23; 87 5;`), chaque pic
 /// pouvant porter une annotation entre guillemets (`85 999 "C5H9+";`).
 /// Valeur qui commence par un autre nom de champ : "CCS: 123" dans la ligne "RETENTIONTIME: CCS: 123".
-static SECOND_FIELD: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\s*([A-Za-z][A-Za-z0-9_]*):(?: )?(.*)$").unwrap());
+// Le « : » du second champ doit être suivi d'un espace ou de la fin de ligne, comme un vrai champ MSP :
+// "LINKS: INCHIKEY:CTXQ...; CAS:..." (MassBank RIKEN) n'est pas coupé (il remplaçait l'InChIKey du spectre).
+static SECOND_FIELD: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\s*([A-Za-z][A-Za-z0-9_]*):(?:[ \t]+(.*))?$").unwrap());
 
 /// Si la valeur d'un champ MSP commence par un nom de champ CONNU (key_to_convert.csv) suivi de « : »,
 /// renvoie ce second champ et sa valeur. Un texte ordinaire ("PC 34:1", "12:30", une URL...) n'est pas coupé :
@@ -79,14 +81,25 @@ fn split_nist_peak_lines(peaks_str: &str) -> Cow<'_, str> {
 /// (avant renommage) et pics. `None` si ce n'est pas un spectre lisible. Sortie de la boucle parallèle telle
 /// quelle, pour pouvoir la tester.
 fn parse_msp_spectrum(spectrum: &str, keys_dict: &HashMap<String, String>) -> Option<ParsedSpectrum> {
-    if let Some(caps) = crate::globals_vars::METADATA_PEAK_LIST_SPLIT_PATTERN_MSP.captures(spectrum) {
-        let metadata_str = caps.get(1).map_or("", |m| m.as_str());
-        let peaks_str = caps.get(2).map_or("", |m| m.as_str());
+    {
+        // Spectre sans pics : tout le bloc est lu comme métadonnées, avec une liste de pics vide. Il est
+        // ensuite supprimé avec le motif « peaks list is empty » (écrit dans DELETED_SPECTRUMS) ; avant, il était
+        // écarté ici sans laisser de trace.
+        let caps = crate::globals_vars::METADATA_PEAK_LIST_SPLIT_PATTERN_MSP.captures(spectrum);
+        let peaks_str = caps.as_ref().and_then(|c| c.get(2)).map_or("", |m| m.as_str());
+        // Sans pics, tout le bloc (jusqu'à sa dernière ligne, même sans retour à la ligne final)
+        let metadata_str = if peaks_str.trim().is_empty() { spectrum }
+            else { caps.as_ref().and_then(|c| c.get(1)).map_or(spectrum, |m| m.as_str()) };
 
-        if !metadata_str.is_empty() && !peaks_str.is_empty() {
+        if !metadata_str.trim().is_empty() {
             let mut metadata_matches = Vec::new();
             for m in crate::globals_vars::METADATA_PATTERN_MSP.captures_iter(metadata_str) {
                 metadata_matches.push((m.get(1).unwrap().as_str().to_string(), m.get(2).unwrap().as_str().to_string()));
+            }
+            // Au moins un champ en plus du nom et de l'empreinte du fichier (ajoutés par le lecteur) : sinon ce
+            // n'est pas un spectre (texte isolé, bloc vide)
+            if !metadata_matches.iter().any(|(k, _)| !matches!(k.trim().to_lowercase().as_str(), "filename" | "filehash")) {
+                return None;
             }
 
             let mut new_matches = Vec::new();
@@ -183,9 +196,7 @@ fn parse_msp_spectrum(spectrum: &str, keys_dict: &HashMap<String, String>) -> Op
                     peaks_array.push((mz, int)); // ✅ TUPLE AU LIEU D'UN VEC
                 }
 
-                if !peaks_array.is_empty() {
-                    return Some(ParsedSpectrum { metadata: metadata_dict, peaks: peaks_array });
-                }
+                return Some(ParsedSpectrum { metadata: metadata_dict, peaks: peaks_array });
             }
         }
     }
@@ -282,6 +293,26 @@ mod tests {
     }
 
     #[test]
+    fn spectre_sans_pics_garde_pour_etre_supprime_avec_son_motif() {
+        let k: HashMap<String, String> = [("name", "NAME"), ("db", "SPECTRUMID")].iter().map(|(a, b)| (a.to_string(), b.to_string())).collect();
+        // Sans pics (avec ou sans « Num Peaks: 0 », avec ou sans retour à la ligne final) : lu, pics vides
+        for spec in ["FILENAME: a.msp\nFILEHASH: h\nName: X\nDB#: CCMSLIB1\nNum Peaks: 0\n",
+                     "FILENAME: a.msp\nFILEHASH: h\nName: X\nDB#: CCMSLIB1"] {
+            let p = parse_msp_spectrum(spec, &k).expect("spectre sans pics lu");
+            assert!(p.peaks.is_empty());
+            let mut out = HashMap::new();
+            p.metadata.map_into(&k, |_| true, &mut out);
+            assert_eq!(out["SPECTRUMID"], "CCMSLIB1");
+            assert_eq!(out["NAME"], "X");
+        }
+        // Bloc sans aucun champ (seulement nom et empreinte ajoutés par le lecteur) : pas un spectre
+        assert!(parse_msp_spectrum("FILENAME: a.msp\nFILEHASH: h\n", &k).is_none());
+        // Spectre normal : inchangé
+        let p = parse_msp_spectrum("FILENAME: a.msp\nName: X\nNum Peaks: 2\n100 3\n101 1\n", &k).unwrap();
+        assert_eq!(p.peaks.len(), 2);
+    }
+
+    #[test]
     fn mona_msp_computed_en_repli_comme_le_json() {
         // Extrait réel du MSP MoNA (WA002994) : SMILES d'origine et SMILES / InChI calculés dans Comments
         let spec = "FILENAME: mona.msp\nFILEHASH: h\nName: Cefuroxime\nDB#: WA002994\nComments: \"SMILES=CO/N=C(/C1=CC=CO1)\\C(=O)N\" \"computed SMILES=O=C(O)C1=C(COC(=N)O)\" \"computed InChI=InChI=1S/C16H16N4O8S/calcule\"\nNum Peaks: 2\n100 3.1\n101 1.2\n";
@@ -343,6 +374,11 @@ mod tests {
         assert_eq!(out["NAME"], "PC 34:1");
         let out = mapped("FILENAME: a.msp\nNAME: Truc\nRETENTIONTIME: 5.2\nNum Peaks: 1\n100 1\n", &[("retentiontime", "RT")]);
         assert_eq!(out["RT"], "5.2");
+        // MassBank RIKEN (MSBNK-AAFC-AC000006) : "INCHIKEY:" collé à sa valeur dans LINKS n'est pas un second champ
+        let spec = "FILENAME: mb.msp\nNAME: AAL toxin TB\nINCHIKEY: CTXQVLLVFBNZKL-YVEDVMJTSA-N\nLINKS: INCHIKEY:CTXQVLLVFBNZKL-YVEDVMJTSA-N; CAS:149849-90-1; PUBCHEM:CID:102004382\nNum Peaks: 1\n100 1\n";
+        let out = mapped(spec, &[("inchikey", "INCHIKEY"), ("links", "LINKS"), ("name", "NAME")]);
+        assert_eq!(out["INCHIKEY"], "CTXQVLLVFBNZKL-YVEDVMJTSA-N");
+        assert_eq!(out["LINKS"], "INCHIKEY:CTXQVLLVFBNZKL-YVEDVMJTSA-N; CAS:149849-90-1; PUBCHEM:CID:102004382");
     }
 
     fn peaks(s: &str) -> Vec<(String, String)> {

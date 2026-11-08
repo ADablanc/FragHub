@@ -21,6 +21,10 @@ pub fn normalize_values(
     context: &super::NormalizerContext
 ) -> Option<HashMap<String, String>> {
 
+    // Nom d'origine, gardé pour l'étape 8 : un nom comme "0 [M-H]-" (MGF GNPS, nom de composé "0") est vidé à
+    // l'étape 1 ("0 ..." est une valeur vide), mais l'adduit écrit à sa fin doit rester lu.
+    let raw_name = metadata_dict.get("NAME").cloned();
+
     // 1. Nettoie les valeurs "null", "nan"
     metadata_dict = super::normalize_empties::normalize_empties(metadata_dict);
     
@@ -54,6 +58,21 @@ pub fn normalize_values(
     //    normalisation du type de précurseur (adduct)
     metadata_dict = super::normalize_name::clean_name_suffixes(metadata_dict);
     metadata_dict = super::normalize_adduct::adduct_from_name_if_missing(metadata_dict, context);
+    let empty = |d: &HashMap<String, String>, k: &str| d.get(k).map_or(true, |v| v.trim().is_empty());
+    if empty(&metadata_dict, "NAME") && empty(&metadata_dict, "PRECURSORTYPE") {
+        if let Some(raw) = raw_name.filter(|n| !n.trim().is_empty()) {
+            // Nom vidé à l'étape 1 : adduit cherché dans le nom d'origine, le nom reste vide
+            let mut probe: HashMap<String, String> = HashMap::new();
+            for k in ["NAME", "PRECURSORTYPE", "INSTRUMENTTYPE", "FILENAME", crate::globals_vars::INPUT_FILENAME_KEY] {
+                if let Some(v) = metadata_dict.get(k) { probe.insert(k.to_string(), v.clone()); }
+            }
+            probe.insert("NAME".to_string(), raw);
+            let probe = super::normalize_adduct::adduct_from_name_if_missing(probe, context);
+            if let Some(adduct) = probe.get("PRECURSORTYPE").filter(|a| !a.trim().is_empty()) {
+                metadata_dict.insert("PRECURSORTYPE".to_string(), adduct.clone());
+            }
+        }
+    }
     metadata_dict = super::normalize_adduct::normalize_adduct(metadata_dict, context);
 
     // 9. Mode d'ionisation absent ou illisible : déduit du signe de l'adduit ("[M+H]+" -> positive)
