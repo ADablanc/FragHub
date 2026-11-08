@@ -20,6 +20,11 @@ Usage (depuis la racine du projet) :
                 aller plus vite qu'un seul processus avec beaucoup de threads.
 Par défaut, la sortie est scratch/renormalize_db/internal_databases.parquet ; une fois vérifiée, elle
 remplace datas/internal_databases.parquet.
+
+Mode diagnostic (variable d'environnement FRAGHUB_RENORM_MAX_SECS=N) : la recherche du tautomère d'une
+molécule est arrêtée après N secondes ; la molécule est notée dans _molecules_trop_longues.tsv, sans résultat,
+et son fichier n'est pas écrit (il le sera par un lancement sans temps limite). Exemple sous macOS :
+  FRAGHUB_RENORM_MAX_SECS=300 .venv/bin/python scripts/build_dataset/renormalize_db.py
 """
 import argparse
 import os
