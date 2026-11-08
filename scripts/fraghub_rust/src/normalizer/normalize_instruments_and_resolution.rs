@@ -54,13 +54,23 @@ fn search_text(parts: &[String]) -> String {
 /// Dans COMMENT, les nombres décimaux sont retirés avant la recherche : les masses calculées du MSP MoNA
 /// ("computed [M+Cl]-=365.526952788") donnaient le mot "365" (AB SCIEX API 365, donc "LC-QQQ") à des spectres
 /// sans aucune information d'instrument. Les modèles d'appareils sont des entiers ou des mots (6530, API 3200).
+/// Un COMMENT en liste "clé=valeur" "clé=valeur"... (MSP MoNA) n'est pas lu : il a déjà été découpé en champs
+/// par le lecteur MSP (une vraie information d'instrument y est donc déjà dans INSTRUMENT, IONIZATION...), et la
+/// recherche dans le texte entier ne trouvait que des mots au hasard ("B", "FD", "CE" -> secteur magnétique,
+/// désorption de champ, électrophorèse capillaire).
 fn clean_spectrum_instrument_info(metadata_dict: &HashMap<String, String>) -> String {
     let get = |k: &str| metadata_dict.get(k).map(|s| s.as_str()).unwrap_or("");
     let parts: Vec<String> = ["INSTRUMENT", "INSTRUMENTTYPE", "IONIZATION", crate::globals_vars::INSTRUMENT_HINTS_KEY]
         .iter().map(|k| clean_field(get(k))).collect();
     if parts.iter().all(|p| p.trim().is_empty()) {
         static DECIMAL: Lazy<Regex> = Lazy::new(|| Regex::new(r"[-+]?(?:\d+\.\d+|\d+(?:\.\d+)?[eE][-+]?\d+)").unwrap());
-        search_text(&[clean_field(&DECIMAL.replace_all(get("COMMENT"), " "))])
+        static QUOTED_FIELD: Lazy<Regex> = Lazy::new(|| Regex::new(r#""[^"=]{1,80}=[^"]*""#).unwrap());
+        let comment = get("COMMENT");
+        if QUOTED_FIELD.find_iter(comment).take(2).count() >= 2 {
+            String::new()
+        } else {
+            search_text(&[clean_field(&DECIMAL.replace_all(comment, " "))])
+        }
     } else {
         search_text(&parts)
     }
@@ -343,9 +353,22 @@ mod tests {
     }
 
     #[test]
+    fn commentaire_en_liste_de_champs_pas_relu_pour_l_instrument() {
+        // MSP MoNA : liste "clé=valeur" déjà découpée en champs ; des lettres isolées ne donnent plus "B" ou "FD"
+        let comment = r#""SMILES=CC" "isomer=B" "comment=FD 30 CE" "MoNA Rating=3.5""#;
+        let m: HashMap<String, String> = [("COMMENT", comment)].iter().map(|(k, v)| (k.to_string(), v.to_string())).collect();
+        assert_eq!(clean_spectrum_instrument_info(&m), "");
+        // Commentaire en texte libre : toujours lu
+        let m: HashMap<String, String> = [("COMMENT", "measured on a Q Exactive, ESI positive")].iter().map(|(k, v)| (k.to_string(), v.to_string())).collect();
+        let text = clean_spectrum_instrument_info(&m);
+        assert!(contains_word(&text, "qexactive") && contains_word(&text, "esi"), "{text}");
+    }
+
+    #[test]
     fn masses_du_commentaire_mona_pas_prises_pour_un_modele() {
         // Extrait réel du MSP MoNA (1001249) : aucune information d'instrument, mais des masses calculées
-        let comment = r#""computed [M+Cl]-=365.526952788" "computed [2M+H]+=2000.0123" "computed mass error=-5.040000132794376E-7" "MoNA Rating=3.333333333333333" "origin=natural_products_neg.msp""#;
+        // (sans guillemets ici : en liste "clé=valeur", le commentaire n'est plus lu du tout)
+        let comment = r#"computed [M+Cl]-=365.526952788; computed [2M+H]+=2000.0123; computed mass error=-5.040000132794376E-7; MoNA Rating=3.333333333333333; origin=natural_products_neg.msp"#;
         let text = clean_spectrum_instrument_info(&[("COMMENT", comment)].iter().map(|(k, v)| (k.to_string(), v.to_string())).collect());
         assert!(!contains_word(&text, "365"), "{text}");
         assert!(!contains_word(&text, "2000"), "{text}");
