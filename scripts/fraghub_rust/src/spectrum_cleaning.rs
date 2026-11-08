@@ -187,6 +187,8 @@ pub fn spectrum_cleaning_processing(
             "spectrum deleted because precursor mz field is empty or contains invalid characters (not a floating number)." => deletion_report.no_precursor_mz += count,
             "spectrum deleted because it's entropy score is lower than the threshold selected by the user." => deletion_report.low_entropy_score += count,
             "spectrum deleted because it has neither inchi nor smiles nor inchikey" => deletion_report.no_smiles_no_inchi_no_inchikey += count,
+            // Suspects (structure d'une molécule apparentée) : comptés avec les spectres sans structure utilisable
+            crate::normalizer::delete_no_smiles_no_inchi::SUSPECT_REASON => deletion_report.no_smiles_no_inchi_no_inchikey += count,
             "spectrum deleted because its adduct field is empty or the value entered is not an adduct" => deletion_report.no_or_bad_adduct += count,
             "spectrum deleted because the adduct corresponds to the wrong ionization mode (neg adduct in pos ionmode)." => deletion_report.no_or_bad_adduct += count,
             "spectrum deleted because the adduct corresponds to the wrong ionization mode (pos adduct in neg ionmode)." => deletion_report.no_or_bad_adduct += count,
@@ -259,6 +261,7 @@ pub(crate) fn deletion_file_name(reason: &str) -> &'static str {
                     "spectrum deleted because it's entropy score is lower than the threshold selected by the user." => "entropy_score_lower_than_threshold.csv",
                     "spectrum deleted because precursor mz field is empty or contains invalid characters (not a floating number)." => "precursor_mz_invalid_or_empty.csv",
                     "spectrum deleted because it has neither inchi nor smiles nor inchikey" => "no_inchi_smiles_or_inchikey.csv",
+                    crate::normalizer::delete_no_smiles_no_inchi::SUSPECT_REASON => "suspect_related_structure.csv",
                     "spectrum deleted because its adduct field is empty or the value entered is not an adduct" => "adduct_empty_or_invalid.csv",
                     "spectrum deleted because the adduct corresponds to the wrong ionization mode (neg adduct in pos ionmode)." => "wrong_adduct_neg_in_pos.csv",
                     "spectrum deleted because the adduct corresponds to the wrong ionization mode (pos adduct in neg ionmode)." => "wrong_adduct_pos_in_neg.csv",

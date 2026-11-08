@@ -119,6 +119,29 @@ pub fn adduct_from_name_if_missing(mut metadata_dict: HashMap<String, String>, c
     metadata_dict
 }
 
+/// Adduit écrit après la structure, dans SMILES, INCHI ou INCHIKEY ("InChI=1S/... [M-H]-", GNPS INCHI_AUX) :
+/// retiré du champ, pour que la structure reste lisible, et renvoyé. Il ne sert que si l'adduit n'a été trouvé
+/// nulle part ailleurs (champ d'adduit, fin du nom) : voir values_normalizer, étape 8.
+/// Seulement un adduit connu (tables FragHub), séparé de la structure par un espace.
+pub fn adduct_from_structure_fields(mut metadata_dict: HashMap<String, String>, context: &super::NormalizerContext) -> (HashMap<String, String>, Option<String>) {
+    let mut found: Option<String> = None;
+    for key in ["INCHI", "SMILES", "INCHIKEY"] {
+        let Some(v) = metadata_dict.get(key) else { continue };
+        let v = v.trim().trim_matches('"').trim();
+        let Some(cut) = v.rfind(char::is_whitespace) else { continue };
+        let (head, last) = (v[..cut].trim_end(), v[cut..].trim());
+        if head.is_empty() || !crate::globals_vars::IS_ADDUCT_PATTERN.is_match(last) || !is_known_adduct(last, context) {
+            continue;
+        }
+        if found.is_none() {
+            found = Some(last.to_string());
+        }
+        let head = head.to_string();
+        metadata_dict.insert(key.to_string(), head);
+    }
+    (metadata_dict, found)
+}
+
 /// Forme écrite d'un adduit absent des tables : "[" + adduit nettoyé + "]" + charge.
 ///
 /// La charge est celle du texte d'origine (après le dernier "]", ou signe final sans crochets :
@@ -216,6 +239,35 @@ mod tests {
         assert_eq!(out["NAME"], "");
     }
 
+    #[test]
+    fn adduit_ecrit_apres_la_structure() {
+        let ctx = context_reel_reduit();
+        let inchi = "InChI=1S/C10H14N5O6P/c1-5-3-15(10(17)12-9(5)16)8-2-6(13-14-11)7(21-8)4-20-22(18)19/h3,6-8,22H,2,4H2,1H3,(H,18,19)(H,12,16,17)";
+        // m/z du précurseur cohérent avec l'adduit attendu (sinon la vérification adduit / m/z le change)
+        let base = |name: &str, adduct: &str, inchi_field: &str| -> HashMap<String, String> {
+            let mz = if adduct.contains("Cl") || name.contains("Cl") { "366.0373" } else { "330.0607" };
+            [("NAME", name), ("PRECURSORTYPE", adduct), ("IONMODE", "Negative"), ("FILENAME", "a.mgf"), ("INCHI", inchi_field),
+             ("PRECURSORMZ", mz), ("SMILES", ""), ("INCHIKEY", ""), ("INSTRUMENTTYPE", ""), ("MSLEVEL", "2")]
+                .iter().map(|(a, b)| (a.to_string(), b.to_string())).collect()
+        };
+        let mut reason = None;
+        // Adduit seulement après l'InChI : repris, et l'InChI redevient lisible
+        let out = crate::normalizer::values_normalizer::normalize_values(base("Truc", "", &format!("{inchi} [M-H]-")), &mut reason, &ctx).expect("gardé");
+        assert_eq!(out["PRECURSORTYPE"], "[M-H]-");
+        assert_eq!(out["INCHI"], inchi);
+        // Adduit déjà donné ailleurs (champ d'adduit) : c'est lui qui reste ; l'InChI est quand même nettoyé
+        let out = crate::normalizer::values_normalizer::normalize_values(base("Truc", "[M+Cl]-", &format!("{inchi} [M-H]-")), &mut reason, &ctx).expect("gardé");
+        assert_eq!(out["PRECURSORTYPE"], "[M+Cl]-");
+        assert_eq!(out["INCHI"], inchi);
+        // Adduit à la fin du nom : prioritaire sur celui de la structure
+        let out = crate::normalizer::values_normalizer::normalize_values(base("Truc [M+Cl]-", "", &format!("{inchi} [M-H]-")), &mut reason, &ctx).expect("gardé");
+        assert_eq!(out["PRECURSORTYPE"], "[M+Cl]-");
+        // Décalage de masse ("- 14.016 Da") : ce n'est pas un adduit, rien n'est repris
+        let (m, a) = adduct_from_structure_fields(base("Truc", "", &format!("{inchi} - 14.016 Da")), &ctx);
+        assert!(a.is_none());
+        assert!(m["INCHI"].ends_with("Da"));
+    }
+
     fn context_reel_reduit() -> super::super::NormalizerContext {
         // Quelques adduits des tables, sous leur clé standardisée (comme loading_db.rs)
         let mut pos = HashMap::new();
@@ -224,6 +276,7 @@ mod tests {
         }
         let mut neg = HashMap::new();
         neg.insert(standardize_adduct_key("M-H"), "[M-H]-".to_string());
+        neg.insert(standardize_adduct_key("M+Cl"), "[M+Cl]-".to_string());
         super::super::NormalizerContext {
             adduct_pos: pos, adduct_neg: neg,
             adduct_massdiff_pos: HashMap::new(), adduct_massdiff_neg: HashMap::new(),

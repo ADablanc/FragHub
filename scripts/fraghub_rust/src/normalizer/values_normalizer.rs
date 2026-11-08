@@ -28,6 +28,17 @@ pub fn normalize_values(
     // 1. Nettoie les valeurs "null", "nan"
     metadata_dict = super::normalize_empties::normalize_empties(metadata_dict);
     
+    // 1a. Spectres « suspects » (GNPS "Suspect related to ...", structure suivie de "- 14.016 Da") : la structure
+    //     donnée est celle d'une molécule apparentée, pas de la molécule mesurée : supprimés
+    let metadata_opt = super::delete_no_smiles_no_inchi::delete_suspect(metadata_dict, deletion_reason);
+    if metadata_opt.is_none() { return None; }
+    metadata_dict = metadata_opt.unwrap();
+
+    // 1b. Adduit écrit après la structure ("InChI=... [M-H]-") : retiré pour que la structure reste lisible ;
+    //     gardé de côté, utilisé à l'étape 8 seulement si l'adduit n'est trouvé nulle part ailleurs
+    let (md, adduct_from_structure) = super::normalize_adduct::adduct_from_structure_fields(metadata_dict, context);
+    metadata_dict = md;
+
     // 2. Corrige les inversions SMILES/INCHI
     metadata_dict = super::repair_mol_descriptors::repair_mol_descriptors(metadata_dict);
 
@@ -71,6 +82,12 @@ pub fn normalize_values(
             if let Some(adduct) = probe.get("PRECURSORTYPE").filter(|a| !a.trim().is_empty()) {
                 metadata_dict.insert("PRECURSORTYPE".to_string(), adduct.clone());
             }
+        }
+    }
+    // Dernier recours : l'adduit écrit après la structure (étape 1b)
+    if empty(&metadata_dict, "PRECURSORTYPE") {
+        if let Some(adduct) = adduct_from_structure {
+            metadata_dict.insert("PRECURSORTYPE".to_string(), adduct);
         }
     }
     metadata_dict = super::normalize_adduct::normalize_adduct(metadata_dict, context);
