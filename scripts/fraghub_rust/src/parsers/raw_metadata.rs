@@ -140,6 +140,15 @@ impl RawMetadata {
                     }
                     continue;
                 }
+                if mapped == crate::globals_vars::INSTRUMENT_HINTS_KEY || mapped == crate::globals_vars::IN_SILICO_HINTS_KEY {
+                    // Indices sur l'instrument ou sur l'origine in silico : tous gardés, mis bout à bout
+                    if keep(mapped) && !is_empty_value(&value) {
+                        let e = target.entry(mapped.clone()).or_default();
+                        if !e.is_empty() { e.push(' '); }
+                        e.push_str(value.trim());
+                    }
+                    continue;
+                }
                 if mapped == "FILENAME" {
                     // Champ du lecteur : nom du fichier d'entrée
                     target.insert(crate::globals_vars::INPUT_FILENAME_KEY.to_string(), value.clone());
@@ -387,6 +396,19 @@ mod tests {
         // Vrai identifiant déjà présent (GNPS) : gardé
         assert_eq!(run(&[("spectrumid", "CCMSLIB00000001547"), ("usi", "mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00000001547")]),
                    "CCMSLIB00000001547");
+    }
+
+    #[test]
+    fn indices_d_instrument_mis_bout_a_bout() {
+        let mut k = keys();
+        k.insert("mass analyzer".into(), "INSTRUMENT_HINTS".into());
+        k.insert("chromatography type".into(), "INSTRUMENT_HINTS".into());
+        let mut raw = RawMetadata::default();
+        raw.insert("chromatography type".into(), "LC".into());
+        raw.insert("mass analyzer".into(), "Triple_Quad".into());
+        let mut out = HashMap::new();
+        raw.map_into(&k, |_| true, &mut out);
+        assert_eq!(out["INSTRUMENT_HINTS"], "LC Triple_Quad");
     }
 
     #[test]
