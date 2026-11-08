@@ -54,6 +54,13 @@ fn parse_json_peak_list_rust(peak_list_string: &str) -> Vec<(f64, f64)> {
 
 use crate::loaders::{INJECTED_FILENAME, INJECTED_FILEHASH, INJECTED_PREFIX};
 
+/// Valeur texte sans le guillemet du début et celui de la fin (GNPS : "\"Candidate Trihydroxylated bile
+/// acid…\"", MoNA : "\"3,4-DIHYDROXYPHENYLGLYCOL\"") : même règle que le parseur MSP
+/// (METADATA_STRIP_VALUE_PATTERN). Avant, le même nom gardait ses guillemets en JSON et pas en MSP.
+fn strip_value(s: &str) -> String {
+    crate::globals_vars::METADATA_STRIP_VALUE_PATTERN.replace_all(s, "").into_owned()
+}
+
 /// Tableau JSON non vide de nombres ou de textes -> "v1, v2, ..." ; `None` pour tout autre tableau ou valeur.
 fn scalar_list(val: &serde_json::Value) -> Option<String> {
     let arr = val.as_array()?;
@@ -75,12 +82,14 @@ fn scalar_list(val: &serde_json::Value) -> Option<String> {
 
 /// Lit une liste MoNA [{name, value, computed}] : valeur texte ou nombre. Les entrées « computed: true »
 /// sont mises dans `computed` (valeurs de repli), les autres dans `metadata`.
+/// Le nom est débarrassé des espaces autour, comme en MSP (MoNA écrit "analytical method     " : le champ
+/// n'était relié à aucune clé).
 fn read_mona_metadata(items: &[serde_json::Value], metadata: &mut RawMetadata, computed: &mut Vec<(String, String)>) {
     for item in items {
         if let Some(name) = item["name"].as_str() {
-            let name_lower = name.to_lowercase();
+            let name_lower = name.trim().to_lowercase();
             let val = if let Some(val) = item["value"].as_str() {
-                val.to_string()
+                strip_value(val)
             } else if let Some(val) = item["value"].as_f64() {
                 val.to_string()
             } else {
@@ -129,9 +138,18 @@ fn parse_json_spectrum(json_str: &str) -> Option<ParsedJsonSpectrum> {
 
     if is_mona {
         if let Some(comp_name) = v["compound"].get(0).and_then(|c| c["names"].get(0)).and_then(|n| n["name"].as_str()) {
-            metadata.insert("compound_name".to_string(), comp_name.to_string());
+            metadata.insert("compound_name".to_string(), strip_value(comp_name));
         } else {
             metadata.insert("compound_name".to_string(), "".to_string());
+        }
+        // Autres noms du composé (devenus des lignes « Synon: » dans le MSP MoNA) : indices in silico
+        // ("$:07 In-Silico-Spectrum", spectres FAHFA sans tag ni bibliothèque). Avant, seul le premier nom était lu.
+        if let Some(names) = v["compound"].get(0).and_then(|c| c["names"].as_array()) {
+            let others: Vec<&str> = names.iter().skip(1).filter_map(|n| n["name"].as_str())
+                .map(|s| s.trim()).filter(|s| !s.is_empty()).collect();
+            if !others.is_empty() {
+                metadata.insert("mona_other_names".to_string(), others.join(" ; "));
+            }
         }
 
         // Valeurs « computed » de MoNA (recalculées par MoNA : SMILES, InChI, formule, masses...) :
@@ -149,7 +167,7 @@ fn parse_json_spectrum(json_str: &str) -> Option<ParsedJsonSpectrum> {
                 if let Some(name) = item["name"].as_str() {
                     let name_lower = format!("classyfire_{}", name.to_lowercase().replace(" ", "_"));
                     if let Some(val) = item["value"].as_str() {
-                        metadata.insert(name_lower, val.to_string());
+                        metadata.insert(name_lower, strip_value(val));
                     }
                 }
             }
@@ -161,14 +179,29 @@ fn parse_json_spectrum(json_str: &str) -> Option<ParsedJsonSpectrum> {
             read_mona_metadata(meta, &mut metadata, &mut computed);
         }
 
-        metadata.insert("predicted".to_string(), "false".to_string());
+        // Tag « In-Silico » : spectre prédit. Sans ce tag, PREDICTED n'est pas rempli (avant : « false »), pour
+        // que normalize_predicted cherche les autres indices comme en MSP (type d'instrument « in-silico QTOF »,
+        // commentaires...) : un « false » y est pris pour une décision de la source et arrête la détection.
+        let mut tag_texts: Vec<&str> = Vec::new();
         if let Some(tags) = v["tags"].as_array() {
             for tag in tags {
-                if tag["text"].as_str() == Some("In-Silico") {
-                    metadata.insert("predicted".to_string(), "true".to_string());
-                    break;
+                if let Some(text) = tag["text"].as_str() {
+                    if text.trim().eq_ignore_ascii_case("in-silico") {
+                        metadata.insert("predicted".to_string(), "true".to_string());
+                    }
+                    tag_texts.push(text);
                 }
             }
+        }
+        // Tags et bibliothèque (« LipidBlast 2022 », « LipidBlast In-Silico MS/MS Database... ») : absents de
+        // l'export MSP, gardés comme indices in silico (key_to_convert.csv : mona_tags, mona_library)
+        if !tag_texts.is_empty() {
+            metadata.insert("mona_tags".to_string(), tag_texts.join(", "));
+        }
+        let library: Vec<&str> = ["library", "description"].iter()
+            .filter_map(|k| v["library"][*k].as_str()).filter(|s| !s.trim().is_empty()).collect();
+        if !library.is_empty() {
+            metadata.insert("mona_library".to_string(), library.join(" ; "));
         }
 
         if let Some(splash) = v.get("splash").and_then(|s| s.get("splash")).and_then(|s| s.as_str()) {
@@ -204,7 +237,7 @@ fn parse_json_spectrum(json_str: &str) -> Option<ParsedJsonSpectrum> {
                 let k_str = k.as_str();
                 if k_str != "spectrum" && k_str != "peaks_json" && k_str != "peaks" && !k_str.starts_with(INJECTED_PREFIX) {
                     if let Some(s) = val.as_str() {
-                        metadata.insert(k.to_lowercase(), s.to_string());
+                        metadata.insert(k.to_lowercase(), strip_value(s));
                     } else if val.is_number() || val.is_boolean() {
                         metadata.insert(k.to_lowercase(), val.to_string());
                     } else if let Some(text) = scalar_list(val) {
@@ -215,18 +248,8 @@ fn parse_json_spectrum(json_str: &str) -> Option<ParsedJsonSpectrum> {
                 }
             }
         }
-        
-        // Extraction flexible de CollisionEnergy du nom pour GNPS via Regex compilée
-        if let Some(name) = metadata.get("compound_name").cloned() {
-            if let Some(caps) = crate::globals_vars::GNPS_COLLISION_ENERGY_EXTRACT_PATTERN.captures(&name) {
-                if let Some(energy_match) = caps.get(1) {
-                    let energy = energy_match.as_str().to_string();
-                    let real_name = crate::globals_vars::GNPS_COLLISION_ENERGY_EXTRACT_PATTERN.replace(&name, " ").to_string();
-                    metadata.insert("compound_name".to_string(), real_name.trim().to_string());
-                    metadata.insert("collision_energy".to_string(), energy.trim().to_string());
-                }
-            }
-        }
+        // L'énergie de collision écrite dans le nom (GNPS : "… CollisionEnergy:102040") est lue pour TOUS les
+        // formats, à la normalisation du nom (normalizer/normalize_name.rs). Avant : ici seulement, en JSON.
     }
 
     Some(ParsedJsonSpectrum { metadata, peaks })
@@ -381,6 +404,17 @@ mod tests {
     }
 
     #[test]
+    fn guillemets_retires_comme_en_msp() {
+        // GNPS JSON (nom entre guillemets) et MoNA (valeur de metaData entre guillemets)
+        let obj = r#"{"compound_name":"\"Candidate Trihydroxylated bile acid\"","Smiles":"CCO","peaks":[[100.0,1.0]]}"#;
+        let out = mapped(obj, "g.json", &[("compound_name", "NAME"), ("smiles", "SMILES")]);
+        assert_eq!(out["NAME"], "Candidate Trihydroxylated bile acid");
+        assert_eq!(out["SMILES"], "CCO");
+        let mona = MONA.replace(r#""name":"Cefuroxime""#, r#""name":"\"Cefuroxime\"""#);
+        assert_eq!(mapped(&mona, "m.json", &[("compound_name", "NAME")])["NAME"], "Cefuroxime");
+    }
+
+    #[test]
     fn json_liste_d_energies_lue_en_texte() {
         let obj = r#"{"compound_name":"X","collision_energy":[20.0, 30.0, 60.0, 40.0],"scan_number":[176, 177],"peaks":[[100.0,1.0]],"annotation_history":[{"a":1}]}"#;
         let out = mapped(obj, "msnlib.json", &[("collision_energy", "COLLISIONENERGY"), ("compound_name", "NAME")]);
@@ -391,6 +425,49 @@ mod tests {
         // Liste d'objets : toujours ignorée
         let parsed = parse_json_spectrum(&as_loaded(obj, "msnlib.json")).unwrap();
         assert!(parsed.metadata.get("annotation_history").is_none());
+    }
+
+    #[test]
+    fn mona_sans_tag_in_silico_detection_comme_en_msp() {
+        let keys = [("predicted", "PREDICTED"), ("instrument_type", "INSTRUMENTTYPE"), ("filename", "FILENAME")];
+        // Tag « In-Silico » : prédit
+        let tagged = MONA.replace(r#""tags":[{"text":"MassBank"}]"#, r#""tags":[{"text":"In-Silico"}]"#);
+        assert_eq!(mapped(&tagged, "mona.json", &keys)["PREDICTED"], "true");
+        // Sans le tag : PREDICTED laissé vide, plus de « false » qui bloquait la détection
+        let out = mapped(MONA, "mona.json", &keys);
+        assert!(out.get("PREDICTED").map_or(true, |p| p.is_empty()));
+        // Le type d'instrument « in-silico QTOF » est alors reconnu, comme pour le même spectre en MSP
+        let insilico = MONA.replace(r#""metaData":[{"name":"exact mass""#,
+            r#""metaData":[{"name":"instrument type","value":"in-silico QTOF","computed":false},{"name":"exact mass""#);
+        let keys2 = [("predicted", "PREDICTED"), ("instrument type", "INSTRUMENTTYPE"), ("filename", "FILENAME")];
+        let out = mapped(&insilico, "mona.json", &keys2);
+        assert_eq!(out["INSTRUMENTTYPE"], "in-silico QTOF");
+        assert_eq!(crate::normalizer::normalize_predicted::normalize_predicted(out)["PREDICTED"], "true");
+        // Tags, bibliothèque et origin : réunis dans la clé interne d'indices in silico
+        let lipidblast = MONA.replace(r#""tags":[{"text":"MassBank"}]"#,
+            r#""tags":[{"text":"LipidBlast 2022"}],"library":{"library":"LipidBlast 2022","description":"LipidBlast In-Silico MS/MS Database"}"#)
+            .replace(r#""metaData":[{"name":"exact mass""#, r#""metaData":[{"name":"origin","value":"MSDIAL-Neg.msp","computed":false},{"name":"exact mass""#);
+        let h = crate::globals_vars::IN_SILICO_HINTS_KEY;
+        let keys3 = [("predicted", "PREDICTED"), ("origin", h), ("mona_tags", h), ("mona_library", h), ("filename", "FILENAME")];
+        let out = mapped(&lipidblast, "mona.json", &keys3);
+        assert_eq!(out[h], "MSDIAL-Neg.msp LipidBlast 2022 LipidBlast 2022 ; LipidBlast In-Silico MS/MS Database");
+        assert_eq!(crate::normalizer::normalize_predicted::normalize_predicted(out)["PREDICTED"], "true");
+        // Autres noms du composé (cas réel MoNA015815, FAHFA) : lus comme les Synon du MSP
+        let fahfa = MONA.replace(r#""names":[{"name":"Cefuroxime"}]"#,
+            r#""names":[{"name":"16-LIAHSA [DMED-FAHFA]"},{"name":"$:00 ms2"},{"name":"$:07 In-Silico-Spectrum"}]"#);
+        let keys5 = [("predicted", "PREDICTED"), ("compound_name", "NAME"), ("mona_other_names", h), ("filename", "FILENAME")];
+        let out = mapped(&fahfa, "mona.json", &keys5);
+        assert_eq!(out["NAME"], "16-LIAHSA [DMED-FAHFA]");
+        assert_eq!(out[h], "$:00 ms2 ; $:07 In-Silico-Spectrum");
+        assert_eq!(crate::normalizer::normalize_predicted::normalize_predicted(out)["PREDICTED"], "true");
+        // Nom de champ avec espaces en trop (cas réel MoNA041205) : relié à sa clé, comme en MSP
+        let qceims = MONA.replace(r#""metaData":[{"name":"exact mass""#,
+            r#""metaData":[{"name":"analytical method     ","value":"Theoretical in-silico spectrum (QCEIMS)","computed":false},{"name":"exact mass""#);
+        let out = mapped(&qceims, "mona.json", &[("analytical method", "ANALYTICALMETHOD")]);
+        assert_eq!(out["ANALYTICALMETHOD"], "Theoretical in-silico spectrum (QCEIMS)");
+        // Spectre expérimental sans indice : toujours « false »
+        let out = mapped(MONA, "mona.json", &keys);
+        assert_eq!(crate::normalizer::normalize_predicted::normalize_predicted(out)["PREDICTED"], "false");
     }
 
     #[test]
