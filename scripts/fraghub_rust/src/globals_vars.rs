@@ -81,6 +81,15 @@ pub const INTERNAL_LIST_SEP: &str = "\u{1f}";
 /// "source_file"...), sinon le nom du fichier d'entrée. Les règles qui reconnaissent un fichier à son
 /// nom (spectres GC "_GC", bibliothèques in silico...) lisent celui-ci : voir input_filename().
 pub const INPUT_FILENAME_KEY: &str = "INPUT_FILENAME";
+/// Clé interne (jamais écrite) : autres champs qui décrivent l'instrument, réunis bout à bout
+/// (key_to_convert.csv : mass analyzer, chromatography type, sample introduction, source introduction).
+/// Lue par normalize_instruments_and_resolution pour reconnaître l'instrument, puis retirée.
+pub const INSTRUMENT_HINTS_KEY: &str = "INSTRUMENT_HINTS";
+/// Clé interne (jamais écrite) : champs qui peuvent dire qu'un spectre est in silico sans être gardés,
+/// réunis bout à bout (key_to_convert.csv : origin, analytical method et ses variantes mal saisies dans MoNA ;
+/// JSON MoNA : tags, bibliothèque et autres noms du composé, voir json_parser.rs).
+/// Lue par normalize_predicted avec le motif fort seulement (IN_SILICO_STRONG_PATTERN), puis retirée.
+pub const IN_SILICO_HINTS_KEY: &str = "IN_SILICO_HINTS";
 
 /// Nom du fichier d'entrée d'un spectre (INPUT_FILENAME), ou FILENAME s'il manque.
 pub fn input_filename(metadata: &std::collections::HashMap<String, String>) -> &str {
@@ -123,8 +132,10 @@ pub static IN_SILICO_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(&format!(
     r"(?i)in.silico|insilico|predicted|theoretical|{}", IN_SILICO_TOOLS
 )).unwrap());
 
+// Un numéro de version collé au nom est accepté ("LipidBlast2022_006705", identifiant MoNA ; "CFMID4") ;
+// une lettre collée ne l'est pas (avant : ni lettre ni chiffre).
 const IN_SILICO_TOOLS: &str =
-    r"(?:^|[^a-z0-9])(?:cfm.?id|qce?ims|qcxms|neims|massformer|3dmolms|graff.?ms|fragnnet|isdb|lipidblast|(?-i:ICEBERG|SCARF))(?:[^a-z0-9]|$)";
+    r"(?:^|[^a-z0-9])(?:cfm.?id|qce?ims|qcxms|neims|massformer|3dmolms|graff.?ms|fragnnet|isdb|lipidblast|(?-i:ICEBERG|SCARF))(?:[^a-z]|$)";
 
 // Formulations qui contiennent "predicted" ou "theoretical" sans dire que le SPECTRE est prédit :
 // retirées du texte avant le test (le moteur de regex de Rust n'a pas de "sauf si suivi de").
