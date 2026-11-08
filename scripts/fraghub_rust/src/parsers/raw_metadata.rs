@@ -164,6 +164,12 @@ impl RawMetadata {
                         Some(old) if filled.contains(mapped) && is_empty_value(old) && !is_empty_value(&value) => {
                             target.insert(mapped.clone(), value);
                         }
+                        // INCHIKEY : un synonyme qui a la forme d'une InChIKey passe devant une valeur qui ne l'a pas
+                        // (GNPS JSON : INCHI_AUX, rempli d'un InChI suivi de l'adduit, avant InChIKey_smiles)
+                        Some(old) if mapped == "INCHIKEY" && filled.contains(mapped)
+                            && !is_inchikey(old) && is_inchikey(&value) => {
+                            target.insert(mapped.clone(), value);
+                        }
                         Some(_) => {}
                     }
                 }
@@ -208,6 +214,11 @@ fn library_spectrum_id(usi: Option<&str>, title: Option<&str>) -> Option<String>
 const READER_KEYS: &[&str] = &["filename", "filehash"];
 
 /// Valeur vide ou « vide » écrit (N/A, nan, unknown, 0...) : même règle que normalize_empties.
+/// Valeur qui a la forme d'une InChIKey (guillemets et espaces autour ignorés).
+fn is_inchikey(v: &str) -> bool {
+    crate::globals_vars::INCHIKEY_FULL_PATTERN.is_match(v.trim().trim_matches('"').trim())
+}
+
 fn is_empty_value(v: &str) -> bool {
     crate::globals_vars::EMPTY_PATTERN.is_match(v.trim())
 }
@@ -230,6 +241,28 @@ mod tests {
         let mut out = HashMap::new();
         raw.map_into(&keys(), |k| k != "HORS_LISTE", &mut out);
         out
+    }
+
+    #[test]
+    fn inchikey_valide_preferee_a_une_valeur_qui_n_en_est_pas_une() {
+        // GNPS JSON : INCHI_AUX (relié à INCHIKEY) contient un InChI, InChIKey_smiles vient après
+        let k: HashMap<String, String> = [("inchi_aux", "INCHIKEY"), ("inchikey_smiles", "INCHIKEY"), ("inchikey_inchi", "INCHIKEY")]
+            .iter().map(|(a, b)| (a.to_string(), b.to_string())).collect();
+        let mut raw = RawMetadata::default();
+        raw.insert("inchi_aux".into(), "\"InChI=1S/C10H13N5O5/c11-8 [M-H]-\"".into());
+        raw.insert("inchikey_smiles".into(), "NYHBQMYGNKIUIF-UHFFFAOYSA-N".into());
+        raw.insert("inchikey_inchi".into(), "AAAAAAAAAAAAAA-UHFFFAOYSA-N".into());
+        let mut out = HashMap::new();
+        raw.map_into(&k, |_| true, &mut out);
+        // La première InChIKey valide gagne, pas la suivante
+        assert_eq!(out["INCHIKEY"], "NYHBQMYGNKIUIF-UHFFFAOYSA-N");
+        // Une InChIKey valide en premier n'est pas remplacée
+        let mut raw = RawMetadata::default();
+        raw.insert("inchikey_smiles".into(), "NYHBQMYGNKIUIF-UHFFFAOYSA-N".into());
+        raw.insert("inchikey_inchi".into(), "AAAAAAAAAAAAAA-UHFFFAOYSA-N".into());
+        let mut out = HashMap::new();
+        raw.map_into(&k, |_| true, &mut out);
+        assert_eq!(out["INCHIKEY"], "NYHBQMYGNKIUIF-UHFFFAOYSA-N");
     }
 
     #[test]

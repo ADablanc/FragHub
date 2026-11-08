@@ -104,9 +104,13 @@ pub fn repair_mol_descriptors(mut metadata_dict: HashMap<String, String>) -> Has
         metadata_dict.insert("SMILES".to_string(), String::new());
     }
 
-    // 4. INCHI trouvé dans le champ INCHIKEY
+    // 4. INCHI trouvé dans le champ INCHIKEY : déplacé dans INCHI seulement si INCHI est vide ; sinon il
+    //    n'écrase pas l'InChI du fichier (GNPS JSON : INCHI_AUX = "InChI=... [M-H]-", parfois d'une autre
+    //    molécule, écrasait le bon InChI et le spectre était supprimé). L'InChIKey est recalculée par RDKit.
     if crate::globals_vars::INCHI_PATTERN.is_match(&inchikey) {
-        metadata_dict.insert("INCHI".to_string(), inchikey.clone());
+        if metadata_dict.get("INCHI").map_or(true, |v| v.trim().is_empty()) {
+            metadata_dict.insert("INCHI".to_string(), inchikey.clone());
+        }
         metadata_dict.insert("INCHIKEY".to_string(), String::new());
     }
 
@@ -179,6 +183,20 @@ mod tests {
         let out2 = repair_mol_descriptors(meta(smiles2, "", ""));
         assert_eq!(out2["SMILES"], smiles2);
         assert_eq!(out2["INCHI"], "");
+    }
+
+    #[test]
+    fn inchi_du_champ_inchikey_n_ecrase_pas_le_bon_inchi() {
+        // Cas réel GNPS JSON (CCMSLIB00016154064) : INCHI_AUX, rangé dans INCHIKEY, est l'InChI d'une autre molécule
+        let good = "InChI=1S/C11H14N2O7/c1-5(14)19-4-6-8(16)9(17)10(20-6)13-3-2-7(15)12-11(13)18/h2-3,6,8-10,16-17H,4H2,1H3,(H,12,15,18)";
+        let aux = "InChI=1S/C9H11FN6O4/c10-5-6(18)9(3-17,14-15-12)20-7(5)16-2-1-4(11)13-8(16)19/h1-2,5-7,17-18H,3H2,(H2,11,13,19) [M-H]-";
+        let out = repair_mol_descriptors(meta("CC(=O)OCC1OC(n2ccc(=O)[nH]c2=O)C(O)C1O", good, aux));
+        assert_eq!(out["INCHI"], good);
+        assert_eq!(out["INCHIKEY"], "");
+        // INCHI vide : l'InChI du champ INCHIKEY est toujours récupéré
+        let out = repair_mol_descriptors(meta("", "", good));
+        assert_eq!(out["INCHI"], good);
+        assert_eq!(out["INCHIKEY"], "");
     }
 
     #[test]
