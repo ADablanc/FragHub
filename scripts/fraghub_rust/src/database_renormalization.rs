@@ -21,7 +21,13 @@
 //! - chaque molécule calculée est ajoutée à un fichier de reprise (<fichier>.reprise) : après un arrêt
 //!   (Ctrl+C, panne), le lancement suivant reprend à la molécule près ;
 //! - les molécules qui prennent plus d'une minute sont notées dans _molecules_lentes.tsv (durée en s,
-//!   fichier, ligne, molécule).
+//!   fichier, ligne, molécule) ;
+//! - mode diagnostic (variable d'environnement FRAGHUB_RENORM_MAX_SECS=N) : la recherche du tautomère d'une
+//!   molécule est arrêtée après N secondes ; la molécule est notée dans _molecules_trop_longues.tsv (même
+//!   format), PAS dans le fichier de reprise, et son fichier .parquet n'est donc pas écrit. Un lancement
+//!   suivant avec le temps limite saute les molécules déjà notées ; sans le temps limite, il les calcule
+//!   normalement. Le temps limite ne change jamais un résultat écrit : une molécule est calculée en entier ou
+//!   pas du tout.
 use polars::prelude::*;
 use pyo3::prelude::*;
 use rayon::prelude::*;
@@ -92,6 +98,28 @@ fn targets_of(df: &DataFrame) -> Option<Vec<Option<String>>> {
 fn compute_one(target: &str) -> Vec<(&'static str, String)> {
     let out = crate::rdkit_native::process_single(target, "", "");
     if out.iter().any(|(k, _)| *k == "INCHIKEY") { out } else { Vec::new() }
+}
+
+/// Comme `compute_one`, avec un temps limite sur la recherche du tautomère : None si dépassé.
+fn compute_one_limited(target: &str, max_secs: f64) -> Option<Vec<(&'static str, String)>> {
+    let out = crate::rdkit_native::process_single_limited(target, "", "", max_secs)?;
+    Some(if out.iter().any(|(k, _)| *k == "INCHIKEY") { out } else { Vec::new() })
+}
+
+/// Temps limite du mode diagnostic (FRAGHUB_RENORM_MAX_SECS), None = pas de limite (cas normal).
+fn max_secs() -> Option<f64> {
+    std::env::var("FRAGHUB_RENORM_MAX_SECS").ok().and_then(|v| v.trim().parse::<f64>().ok()).filter(|&s| s > 0.0)
+}
+
+/// Molécules déjà notées trop longues : (fichier, ligne).
+fn read_too_long(path: &Path) -> std::collections::HashSet<(String, usize)> {
+    fs::read_to_string(path).unwrap_or_default().lines().filter_map(|l| {
+        let mut f = l.split('\t');
+        let _secs = f.next()?;
+        let name = f.next()?.to_string();
+        let row = f.next()?.parse().ok()?;
+        Some((name, row))
+    }).collect()
 }
 
 /// Applique les résultats au tableau : colonnes réécrites et compteurs.
@@ -269,6 +297,10 @@ struct Shared {
     /// Molécule en cours sur chaque thread : (début, fichier, ligne)
     running: std::sync::Mutex<Vec<Option<(Instant, usize, usize)>>>,
     slow_log: std::sync::Mutex<fs::File>,
+    /// Mode diagnostic : temps limite et fichier des molécules trop longues
+    max_secs: Option<f64>,
+    too_long_log: std::sync::Mutex<Option<fs::File>>,
+    too_long: AtomicUsize,
 }
 
 /// Re-normalise tous les fichiers *.parquet de `input_dir` dans `output_dir` (mêmes noms de fichiers).
@@ -346,17 +378,28 @@ pub fn renormalize_database(
     //     d'abord dans chaque fichier), puis les très grosses molécules de toute la base, de la plus petite à la
     //     plus grosse (les fichiers qui en ont peu sont écrits plus tôt) ---
     let big = big_atoms_threshold();
+    let limit = max_secs();
+    let too_long_path = output_dir.join("_molecules_trop_longues.tsv");
+    let already_too_long = if limit.is_some() { read_too_long(&too_long_path) } else { Default::default() };
+    if let Some(s) = limit {
+        log(&format!("Mode diagnostic : recherche du tautomère arrêtée après {s:.0} s ; molécules trop longues notées dans {} (non écrites)", too_long_path.display()));
+    }
+    let mut skipped = 0usize;
     let mut queue: Vec<(usize, usize)> = Vec::new();
     let mut big_queue: Vec<(usize, usize, usize)> = Vec::new();
     for (p, part) in parts.iter().enumerate() {
         let res = part.results.lock().unwrap();
         let mut rows: Vec<usize> = Vec::new();
         for i in (0..part.targets.len()).filter(|&i| part.targets[i].is_some() && res[i].is_none()) {
+            if already_too_long.contains(&(part.name.clone(), i)) { skipped += 1; continue; }
             let atoms = heavy_atoms(part.targets[i].as_ref().unwrap());
             if atoms > big { big_queue.push((atoms, p, i)); } else { rows.push(i); }
         }
         rows.sort_by(|&a, &b| part.targets[b].as_ref().unwrap().len().cmp(&part.targets[a].as_ref().unwrap().len()));
         queue.extend(rows.into_iter().map(|r| (p, r)));
+    }
+    if skipped > 0 {
+        log(&format!("{skipped} molécules déjà notées trop longues : sautées (relancer sans FRAGHUB_RENORM_MAX_SECS pour les calculer)"));
     }
     if !big_queue.is_empty() {
         log(&format!("{} très grosses molécules (plus de {big} atomes lourds) gardées pour la fin", big_queue.len()));
@@ -375,6 +418,11 @@ pub fn renormalize_database(
         running: std::sync::Mutex::new(vec![None; workers + 1]),
         slow_log: std::sync::Mutex::new(
             fs::OpenOptions::new().create(true).append(true).open(output_dir.join("_molecules_lentes.tsv")).map_err(|e| e.to_string())?),
+        max_secs: limit,
+        too_long_log: std::sync::Mutex::new(if limit.is_some() {
+            Some(fs::OpenOptions::new().create(true).append(true).open(&too_long_path).map_err(|e| e.to_string())?)
+        } else { None }),
+        too_long: AtomicUsize::new(0),
     });
     let parts = &shared.parts;
 
@@ -412,9 +460,22 @@ pub fn renormalize_database(
                     let target = part.targets[row].as_ref().unwrap();
                     let start = Instant::now();
                     sh.running.lock().unwrap()[slot] = Some((start, p, row));
-                    let out = compute_one(target);
+                    let out = match sh.max_secs {
+                        None => Some(compute_one(target)),
+                        Some(s) => compute_one_limited(target, s),
+                    };
                     sh.running.lock().unwrap()[slot] = None;
                     let secs = start.elapsed().as_secs_f64();
+                    let Some(out) = out else {
+                        // Temps dépassé : notée, pas de résultat ni de ligne de reprise (fichier non écrit)
+                        if let Some(f) = sh.too_long_log.lock().unwrap().as_mut() {
+                            let _ = writeln!(f, "{secs:.0}\t{}\t{row}\t{target}", part.name);
+                            let _ = f.flush();
+                        }
+                        sh.too_long.fetch_add(1, Ordering::Relaxed);
+                        sh.done.fetch_add(1, Ordering::Relaxed);
+                        continue;
+                    };
                     if secs >= SLOW_SECS {
                         let _ = writeln!(sh.slow_log.lock().unwrap(), "{secs:.0}\t{}\t{row}\t{target}", part.name);
                     }
@@ -463,6 +524,12 @@ pub fn renormalize_database(
     }
     if let Some(e) = error { return Err(e); }
     if stopped { return Err("interrompu".into()); }
+    let too_long = shared.too_long.load(Ordering::Relaxed);
+    if too_long + skipped > 0 {
+        let left = parts.iter().filter(|p| !p.written.load(Ordering::Relaxed)).count();
+        log(&format!("Mode diagnostic : {too_long} molécules trop longues cette fois, {skipped} déjà notées ; {left} fichiers non écrits (voir {})",
+            too_long_path.display()));
+    }
 
     // InChIKey en double après normalisation (sur toute la base)
     let mut seen = std::collections::HashMap::<String, usize>::new();
@@ -644,6 +711,32 @@ mod tests {
         assert!(read(&dst.join("part_0000.parquet")).equals_missing(&read(&ref_.join("part_0000.parquet"))));
         let _ = fs::remove_dir_all(&dir);
     }
+
+    #[test]
+    fn temps_limite_du_mode_diagnostic() {
+        // Macrocycle C99H90O54 (environ 270 s de tautomère sans limite) : arrêté vite, aucun résultat gardé
+        let t = Instant::now();
+        assert!(compute_one_limited(GEANT, 3.0).is_none());
+        assert!(t.elapsed() < Duration::from_secs(60), "arrêt en {:?}", t.elapsed());
+        // Molécules ordinaires : même résultat qu'en calcul normal, avec ou sans temps limite
+        for m in ["InChI=1S/C9H8O4/c1-6(10)13-8-5-3-2-4-7(8)9(11)12/h2-5H,1H3,(H,11,12)", "CC(=O)Oc1ccccc1C(=O)O",
+                  "O=C1NC(=O)C=C1", "Oc1ccncc1", "C[C@@H](N)C(=O)O"] {
+            assert_eq!(compute_one_limited(m, 60.0), Some(compute_one(m)), "{m}");
+        }
+        // Le temps limite ne reste pas actif après l'appel : calcul normal ensuite sur le même thread
+        assert!(!compute_one("Oc1ccncc1").is_empty());
+        // Liste des molécules trop longues relue (fichier, ligne)
+        let dir = std::env::temp_dir().join(format!("fraghub_renorm_tl_{}", std::process::id()));
+        fs::create_dir_all(&dir).unwrap();
+        let f = dir.join("_molecules_trop_longues.tsv");
+        fs::write(&f, "301\tpart_0002.parquet\t17\tInChI=1S/C...\n300\tpart_0005.parquet\t4\tCC\ncoupé").unwrap();
+        let set = read_too_long(&f);
+        assert_eq!(set.len(), 2);
+        assert!(set.contains(&("part_0002.parquet".to_string(), 17)));
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    const GEANT: &str = "InChI=1S/C99H90O54/c100-82(101)28-136-64-12-48-2-50-14-70(142-34-88(112)113)52(16-68(50)140-32-86(108)109)4-54-18-74(146-38-92(120)121)56(20-72(54)144-36-90(116)117)6-58-22-78(150-42-96(128)129)60(24-76(58)148-40-94(124)125)8-62-26-81(153-45-99(134)135)63(27-80(62)152-44-98(132)133)9-61-25-77(149-41-95(126)127)59(23-79(61)151-43-97(130)131)7-57-21-73(145-37-91(118)119)55(19-75(57)147-39-93(122)123)5-53-17-69(141-33-87(110)111)51(15-71(53)143-35-89(114)115)3-49-13-65(137-29-83(102)103)47(11-67(49)139-31-85(106)107)1-46(64)10-66(48)138-30-84(104)105/h10-27H,1-9,28-45H2,(H,100,101)(H,102,103)(H,104,105)(H,106,107)(H,108,109)(H,110,111)(H,112,113)(H,114,115)(H,116,117)(H,118,119)(H,120,121)(H,122,123)(H,124,125)(H,126,127)(H,128,129)(H,130,131)(H,132,133)(H,134,135)";
 
     #[test]
     fn arret_sans_attendre_une_molecule_geante() {
