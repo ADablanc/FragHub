@@ -58,6 +58,8 @@ mod ffi {
             adduct_charge: i32,
         ) -> MolResult;
         fn exact_mass(mol: &str, is_inchi: bool) -> f64;
+        fn set_time_limit(max_secs: f64);
+        fn take_timed_out() -> bool;
     }
 }
 
@@ -134,6 +136,18 @@ pub fn process_single(clean_mol: &str, precursortype: &str, precursormz_str: &st
     if r.has_exactmass { out.push(("EXACTMASS", py_float_str(r.exactmass))); }
     if r.has_averagemass { out.push(("AVERAGEMASS", py_float_str(r.averagemass))); }
     out
+}
+
+/// Comme `process_single`, avec un temps limite (en secondes) sur la recherche du tautomère canonique.
+/// None si le temps est dépassé : RDKit a arrêté l'énumération, le résultat n'est pas gardé.
+/// Sert seulement au mode diagnostic de la re-normalisation (FRAGHUB_RENORM_MAX_SECS).
+pub fn process_single_limited(clean_mol: &str, precursortype: &str, precursormz_str: &str, max_secs: f64) -> Option<Vec<(&'static str, String)>> {
+    INIT.call_once(ffi::init_rdkit);
+    ffi::set_time_limit(max_secs);
+    let out = process_single(clean_mol, precursortype, precursormz_str);
+    let timed_out = ffi::take_timed_out();
+    ffi::set_time_limit(0.0);
+    if timed_out { None } else { Some(out) }
 }
 
 /// (n molécules, différence de masse totale, charge) d'un adduit au format FragHub, d'après les tables
