@@ -30,6 +30,7 @@
 #include <GraphMol/inchi.h>
 #include <RDGeneral/RDLog.h>
 
+#include <chrono>
 #include <cmath>
 #include <map>
 #include <memory>
@@ -125,10 +126,34 @@ RDKit::MolStandardize::CleanupParameters tautomer_params() {
   return p;
 }
 
+// Temps limite de la recherche du tautomère, propre à chaque thread (0 = pas de limite, le cas normal).
+// Utilisé seulement par le mode diagnostic de la re-normalisation (FRAGHUB_RENORM_MAX_SECS) : au-delà,
+// RDKit arrête l'énumération et la molécule est signalée comme trop longue (son résultat n'est pas gardé).
+thread_local double tl_deadline = 0.0;
+thread_local bool tl_timed_out = false;
+
+double now_secs() {
+  return std::chrono::duration<double>(std::chrono::steady_clock::now().time_since_epoch()).count();
+}
+
+// Appelé par RDKit pendant l'énumération des tautomères : renvoie false pour l'arrêter. Sans temps limite,
+// renvoie toujours true : l'énumération est exactement la même que sans rappel.
+class DeadlineCallback : public RDKit::MolStandardize::TautomerEnumeratorCallback {
+ public:
+  bool operator()(const RDKit::ROMol &, const RDKit::MolStandardize::TautomerEnumeratorResult &) override {
+    if (tl_deadline > 0.0 && now_secs() > tl_deadline) {
+      tl_timed_out = true;
+      return false;
+    }
+    return true;
+  }
+};
+
 // Outils créés une fois par thread
 struct Tools {
   RDKit::MolStandardize::Uncharger uncharger;
   RDKit::MolStandardize::TautomerEnumerator enumerator{tautomer_params()};
+  Tools() { enumerator.setCallback(new DeadlineCallback()); }  // RDKit devient propriétaire du rappel
 };
 Tools &tools() {
   thread_local Tools t;
@@ -255,6 +280,19 @@ MolResult process_single(rust::Str clean_mol_rs, rust::Str ptype_rs, double prec
   } catch (...) {
   }
   return r;
+}
+
+// Temps limite (en secondes) des prochains calculs sur ce thread ; 0 = pas de limite
+void set_time_limit(double max_secs) {
+  tl_deadline = max_secs > 0.0 ? now_secs() + max_secs : 0.0;
+  tl_timed_out = false;
+}
+
+// Vrai si le dernier calcul a été arrêté par le temps limite (et remet l'indicateur à faux)
+bool take_timed_out() {
+  bool t = tl_timed_out;
+  tl_timed_out = false;
+  return t;
 }
 
 }  // namespace fraghub
