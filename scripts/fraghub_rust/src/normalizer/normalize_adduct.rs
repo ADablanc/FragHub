@@ -85,7 +85,15 @@ fn clean_adduct(adduct: &str) -> String {
 fn is_known_adduct(text: &str, context: &super::NormalizerContext) -> bool {
     let key = standardize_adduct_key(&clean_adduct(text));
     context.adduct_pos.contains_key(&key) || context.adduct_neg.contains_key(&key)
+        // Ou écrit sous la forme complète d'un adduit, entre crochets avec sa charge ("[M]-", "[M+HCOOH-H]-") :
+        // un mot de nom ordinaire n'a jamais cette forme. Le même adduit dans le champ d'adduit est gardé
+        // (normalize_adduct, forme standard) : sans ça, le MGF GNPS ("dapsone [M]-") perdait l'adduit que
+        // JSON et MSP gardent.
+        || BRACKETED_ADDUCT.is_match(text.trim())
 }
+
+static BRACKETED_ADDUCT: once_cell::sync::Lazy<regex::Regex> =
+    once_cell::sync::Lazy::new(|| regex::Regex::new(r"^\[\d*M[^\]\s]*\]\d*[+-]$").unwrap());
 
 /// Adduit écrit à la fin du nom quand le champ adduit est vide.
 ///
@@ -266,6 +274,23 @@ mod tests {
         let (m, a) = adduct_from_structure_fields(base("Truc", "", &format!("{inchi} - 14.016 Da")), &ctx);
         assert!(a.is_none());
         assert!(m["INCHI"].ends_with("Da"));
+    }
+
+    #[test]
+    fn adduit_complet_entre_crochets_lu_dans_le_nom() {
+        // MGF GNPS (CCMSLIB00012870046) : "dapsone [M]-", absent des tables mais écrit sous forme d'adduit
+        let ctx = context_reel_reduit();
+        let m: HashMap<String, String> = [("NAME", "dapsone [M]-"), ("PRECURSORTYPE", ""), ("FILENAME", "ALL_GNPS.mgf")]
+            .iter().map(|(a, b)| (a.to_string(), b.to_string())).collect();
+        let out = adduct_from_name_if_missing(m, &ctx);
+        assert_eq!(out["PRECURSORTYPE"], "[M]-");
+        assert_eq!(out["NAME"], "dapsone");
+        // Mots ordinaires : jamais pris
+        for name in ["Vitamin [M]", "Compound M-", "Truc [X]-", "Peptide [Met]-"] {
+            let m: HashMap<String, String> = [("NAME", name), ("PRECURSORTYPE", ""), ("FILENAME", "a.mgf")]
+                .iter().map(|(a, b)| (a.to_string(), b.to_string())).collect();
+            assert_eq!(adduct_from_name_if_missing(m, &ctx)["PRECURSORTYPE"], "", "{name}");
+        }
     }
 
     fn context_reel_reduit() -> super::super::NormalizerContext {
