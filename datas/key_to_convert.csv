@@ -71,6 +71,7 @@ ch$name;name
 ch$nominal_mass;nominalmass
 ch$smiles;smiles
 charge;charge
+chromatography type;instrument_hints
 colenergy;collisionenergy
 collision energy;collisionenergy
 collision energy;collisionenergy
@@ -142,12 +143,14 @@ ion type;precursortype
 ion_mode;ionmode
 ion_source;ionization
 ionimethod;ionization
+ionisation;ionization
 ionization;ionization
 ionization mode;ionmode
 ionization-mode;ionmode
 ionmode;ionmode
 ionpol;ionmode
 ionpolarity;ionmode
+mass analyzer;instrument_hints
 polarity;ionmode
 isolation_width;isolationwindowtargetmz
 isolationwidth;isolationwindowtargetmz
@@ -187,7 +190,7 @@ num peaks;num peaks
 numpeaks;num peaks
 ontology;compoundclass
 organism;organismname
-origin;origin
+origin;in_silico_hints
 parentmass;parentmass
 peaks;peaks_list
 peaks_json;peaks_list
@@ -234,11 +237,13 @@ rt_query;rt
 rtinseconds;rt
 salt;salt
 salt_mix_cas;saltmixcas
+sample introduction;instrument_hints
 sample_inlet;sampleinlet
 scans;scans
 seq;peptidesequence
 smiles;smiles
 source file;filename
+source introduction;instrument_hints
 source_file;filename
 source_instrument;instrumenttype
 sp$lineage;organismlineage
@@ -270,3 +275,9 @@ molecular formula;formula
 classyfire_superclass;classyfire_superclass
 classyfire_class;classyfire_class
 classyfire_subclass;classyfire_subclass
+mona_library;in_silico_hints
+mona_tags;in_silico_hints
+analytical method;in_silico_hints
+analytical me;in_silico_hints
+analh;in_silico_hints
+mona_other_names;in_silico_hints
