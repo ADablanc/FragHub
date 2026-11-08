@@ -45,17 +45,20 @@ fn search_text(parts: &[String]) -> String {
     format!(". {} .", cleaned.split_whitespace().collect::<Vec<&str>>().join(" "))
 }
 
-/// Texte dans lequel on cherche l'instrument : INSTRUMENT et INSTRUMENTTYPE.
-/// COMMENT n'est utilisé que si ces deux champs sont vides : sinon, une date ("2020") ou le nom
+/// Texte dans lequel on cherche l'instrument : INSTRUMENT, INSTRUMENTTYPE, IONIZATION et les autres champs qui
+/// décrivent l'instrument (clé interne INSTRUMENT_HINTS : MoNA « mass analyzer », « chromatography type »...).
+/// Avant, seuls INSTRUMENT et INSTRUMENTTYPE étaient lus : l'ion source de GNPS JSON ("LC-ESI", rangé dans
+/// IONIZATION) n'était pas vue, et le même instrument donnait "LC-FT" depuis le JSON et "LC-ESI-FT" depuis le MSP.
+/// COMMENT n'est utilisé que si tous ces champs sont vides : sinon, une date ("2020") ou le nom
 /// de la chromatographie ("Waters Acquity") pouvaient être pris pour le modèle ou la marque.
 fn clean_spectrum_instrument_info(metadata_dict: &HashMap<String, String>) -> String {
     let get = |k: &str| metadata_dict.get(k).map(|s| s.as_str()).unwrap_or("");
-    let instrument = clean_field(get("INSTRUMENT"));
-    let instrument_type = clean_field(get("INSTRUMENTTYPE"));
-    if instrument.trim().is_empty() && instrument_type.trim().is_empty() {
+    let parts: Vec<String> = ["INSTRUMENT", "INSTRUMENTTYPE", "IONIZATION", crate::globals_vars::INSTRUMENT_HINTS_KEY]
+        .iter().map(|k| clean_field(get(k))).collect();
+    if parts.iter().all(|p| p.trim().is_empty()) {
         search_text(&[clean_field(get("COMMENT"))])
     } else {
-        search_text(&[instrument, instrument_type])
+        search_text(&parts)
     }
 }
 
@@ -131,6 +134,8 @@ fn is_known(value: &str) -> bool {
 /// * `HashMap<String, String>` : Le dictionnaire mis à jour avec INSTRUMENT, INSTRUMENTTYPE, RESOLUTION.
 pub fn normalize_instruments_and_resolution(mut metadata_dict: HashMap<String, String>, context: &super::NormalizerContext) -> HashMap<String, String> {
     let infos = clean_spectrum_instrument_info(&metadata_dict);
+    // Clé interne : lue une seule fois, ici
+    metadata_dict.remove(crate::globals_vars::INSTRUMENT_HINTS_KEY);
 
     let mut current_level = &context.instrument_tree;
     let mut tree_levels = Vec::new();
@@ -249,6 +254,25 @@ mod tests {
         let m = run(&[("INSTRUMENT", ""), ("INSTRUMENTTYPE", "qtof")]);
         assert_eq!(m["INSTRUMENT"], "");
         assert_eq!(m["INSTRUMENTTYPE"], "QTOF");
+    }
+
+    #[test]
+    fn ionisation_et_autres_champs_lus_pour_l_instrument() {
+        // GNPS JSON : Instrument "Orbitrap", Ion_Source "LC-ESI" (rangé dans IONIZATION), pas de type
+        let tree: serde_json::Value = serde_json::from_str(r#"{"not found": {"orbitrap": {"lc": {"not found": {
+            "esi": {"high": {"SOLUTION": "Thermo Fisher Scientific Orbitrap, LC-ESI-FT, HIGH"}},
+            "not found": {"high": {"SOLUTION": "Thermo Fisher Scientific Orbitrap, LC-FT, HIGH"}}}}}}}"#).unwrap();
+        let ctx = super::super::NormalizerContext {
+            adduct_pos: HashMap::new(), adduct_neg: HashMap::new(),
+            adduct_massdiff_pos: HashMap::new(), adduct_massdiff_neg: HashMap::new(), instrument_tree: tree,
+        };
+        let run2 = |f: &[(&str, &str)]| normalize_instruments_and_resolution(f.iter().map(|(k, v)| (k.to_string(), v.to_string())).collect(), &ctx);
+        let m = run2(&[("INSTRUMENT", "Orbitrap"), ("INSTRUMENTTYPE", ""), ("IONIZATION", "LC-ESI")]);
+        assert_eq!(m["INSTRUMENTTYPE"], "LC-ESI-FT");
+        // Indice venu d'un autre champ (clé interne), retiré ensuite
+        let m = run2(&[("INSTRUMENT", "Orbitrap"), ("INSTRUMENT_HINTS", "Liquid Chromatography (LC) ESI")]);
+        assert_eq!(m["INSTRUMENTTYPE"], "LC-ESI-FT");
+        assert!(!m.contains_key("INSTRUMENT_HINTS"));
     }
 
     #[test]
