@@ -11,6 +11,8 @@ use std::collections::HashMap;
 /// # Returns
 /// * `HashMap<String, String>` : Le dictionnaire avec PREDICTED à "true" ou "false".
 pub fn normalize_predicted(mut metadata_dict: HashMap<String, String>) -> HashMap<String, String> {
+    // Clé interne (origin, tags et bibliothèque MoNA) : lue ici puis retirée, jamais écrite
+    let hints = metadata_dict.remove(crate::globals_vars::IN_SILICO_HINTS_KEY).unwrap_or_default();
     let predicted = metadata_dict.get("PREDICTED").cloned().unwrap_or_default();
     if predicted.to_lowercase() == "false" {
         return metadata_dict;
@@ -20,6 +22,7 @@ pub fn normalize_predicted(mut metadata_dict: HashMap<String, String>) -> HashMa
     let filename = crate::globals_vars::input_filename(&metadata_dict).to_string();
     let name = metadata_dict.get("NAME").cloned().unwrap_or_default();
     let instrument_type = metadata_dict.get("INSTRUMENTTYPE").cloned().unwrap_or_default();
+    let spectrum_id = metadata_dict.get("SPECTRUMID").cloned().unwrap_or_default();
     // Toutes les lignes "Synon:" du fichier (SYNON n'en garde que la dernière), voir raw_metadata.rs
     let all_synons = metadata_dict.get(crate::globals_vars::ALL_SYNONS_KEY).cloned().unwrap_or_default();
 
@@ -36,6 +39,14 @@ pub fn normalize_predicted(mut metadata_dict: HashMap<String, String>) -> HashMa
         is_predicted = true;
     } else if crate::globals_vars::IN_SILICO_STRONG_PATTERN.is_match(&all_synons) {
         // MoNA : "Synon: $:07 In-Silico-Spectrum", souvent suivie d'une autre ligne Synon
+        is_predicted = true;
+    } else if crate::globals_vars::IN_SILICO_STRONG_PATTERN.is_match(&hints) {
+        // origin (« in-silico.msp »), tags et bibliothèque MoNA (« LipidBlast 2022 », « ... In-Silico ... ») :
+        // motif fort seulement ("predicted" seul y est trop ambigu, ex. MassBank "origin=MassBank; Predicted")
+        is_predicted = true;
+    } else if crate::globals_vars::IN_SILICO_STRONG_PATTERN.is_match(&spectrum_id) {
+        // Identifiant d'une bibliothèque in silico (MSP MoNA : "DB#: LipidBlast2022_006705", seul indice que
+        // l'export MSP garde de la bibliothèque)
         is_predicted = true;
     } else if !filename.contains("MSMS_Public") {
         // `format!` est l'équivalent parfait des f-strings Python : f"{filename} {name}"
@@ -143,6 +154,30 @@ mod tests {
         // Mais un spectre GÉNÉRÉ par CFM-ID reste in silico
         assert_eq!(run(&[("COMMENT", "spectrum predicted with CFM-ID 4.0")]), "true");
         assert_eq!(run(&[("COMMENT", "origin=CFM-ID; energy=10")]), "true");
+    }
+
+    #[test]
+    fn indices_in_silico_et_identifiant_de_bibliotheque() {
+        let hints = crate::globals_vars::IN_SILICO_HINTS_KEY;
+        // MoNA : origin, tags, bibliothèque
+        assert_eq!(run(&[(hints, "in-silico.msp")]), "true");
+        assert_eq!(run(&[(hints, "LipidBlast 2022, In-Silico")]), "true");
+        assert_eq!(run(&[(hints, "LipidBlast In-Silico MS/MS Database for Lipid Identification")]), "true");
+        // Motif fort seulement : "Predicted" seul (annotation MassBank) ne suffit pas
+        assert_eq!(run(&[(hints, "MassBank; Predicted")]), "false");
+        assert_eq!(run(&[(hints, "Enveda-180, LC-MS"), ("FILENAME", "a.json")]), "false");
+        // La clé interne est retirée
+        let m: HashMap<String, String> = [(hints.to_string(), "in-silico.msp".to_string())].into_iter().collect();
+        assert!(!normalize_predicted(m).contains_key(hints));
+        // Identifiant d'une bibliothèque in silico, avec numéro de version collé
+        assert_eq!(run(&[("SPECTRUMID", "LipidBlast2022_006705"), ("FILENAME", "MoNA-export-All_Spectra.msp")]), "true");
+        assert_eq!(run(&[("COMMENT", "predicted with CFMID4")]), "true");
+        // Identifiants ordinaires : pas in silico
+        for id in ["Enveda028909", "MoNA039726", "CCMSLIB00000579359", "MSBNK-RIKEN-PR000001", "AOCCRKXUBBAOQI-GOSISDBHSA-N"] {
+            assert_eq!(run(&[("SPECTRUMID", id), ("FILENAME", "a.msp")]), "false", "{id}");
+        }
+        // Un « false » explicite reste respecté
+        assert_eq!(run(&[("PREDICTED", "false"), (hints, "in-silico.msp")]), "false");
     }
 
     #[test]
