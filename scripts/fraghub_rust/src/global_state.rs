@@ -41,7 +41,13 @@ impl GlobalState {
                 "COLLISIONENERGY".to_string(), "FORMULA".to_string(), "RT".to_string(), "IONMODE".to_string(),
                 "COMMENT".to_string(), "ENTROPY".to_string(), "CLASSYFIRE_SUPERCLASS".to_string(), "CLASSYFIRE_CLASS".to_string(),
                 "CLASSYFIRE_SUBCLASS".to_string(), "NPCLASS_PATHWAY".to_string(), "NPCLASS_SUPERCLASS".to_string(),
-                "NPCLASS_CLASS".to_string(), "NUM PEAKS".to_string(), "PEAKS_LIST".to_string()
+                "NPCLASS_CLASS".to_string(), "NUM PEAKS".to_string(), "PEAKS_LIST".to_string(),
+                // Clé interne, jamais écrite : autres champs qui décrivent l'instrument (MoNA « mass analyzer »,
+                // « chromatography type »...), lus par normalize_instruments_and_resolution puis retirés
+                crate::globals_vars::INSTRUMENT_HINTS_KEY.to_string(),
+                // Clé interne, jamais écrite : champs qui peuvent dire qu'un spectre est in silico (origin, tags et
+                // bibliothèque MoNA), lus par normalize_predicted puis retirés
+                crate::globals_vars::IN_SILICO_HINTS_KEY.to_string()
             ],
             instrument_tree: serde_json::Value::Null,
         }
