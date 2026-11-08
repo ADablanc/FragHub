@@ -128,17 +128,35 @@ fn parse_msp_spectrum(spectrum: &str, keys_dict: &HashMap<String, String>) -> Op
                 // Champs « computed » (MoNA : "computed SMILES=...", recalculés par MoNA) : gardés
                 // seulement à défaut de la valeur d'origine, comme en JSON (avant : écartés)
                 let mut computed: Vec<(String, String)> = Vec::new();
-                for (k_raw, v_raw) in new_matches {
+                let fields: Vec<(bool, String, String)> = new_matches.into_iter().map(|(k_raw, v_raw)| {
                     let is_computed = crate::globals_vars::COMPUTED_PATTERN.is_match(&k_raw);
                     let k_raw = if is_computed { crate::globals_vars::COMPUTED_PATTERN.replace_all(&k_raw, "").into_owned() } else { k_raw };
                     let k = crate::globals_vars::METADATA_FIELDS_NAME_PATTERN.replace_all(&k_raw, "").to_lowercase().trim().to_string();
                     let v = crate::globals_vars::METADATA_STRIP_VALUE_PATTERN.replace_all(&v_raw, "").to_string();
-                    if is_computed {
-                        computed.push((k, v));
+                    (is_computed, k, v)
+                }).collect();
+                // MSP MoNA : la ligne "PrecursorMZ:" donne parfois la masse CALCULÉE de l'adduit (même texte qu'un
+                // "computed [2M-H]-=..." des Comments), la masse mesurée étant dans les Comments ("pepmass=...").
+                // Une valeur de m/z précurseur identique à une valeur calculée est donc traitée comme calculée :
+                // gardée seulement à défaut d'une valeur d'origine (comme en JSON, où MoNA la marque "computed").
+                let computed_values: HashSet<&str> = fields.iter()
+                    .filter(|(c, _, _)| *c).map(|(_, _, v)| v.trim()).filter(|v| !v.is_empty()).collect();
+                let mut moved: Vec<(String, String)> = Vec::new();
+                for (is_computed, k, v) in &fields {
+                    let same_as_computed = !*is_computed && !computed_values.is_empty()
+                        && keys_dict.get(k).map_or(false, |m| m == "PRECURSORMZ")
+                        && computed_values.contains(v.trim());
+                    if *is_computed {
+                        computed.push((k.clone(), v.clone()));
+                    } else if same_as_computed {
+                        moved.push((k.clone(), v.clone()));
                     } else {
-                        metadata_dict.insert(k, v);
+                        metadata_dict.insert(k.clone(), v.clone());
                     }
                 }
+                // Valeurs calculées déguisées d'abord (même place qu'avant parmi les replis), puis les "computed"
+                moved.extend(computed);
+                let computed = moved;
                 for (k, v) in computed {
                     metadata_dict.insert_if_absent(k, v);
                 }
@@ -269,6 +287,22 @@ mod tests {
         assert_eq!(parsed.peaks, vec![(100.12, 150000.0), (250.0, 0.3), (300.0, 2000.0), (350.5, 0.0), (400.0, -100.0)]);
         let kept = crate::peaks_filters::filters::remove_non_positive_peaks(parsed.peaks);
         assert_eq!(kept, vec![(100.12, 150000.0), (250.0, 0.3), (300.0, 2000.0)]);
+    }
+
+    #[test]
+    fn precursormz_calcule_par_mona_en_repli() {
+        // Extrait réel du MSP MoNA (Enveda028909) : PrecursorMZ = valeur calculée de [2M-H]-, pepmass = mesurée
+        let k = [("precursormz", "PRECURSORMZ"), ("pepmass", "PRECURSORMZ"), ("precursor m/z", "PRECURSORMZ"), ("db", "SPECTRUMID")];
+        let spec = "FILENAME: mona.msp\nName: X\nDB#: Enveda028909\nPrecursor_type: [2M-H]-\nPrecursorMZ: 509.236536048\nComments: \"computed [M-H]-=254.114630024\" \"computed [2M-H]-=509.236536048\" \"pepmass=509.236763\"\nNum Peaks: 1\n100 1\n";
+        assert_eq!(mapped(spec, &k)["PRECURSORMZ"], "509.236763");
+        // Pas de valeur mesurée dans les Comments : la valeur calculée reste (rien de perdu)
+        let spec2 = spec.replace(" \"pepmass=509.236763\"", "");
+        assert_eq!(mapped(&spec2, &k)["PRECURSORMZ"], "509.236536048");
+        // LipidBlast2022_006705 : PrecursorMZ d'origine, différent de la valeur calculée : gardé
+        let spec3 = "FILENAME: mona.msp\nName: X\nPrecursorMZ: 1746.20819\nComments: \"computed [M-H]-=1746.20873173\"\nNum Peaks: 1\n100 1\n";
+        assert_eq!(mapped(spec3, &k)["PRECURSORMZ"], "1746.20819");
+        // Sans Comments : inchangé
+        assert_eq!(mapped("FILENAME: a.msp\nName: X\nPrecursorMZ: 300.1\nNum Peaks: 1\n100 1\n", &k)["PRECURSORMZ"], "300.1");
     }
 
     #[test]
