@@ -14,6 +14,17 @@ use std::collections::HashMap;
 pub fn normalize_ionization(mut metadata_dict: HashMap<String, String>) -> HashMap<String, String> {
     let mut found_mode: Option<String> = None;
 
+    // Valeur d'origine gardée pour la recherche d'instrument (étape suivante), qui ne verrait sinon que la
+    // valeur réécrite : GNPS JSON "Ion_Source: LC-ESI" devenait "ESI", le LC était perdu ("ESI-FT" au lieu
+    // de "LC-ESI-FT" comme le MSP GNPS). Clé interne INSTRUMENT_HINTS, jamais écrite.
+    if let Some(raw) = metadata_dict.get("IONIZATION").map(|s| s.trim().to_string()) {
+        if !raw.is_empty() {
+            let e = metadata_dict.entry(crate::globals_vars::INSTRUMENT_HINTS_KEY.to_string()).or_default();
+            if !e.is_empty() { e.push(' '); }
+            e.push_str(&raw);
+        }
+    }
+
     // 1. Chercher d'abord dans IONIZATION
     // On extrait la valeur. Si elle n'existe pas, le bloc est ignoré sans générer d'erreur KeyError.
     if let Some(ion) = metadata_dict.get("IONIZATION") {
@@ -52,4 +63,28 @@ pub fn normalize_ionization(mut metadata_dict: HashMap<String, String>) -> HashM
     }
 
     metadata_dict
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn ionisation_d_origine_gardee_pour_l_instrument() {
+        // GNPS JSON : "Ion_Source: LC-ESI" -> IONIZATION "ESI", mais "LC-ESI" reste visible pour l'instrument
+        let m: HashMap<String, String> = [("IONIZATION".to_string(), "LC-ESI".to_string()),
+            (crate::globals_vars::INSTRUMENT_HINTS_KEY.to_string(), "".to_string())].into_iter().collect();
+        let m = normalize_ionization(m);
+        assert_eq!(m["IONIZATION"], "ESI");
+        assert_eq!(m[crate::globals_vars::INSTRUMENT_HINTS_KEY], "LC-ESI");
+        // Indices déjà présents : mis bout à bout
+        let m: HashMap<String, String> = [("IONIZATION".to_string(), "LC-ESI".to_string()),
+            (crate::globals_vars::INSTRUMENT_HINTS_KEY.to_string(), "Triple_Quad".to_string())].into_iter().collect();
+        assert_eq!(normalize_ionization(m)[crate::globals_vars::INSTRUMENT_HINTS_KEY], "Triple_Quad LC-ESI");
+        // Pas d'ionisation : pas d'indice ajouté
+        let m: HashMap<String, String> = [("INSTRUMENTTYPE".to_string(), "LC-ESI-QTOF".to_string())].into_iter().collect();
+        let m = normalize_ionization(m);
+        assert_eq!(m["IONIZATION"], "ESI");
+        assert!(!m.contains_key(crate::globals_vars::INSTRUMENT_HINTS_KEY));
+    }
 }
