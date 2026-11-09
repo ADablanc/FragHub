@@ -48,8 +48,9 @@ pub fn normalize_values(
     metadata_dict = metadata_opt.unwrap();
 
     // 4. Standardise le statut in-silico (prédit). AVANT la normalisation des instruments, pour lire INSTRUMENTTYPE
-    //    tel qu'il est dans le fichier (ex. LipidBlast : "in-silico QTOF"). Les étapes suivantes ne lisent ni ne
-    //    modifient COMMENT, FILENAME et PREDICTED ; seule l'étape 8 modifie NAME (fin du nom : énergie, InChIKey, adduit).
+    //    tel qu'il est dans le fichier (ex. LipidBlast : "in-silico QTOF"). Les étapes suivantes ne modifient ni
+    //    COMMENT, ni FILENAME, ni PREDICTED ; seule l'étape 8 modifie NAME (fin du nom : énergie, InChIKey, adduit)
+    //    et lit COMMENT (énergie de collision).
     metadata_dict = super::normalize_predicted::normalize_predicted(metadata_dict);
     // Liste interne de toutes les lignes "Synon:", lue seulement par normalize_predicted
     metadata_dict.remove(crate::globals_vars::ALL_SYNONS_KEY);
@@ -68,6 +69,8 @@ pub fn normalize_values(
     //    Adduit vide : lu à la fin du nom s'il y est écrit (MGF GNPS : "Hectochlorin M+Na"), puis
     //    normalisation du type de précurseur (adduct)
     metadata_dict = super::normalize_name::clean_name_suffixes(metadata_dict);
+    //    Énergie de collision toujours vide : lue dans le commentaire, sous une écriture sans ambiguïté
+    metadata_dict = super::normalize_name::collision_energy_from_comment(metadata_dict);
     metadata_dict = super::normalize_adduct::adduct_from_name_if_missing(metadata_dict, context);
     let empty = |d: &HashMap<String, String>, k: &str| d.get(k).map_or(true, |v| v.trim().is_empty());
     if empty(&metadata_dict, "NAME") && empty(&metadata_dict, "PRECURSORTYPE") {
