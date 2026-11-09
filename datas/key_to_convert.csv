@@ -289,3 +289,8 @@ collisiontype;fragmentationmethode
 mstype;mslevel
 monoisotopic mass;exactmass
 spectrum analyzer type;instrument_hints
+collision energy voltage;collisionenergy
+collision energy level;collisionenergy
+stepped nce;collisionenergy
+hcd;collisionenergy
+collision energies;collisionenergy
