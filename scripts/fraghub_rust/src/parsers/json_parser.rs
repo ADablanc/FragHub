@@ -80,14 +80,44 @@ fn scalar_list(val: &serde_json::Value) -> Option<String> {
     Some(parts.join(", "))
 }
 
+/// Champ « "clé=valeur" » d'un commentaire MoNA écrit en liste ("\"compound id=MX_C1_210\" \"retention time=2.2957\"").
+static QUOTED_SUB_FIELD: once_cell::sync::Lazy<regex::Regex> =
+    once_cell::sync::Lazy::new(|| regex::Regex::new(r#""([^"=]+)=([^"]*)""#).unwrap());
+
+/// Commentaire MoNA écrit comme une liste d'au moins deux champs « "clé=valeur" » : ces champs, comme le
+/// parseur MSP les lit dans le champ Comments ; vide sinon (commentaire en texte libre, gardé tel quel).
+/// Un nom « computed ... » est marqué calculé (valeur de repli), comme en MSP.
+/// MoNA JSON écrit la liste sans le guillemet du début ni celui de la fin
+/// (`computed SMILES=…" "author=…" … "MoNA Rating=4.6`) : ils sont remis avant la lecture.
+fn comment_sub_fields(raw: &str) -> Vec<(bool, String, String)> {
+    let t = raw.trim();
+    let quoted = format!("{}{}{}", if t.starts_with('"') { "" } else { "\"" }, t, if t.ends_with('"') { "" } else { "\"" });
+    let found: Vec<(bool, String, String)> = QUOTED_SUB_FIELD.captures_iter(&quoted).filter_map(|c| {
+        let key = c[1].trim().to_lowercase();
+        let is_computed = crate::globals_vars::COMPUTED_PATTERN.is_match(&key);
+        let key = if is_computed { crate::globals_vars::COMPUTED_PATTERN.replace_all(&key, "").trim().to_string() } else { key };
+        (!key.is_empty()).then(|| (is_computed, key, c[2].trim().to_string()))
+    }).collect();
+    if found.len() >= 2 { found } else { Vec::new() }
+}
+
 /// Lit une liste MoNA [{name, value, computed}] : valeur texte ou nombre. Les entrées « computed: true »
 /// sont mises dans `computed` (valeurs de repli), les autres dans `metadata`.
 /// Le nom est débarrassé des espaces autour, comme en MSP (MoNA écrit "analytical method     " : le champ
 /// n'était relié à aucune clé).
-fn read_mona_metadata(items: &[serde_json::Value], metadata: &mut RawMetadata, computed: &mut Vec<(String, String)>) {
+/// Un commentaire écrit en liste « "clé=valeur" » est aussi lu champ par champ, comme en MSP : ses champs vont
+/// dans `from_comments`, utilisés seulement à défaut d'un vrai champ (MoNA JSON : "retention time=2.2957" n'était
+/// lu qu'en MSP).
+fn read_mona_metadata(items: &[serde_json::Value], metadata: &mut RawMetadata, computed: &mut Vec<(String, String)>,
+                      from_comments: &mut Vec<(bool, String, String)>) {
     for item in items {
         if let Some(name) = item["name"].as_str() {
             let name_lower = name.trim().to_lowercase();
+            if let Some(raw) = item["value"].as_str() {
+                if crate::globals_vars::COMMENT_PATTERN.is_match(&name_lower) {
+                    from_comments.extend(comment_sub_fields(raw));
+                }
+            }
             let val = if let Some(val) = item["value"].as_str() {
                 strip_value(val)
             } else if let Some(val) = item["value"].as_f64() {
@@ -156,9 +186,10 @@ fn parse_json_spectrum(json_str: &str) -> Option<ParsedJsonSpectrum> {
         // gardées de côté et utilisées seulement à défaut de la valeur d'origine (voir plus bas).
         // Avant, un SMILES « computed » (sans stéréochimie) remplaçait celui du déposant.
         let mut computed: Vec<(String, String)> = Vec::new();
+        let mut from_comments: Vec<(bool, String, String)> = Vec::new();
 
         if let Some(meta) = v["compound"].get(0).and_then(|c| c["metaData"].as_array()) {
-            read_mona_metadata(meta, &mut metadata, &mut computed);
+            read_mona_metadata(meta, &mut metadata, &mut computed, &mut from_comments);
         }
 
         // Extraction de la classification (MoNA utilise ClassyFire par défaut)
@@ -176,7 +207,7 @@ fn parse_json_spectrum(json_str: &str) -> Option<ParsedJsonSpectrum> {
         if let Some(id) = v["id"].as_str() { metadata.insert("spectrum_id".to_string(), id.to_string()); }
 
         if let Some(meta) = v["metaData"].as_array() {
-            read_mona_metadata(meta, &mut metadata, &mut computed);
+            read_mona_metadata(meta, &mut metadata, &mut computed, &mut from_comments);
         }
 
         // Tag « In-Silico » : spectre prédit. Sans ce tag, PREDICTED n'est pas rempli (avant : « false »), pour
@@ -212,8 +243,12 @@ fn parse_json_spectrum(json_str: &str) -> Option<ParsedJsonSpectrum> {
             peaks = parse_json_peak_list_rust(spec);
         }
 
-        // Valeurs « computed » en dernier : seulement là où il n'y a pas de valeur d'origine
-        // (ni même champ, ni synonyme rempli avant : elles passent après tous les autres champs)
+        // Champs lus dans un commentaire en liste, puis valeurs « computed » en dernier : seulement là où il
+        // n'y a pas de valeur d'origine (ni même champ, ni synonyme rempli avant : ils passent après tous les
+        // autres champs)
+        for (is_computed, name, val) in from_comments {
+            if is_computed { computed.push((name, val)); } else { metadata.insert_if_absent(name, val); }
+        }
         for (name, val) in computed {
             metadata.insert_if_absent(name, val);
         }
@@ -369,6 +404,27 @@ mod tests {
                     {"name":"spectral entropy","value":4.12,"computed":true}],
         "tags":[{"text":"MassBank"}],
         "spectrum":"100:3.1 101:1.2"}"#;
+
+    #[test]
+    fn mona_commentaire_en_liste_lu_champ_par_champ() {
+        // MoNA_0002464 : "comments" = "computed SMILES=…\" \"compound id=MX_C1_210\" \"retention time=2.2957\" …
+        // \"MoNA Rating=4.6" (sans guillemet au début ni à la fin ; lu en MSP, pas en JSON)
+        let keys = [("retention time", "RT"), ("exact mass", "EXACTMASS"), ("spectral entropy", "ENTROPY")];
+        let with = |comments: &str| MONA.replace(r#"{"name":"spectral entropy""#,
+            &format!(r#"{{"name":"comments","value":{},"computed":false}},{{"name":"spectral entropy""#, serde_json::to_string(comments).unwrap()));
+        let out = mapped(&with(r#"computed exact mass=1.0" "compound id=MX_C1_210" "retention time=2.2957"#), "mona.json", &keys);
+        assert_eq!(out["RT"], "2.2957");
+        // Même liste écrite avec tous ses guillemets
+        let out = mapped(&with(r#""compound id=MX_C1_210" "retention time=2.2957""#), "mona.json", &keys);
+        assert_eq!(out["RT"], "2.2957");
+        // Un vrai champ passe devant (masse exacte d'origine), le « computed » du commentaire n'est qu'un repli
+        assert_eq!(out["EXACTMASS"], "424.06888");
+        // Texte libre ou un seul champ : pas de découpage
+        let out = mapped(&with("acquired with retention time=5 min"), "mona.json", &keys);
+        assert!(!out.contains_key("RT"));
+        let out = mapped(&with(r#""retention time=2.2957""#), "mona.json", &keys);
+        assert!(!out.contains_key("RT"));
+    }
 
     #[test]
     fn mona_valeur_d_origine_gardee_computed_en_repli() {
