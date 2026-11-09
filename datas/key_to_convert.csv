@@ -281,3 +281,11 @@ analytical method;in_silico_hints
 analytical me;in_silico_hints
 analh;in_silico_hints
 mona_other_names;in_silico_hints
+msn observed rt;rt
+ionization method;ionization
+fragmentation mode;fragmentationmethode
+fragmentation method;fragmentationmethode
+collisiontype;fragmentationmethode
+mstype;mslevel
+monoisotopic mass;exactmass
+spectrum analyzer type;instrument_hints

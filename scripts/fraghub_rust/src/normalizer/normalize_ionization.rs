@@ -1,7 +1,7 @@
 // src/normalizer/normalize_ionization.rs
 use std::collections::HashMap;
 
-/// Normalise le mode d'ionisation en lisant IONIZATION ou INSTRUMENTTYPE.
+/// Normalise le mode d'ionisation en lisant IONIZATION, puis INSTRUMENTTYPE, puis IONMODE.
 ///
 /// Pour un développeur Python : Cette fonction illustre le "Pattern Matching" avec `if let`.
 /// C'est une façon très élégante de dire "Si ça contient quelque chose, extrait-le et exécute ce bloc".
@@ -49,7 +49,19 @@ pub fn normalize_ionization(mut metadata_dict: HashMap<String, String>) -> HashM
         }
     }
 
-    // 3. Application et correction
+    // 3. Sinon, dans IONMODE : MoNA range parfois la source d'ions dans « ionization mode » (« ESI »), relié à
+    //    IONMODE ; le mode positif / négatif est alors déduit plus loin de l'adduit, mais l'ESI était perdu
+    if found_mode.is_none() {
+        if let Some(mode) = metadata_dict.get("IONMODE") {
+            if let Some(caps) = crate::globals_vars::IONIZATION_MODE_PATTERN.captures(mode) {
+                if let Some(m) = caps.get(1) {
+                    found_mode = Some(m.as_str().to_uppercase());
+                }
+            }
+        }
+    }
+
+    // 4. Application et correction
     // `mut mode` permet de modifier la variable locale `mode` extraite du `Some()`.
     if let Some(mut mode) = found_mode {
         // Correction de la faute de frappe commune "ACPI" au lieu de "APCI"
@@ -86,5 +98,19 @@ mod tests {
         let m = normalize_ionization(m);
         assert_eq!(m["IONIZATION"], "ESI");
         assert!(!m.contains_key(crate::globals_vars::INSTRUMENT_HINTS_KEY));
+    }
+
+    #[test]
+    fn ionisation_lue_dans_le_mode_d_ionisation() {
+        // MoNA : « ionization mode: ESI » (relié à IONMODE), pas d'autre champ d'ionisation
+        let m: HashMap<String, String> = [("IONMODE".to_string(), "ESI".to_string())].into_iter().collect();
+        assert_eq!(normalize_ionization(m)["IONIZATION"], "ESI");
+        // Un vrai mode d'ionisation ne donne rien
+        let m: HashMap<String, String> = [("IONMODE".to_string(), "Positive".to_string())].into_iter().collect();
+        assert_eq!(normalize_ionization(m)["IONIZATION"], "");
+        // IONIZATION ou INSTRUMENTTYPE gardent la priorité
+        let m: HashMap<String, String> = [("IONMODE".to_string(), "ESI".to_string()),
+            ("INSTRUMENTTYPE".to_string(), "LC-APCI-QTOF".to_string())].into_iter().collect();
+        assert_eq!(normalize_ionization(m)["IONIZATION"], "APCI");
     }
 }

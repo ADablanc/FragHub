@@ -6,7 +6,35 @@ use std::fs;
 use std::path::Path;
 use csv::WriterBuilder;
 
+/// Colonnes jamais complétées depuis un doublon : elles décrivent le spectre gardé lui-même (fichier, base,
+/// identifiant, empreinte, statut in silico, commentaire) ou sont recalculées plus loin (entropie, pics).
+const NOT_FILLED_FROM_DUPLICATES: [&str; 11] = ["FILENAME", "DATABASE_NAME", "FILEHASH", "SPECTRUMID", "SPLASH",
+    "INCHIKEY", "PREDICTED", "COMMENT", "ENTROPY", "NUM PEAKS", "PEAKS_LIST"];
+
+fn is_blank(v: Option<&String>) -> bool {
+    v.map_or(true, |s| { let t = s.trim(); t.is_empty() || t.eq_ignore_ascii_case("nan") })
+}
+
+/// Valeurs à copier dans le spectre gardé depuis ses doublons supprimés (mêmes pics, même molécule) :
+/// seulement pour ses colonnes vides, avec la première valeur non vide des doublons (dans l'ordre de lecture).
+/// Aucune valeur existante n'est remplacée. Avant, le doublon gardé (celui qui avait le plus de caractères de
+/// métadonnées) pouvait ne pas avoir le temps de rétention ou l'énergie de collision que l'autre avait
+/// (Metaboanalyst NEG : 283 RT et 61 énergies perdus sur 2 744 doublons).
+fn values_from_duplicates(kept: &HashMap<String, String>, removed: &[&HashMap<String, String>], columns: &[String]) -> Vec<(String, String)> {
+    let mut fills = Vec::new();
+    for col in columns {
+        if NOT_FILLED_FROM_DUPLICATES.contains(&col.as_str()) || !is_blank(kept.get(col)) {
+            continue;
+        }
+        if let Some(v) = removed.iter().filter_map(|m| m.get(col)).find(|v| !is_blank(Some(v))) {
+            fills.push((col.clone(), v.trim().to_string()));
+        }
+    }
+    fills
+}
+
 /// Supprime les doublons (spectres identiques) en gardant celui qui contient le plus de métadonnées.
+/// Les colonnes vides du spectre gardé sont complétées avec les valeurs de ses doublons (`values_from_duplicates`).
 ///
 /// Pour un développeur Python : Retirer des doublons est très long si c'est mal optimisé (`drop_duplicates` etc.).
 /// En Rust, on fait un seul passage (`O(N)`) sur les spectres. On calcule la taille (en caractères)
@@ -36,6 +64,8 @@ pub fn remove_duplicatas_processing(
     // spectre gardé restait connue, et le rapport ne pouvait montrer aucun recoupement entre bases)
     let mut group_dbs: HashMap<(String, String), BTreeSet<String>> = HashMap::new();
     let mut empty_inchi_indices: Vec<usize> = Vec::new();
+    // Groupe (SPLASH, INCHIKEY) de chaque spectre, pour compléter le gagnant avec ses doublons
+    let mut group_of: Vec<Option<(String, String)>> = vec![None; total_items];
 
     let mut processed = 0;
 
@@ -54,6 +84,7 @@ pub fn remove_duplicatas_processing(
             empty_inchi_indices.push(i);
         } else {
             let key = (splash, inchikey);
+            group_of[i] = Some(key.clone());
             let db = spec.metadata.get("DATABASE_NAME").map(|s| s.trim().to_string()).unwrap_or_default();
             group_dbs.entry(key.clone()).or_default().insert(db);
             if let Some(&(_, best_size)) = best_indices.get(&key) {
@@ -130,10 +161,33 @@ pub fn remove_duplicatas_processing(
         }
     }
 
+    // Valeurs reprises des doublons pour les colonnes vides de chaque gagnant
+    let mut removed_by_group: HashMap<&(String, String), Vec<&HashMap<String, String>>> = HashMap::new();
+    for &idx in &indices_to_delete {
+        if let Some(key) = &group_of[idx] {
+            removed_by_group.entry(key).or_default().push(&spectrum_list[idx].metadata);
+        }
+    }
+    let mut fills_by_winner: HashMap<usize, Vec<(String, String)>> = HashMap::new();
+    for (key, removed) in &removed_by_group {
+        if let Some(&(winner, _)) = best_indices.get(*key) {
+            let fills = values_from_duplicates(&spectrum_list[winner].metadata, removed, &ordered_columns);
+            if !fills.is_empty() {
+                fills_by_winner.insert(winner, fills);
+            }
+        }
+    }
+    drop(removed_by_group);
+
     let mut final_list = Vec::with_capacity(indices_to_keep.len());
     let mut current_idx = 0;
     for mut spec in spectrum_list.into_iter() {
         if indices_to_keep.contains(&current_idx) {
+            if let Some(fills) = fills_by_winner.remove(&current_idx) {
+                for (col, val) in fills {
+                    spec.metadata.insert(col, val);
+                }
+            }
             if let Some(list) = all_dbs.remove(&current_idx) {
                 spec.metadata.insert(crate::globals_vars::ALL_DATABASE_NAMES_KEY.to_string(), list);
             }
@@ -146,4 +200,29 @@ pub fn remove_duplicatas_processing(
     if let Some(cb) = &progress_callback { cb.call1(py, (total_items,))?; }
 
     Ok((final_list, indices_to_delete.len()))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn meta(pairs: &[(&str, &str)]) -> HashMap<String, String> {
+        pairs.iter().map(|(k, v)| (k.to_string(), v.to_string())).collect()
+    }
+
+    #[test]
+    fn colonnes_vides_completees_par_les_doublons() {
+        // Cas Metaboanalyst NEG : le doublon gardé n'a pas le RT ni l'énergie, l'autre les a
+        let cols: Vec<String> = ["SPECTRUMID", "COMMENT", "RT", "COLLISIONENERGY", "INSTRUMENTTYPE", "NAME"].iter().map(|s| s.to_string()).collect();
+        let kept = meta(&[("SPECTRUMID", "RIKENPlaSMA004441"), ("RT", ""), ("COLLISIONENERGY", "nan"), ("INSTRUMENTTYPE", "LC-ESI-QTOF"), ("NAME", "Rutin")]);
+        let a = meta(&[("SPECTRUMID", "PR1"), ("COMMENT", "autre"), ("RT", "  "), ("COLLISIONENERGY", "45"), ("INSTRUMENTTYPE", "ESI-QFT")]);
+        let b = meta(&[("SPECTRUMID", "PR2"), ("RT", "4.518883"), ("COLLISIONENERGY", "20")]);
+        let mut fills = values_from_duplicates(&kept, &[&a, &b], &cols);
+        fills.sort();
+        // RT : première valeur non vide (b) ; énergie : premier doublon (a) ; instrument et nom gardés ;
+        // identifiant et commentaire jamais repris
+        assert_eq!(fills, vec![("COLLISIONENERGY".to_string(), "45".to_string()), ("RT".to_string(), "4.518883".to_string())]);
+        // Rien à compléter
+        assert!(values_from_duplicates(&kept, &[], &cols).is_empty());
+    }
 }
