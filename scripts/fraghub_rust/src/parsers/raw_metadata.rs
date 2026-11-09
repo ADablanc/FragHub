@@ -170,6 +170,12 @@ impl RawMetadata {
                             && !is_inchikey(old) && is_inchikey(&value) => {
                             target.insert(mapped.clone(), value);
                         }
+                        // COLLISIONENERGY : une valeur chiffrée passe devant une valeur qui n'a pas de chiffre
+                        // (MoNA / HMDB : « collision energy level: high » avant « collision energy voltage: 40 »)
+                        Some(old) if mapped == "COLLISIONENERGY" && filled.contains(mapped)
+                            && !has_digit(old) && has_digit(&value) => {
+                            target.insert(mapped.clone(), value);
+                        }
                         Some(_) => {}
                     }
                 }
@@ -215,6 +221,10 @@ const READER_KEYS: &[&str] = &["filename", "filehash"];
 
 /// Valeur vide ou « vide » écrit (N/A, nan, unknown, 0...) : même règle que normalize_empties.
 /// Valeur qui a la forme d'une InChIKey (guillemets et espaces autour ignorés).
+fn has_digit(v: &str) -> bool {
+    v.chars().any(|c| c.is_ascii_digit())
+}
+
 fn is_inchikey(v: &str) -> bool {
     crate::globals_vars::INCHIKEY_FULL_PATTERN.is_match(v.trim().trim_matches('"').trim())
 }
@@ -263,6 +273,25 @@ mod tests {
         let mut out = HashMap::new();
         raw.map_into(&k, |_| true, &mut out);
         assert_eq!(out["INCHIKEY"], "NYHBQMYGNKIUIF-UHFFFAOYSA-N");
+    }
+
+    #[test]
+    fn energie_chiffree_preferee_a_un_niveau_en_texte() {
+        // MoNA (HMDB) : « collision energy level » (low / med / high) et « collision energy voltage »
+        let k: HashMap<String, String> = [("collision energy level", "COLLISIONENERGY"), ("collision energy voltage", "COLLISIONENERGY")]
+            .iter().map(|(a, b)| (a.to_string(), b.to_string())).collect();
+        let mut raw = RawMetadata::default();
+        raw.insert("collision energy level".into(), "high".into());
+        raw.insert("collision energy voltage".into(), "40".into());
+        let mut out = HashMap::new();
+        raw.map_into(&k, |_| true, &mut out);
+        assert_eq!(out["COLLISIONENERGY"], "40");
+        // Niveau seul : gardé
+        let mut raw = RawMetadata::default();
+        raw.insert("collision energy level".into(), "low".into());
+        let mut out = HashMap::new();
+        raw.map_into(&k, |_| true, &mut out);
+        assert_eq!(out["COLLISIONENERGY"], "low");
     }
 
     #[test]
