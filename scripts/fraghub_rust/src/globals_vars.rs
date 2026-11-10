@@ -181,6 +181,11 @@ pub static EMPTY_PATTERN: Lazy<Regex> = Lazy::new(|| {
 
 // Spectre GC (ou EI, ionisation électronique, en masse nominale et sans adduit) : "GC" ou "EI" en MOTS ENTIERS
 // dans le type d'instrument ("GC-EI-TOF", "EI-B", "EI-EBEB", "GC-APCI-QTOF"…).
+/// Ionisation chimique NÉGATIVE (GC-NCI, ECNI...) : ions négatifs, exception à la règle « GC = positif ».
+pub static NEGATIVE_CI_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(
+    r"(?i)\b(?:NCI|ECNI|NICI|ENCI)\b|negative[\s_-]*(?:ion[\s_-]*)?chemical[\s_-]*ionization|electron[\s_-]*capture[\s_-]*(?:negative[\s_-]*)?ionization"
+).unwrap());
+
 pub static GC_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?i)\b(?:GC|EI)\b").unwrap());
 
 /// Règle UNIQUE « ce spectre est-il GC ? », utilisée partout (normalisation de l'adduit, contrôle de l'adduit,

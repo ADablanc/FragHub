@@ -61,16 +61,17 @@ pub fn normalize_ion_mode(mut metadata_dict: HashMap<String, String>) -> HashMap
 
 /// Mode d'ionisation absent ou illisible : on le déduit du signe de l'adduit (déjà normalisé).
 /// Avant, ces spectres arrivaient au splitter sans mode et y disparaissaient sans laisser de trace.
-/// Spectre GC sans adduit exploitable : positif (l'ionisation électronique donne des ions positifs).
+/// Spectre GC sans adduit exploitable : positif (l'ionisation électronique donne des ions positifs), SAUF en
+/// ionisation chimique négative (`negative_ci`, cas rare : NCI / ECNI, ions négatifs), où l'on ne devine pas.
 /// Sinon IONMODE reste tel quel et check_for_bad_adduct supprime le spectre (avec un motif).
-pub fn ion_mode_from_adduct_if_missing(mut metadata_dict: HashMap<String, String>) -> HashMap<String, String> {
+pub fn ion_mode_from_adduct_if_missing(mut metadata_dict: HashMap<String, String>, negative_ci: bool) -> HashMap<String, String> {
     let known = matches!(metadata_dict.get("IONMODE").map(|s| s.as_str()), Some("positive") | Some("negative"));
     if !known {
         let from_adduct = metadata_dict.get("PRECURSORTYPE").and_then(|a| ion_mode_from_adduct(a));
         let mode = from_adduct.or_else(|| {
             let filename = crate::globals_vars::input_filename(&metadata_dict);
             let instrument_type = metadata_dict.get("INSTRUMENTTYPE").map(|s| s.as_str()).unwrap_or("");
-            crate::globals_vars::is_gc_spectrum(filename, instrument_type).then_some("positive")
+            (crate::globals_vars::is_gc_spectrum(filename, instrument_type) && !negative_ci).then_some("positive")
         });
         if let Some(mode) = mode {
             metadata_dict.insert("IONMODE".to_string(), mode.to_string());
@@ -123,23 +124,37 @@ mod tests {
 
     #[test]
     fn deduction_seulement_si_le_mode_manque() {
-        let m = ion_mode_from_adduct_if_missing(with(&[("IONMODE", ""), ("PRECURSORTYPE", "[M+H]+")]));
+        let m = ion_mode_from_adduct_if_missing(with(&[("IONMODE", ""), ("PRECURSORTYPE", "[M+H]+")]), false);
         assert_eq!(m["IONMODE"], "positive");
-        let m = ion_mode_from_adduct_if_missing(with(&[("PRECURSORTYPE", "[M-H]-")]));
+        let m = ion_mode_from_adduct_if_missing(with(&[("PRECURSORTYPE", "[M-H]-")]), false);
         assert_eq!(m["IONMODE"], "negative");
-        let m = ion_mode_from_adduct_if_missing(with(&[("IONMODE", "E"), ("PRECURSORTYPE", "[M+H]+")]));
+        let m = ion_mode_from_adduct_if_missing(with(&[("IONMODE", "E"), ("PRECURSORTYPE", "[M+H]+")]), false);
         assert_eq!(m["IONMODE"], "positive");
         // Mode déjà connu : jamais remplacé (l'incohérence éventuelle est traitée par check_for_bad_adduct)
-        let m = ion_mode_from_adduct_if_missing(with(&[("IONMODE", "negative"), ("PRECURSORTYPE", "[M+H]+")]));
+        let m = ion_mode_from_adduct_if_missing(with(&[("IONMODE", "negative"), ("PRECURSORTYPE", "[M+H]+")]), false);
         assert_eq!(m["IONMODE"], "negative");
         // Pas d'adduit exploitable : inchangé
-        let m = ion_mode_from_adduct_if_missing(with(&[("IONMODE", ""), ("PRECURSORTYPE", "")]));
+        let m = ion_mode_from_adduct_if_missing(with(&[("IONMODE", ""), ("PRECURSORTYPE", "")]), false);
         assert_eq!(m["IONMODE"], "");
         // Spectre GC sans mode ni adduit : positif d'office
-        let m = ion_mode_from_adduct_if_missing(with(&[("IONMODE", ""), ("PRECURSORTYPE", ""), ("INSTRUMENTTYPE", "GC-EI-TOF")]));
+        let m = ion_mode_from_adduct_if_missing(with(&[("IONMODE", ""), ("PRECURSORTYPE", ""), ("INSTRUMENTTYPE", "GC-EI-TOF")]), false);
         assert_eq!(m["IONMODE"], "positive");
         // Spectre GC dont l'adduit dit négatif : négatif
-        let m = ion_mode_from_adduct_if_missing(with(&[("IONMODE", ""), ("PRECURSORTYPE", "[M-H]-"), ("INSTRUMENTTYPE", "GC-APCI-QTOF")]));
+        let m = ion_mode_from_adduct_if_missing(with(&[("IONMODE", ""), ("PRECURSORTYPE", "[M-H]-"), ("INSTRUMENTTYPE", "GC-APCI-QTOF")]), false);
         assert_eq!(m["IONMODE"], "negative");
+        // Spectre GC en ionisation chimique négative, sans mode ni adduit : on ne devine pas
+        let m = ion_mode_from_adduct_if_missing(with(&[("IONMODE", ""), ("PRECURSORTYPE", ""), ("INSTRUMENTTYPE", "GC-EI-TOF")]), true);
+        assert_eq!(m["IONMODE"], "");
+    }
+
+    #[test]
+    fn ionisation_chimique_negative_reconnue() {
+        for t in ["NCI", "GC-NCI-Q", "ECNI", "NICI", "negative chemical ionization", "Negative-Ion Chemical Ionization",
+                  "electron capture negative ionization"] {
+            assert!(crate::globals_vars::NEGATIVE_CI_PATTERN.is_match(t), "{t}");
+        }
+        for t in ["EI", "CI", "PCI", "GC-EI-TOF", "positive chemical ionization", "ESI negative"] {
+            assert!(!crate::globals_vars::NEGATIVE_CI_PATTERN.is_match(t), "{t}");
+        }
     }
 }

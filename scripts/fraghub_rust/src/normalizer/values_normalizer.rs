@@ -61,6 +61,12 @@ pub fn normalize_values(
     // Liste interne de toutes les lignes "Synon:", lue seulement par normalize_predicted
     metadata_dict.remove(crate::globals_vars::ALL_SYNONS_KEY);
 
+    // Ionisation chimique négative écrite dans les champs d'origine (lus avant les étapes 5 et 6, qui les
+    // réécrivent ou les retirent) : exception à la règle « spectre GC sans mode = positif » de l'étape 9
+    let negative_ci = ["IONIZATION", "INSTRUMENTTYPE", "INSTRUMENT", crate::globals_vars::INSTRUMENT_HINTS_KEY].iter()
+        .filter_map(|k| metadata_dict.get(*k))
+        .any(|v| crate::globals_vars::NEGATIVE_CI_PATTERN.is_match(v));
+
     // 5. Normalise la méthode d'ionisation
     metadata_dict = super::normalize_ionization::normalize_ionization(metadata_dict);
 
@@ -102,7 +108,8 @@ pub fn normalize_values(
     metadata_dict = super::normalize_adduct::normalize_adduct(metadata_dict, context);
 
     // 9. Mode d'ionisation absent ou illisible : déduit du signe de l'adduit ("[M+H]+" -> positive)
-    metadata_dict = super::normalize_ionmode::ion_mode_from_adduct_if_missing(metadata_dict);
+    //    Spectre GC sans mode ni adduit : positif, sauf en ionisation chimique négative
+    metadata_dict = super::normalize_ionmode::ion_mode_from_adduct_if_missing(metadata_dict, negative_ci);
 
     // 10. Complète l'adduit (in silico sans adduit, forme courte "M") AVANT le recalcul du m/z, qui en a besoin
     metadata_dict = super::check_for_bad_adduct::complete_adduct(metadata_dict);
