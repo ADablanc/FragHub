@@ -405,6 +405,9 @@ mod tests {
         assert_eq!(ce("-10, -35, -60V"), "-10/-35/-60 V");
         assert_eq!(ce("-60,-40,-20"), "-60/-40/-20");
         assert_eq!(ce("10 20"), "10/20");
+        // Spectraverse, après lecture (rampe : champs 1 et 2 ; paliers : champs 1, 2, 3)
+        assert_eq!(ce("Ramp 20.0, 40.0"), "Ramp 20/40");
+        assert_eq!(ce("Stepped 5.361791, 8.042687, 10.723583"), "Stepped 5.361791/8.042687/10.723583");
         // GNPS : énergies collées
         assert_eq!(ce("102040"), "10/20/40");
     }
