@@ -33,7 +33,7 @@ fn main() -> ExitCode {
         }
     }
 
-    match builder::generate(&xlsx, &json, solutions.as_deref(), builder::KeyStyle::Search) {
+    match builder::generate(&xlsx, &json, solutions.as_deref()) {
         Ok(n) => {
             println!("{n} solutions écrites dans {}", json.display());
             if let Some(s) = &solutions { println!("Tableau des solutions : {}", s.display()); }
