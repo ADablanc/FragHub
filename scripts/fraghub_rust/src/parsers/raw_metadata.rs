@@ -41,7 +41,9 @@ pub fn keep_unit_from_key(raw_key: &str, value: String) -> String {
 ///   toujours gardé dans la clé interne INPUT_FILENAME (jamais écrite), lue par les règles qui
 ///   reconnaissent un fichier à son nom. FILEHASH reste celui du fichier d'entrée ;
 /// - énergies de collision numérotées (Spectraverse : COLLISION_ENERGY_1, _2, _3) : réunies en une
-///   seule valeur "e1, e2, e3" (valeurs vides ou "nan" ignorées), lue comme COLLISION_ENERGY_1.
+///   seule valeur "e1, e2, e3" (valeurs vides ou "nan" ignorées), lue comme COLLISION_ENERGY_1 ;
+///   d'après l'article Spectraverse, une rampe remplit les champs 1 et 2, des paliers les champs 1, 2 et 3 :
+///   "Ramp e1, e2" ou "Stepped e1, e2, e3" dans ces deux cas exactement, liste neutre sinon.
 #[derive(Default)]
 pub struct RawMetadata {
     values: HashMap<String, String>,
@@ -87,17 +89,28 @@ impl RawMetadata {
     }
 
     /// Réunit COLLISION_ENERGY_1, _2, _3... (Spectraverse) en une seule valeur dans COLLISION_ENERGY_1.
+    /// Champs 1 et 2 seuls remplis : rampe ; champs 1, 2 et 3 remplis : paliers (article Spectraverse).
     fn merge_numbered_collision_energies(&mut self) {
         let mut parts = Vec::new();
+        // Numéros des champs remplis
+        let mut filled = Vec::new();
         for i in 1..=9 {
             match self.values.get(&format!("collision_energy_{i}")) {
-                Some(v) if !is_empty_value(v) => parts.push(v.trim().to_string()),
+                Some(v) if !is_empty_value(v) => {
+                    parts.push(v.trim().to_string());
+                    filled.push(i);
+                }
                 Some(_) => {}
                 None => break,
             }
         }
         if !parts.is_empty() {
-            self.values.insert("collision_energy_1".to_string(), parts.join(", "));
+            let prefix = match filled.as_slice() {
+                [1, 2] => "Ramp ",
+                [1, 2, 3] => "Stepped ",
+                _ => "",
+            };
+            self.values.insert("collision_energy_1".to_string(), format!("{prefix}{}", parts.join(", ")));
         }
     }
 
@@ -429,7 +442,10 @@ mod tests {
             out.get("COLLISIONENERGY").cloned().unwrap_or_default()
         };
         assert_eq!(run(&[("collision_energy_1", "11.326204"), ("collision_energy_2", "nan"), ("collision_energy_3", "nan")]), "11.326204");
-        assert_eq!(run(&[("collision_energy_1", "5.36"), ("collision_energy_2", "8.04"), ("collision_energy_3", "10.72")]), "5.36, 8.04, 10.72");
+        // Champs 1, 2, 3 : paliers ; champs 1 et 2 : rampe ; autre combinaison : liste neutre
+        assert_eq!(run(&[("collision_energy_1", "5.36"), ("collision_energy_2", "8.04"), ("collision_energy_3", "10.72")]), "Stepped 5.36, 8.04, 10.72");
+        assert_eq!(run(&[("collision_energy_1", "20.0"), ("collision_energy_2", "40.0"), ("collision_energy_3", "nan")]), "Ramp 20.0, 40.0");
+        assert_eq!(run(&[("collision_energy_1", "20.0"), ("collision_energy_2", "nan"), ("collision_energy_3", "40.0")]), "20.0, 40.0");
         assert_eq!(run(&[("collision_energy_1", "nan"), ("collision_energy_2", "nan")]), "nan");
     }
 
