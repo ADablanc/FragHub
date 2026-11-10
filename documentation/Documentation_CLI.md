@@ -132,7 +132,7 @@ Specify which formats you want FragHub to generate at the end of the processing 
 | `--csv` | `yes` | Output data as tabular `.csv` files. |
 | `--msp` | `yes` | Output data as `.msp` spectral files. |
 | `--json` | `yes` | Output data as highly compacted `.json` files. |
-| `--mzspeclib_json` | `yes` | Also write the spectra in the [mzSpecLib](https://www.psidev.info/mzspeclib) JSON format, in `<output_directory>/mzSpecLib`. The conversion starts from the `.msp` files written by FragHub, so it requires `--msp yes`. |
+| `--mzspeclib_json` | `yes` | Also write the spectra in the [mzSpecLib](https://www.psidev.info/mzspeclib) JSON format, in `<output_directory>/mzSpecLib` (one library per `.mzSpecLib.json` file, with the PSI-MS terms of each FragHub field). Independent of the other output formats. |
 | `--reset_updates` | `no` | If `yes`, forces FragHub to ignore previously cleaned caches and run everything from scratch in the output directory. ⚠️ The content of the output directory is deleted first (including previous performance logs). |
 | `--write_perf_logs` | `no` | If `yes`, writes a performance log at the end of the run (see below). Same as the "Write perf logs" switch of the GUI. |
 
@@ -171,7 +171,6 @@ uv run python scripts/FragHub.py \
   --json yes \
   --mzspeclib_json no
 ```
-> `--mzspeclib_json no` is needed here: the mzSpecLib conversion starts from the `.msp` files, which are disabled.
 
 ### 4. Benchmarking a Run
 Writes a performance log in `/path/to/output_folder/PERF_LOGS`, named in the run history.
