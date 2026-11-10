@@ -408,6 +408,8 @@ mod tests {
         // Spectraverse, après lecture (rampe : champs 1 et 2 ; paliers : champs 1, 2, 3)
         assert_eq!(ce("Ramp 20.0, 40.0"), "Ramp 20/40");
         assert_eq!(ce("Stepped 5.361791, 8.042687, 10.723583"), "Stepped 5.361791/8.042687/10.723583");
+        assert_eq!(ce("Ramp 20.0, 40.0 eV"), "Ramp 20/40 eV");
+        assert_eq!(ce("11.326204 eV"), "11.326204 eV");
         // GNPS : énergies collées
         assert_eq!(ce("102040"), "10/20/40");
     }
