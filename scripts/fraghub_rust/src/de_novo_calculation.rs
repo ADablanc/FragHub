@@ -259,7 +259,10 @@ fn process_spectrum_peaks(formula: &str, peaks_list_str: &str, ppm_tol: f64, ion
                 let rounded_error = py_round(error_ppm, 2);
                 let formatted_error = py_format_float(rounded_error);
 
-                best_formula = format!("{}+/{}", format_hill_system(&ion_comp), formatted_error);
+                // Charge de l'ion : « - » en mode négatif (ion déprotoné, un H retiré ci-dessus), « + » sinon.
+                // Avant, « + » était écrit dans les deux cas.
+                let sign = if is_neg { '-' } else { '+' };
+                best_formula = format!("{}{}/{}", format_hill_system(&ion_comp), sign, formatted_error);
                 has_annotations = true;
                 break;
             }
