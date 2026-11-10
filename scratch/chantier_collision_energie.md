@@ -34,9 +34,10 @@ Normalisation de l'énergie de collision (COLLISIONENERGY) et de la méthode de 
   `15, 30, 45, 60, 70 or 90 (nominal)` (« or » : une seule de ces valeurs, pas une liste), MoNA
   `6V (MSn); Ramp 15V-35V (MSe)`, toute écriture non reconnue.
 
-Points encore ouverts :
-- spectraverse : rampe = champs 1 et 2, paliers = champs 1, 2, 3 ; aujourd'hui réunis de la même façon → liste
-  neutre ; à distinguer à la lecture plus tard. Valeurs en eV d'après l'article, mais écrites sans unité.
+- **spectraverse** (2026-11-10) : d'après l'article, rampe = champs 1 et 2, paliers = champs 1, 2, 3 ; écrit à la
+  lecture (`Ramp 20/40`, `Stepped 5.361791/8.042687/10.723583`), liste neutre pour toute autre combinaison.
+  Échantillon : 302 rampes, 142 paliers. Point ouvert : ajouter `eV` (unité donnée par l'article, absente du
+  fichier) ? décision d'Axel attendue.
 
 ## Méthode de fragmentation (FRAGMENTATIONMETHODE) — règles (2026-11-10)
 
