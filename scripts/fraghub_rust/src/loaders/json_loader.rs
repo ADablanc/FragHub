@@ -61,6 +61,7 @@ pub fn load_spectrum_list_json(
     let injection_prefix = format!(r#"{{"{}":"{}","{}":"{}","#, super::INJECTED_FILENAME, filename, super::INJECTED_FILEHASH, file_hash);
 
     loop {
+        crate::stop::check()?; // arrêt demandé (stop.rs)
         let buf = match reader.fill_buf() {
             Ok(b) => b,
             Err(e) => return Err(pyo3::exceptions::PyIOError::new_err(e.to_string())),

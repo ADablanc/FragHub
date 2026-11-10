@@ -58,6 +58,7 @@ pub fn mgf_to_dict_processing(
     // restait en mémoire jusqu'à la fin de la lecture, en plus des spectres lus)
     let mut remaining = final_mgf.into_iter();
     loop {
+        crate::stop::check()?; // arrêt demandé (stop.rs)
         let chunk: Vec<String> = remaining.by_ref().take(chunk_size).collect();
         if chunk.is_empty() {
             break;

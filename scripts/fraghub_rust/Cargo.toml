@@ -26,6 +26,8 @@ hashbrown = { version = "0.14", features = ["raw"] }
 mimalloc = { version = "0.1", default-features = false }
 # Passerelle vers RDKit en C++ (voir build.rs et src/rdkit_native)
 cxx = "1.0"
+# Ctrl+C dans le terminal (mode CLI) : arrêt propre du run (voir src/stop.rs)
+ctrlc = "3.4"
 
 [build-dependencies]
 cxx-build = "1.0"

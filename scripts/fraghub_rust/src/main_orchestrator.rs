@@ -1,6 +1,5 @@
 // src/main_orchestrator.rs
 use pyo3::prelude::*;
-use pyo3::exceptions::PyException;
 use std::time::SystemTime;
 use chrono::Local;
 
@@ -20,7 +19,7 @@ use crate::splitter::master_splitter;
 
 use crate::writers::{writting_csv_processing, writting_msp_processing, writting_json_processing, sending_mzspeclib_processing};
 use crate::report::generate_report_processing;
-use crate::set_projects::{init_project, reset_updates};
+use crate::set_projects::{init_project, reset_updates_for_run};
 use crate::deletion_report::DeletionReport;
 use crate::mz_correction::mz_correction_processing;
 
@@ -46,10 +45,15 @@ use crate::mz_correction::mz_correction_processing;
 /// * `mzspeclib_sink` (Option<PyObject>) : Objet Python qui écrit les fichiers mzSpecLib
 ///   (`mzspeclib_converter.MzSpecLibSink`) ; utilisé si le paramètre `mzspeclib_json` vaut 1.
 ///
+/// Arrêt : en plus de `stop_flag`, le bouton stop (`request_stop`) et Ctrl+C (`install_ctrl_c_handler`) lèvent un
+/// indicateur partagé (stop.rs) que toutes les boucles longues regardent : l'arrêt a lieu en moins d'une seconde.
+/// Si le run s'arrête ou échoue, le dossier de sortie est remis exactement comme avant le run (output_guard.rs).
+///
 /// # Returns
 /// * `PyResult<i32>` : 0 si le traitement a réussi.
 #[pyfunction]
 #[pyo3(signature = (parameters_dict, progress_callback=None, total_items_callback=None, prefix_callback=None, item_type_callback=None, step_callback=None, completion_callback=None, deletion_callback=None, stop_flag=None, mzspeclib_sink=None))]
+#[allow(clippy::too_many_arguments)]
 pub fn main_orchestrator(
     py: Python,
     parameters_dict: &pyo3::Bound<'_, pyo3::types::PyDict>,
@@ -63,12 +67,45 @@ pub fn main_orchestrator(
     stop_flag: Option<PyObject>,
     mzspeclib_sink: Option<PyObject>,
 ) -> PyResult<i32> {
+    crate::stop::reset_stop();
+    crate::output_guard::begin();
+    let result = run_orchestrator(py, parameters_dict, progress_callback, total_items_callback, prefix_callback, item_type_callback, step_callback, completion_callback, deletion_callback, stop_flag, mzspeclib_sink);
+    match &result {
+        Ok(_) => crate::output_guard::commit(),
+        Err(_) => {
+            // Arrêt ou erreur : dossier de sortie remis comme avant le run
+            let failed = py.allow_threads(crate::output_guard::rollback);
+            for f in failed {
+                eprintln!("[FragHub] Fichier de sortie non remis dans son état d'avant le run : {f}");
+            }
+        }
+    }
+    result
+}
 
+#[allow(clippy::too_many_arguments)]
+fn run_orchestrator(
+    py: Python,
+    parameters_dict: &pyo3::Bound<'_, pyo3::types::PyDict>,
+    progress_callback: Option<PyObject>,
+    total_items_callback: Option<PyObject>,
+    prefix_callback: Option<PyObject>,
+    item_type_callback: Option<PyObject>,
+    step_callback: Option<PyObject>,
+    completion_callback: Option<PyObject>,
+    deletion_callback: Option<PyObject>,
+    stop_flag: Option<PyObject>,
+    mzspeclib_sink: Option<PyObject>,
+) -> PyResult<i32> {
+
+    // Indicateur partagé (stop.rs), et indicateur Python d'avant (gardé : il lève aussi l'indicateur partagé)
     let check_stop_flag = || -> PyResult<()> {
+        crate::stop::check()?;
         if let Some(cb) = &stop_flag {
             let res = cb.call0(py)?;
             if res.is_truthy(py)? {
-                return Err(PyException::new_err("Process stopped by user."));
+                crate::stop::request();
+                return Err(crate::stop::error());
             }
         }
         Ok(())
@@ -86,7 +123,8 @@ pub fn main_orchestrator(
 
     let reset_updates_val: f64 = parameters_dict.get_item("reset_updates")?.unwrap().extract()?;
     if reset_updates_val == 1.0 {
-        reset_updates(output_directory.clone())?;
+        // Ancien contenu mis de côté (et non supprimé) : remis si le run s'arrête
+        reset_updates_for_run(&output_directory)?;
     }
     init_project(output_directory.clone())?;
 

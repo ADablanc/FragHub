@@ -91,6 +91,7 @@ pub fn remove_duplicatas_processing(
     });
 
     for (i, spec) in spectrum_list.iter().enumerate() {
+        crate::stop::check()?; // arrêt demandé (stop.rs)
         let row_size = row_sizes[i];
 
         let splash = spec.metadata.get("SPLASH").cloned().unwrap_or_default();
@@ -137,6 +138,8 @@ pub fn remove_duplicatas_processing(
         // On preserve l'historique des runs precedents (mode append, sans reset_updates) :
         // si le fichier existe deja, on ajoute les lignes a la suite au lieu de l'ecraser.
         let is_append = update && file_path.exists();
+        // Noté avant écriture : remis comme avant si le run s'arrête (output_guard.rs)
+        crate::output_guard::prepare(&file_path, is_append).map_err(|e| pyo3::exceptions::PyIOError::new_err(e.to_string()))?;
         let file = std::fs::OpenOptions::new().write(true).create(true).append(is_append).truncate(!is_append).open(&file_path)
             .map_err(|e| pyo3::exceptions::PyIOError::new_err(e.to_string()))?;
 

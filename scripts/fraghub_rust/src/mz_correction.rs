@@ -64,6 +64,7 @@ pub fn mz_correction_processing(
     // d'origine restait entière jusqu'à la fin de l'étape, à côté de la liste corrigée (deux fois la mémoire).
     let mut remaining = spectrum_list.into_iter();
     loop {
+        crate::stop::check()?; // arrêt demandé (stop.rs)
         let chunk: Vec<Spectrum> = remaining.by_ref().take(batch_size).collect();
         if chunk.is_empty() {
             break;

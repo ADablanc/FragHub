@@ -24,6 +24,17 @@ from mzspeclib.analyte import Analyte
 from mzspeclib.backends.json import JSONSpectralLibraryWriter
 from mzspeclib.backends.memory import InMemorySpectrumLibrary
 from mzspeclib.spectrum import Spectrum
+
+
+def _guard_output_file(path, append):
+    """Protection du dossier de sortie (output_guard.rs) : un fichier mzSpecLib remplacé ou complété est remis comme
+    avant si le run s'arrête ensuite. Importé ici, dans le processus principal seulement (les processus de
+    conversion n'ont pas à charger le moteur Rust). Absent (tests sans le moteur) : rien n'est noté."""
+    try:
+        from fraghub_rust import guard_output_file
+    except ImportError:  # pragma: no cover
+        return
+    guard_output_file(path, append)
 from mzspeclib.annotation import parse_annotation  # mzPAF (réexporté par mzspeclib)
 
 # ---------------------------------------------------------------------------------------------
@@ -326,6 +337,13 @@ _worker_writer = None
 def _worker_init():
     global _worker_writer
     warnings.simplefilter("ignore")
+    # Ctrl+C est géré par le processus principal (arrêt propre, src/stop.rs) : les processus de conversion
+    # l'ignorent, sinon ils s'arrêtaient en plein travail et bloquaient la conversion
+    try:
+        import signal
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+    except (ImportError, ValueError, OSError):  # pragma: no cover
+        pass
     _worker_writer = JSONSpectralLibraryWriter(_NullHandle())
 
 
@@ -453,6 +471,7 @@ class MzSpecLibSink:
         if self.append_mode:
             # Fin du fichier existant retirée, nouveaux spectres ajoutés, fin remise
             if self.written:
+                _guard_output_file(self.path, True)
                 with open(self.path, "r+b") as out:
                     out.seek(0, os.SEEK_END)
                     out.truncate(out.tell() - len(self.tail))
@@ -474,6 +493,7 @@ class MzSpecLibSink:
                 else:
                     out.write(self.empty_text)
             os.remove(part_path)
+            _guard_output_file(self.path, False)
             os.replace(final_tmp, self.path)
         if self.skipped:
             print(f"[mzSpecLib] {self.skipped} spectre(s) ignoré(s) dans {os.path.basename(self.path)}.")

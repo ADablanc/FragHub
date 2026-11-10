@@ -137,6 +137,7 @@ pub fn generate_splash_processing(
     let mut processed = 0;
 
     for chunk in spectrum_list.chunks_mut(chunk_size) {
+        crate::stop::check()?; // arrêt demandé (stop.rs)
         let splash_results: Vec<Option<String>> = chunk
             .par_iter_mut()
             .map(clean_peaks_and_splash)

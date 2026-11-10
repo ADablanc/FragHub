@@ -52,6 +52,7 @@ pub fn load_spectrum_list_json_2(
     let injection_prefix = format!(r#"{{"{}":"{}","{}":"{}","#, super::INJECTED_FILENAME, filename, super::INJECTED_FILEHASH, file_hash);
 
     loop {
+        crate::stop::check()?; // arrêt demandé (stop.rs)
         line.clear();
         match reader.read_line(&mut line) {
             Ok(0) => break,

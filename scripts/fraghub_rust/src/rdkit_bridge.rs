@@ -225,6 +225,8 @@ pub fn process_mols(
         // On preserve l'historique des runs precedents (mode append, sans reset_updates) :
         // si le fichier existe deja, on ajoute les lignes a la suite au lieu de l'ecraser.
         let is_append = update && file_path.exists();
+        // Noté avant écriture : remis comme avant si le run s'arrête (output_guard.rs)
+        crate::output_guard::prepare(&file_path, is_append).unwrap();
         let file = std::fs::OpenOptions::new().write(true).create(true).append(is_append).truncate(!is_append).open(&file_path).unwrap();
         let mut wtr = csv::WriterBuilder::new().delimiter(b'\t').has_headers(!is_append).from_writer(file);
         if !is_append {

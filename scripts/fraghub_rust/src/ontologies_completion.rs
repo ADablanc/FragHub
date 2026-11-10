@@ -45,6 +45,7 @@ pub fn ontologies_completion_processing(
 
     // --- Step 3: Boucle de mise à jour (Multithreaded) ---
     for chunk in spectrum_list.chunks_mut(chunk_size) {
+        crate::stop::check()?; // arrêt demandé (stop.rs)
         py.allow_threads(|| {
             chunk.par_iter_mut().for_each(|spec| {
                 // Par défaut, on initialise tout à "NOT FOUND" comme dans votre code Python

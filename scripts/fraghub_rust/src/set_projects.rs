@@ -24,6 +24,13 @@ fn remove_files_rust(dir: &Path) -> std::io::Result<()> {
     Ok(())
 }
 
+/// Remise à zéro des mises à jour, pendant un run : le contenu du dossier de sortie est mis de côté (et non
+/// supprimé), puis supprimé en fin de run réussi, ou remis si le run s'arrête (output_guard.rs).
+pub fn reset_updates_for_run(output_directory: &str) -> PyResult<()> {
+    crate::output_guard::set_aside_output_directory(Path::new(output_directory))?;
+    Ok(())
+}
+
 #[pyfunction]
 pub fn reset_updates(output_directory: String) -> PyResult<()> {
     let out_path = Path::new(&output_directory);
@@ -54,6 +61,8 @@ pub fn init_project(output_directory: String) -> PyResult<()> {
     // 2. Créer updates.json (avec un objet vide "{}")
     let updates_file_path = out_path.join("updates.json");
     if !updates_file_path.exists() {
+        // Noté : retiré si le run s'arrête (output_guard.rs)
+        crate::output_guard::prepare(&updates_file_path, false)?;
         if let Ok(mut file) = File::create(&updates_file_path) {
             let _ = file.write_all(b"{}");
         }

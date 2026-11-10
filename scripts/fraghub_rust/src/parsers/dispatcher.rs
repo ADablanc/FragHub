@@ -93,6 +93,7 @@ pub fn parsing_to_dict_processing(
             } else {
                 match load_spectrum_list_json(py, &file, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone()) {
                     Ok(t) => t,
+                    Err(e) if crate::stop::requested() => return Err(e),
                     Err(_) => load_spectrum_list_json_2(py, &file, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?,
                 }
             };

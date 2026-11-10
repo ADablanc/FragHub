@@ -571,6 +571,8 @@ pub fn generate_report_processing(
 
     let file_name = format!("report_{}.html", date_str);
     let report_path = Path::new(&output_directory).join(file_name);
+    // Noté avant écriture : retiré si le run s'arrête (output_guard.rs)
+    crate::output_guard::prepare(&report_path, false)?;
     let mut file = File::create(report_path)?;
     file.write_all(html.as_bytes())?;
     

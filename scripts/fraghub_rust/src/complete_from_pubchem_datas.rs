@@ -37,6 +37,7 @@ pub fn complete_from_pubchem_datas(
 
     // --- Step 3: Boucle de mise à jour (Multithreaded) ---
     for chunk in spectrum_list.chunks_mut(chunk_size) {
+        crate::stop::check()?; // arrêt demandé (stop.rs)
         py.allow_threads(|| {
             chunk.par_iter_mut().for_each(|spec| {
                 let inchikey = spec.metadata.get("INCHIKEY").cloned().unwrap_or_default();

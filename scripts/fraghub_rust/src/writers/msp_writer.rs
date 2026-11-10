@@ -70,7 +70,7 @@ pub fn writting_msp_processing(
     });
 
     for res in results {
-        if let Err(e) = res { return Err(pyo3::exceptions::PyIOError::new_err(e)); }
+        if let Err(e) = res { return Err(crate::stop::io_error(e)); }
     }
 
     if let Some(cb) = &progress_callback { cb.call1(py, (total_items,))?; }
@@ -85,10 +85,13 @@ pub(crate) fn write_msp_file(
     update: bool,
     progress: &(dyn Fn(usize) + Sync),
 ) -> Result<(), String> {
+    // Noté avant écriture : remis comme avant si le run s'arrête (output_guard.rs)
+    crate::output_guard::prepare(file_path, update && file_path.exists()).map_err(|e| e.to_string())?;
     let file = OpenOptions::new().write(true).create(true).append(update).truncate(!update).open(file_path).map_err(|e| e.to_string())?;
     let mut file = std::io::BufWriter::with_capacity(1 << 20, file);
     let round_size = WRITE_CHUNK * WRITE_CHUNKS_PER_ROUND;
     for round in data_list.chunks(round_size) {
+        crate::stop::check_str()?; // arrêt demandé (stop.rs)
         let buffers: Vec<Vec<u8>> = round.par_chunks(WRITE_CHUNK).map(|chunk| {
             let mut out = Vec::with_capacity(chunk.len() * 4096);
             for spec in chunk {
