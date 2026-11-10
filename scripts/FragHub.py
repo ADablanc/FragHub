@@ -5,7 +5,6 @@ import multiprocessing
 import traceback
 import mzspeclib_converter
 import time
-import re
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, BackgroundTasks
 from fastapi.responses import FileResponse
@@ -127,8 +126,6 @@ def emit_to_frontend(event, data):
             pass
 
 # --- CALLBACKS ---
-deferred_deletion = None
-deferred_report = False
 current_total_items = 0  # <-- Nouvelle variable globale
 
 # État de la tâche en cours, renvoyé avec CHAQUE message de progression.
@@ -177,21 +174,13 @@ def item_type_callback(*args):
         emit_to_frontend('item_type', args[0])
 
 def step_callback(*args):
-    global deferred_report
     if args:
         perf_log.on_step(args[0])  # PERF_LOG
-        if args[0] == "Generating Report" and parameters_dict.get("mzspeclib_json", 0.0) == 1.0:
-            deferred_report = True
-            return
         emit_to_frontend('step', args[0])
 
 def deletion_callback(*args):
-    global deferred_deletion
     if args:
         perf_log.on_deletion(args[0])  # PERF_LOG
-        if parameters_dict.get("mzspeclib_json", 0.0) == 1.0:
-            deferred_deletion = args[0]
-            return
         emit_to_frontend('deletion', args[0])
 
 def completion_callback(*args):
@@ -230,34 +219,7 @@ async def init_data():
     return {"status": "loaded"}
 
 # --- EXÉCUTION ---
-def _format_hms(seconds):
-    seconds = int(seconds)
-    return f"{seconds // 3600:02d}:{(seconds % 3600) // 60:02d}:{seconds % 60:02d}"
-
-
-def _update_total_time(rust_completion_data, run_start):
-    """Remplace le temps total calculé par Rust (qui s'arrête avant la conversion mzSpecLib, faite
-    ensuite en Python) par la vraie durée du run, dans le message de fin ET dans le rapport HTML."""
-    total = _format_hms(time.time() - run_start)
-    msg, report_path = rust_completion_data
-    if isinstance(msg, str) and msg.startswith("--- TOTAL TIME:"):
-        msg = f"--- TOTAL TIME: {total} ---"
-    if report_path and os.path.exists(report_path):
-        try:
-            with open(report_path, "r", encoding="utf-8") as f:
-                html = f.read()
-            new_html = re.sub(r"(Total Processing Time: <strong>)\d{2,}:\d{2}:\d{2}(</strong>)",
-                              lambda m: m.group(1) + total + m.group(2), html, count=1)
-            if new_html != html:
-                with open(report_path, "w", encoding="utf-8") as f:
-                    f.write(new_html)
-        except OSError as e:
-            print(f"[WARNING] Impossible de mettre à jour le temps total dans le rapport : {e}")
-    return (msg, report_path)
-
-
 def execute_main_safely():
-    run_start = time.time()  # début du run, pour le temps total (mzSpecLib compris)
     try:
         # We need to capture the completion data from Rust so it doesn't close the GUI early
         rust_completion_data = None
@@ -265,49 +227,35 @@ def execute_main_safely():
             nonlocal rust_completion_data
             rust_completion_data = (msg, report_path)
 
+        # Sortie mzSpecLib : le moteur Rust envoie les spectres par paquets à cet objet, qui les écrit
+        # avec la bibliothèque mzspeclib (en parallèle), pendant l'étape d'écriture des sorties
+        mzspeclib_sink = None
+        if parameters_dict.get("mzspeclib_json", 0.0) == 1.0:
+            mzspeclib_sink = mzspeclib_converter.MzSpecLibSink()
+
         # Appel direct de la fonction Rust
-        fraghub_rust.main_orchestrator(
-            parameters_dict,
-            progress_callback,
-            total_items_callback,
-            prefix_callback,
-            item_type_callback,
-            step_callback,
-            proxy_completion_callback,
-            deletion_callback,
-            get_stop_flag
-        )
+        try:
+            fraghub_rust.main_orchestrator(
+                parameters_dict,
+                progress_callback,
+                total_items_callback,
+                prefix_callback,
+                item_type_callback,
+                step_callback,
+                proxy_completion_callback,
+                deletion_callback,
+                get_stop_flag,
+                mzspeclib_sink=mzspeclib_sink
+            )
+        finally:
+            if mzspeclib_sink is not None:
+                mzspeclib_sink.close(terminate=True)
         
         # Si l'utilisateur a cliqué sur stop ou s'il y a eu une erreur précoce dans Rust
         if rust_completion_data and rust_completion_data[0] == "Process stopped by user":
             if completion_callback:
                 completion_callback(rust_completion_data[0], rust_completion_data[1])
             return
-
-        # ── Intégration de mzspeclib pour la conversion propre en mzSpecLib.json ──
-        if parameters_dict.get("mzspeclib_json", 0.0) == 1.0:
-            try:
-                mzspeclib_converter.convert_all_msp(
-                    parameters_dict["output_directory"],
-                    step_cb=step_callback,
-                    prefix_cb=prefix_callback,
-                    progress_cb=progress_callback,
-                    total_items_cb=total_items_callback
-                )
-            except Exception as cv_e:
-                if completion_callback:
-                    completion_callback(f"Warning: mzSpecLib JSON conversion failed: {cv_e}")
-                return # Si on retourne ici, on n'affiche pas le TOTAL TIME
-
-            # Le temps total de Rust ne comptait pas cette conversion : on le recalcule
-            if rust_completion_data:
-                rust_completion_data = _update_total_time(rust_completion_data, run_start)
-
-        # On envoie maintenant les étapes qu'on avait différées
-        if deferred_deletion:
-            emit_to_frontend('deletion', deferred_deletion)
-        if deferred_report:
-            emit_to_frontend('step', "Generating Report")
 
         # Une fois tout terminé, on envoie la vraie fin de process au GUI
         if completion_callback and rust_completion_data:
@@ -515,56 +463,15 @@ if __name__ == "__main__":
         def cli_get_stop_flag():
             return False # Pas d'interruption via UI en mode CLI (l'utilisateur fera Ctrl+C)
 
-        # Comme dans l'interface (execute_main_safely) : si la conversion mzSpecLib est demandée, elle
-        # se fait APRÈS le moteur Rust ; le bilan des suppressions, « Generating Report » et le message
-        # de fin (TOTAL TIME) envoyés par Rust sont donc gardés et affichés après la conversion.
         with_mzspeclib = parameters_dict.get("mzspeclib_json", 0.0) == 1.0
-        cli_deferred = []  # messages retenus, dans leur ordre d'arrivée : (callback, arguments)
 
-        def rust_step_callback(*cb_args):
-            if with_mzspeclib and cb_args and cb_args[0] == "Generating Report":
-                if cb_args: perf_log.on_step(cb_args[0])  # PERF_LOG (au moment réel de l'étape)
-                cli_deferred.append(("step", cb_args))
-                return
-            cli_step_callback(*cb_args)
-
-        def rust_deletion_callback(*cb_args):
-            if with_mzspeclib:
-                if cb_args: perf_log.on_deletion(cb_args[0])  # PERF_LOG
-                cli_deferred.append(("deletion", cb_args))
-                return
-            cli_deletion_callback(*cb_args)
-
-        def rust_completion_callback(*cb_args):
-            if with_mzspeclib:
-                if cb_args: perf_log.on_completion(cb_args[0])  # PERF_LOG
-                cli_deferred.append(("completion", cb_args))
-                return
-            cli_completion_callback(*cb_args)
-
-        def replay_deferred():
-            # Affiche les messages retenus ; le temps total (message et rapport HTML) est recalculé
-            # pour compter la conversion mzSpecLib.
-            for kind, cb_args in cli_deferred:
-                if not cb_args:
-                    continue
-                if kind == "completion":
-                    # Rapport HTML mis à jour même en mode --quiet
-                    report_path = cb_args[1] if len(cb_args) > 1 else ""
-                    msg, _ = _update_total_time((cb_args[0], report_path), global_start_time)
-                    if not args.quiet:
-                        print(f"\n\033[1;32m✔ {msg}\033[0m\n")
-                elif args.quiet:
-                    continue
-                elif kind == "step":
-                    print(f"\n\033[1;33m=== {cb_args[0]} ===\033[0m")
-                else:
-                    print(f"\033[38;5;208m[REPORT] {cb_args[0]}\033[0m")
-            
         # Journal de performances seulement si --write_perf_logs yes (comme l'interrupteur de l'onglet Projects).
         # Sinon perf_log n'est pas démarré : ses fonctions ne font rien et finish() n'écrit aucun fichier.
         if parameters_dict.get("write_perf_logs", 0.0) == 1.0:  # PERF_LOG
             perf_log.start(parameters_dict)  # PERF_LOG
+        # Sortie mzSpecLib, comme dans l'interface (execute_main_safely) : le moteur Rust envoie les spectres
+        # à cet objet, qui écrit <output_directory>/mzSpecLib pendant l'étape d'écriture des sorties.
+        mzspeclib_sink = mzspeclib_converter.MzSpecLibSink() if with_mzspeclib else None
         try:
             # Lancement de l'orchestrateur de façon synchrone dans le thread principal
             fraghub_rust.main_orchestrator(
@@ -573,32 +480,20 @@ if __name__ == "__main__":
                 cli_total_items_callback,
                 cli_prefix_callback,
                 cli_item_type_callback,
-                rust_step_callback,
-                rust_completion_callback,
-                rust_deletion_callback,
-                cli_get_stop_flag
+                cli_step_callback,
+                cli_completion_callback,
+                cli_deletion_callback,
+                cli_get_stop_flag,
+                mzspeclib_sink=mzspeclib_sink
             )
         except Exception as e:
             print(f"\n[ERROR] Une erreur s'est produite : {e}")
             perf_log.finish(f"Erreur : {e}")  # PERF_LOG
             sys.exit(1)
+        finally:
+            if mzspeclib_sink is not None:
+                mzspeclib_sink.close(terminate=True)
 
-        # Conversion mzSpecLib JSON, comme dans l'interface (execute_main_safely) : à partir des fichiers
-        # MSP écrits dans le dossier de sortie, vers <output_directory>/mzSpecLib.
-        if parameters_dict.get("mzspeclib_json", 0.0) == 1.0:
-            try:
-                mzspeclib_converter.convert_all_msp(
-                    parameters_dict["output_directory"],
-                    step_cb=cli_step_callback,
-                    prefix_cb=cli_prefix_callback,
-                    progress_cb=cli_progress_callback,
-                    total_items_cb=cli_total_items_callback
-                )
-            except Exception as cv_e:
-                print(f"\n[ERROR] La conversion mzSpecLib JSON a échoué : {cv_e}")
-                perf_log.finish(f"Erreur mzSpecLib : {cv_e}")  # PERF_LOG
-                sys.exit(1)
-            replay_deferred()
         perf_log.finish()  # PERF_LOG
             
         # Calcul et affichage du temps total

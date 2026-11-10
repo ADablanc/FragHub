@@ -1,342 +1,490 @@
-import io
+"""Écriture des fichiers mzSpecLib (format PSI, https://psidev.info/mzspeclib) de FragHub.
+
+Le moteur Rust envoie les spectres de chaque bibliothèque (POS_LC, NEG_LC...) par paquets à un objet
+`MzSpecLibSink` (writers/mzspeclib_sender.rs) : chaque spectre arrive sous la forme du texte JSON d'un spectre
+FragHub (mêmes noms de champs et mêmes valeurs que la sortie JSON). Ici :
+  - chaque champ FragHub est traduit en terme du vocabulaire PSI-MS (`to_spectrum`) ; un champ sans terme
+    adapté devient un attribut libre (MS:1003275 / MS:1003276) qui garde son nom FragHub ; un champ vide ou
+    « NOT FOUND » n'est pas écrit ;
+  - l'objet est mis en forme par la bibliothèque `mzspeclib` (JSONSpectralLibraryWriter), en parallèle sur
+    tous les cœurs ; les paquets sont recollés dans l'ordre d'arrivée ;
+  - le fichier obtenu est exactement celui qu'écrirait `mzspeclib` pour toute la bibliothèque d'un coup
+    (en-tête de bibliothèque compris), sans avoir tous les spectres en mémoire, à une correction près : une valeur
+    libre qui contient « | » reste entière (voir `_keep_whole_values`).
+Chaque terme a été vérifié avec le validateur de mzspeclib (vocabulaire PSI-MS 4.1.258).
+"""
+import collections
 import json
 import multiprocessing
 import os
 import re
-import sys
-import traceback
 import warnings
-from mzspeclib.backends.msp import MSPSpectralLibrary
+
+from mzspeclib.analyte import Analyte
 from mzspeclib.backends.json import JSONSpectralLibraryWriter
-import time
+from mzspeclib.backends.memory import InMemorySpectrumLibrary
+from mzspeclib.spectrum import Spectrum
 
-# mzspeclib avertit pour chaque spectre dont l'énergie de collision n'est pas un nombre simple
-# ("NOT FOUND", "-60,-20", "[15.0, 60.0]", "-70 eV"…). Le spectre est quand même converti (sans ce champ) :
-# message sans intérêt, répété des milliers de fois. Seul ce message est masqué, les autres restent visibles.
-# Placé ici (au chargement du module), le filtre s'applique aussi aux processus de conversion parallèle.
-warnings.filterwarnings("ignore", message=r"Failed to parse .* for COLLISIONENERGY", category=UserWarning)
+# ---------------------------------------------------------------------------------------------
+# Correspondance FragHub -> PSI-MS
+# ---------------------------------------------------------------------------------------------
 
-# ---------------------------------------------------------------------------
-# Conversion MSP -> mzSpecLib JSON
-#
-# Version parallèle : chaque fichier MSP est découpé en morceaux (aux frontières de spectres),
-# convertis en même temps sur tous les cœurs avec mzspeclib, puis recollés dans l'ordre.
-# Le fichier obtenu est IDENTIQUE, octet pour octet, à celui de l'ancienne conversion séquentielle
-# (convert_msp_to_mzspeclib_json, gardée plus bas comme référence et comme solution de repli) :
-# - mêmes spectres, découpés avec les mêmes règles que l'index de mzspeclib (create_index) ;
-# - chaque spectre est lu par le même code mzspeclib (_parse) avec le même numéro (donc la même
-#   « library spectrum key ») et mis en forme par le même writer (write_spectrum) ;
-# - le texte JSON est recollé exactement comme json.dump(liste, indent=2, sort_keys=True).
-# En plus d'aller plus vite, on n'a plus tout le fichier en mémoire avant l'écriture.
-# ---------------------------------------------------------------------------
+# Valeur absente : vide, « NOT FOUND » (normalize_to_not_found.rs), « NaN » (sortie JSON)
+EMPTY = re.compile(r"^\s*(|nan|not found)\s*$", re.I)
 
-# Règle de mzspeclib (backends/msp.py) : un spectre commence à une ligne "Name:", "NAME:",
-# "Compound:" ou "COMPOUND:" (début de ligne, après suppression des espaces de fin).
-_LEADER = re.compile(r"(Name|NAME|Compound|COMPOUND)\s*:")
-_CHUNK_BYTES = 8 * 1024 * 1024  # taille visée d'un morceau (~ quelques milliers de spectres)
+UNIT = "UO:0000000|unit"
+EV = "UO:0000266|electronvolt"
+PERCENT = "UO:0000187|percent"
+MINUTE = "UO:0000031|minute"
+DALTON = "UO:0000221|dalton"
+MZ = "MS:1000040|m/z"
+OTHER_NAME = "MS:1003275|other attribute name"
+OTHER_VALUE = "MS:1003276|other attribute value"
 
+# Méthodes de fragmentation écrites par FragHub (normalize_collision_energy.rs)
+DISSOCIATION = {
+    "CID": "MS:1000133|collision-induced dissociation",
+    "CAD": "MS:1000133|collision-induced dissociation",
+    "HCD": "MS:1000422|beam-type collision-induced dissociation",
+    "ETD": "MS:1000598|electron transfer dissociation",
+    "ECD": "MS:1000250|electron capture dissociation",
+    "EAD": "MS:1003294|electron activated dissociation",
+    "UVPD": "MS:1003246|ultraviolet photodissociation",
+    "IRMPD": "MS:1000262|infrared multiphoton dissociation",
+    "PQD": "MS:1000599|pulsed q dissociation",
+    "EThcD": "MS:1002631|electron-transfer/higher-energy collision dissociation",
+    "ETciD": "MS:1003182|electron-transfer/collision-induced dissociation",
+    "in-source CID": "MS:1001880|in-source collision-induced dissociation",
+    "LOW-ENERGY CID": "MS:1000433|low-energy collision-induced dissociation",
+    "low-energy CID": "MS:1000433|low-energy collision-induced dissociation",
+}
 
-def _read_text_lines(path, start, end):
-    """Lignes du fichier entre deux positions (en octets), lues comme mzspeclib les lit :
-    UTF-8 et fins de ligne universelles (open_stream(..., encoding='utf8', newline=None))."""
-    with open(path, "rb") as f:
-        f.seek(start)
-        data = f.read(end - start)
-    return io.TextIOWrapper(io.BytesIO(data), encoding="utf8", newline=None)
+# Ionisations écrites par FragHub (normalize_ionization.rs)
+IONIZATION = {
+    "ESI": "MS:1000073|electrospray ionization",
+    "APCI": "MS:1000070|atmospheric pressure chemical ionization",
+    "APPI": "MS:1000382|atmospheric pressure photoionization",
+    "EI": "MS:1000389|electron ionization",
+    "CI": "MS:1000071|chemical ionization",
+    "MALDI": "MS:1000075|matrix-assisted laser desorption ionization",
+    "FAB": "MS:1000074|fast atom bombardment ionization",
+}
 
+POLARITY = {"positive": "MS:1000130|positive scan", "negative": "MS:1000129|negative scan"}
 
-def _spectrum_buffers(path, start, end, header_state):
-    """Découpe un morceau en spectres, avec les mêmes règles que create_index + _buffer_from_stream
-    de mzspeclib : lignes sans espaces de fin, lignes vides ignorées, lignes avant le premier
-    spectre du fichier ignorées. Renvoie la liste des spectres (chacun = liste de lignes)."""
-    buffers = []
-    current = None
-    state = "header" if header_state else "body"
-    for line in _read_text_lines(path, start, end):
-        line = line.rstrip()
-        if state == "header":
-            if _LEADER.match(line):
-                state = "body"
-            else:
-                continue
-        if len(line) == 0:
-            continue
-        if _LEADER.match(line):
-            if current:
-                buffers.append(current)
-            current = []
-        if current is None:  # ne se produit qu'au début d'un morceau sans en-tête
-            current = []
-        current.append(line)
-    if current:
-        buffers.append(current)
-    return buffers
+# Champs sans terme adapté dans le vocabulaire : attributs libres, dans cet ordre
+# (FILENAME, SPECTRUMID : les termes « source data file » et « external reference identifier » exigent un terme
+#  comme valeur ; FILEHASH : SHA-256 de la taille du fichier, pas de son contenu ; RESOLUTION : catégorie
+#  HIGH / LOW, pas une mesure ; INSTRUMENT, INSTRUMENTTYPE : termes du vocabulaire à trouver avec l'arbre des
+#  instruments)
+FREE_FIELDS = [
+    "SPECTRUMID", "FILENAME", "DATABASE_NAME", "FILEHASH", "RESOLUTION", "SYNON", "INSTRUMENTTYPE", "INSTRUMENT",
+    "ENTROPY", "CLASSYFIRE_SUPERCLASS", "CLASSYFIRE_CLASS", "CLASSYFIRE_SUBCLASS",
+    "NPCLASS_PATHWAY", "NPCLASS_SUPERCLASS", "NPCLASS_CLASS",
+]
 
-
-def _chunk_boundaries(path):
-    """Positions (en octets) où couper le fichier : chacune est le début d'une ligne de début
-    de spectre. Le premier morceau commence au début du fichier (lignes d'en-tête comprises)."""
-    size = os.path.getsize(path)
-    bounds = [0]
-    with open(path, "rb") as f:
-        target = _CHUNK_BYTES
-        while target < size:
-            f.seek(target)
-            f.readline()  # aller au début de la ligne suivante
-            pos = f.tell()
-            found = None
-            while pos < size:
-                raw = f.readline()
-                # Même lecture que mzspeclib (UTF-8, fins de ligne universelles) pour tester la ligne
-                text = raw.decode("utf8", errors="replace").replace("\r\n", "\n").replace("\r", "\n")
-                first = text.split("\n", 1)[0]
-                if _LEADER.match(first.rstrip()):
-                    found = pos
-                    break
-                pos = f.tell()
-            if found is None or found <= bounds[-1]:
-                break
-            bounds.append(found)
-            target = found + _CHUNK_BYTES
-    bounds.append(size)
-    return bounds
+_NUM = r"\d+(?:\.\d+)?"
+_ENERGY_SINGLE = re.compile(rf"({_NUM}) (eV|NCE)")
+_ENERGY_RAMP = re.compile(rf"Ramp ({_NUM})/({_NUM}) (eV|NCE)")
+# Charge écrite à la fin de l'adduit normalisé : "[M-H]-" -> -1, "[M+2H]2+" -> 2, "[M]+" -> 1,
+# "[M]+*" (ion radical, GC-EI) -> 1
+_ADDUCT_CHARGE = re.compile(r"\](\d*)([+-])\*?$")
+# Accession d'un terme de vocabulaire (« MS:1000133 », « UO:0000266 »)
+_CURIE = re.compile(r"[A-Za-z]+:\d+")
 
 
-# --- Travail fait dans les processus parallèles --------------------------------
-
-_worker_cache = {}
-
-
-def _worker_tools(path):
-    tools = _worker_cache.get(path)
-    if tools is None:
-        _worker_cache.clear()
-        lib = MSPSpectralLibrary(path, create_index=False)  # pas d'index : on fournit nous-mêmes les spectres
-        writer = JSONSpectralLibraryWriter(io.StringIO())
-        tools = _worker_cache[path] = (lib, writer)
-    return tools
+def _value(d, key):
+    """Valeur d'un champ FragHub, sous forme de texte ; None si elle est vide."""
+    v = d.get(key)
+    if v is None:
+        return None
+    s = str(v).strip()
+    return None if EMPTY.match(s) else s
 
 
-def _count_task(args):
-    path, k, start, end = args
-    return path, k, len(_spectrum_buffers(path, start, end, header_state=(k == 0)))
+def _float(s):
+    try:
+        return float(s)
+    except (TypeError, ValueError):
+        return None
 
 
-def _convert_task(args):
-    """Convertit un morceau. Écrit le texte JSON de ses spectres dans un fichier temporaire, déjà
-    mis en forme comme dans json.dump(liste, indent=2, sort_keys=True) (niveau 1, séparateurs ",\\n  ")."""
-    path, k, start, end, first_index, part_path = args
-    lib, writer = _worker_tools(path)
-    spectra = writer.buffer["spectra"]
-    count = skipped = 0
-    with open(part_path, "w", encoding="ascii", newline="\n") as out:
-        for i, buf in enumerate(_spectrum_buffers(path, start, end, header_state=(k == 0))):
-            number = first_index + i
-            try:
-                # Même lecture (_parse avec le même numéro) et même mise en forme que la version séquentielle.
-                spec = lib._parse(buf, number)
-                writer.write_spectrum(spec)
-            except Exception as spec_e:
-                skipped += 1
-                print(f"[mzSpecLib] Spectre ignore (#{number}) dans {os.path.basename(path)}: {spec_e}")
-                continue
-            payload = spectra.pop()
-            if count:
-                out.write(",\n  ")
-            out.write(json.dumps(payload, indent=2, sort_keys=True).replace("\n", "\n  "))
-            count += 1
-    return path, k, count, skipped
+def _add_free(obj, name, value):
+    """Attribut libre : nom FragHub + valeur, dans un même groupe."""
+    group = obj.get_next_group_identifier()
+    obj.add_attribute(OTHER_NAME, name, group)
+    obj.add_attribute(OTHER_VALUE, value, group)
 
 
-def _assemble(json_path, parts):
-    """Écrit le fichier final à partir des morceaux (dans l'ordre), comme le faisait le writer :
-    ouverture en mode texte 'wt' (même traduction des fins de ligne), liste JSON indentée,
-    ou objet seul s'il n'y a qu'un spectre (option simplify de mzspeclib)."""
-    total = sum(c for _, c in parts)
-    with open(json_path, "wt") as handle:
-        if total == 0:
-            handle.write("[]")
-        elif total == 1:
-            text = next(open(p, "r", encoding="ascii", newline="\n").read() for p, c in parts if c)
-            handle.write(text.replace("\n  ", "\n"))  # retour au niveau 0 (objet seul)
+def _add_with_unit(obj, term, value, unit):
+    group = obj.get_next_group_identifier()
+    obj.add_attribute(term, value, group)
+    obj.add_attribute(UNIT, unit, group)
+
+
+def _add_energy(spectrum, text):
+    """Énergie de collision écrite par FragHub (normalize_collision_energy.rs). Le vocabulaire n'accepte que
+    l'électronvolt (collision energy) et le pourcentage (normalized collision energy) : toute autre écriture
+    (V, kV, sans unité, paliers, négative, CE0...) reste un attribut libre, telle quelle."""
+    m = _ENERGY_SINGLE.fullmatch(text)
+    if m:
+        if m.group(2) == "eV":
+            _add_with_unit(spectrum, "MS:1000045|collision energy", float(m.group(1)), EV)
         else:
-            handle.write("[\n  ")
-            first = True
-            for p, c in parts:
-                if not c:
-                    continue
-                if not first:
-                    handle.write(",\n  ")
-                with open(p, "r", encoding="ascii", newline="\n") as f:
-                    while True:
-                        block = f.read(4 * 1024 * 1024)
-                        if not block:
-                            break
-                        handle.write(block)
-                first = False
-            handle.write("\n]")
-    for p, _ in parts:
+            _add_with_unit(spectrum, "MS:1000138|normalized collision energy", float(m.group(1)), PERCENT)
+        return
+    m = _ENERGY_RAMP.fullmatch(text)
+    if m:
+        if m.group(3) == "eV":
+            _add_with_unit(spectrum, "MS:1002013|collision energy ramp start", float(m.group(1)), EV)
+            _add_with_unit(spectrum, "MS:1002014|collision energy ramp end", float(m.group(2)), EV)
+        else:
+            _add_with_unit(spectrum, "MS:1002218|percent collision energy ramp start", float(m.group(1)), PERCENT)
+            _add_with_unit(spectrum, "MS:1002219|percent collision energy ramp end", float(m.group(2)), PERCENT)
+        return
+    _add_free(spectrum, "COLLISIONENERGY", text)
+
+
+def adduct_charge(adduct):
+    """Charge lue à la fin de l'adduit normalisé par FragHub ; None si elle n'y est pas écrite."""
+    m = _ADDUCT_CHARGE.search(adduct)
+    if not m:
+        return None
+    n = int(m.group(1)) if m.group(1) else 1
+    return n if m.group(2) == "+" else -n
+
+
+def to_spectrum(d, key):
+    """Spectre FragHub (dict, noms et valeurs de la sortie JSON) -> objet mzSpecLib."""
+    sp = Spectrum()
+    sp.key = key
+    v = _value(d, "NAME")
+    if v:
+        sp.add_attribute("MS:1003061|library spectrum name", v)
+    v = _value(d, "SPLASH")
+    if v:
+        sp.add_attribute("MS:1002599|splash key", v)
+    v = _value(d, "PREDICTED")
+    if v:
+        if v.lower() == "true":
+            sp.add_attribute("MS:1003072|spectrum origin type", "MS:1003074|predicted spectrum")
+        elif v.lower() == "false":
+            sp.add_attribute("MS:1003072|spectrum origin type", "MS:1003073|observed spectrum")
+        else:
+            _add_free(sp, "PREDICTED", v)
+    v = _value(d, "MSLEVEL")
+    if v:
+        if v.isdigit():
+            sp.add_attribute("MS:1000511|ms level", int(v))
+        else:
+            _add_free(sp, "MSLEVEL", v)  # ex. "2-3"
+    v = _value(d, "PRECURSORMZ")
+    if v:
+        x = _float(v)
+        if x is not None:
+            _add_with_unit(sp, "MS:1003208|experimental precursor monoisotopic m/z", x, MZ)
+        else:
+            _add_free(sp, "PRECURSORMZ", v)
+    v = _value(d, "IONMODE")
+    if v:
+        if v.lower() in POLARITY:
+            sp.add_attribute("MS:1000465|scan polarity", POLARITY[v.lower()])
+        else:
+            _add_free(sp, "IONMODE", v)
+    v = _value(d, "IONIZATION")
+    if v:
+        if v in IONIZATION:
+            sp.add_attribute("MS:1000008|ionization type", IONIZATION[v])
+        else:
+            _add_free(sp, "IONIZATION", v)
+    v = _value(d, "FRAGMENTATIONMETHODE")
+    if v:
+        if v in DISSOCIATION:
+            sp.add_attribute("MS:1000044|dissociation method", DISSOCIATION[v])
+        else:
+            _add_free(sp, "FRAGMENTATIONMETHODE", v)
+    v = _value(d, "COLLISIONENERGY")
+    if v:
+        _add_energy(sp, v)
+    v = _value(d, "RT")
+    if v:
+        x = _float(v)
+        if x is not None:
+            _add_with_unit(sp, "MS:1000894|retention time", x, MINUTE)  # FragHub écrit le RT en minutes
+        else:
+            _add_free(sp, "RT", v)
+    v = _value(d, "COMMENT")
+    if v:
+        sp.add_attribute("MS:1003168|library spectrum comment", v)
+    for field in FREE_FIELDS:
+        v = _value(d, field)
+        if v:
+            _add_free(sp, field, v)
+
+    analyte = Analyte("1")
+    for field, term in (("FORMULA", "MS:1000866|molecular formula"), ("SMILES", "MS:1000868|SMILES string"),
+                        ("INCHI", "MS:1003403|InChI"), ("INCHIKEY", "MS:1002894|InChIKey")):
+        v = _value(d, field)
+        if v:
+            analyte.add_attribute(term, v)
+    v = _value(d, "PRECURSORTYPE")
+    if v:
+        analyte.add_attribute("MS:1002813|adduct ion formula", v)
+        charge = adduct_charge(v)
+        if charge is not None:
+            analyte.add_attribute("MS:1000041|charge state", charge)
+    for field, term in (("EXACTMASS", "MS:1003637|theoretical neutral monoisotopic mass"),
+                        ("AVERAGEMASS", "MS:1003638|theoretical neutral average mass")):
+        v = _value(d, field)
+        if v:
+            x = _float(v)
+            if x is not None:
+                _add_with_unit(analyte, term, x, DALTON)
+            else:
+                _add_free(analyte, field, v)
+    sp.add_analyte(analyte)
+
+    # Pics : m/z, intensité (une formule de novo éventuelle, 3e valeur, n'est pas encore écrite)
+    peaks = d.get("PEAKS_LIST") or []
+    sp.peak_list = [[float(p[0]), float(p[1]), [], []] for p in peaks]
+    sp.add_attribute("MS:1003059|number of peaks", len(peaks))
+    return sp
+
+
+# ---------------------------------------------------------------------------------------------
+# Mise en forme : exactement celle de JSONSpectralLibraryWriter (json.dump(buffer, indent=2, sort_keys=True))
+# ---------------------------------------------------------------------------------------------
+
+_SPECTRA_EMPTY = '"spectra": []'
+_ITEM_SEP = ",\n    "  # entre deux spectres du tableau "spectra" (niveau 2)
+
+
+def library_text_parts(name, version):
+    """En-tête et fin du fichier, autour des spectres : (avant le premier spectre, après le dernier)."""
+    library = InMemorySpectrumLibrary(create_index=False)
+    library.add_attribute("MS:1003186|library format version", "1.0")
+    library.add_attribute("MS:1003188|library name", name)
+    library.add_attribute("MS:1003189|library description", f"Spectral library built by FragHub {version}")
+    writer = JSONSpectralLibraryWriter(_NullHandle())
+    writer.write_header(library)
+    text = json.dumps(writer.buffer, indent=2, sort_keys=True)
+    i = text.index(_SPECTRA_EMPTY)
+    head = text[:i] + '"spectra": [\n    '
+    tail = "\n  ]" + text[i + len(_SPECTRA_EMPTY):]
+    return head, tail, text
+
+
+class _NullHandle:
+    closed = False
+
+    def write(self, *_):
+        pass
+
+    def close(self):
+        self.closed = True
+
+
+def _keep_whole_values(attributes):
+    """Le writer de mzspeclib coupe toute valeur texte au premier « | » (« accession|nom » d'un terme) : une valeur
+    libre comme « Polyketides|Terpenoids » (NPClassifier) devenait l'accession « Polyketides » et la valeur
+    « Terpenoids ». La valeur est remise entière quand la partie gauche n'est pas une accession de terme."""
+    for a in attributes:
+        acc = a.get("value_accession")
+        if acc is not None and not _CURIE.fullmatch(str(acc)):
+            a["value"] = f"{acc}|{a['value']}"
+            del a["value_accession"]
+
+
+def spectrum_text(spectrum, writer):
+    """Texte JSON d'un spectre, déjà indenté pour le tableau "spectra"."""
+    writer.write_spectrum(spectrum)
+    payload = writer.buffer["spectra"].pop()
+    _keep_whole_values(payload["attributes"])
+    for analyte in payload["analytes"].values():
+        _keep_whole_values(analyte["attributes"])
+    return json.dumps(payload, indent=2, sort_keys=True).replace("\n", "\n    ")
+
+
+# --- Travail fait dans les processus parallèles --------------------------------------------------
+
+_worker_writer = None
+
+
+def _worker_init():
+    global _worker_writer
+    warnings.simplefilter("ignore")
+    _worker_writer = JSONSpectralLibraryWriter(_NullHandle())
+
+
+def convert_batch(args):
+    """Convertit un paquet : (texte des spectres, nombre écrit, erreurs). Un spectre qui ne peut pas être
+    converti est signalé et laissé de côté ; les autres gardent leur numéro (clé)."""
+    first_key, texts = args
+    writer = _worker_writer if _worker_writer is not None else JSONSpectralLibraryWriter(_NullHandle())
+    out, errors = [], []
+    for i, text in enumerate(texts):
+        key = first_key + i
         try:
-            os.remove(p)
-        except OSError:
-            pass
+            out.append(spectrum_text(to_spectrum(json.loads(text), key), writer))
+        except Exception as e:  # noqa: BLE001 - un spectre fautif ne doit pas arrêter la bibliothèque
+            writer.buffer["spectra"].clear()
+            errors.append(f"spectre {key} : {e}")
+    return _ITEM_SEP.join(out), len(out), errors
 
 
-# ---------------------------------------------------------------------------
-# Ancienne conversion séquentielle (référence exacte, et repli si le parallélisme échoue)
-# ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
+# Réception des spectres envoyés par Rust
+# ---------------------------------------------------------------------------------------------
 
-def convert_msp_to_mzspeclib_json(input_msp, output_json, progress_cb=None):
-    try:
-        lib = MSPSpectralLibrary(input_msp)
-        writer = JSONSpectralLibraryWriter(output_json)
+_LAST_KEY = re.compile(rb'"name": "library spectrum key",\s*"value": (\d+)')
 
-        count = 0
-        skipped = 0
-        # On itere manuellement sur l'index plutot que "for spec in lib" :
-        # un spectre individuel invalide (ex: IONMODE "NOT FOUND" que mzspeclib
-        # ne sait pas convertir en polarite) ne doit pas interrompre tout le fichier.
-        for record in lib.index:
+
+def _last_key(path, size, tail_len):
+    """Clé du dernier spectre d'un fichier mzSpecLib déjà écrit (cherchée depuis la fin)."""
+    with open(path, "rb") as f:
+        window = 1 << 20
+        while True:
+            start = max(0, size - tail_len - window)
+            f.seek(start)
+            data = f.read(size - tail_len - start)
+            found = list(_LAST_KEY.finditer(data))
+            if found:
+                return int(found[-1].group(1))
+            if start == 0:
+                return None
+            window *= 4
+
+
+class MzSpecLibSink:
+    """Reçoit les spectres d'une bibliothèque après l'autre : begin(), add() par paquet, end().
+    Les paquets sont convertis en parallèle ; au plus `max_pending` paquets attendent à la fois.
+    Le fichier est écrit à côté (« .part ») puis mis en place à la fin : un arrêt en cours de route ne laisse
+    ni fichier incomplet ni fichier précédent abîmé."""
+
+    def __init__(self, workers=None, progress_cb=None):
+        self.workers = workers or max(1, multiprocessing.cpu_count() - 1)
+        self.max_pending = 2 * self.workers
+        self.pool = None
+        self._reset()
+
+    def _reset(self):
+        self.path = None
+        self.part = None
+        self.pending = collections.deque()
+        self.next_key = 1
+        self.written = 0
+        self.skipped = 0
+        self.append_mode = False
+
+    def _ensure_pool(self):
+        if self.pool is None:
             try:
-                # La lecture (parsing MSP) ET l'ecriture (JSON) peuvent echouer
-                # independamment sur un spectre precis (ex: bug connu de mzspeclib
-                # sur RT qui pose une cle "ERROR" invalide) : les deux etapes sont
-                # couvertes ici pour qu'un seul spectre foireux ne fasse pas
-                # avorter tout le fichier.
-                spec = lib.get_spectrum(record.number)
-                writer.write_spectrum(spec)
-            except Exception as spec_e:
-                skipped += 1
-                print(f"[mzSpecLib] Spectre ignore (#{record.number}) dans {os.path.basename(input_msp)}: {spec_e}")
-                if progress_cb:
-                    progress_cb(1)
-                continue
+                self.pool = multiprocessing.Pool(processes=self.workers, initializer=_worker_init)
+            except Exception as e:  # noqa: BLE001
+                print(f"[mzSpecLib] Conversion parallèle impossible ({e}) : conversion dans ce processus.")
+                self.pool = False
+                _worker_init()
 
-            count += 1
-            if progress_cb:
-                progress_cb(1)
+    def begin(self, path, name, update=False, version=""):
+        self._ensure_pool()
+        self._reset()
+        self.path = path
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        self.head, self.tail, self.empty_text = library_text_parts(name, version)
+        size = os.path.getsize(path) if os.path.exists(path) else 0
+        if update and size > len(self.tail):
+            with open(path, "rb") as f:
+                f.seek(size - len(self.tail))
+                same_tail = f.read() == self.tail.encode("ascii")
+            last = _last_key(path, size, len(self.tail)) if same_tail else None
+            if last is not None:
+                # Mise à jour : les nouveaux spectres sont ajoutés à la suite, avec les clés suivantes
+                self.append_mode = True
+                self.next_key = last + 1
+            elif size == len(self.empty_text) and open(path, "rb").read() == self.empty_text.encode("ascii"):
+                pass  # bibliothèque existante sans spectre : réécrite, rien n'est perdu
+            else:
+                print(f"[mzSpecLib] {os.path.basename(path)} : fichier existant d'un autre format, réécrit "
+                      f"avec les seuls nouveaux spectres (relancer avec la remise à zéro des mises à jour pour "
+                      f"tout réécrire).")
+        self.part = open(path + ".part", "w", encoding="ascii", newline="\n")
+        self.first = True
 
-        writer.close()
-        if skipped:
-            print(f"[mzSpecLib] {skipped} spectre(s) ignore(s) dans {os.path.basename(input_msp)} (non convertibles).")
-        return count
-    except Exception as e:
-        traceback.print_exc()
-        raise e
+    def add(self, texts):
+        job = (self.next_key, list(texts))
+        self.next_key += len(job[1])
+        if self.pool:
+            self.pending.append(self.pool.apply_async(convert_batch, (job,)))
+            while len(self.pending) > self.max_pending:
+                self._write(self.pending.popleft().get())
+        else:
+            self._write(convert_batch(job))
 
+    def _write(self, result):
+        text, n, errors = result
+        for e in errors:
+            print(f"[mzSpecLib] Spectre ignoré dans {os.path.basename(self.path)} ({e})")
+        self.skipped += len(errors)
+        if n:
+            if not self.first or self.append_mode:
+                self.part.write(_ITEM_SEP)
+            self.part.write(text)
+            self.first = False
+            self.written += n
 
-def _convert_all_sequential(jobs, prefix_cb, global_progress_cb):
-    for msp_path, json_path in jobs:
-        if prefix_cb:
-            prefix_cb(f"Writing {os.path.basename(json_path)} to disk...")
-        convert_msp_to_mzspeclib_json(msp_path, json_path, progress_cb=global_progress_cb)
+    def end(self):
+        while self.pending:
+            self._write(self.pending.popleft().get())
+        self.part.close()
+        part_path = self.path + ".part"
+        if self.append_mode:
+            # Fin du fichier existant retirée, nouveaux spectres ajoutés, fin remise
+            if self.written:
+                with open(self.path, "r+b") as out:
+                    out.seek(0, os.SEEK_END)
+                    out.truncate(out.tell() - len(self.tail))
+                    out.seek(0, os.SEEK_END)
+                    with open(part_path, "rb") as src:
+                        while block := src.read(1 << 22):
+                            out.write(block)
+                    out.write(self.tail.encode("ascii"))
+            os.remove(part_path)
+        else:
+            final_tmp = self.path + ".tmp"
+            with open(final_tmp, "w", encoding="ascii", newline="\n") as out:
+                if self.written:
+                    out.write(self.head)
+                    with open(part_path, "r", encoding="ascii", newline="\n") as src:
+                        while block := src.read(1 << 22):
+                            out.write(block)
+                    out.write(self.tail)
+                else:
+                    out.write(self.empty_text)
+            os.remove(part_path)
+            os.replace(final_tmp, self.path)
+        if self.skipped:
+            print(f"[mzSpecLib] {self.skipped} spectre(s) ignoré(s) dans {os.path.basename(self.path)}.")
+        self._reset()
 
+    def abort(self):
+        """Arrêt demandé : rien n'est écrit, le fichier précédent (mise à jour) reste tel quel."""
+        self.pending.clear()
+        if self.part is not None and not self.part.closed:
+            self.part.close()
+        for p in (self.path and self.path + ".part", self.path and self.path + ".tmp"):
+            if p and os.path.exists(p):
+                try:
+                    os.remove(p)
+                except OSError:
+                    pass
+        self.close(terminate=True)
+        self._reset()
 
-def convert_all_msp(output_directory, step_cb=None, prefix_cb=None, progress_cb=None, total_items_cb=None, workers=None):
-    msp_dir = os.path.join(output_directory, "MSP")
-    json_dir = os.path.join(output_directory, "mzSpecLib")
-
-    if not os.path.exists(msp_dir):
-        return
-
-    msp_files = []
-    for root, dirs, files in os.walk(msp_dir):
-        for f in files:
-            if f.endswith('.msp'):
-                msp_files.append(os.path.join(root, f))
-
-    if not msp_files:
-        return
-
-    if step_cb:
-        step_cb("Writing mzSpecLib JSON")
-
-    jobs = []
-    for msp_path in msp_files:
-        rel_path = os.path.relpath(msp_path, msp_dir)
-        json_path = os.path.join(json_dir, rel_path)
-        json_path = json_path.replace('.msp', '.mzSpecLib.json')
-        os.makedirs(os.path.dirname(json_path), exist_ok=True)
-        jobs.append((msp_path, json_path))
-
-    # Même réglage que l'ancien rdkit_worker.run_parallel (éprouvé dans l'exécutable PyInstaller)
-    workers = workers or max(1, multiprocessing.cpu_count() - 1)
-    try:
-        pool = multiprocessing.Pool(processes=workers)
-    except Exception as e:
-        print(f"[mzSpecLib] Conversion parallèle impossible ({e}) : conversion séquentielle.")
-        pool = None
-
-    if pool is None:
-        total_count = 0
-        for msp_path, _ in jobs:
-            with open(msp_path, 'r', encoding='utf-8', errors='ignore') as f:
-                total_count += sum(1 for line in f if line.upper().startswith("NAME:"))
-        if total_items_cb:
-            total_items_cb(total_count)
-        global_count = 0
-
-        def global_progress_cb(count):
-            nonlocal global_count
-            global_count += 1
-            if progress_cb and global_count % 100 == 0:
-                progress_cb(global_count)
-        _convert_all_sequential(jobs, prefix_cb, global_progress_cb)
-        if progress_cb:
-            progress_cb(global_count)
-        return
-
-    with pool:
-        # 1. Découpage de chaque fichier, puis comptage des spectres de chaque morceau (en parallèle).
-        #    Le nombre de spectres avant un morceau donne le numéro de son premier spectre.
-        bounds = {p: _chunk_boundaries(p) for p, _ in jobs}
-        count_tasks = [(p, k, b[k], b[k + 1]) for p, _ in jobs for b in [bounds[p]] for k in range(len(b) - 1)]
-        counts = {}
-        for p, k, n in pool.imap_unordered(_count_task, count_tasks):
-            counts[(p, k)] = n
-        n_chunks = {p: len(bounds[p]) - 1 for p, _ in jobs}
-        # Cas particulier de mzspeclib : un fichier sans aucune ligne "Name:" compte quand même
-        # un « spectre » (tout le fichier), lu à partir du début.
-        totals = {p: sum(counts[(p, k)] for k in range(n_chunks[p])) for p, _ in jobs}
-
-        if total_items_cb:
-            total_items_cb(sum(totals.values()))
-
-        done = 0
-        for msp_path, json_path in jobs:
-            if prefix_cb:
-                prefix_cb(f"Writing {os.path.basename(json_path)} to disk...")
-            if totals[msp_path] == 0:
-                # Fichier sans début de spectre reconnu : comportement exact de l'ancienne conversion
-                convert_msp_to_mzspeclib_json(msp_path, json_path)
-                continue
-            b = bounds[msp_path]
-            tasks, first = [], 0
-            for k in range(n_chunks[msp_path]):
-                tasks.append((msp_path, k, b[k], b[k + 1], first, f"{json_path}.part{k:05d}"))
-                first += counts[(msp_path, k)]
-            results = {}
-            skipped = 0
-            try:
-                for p, k, c, s in pool.imap_unordered(_convert_task, tasks):
-                    results[k] = c
-                    skipped += s
-                    done += counts[(msp_path, k)]
-                    if progress_cb:
-                        progress_cb(done)  # peut lever "Process stopped by user." (bouton stop)
-            except BaseException:
-                # Arrêt ou erreur : on arrête les processus et on ne laisse pas de fichiers temporaires
-                pool.terminate()
-                pool.join()
-                for t in tasks:
-                    try:
-                        os.remove(t[5])
-                    except OSError:
-                        pass
-                raise
-            _assemble(json_path, [(tasks[k][5], results[k]) for k in range(len(tasks))])
-            if skipped:
-                print(f"[mzSpecLib] {skipped} spectre(s) ignore(s) dans {os.path.basename(msp_path)} (non convertibles).")
-
-    if progress_cb:
-        progress_cb(done)
+    def close(self, terminate=False):
+        if self.pool:
+            if terminate:
+                self.pool.terminate()
+            else:
+                self.pool.close()
+            self.pool.join()
+        self.pool = None
