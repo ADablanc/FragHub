@@ -43,7 +43,9 @@ pub fn keep_unit_from_key(raw_key: &str, value: String) -> String {
 /// - énergies de collision numérotées (Spectraverse : COLLISION_ENERGY_1, _2, _3) : réunies en une
 ///   seule valeur "e1, e2, e3" (valeurs vides ou "nan" ignorées), lue comme COLLISION_ENERGY_1 ;
 ///   d'après l'article Spectraverse, une rampe remplit les champs 1 et 2, des paliers les champs 1, 2 et 3 :
-///   "Ramp e1, e2" ou "Stepped e1, e2, e3" dans ces deux cas exactement, liste neutre sinon.
+///   "Ramp e1, e2" ou "Stepped e1, e2, e3" dans ces deux cas exactement, liste neutre sinon ;
+///   unité « eV » ajoutée seulement pour un spectre Spectraverse sûr (TITLE "SPECTRAVERSE" suivi de chiffres et
+///   champs NORMALIZED_COLLISION_ENERGY présents) : l'article la donne, le fichier ne l'écrit pas.
 #[derive(Default)]
 pub struct RawMetadata {
     values: HashMap<String, String>,
@@ -89,7 +91,9 @@ impl RawMetadata {
     }
 
     /// Réunit COLLISION_ENERGY_1, _2, _3... (Spectraverse) en une seule valeur dans COLLISION_ENERGY_1.
-    /// Champs 1 et 2 seuls remplis : rampe ; champs 1, 2 et 3 remplis : paliers (article Spectraverse).
+    /// Champs 1 et 2 seuls remplis : rampe ; champs 1, 2 et 3 remplis : paliers (article Spectraverse,
+    /// Gupta et al., Anal. Chem. 2026, doi 10.1021/acs.analchem.5c06256). Valeurs en eV d'après le même article :
+    /// unité ajoutée seulement si le spectre est sûrement un spectre Spectraverse.
     fn merge_numbered_collision_energies(&mut self) {
         let mut parts = Vec::new();
         // Numéros des champs remplis
@@ -110,7 +114,17 @@ impl RawMetadata {
                 [1, 2, 3] => "Stepped ",
                 _ => "",
             };
-            self.values.insert("collision_energy_1".to_string(), format!("{prefix}{}", parts.join(", ")));
+            // Spectre Spectraverse : identifiant "SPECTRAVERSE0000000001" et énergies normalisées numérotées
+            let spectraverse = self.values.get("title").map_or(false, |t| {
+                let t = t.trim();
+                t.len() > "SPECTRAVERSE".len()
+                    && t.starts_with("SPECTRAVERSE")
+                    && t["SPECTRAVERSE".len()..].chars().all(|c| c.is_ascii_digit())
+            }) && self.values.contains_key("normalized_collision_energy_1");
+            // Nombres seuls (pas d'unité écrite) : seule condition pour ajouter l'unité
+            let numbers_only = parts.iter().all(|p| p.parse::<f64>().is_ok());
+            let unit = if spectraverse && numbers_only { " eV" } else { "" };
+            self.values.insert("collision_energy_1".to_string(), format!("{prefix}{}{unit}", parts.join(", ")));
         }
     }
 
@@ -446,6 +460,15 @@ mod tests {
         assert_eq!(run(&[("collision_energy_1", "5.36"), ("collision_energy_2", "8.04"), ("collision_energy_3", "10.72")]), "Stepped 5.36, 8.04, 10.72");
         assert_eq!(run(&[("collision_energy_1", "20.0"), ("collision_energy_2", "40.0"), ("collision_energy_3", "nan")]), "Ramp 20.0, 40.0");
         assert_eq!(run(&[("collision_energy_1", "20.0"), ("collision_energy_2", "nan"), ("collision_energy_3", "40.0")]), "20.0, 40.0");
+        // Spectraverse sûr : unité eV ajoutée
+        let sv = |e1: &str, e2: &str| run(&[("title", "SPECTRAVERSE0000000001"), ("collision_energy_1", e1), ("collision_energy_2", e2),
+                                              ("collision_energy_3", "nan"), ("normalized_collision_energy_1", "20.0")]);
+        assert_eq!(sv("11.326204", "nan"), "11.326204 eV");
+        assert_eq!(sv("20.0", "40.0"), "Ramp 20.0, 40.0 eV");
+        // Pas sûr : titre autre, ou pas d'énergie normalisée : aucune unité
+        assert_eq!(run(&[("title", "Spectrum 12"), ("collision_energy_1", "20.0"), ("normalized_collision_energy_1", "20.0")]), "20.0");
+        assert_eq!(run(&[("title", "SPECTRAVERSE0000000001"), ("collision_energy_1", "20.0")]), "20.0");
+        assert_eq!(run(&[("title", "SPECTRAVERSE_test"), ("collision_energy_1", "20.0"), ("normalized_collision_energy_1", "20.0")]), "20.0");
         assert_eq!(run(&[("collision_energy_1", "nan"), ("collision_energy_2", "nan")]), "nan");
     }
 
