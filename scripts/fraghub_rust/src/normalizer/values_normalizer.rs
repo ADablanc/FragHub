@@ -47,6 +47,12 @@ pub fn normalize_values(
     if metadata_opt.is_none() { return None; } // Interruption prématurée si le spectre est mauvais
     metadata_dict = metadata_opt.unwrap();
 
+    // 3b. Méthode de fragmentation écrite ailleurs (instrument, origine, bibliothèque, nom) : AVANT les étapes 4 et 6,
+    //     qui retirent les indices in silico et d'instrument
+    metadata_dict = super::normalize_collision_energy::fragmentation_method_from_text(metadata_dict);
+    //     Analyseur écrit après l'énergie (« 35 eV FT-MS ») : retiré, mis dans INSTRUMENTTYPE si ce champ est vide
+    metadata_dict = super::normalize_collision_energy::analyzer_from_collision_energy(metadata_dict);
+
     // 4. Standardise le statut in-silico (prédit). AVANT la normalisation des instruments, pour lire INSTRUMENTTYPE
     //    tel qu'il est dans le fichier (ex. LipidBlast : "in-silico QTOF"). Les étapes suivantes ne modifient ni
     //    COMMENT, ni FILENAME, ni PREDICTED ; seule l'étape 8 modifie NAME (fin du nom : énergie, InChIKey, adduit)
@@ -116,6 +122,10 @@ pub fn normalize_values(
 
     // 14. Normalise les unités de temps de rétention en minutes
     metadata_dict = super::normalize_retentiontime::normalize_retention_time(metadata_dict);
+
+    // 15. Uniformise l'écriture de l'énergie de collision (sans conversion d'unité) ; la méthode de fragmentation
+    //     écrite avec elle (« 35 CID ») va dans FRAGMENTATIONMETHODE si ce champ est vide
+    metadata_dict = super::normalize_collision_energy::normalize_collision_energy(metadata_dict);
 
     // On enveloppe le dictionnaire valide et entièrement normalisé dans `Some` pour le renvoyer.
     Some(metadata_dict)
