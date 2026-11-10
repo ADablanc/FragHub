@@ -2,7 +2,7 @@
 //! Écriture des fichiers de sortie de FragHub, un fichier par format :
 //! - `csv_writer.rs`  : fichiers CSV (CSV/POS, CSV/NEG) ;
 //! - `json_writer.rs` : fichiers JSON (JSON/POS, JSON/NEG) ;
-//! - `msp_writer.rs`  : fichiers MSP (MSP/POS, MSP/NEG), à partir des textes préparés par spectra_to_msp.rs ;
+//! - `msp_writer.rs`  : fichiers MSP (MSP/POS, MSP/NEG), texte de chaque spectre fabriqué par spectra_to_msp.rs ;
 //! - `mzspeclib_sender.rs` : fichiers mzSpecLib (mzSpecLib/POS, mzSpecLib/NEG) : les spectres sont envoyés par
 //!   paquets au Python (scripts/mzspeclib_converter.py), qui les écrit avec la bibliothèque mzspeclib.
 

@@ -72,7 +72,13 @@ pub fn remove_duplicatas_processing(
     for (i, spec) in spectrum_list.iter().enumerate() {
         let mut row_size = 0;
         for col in &ordered_columns {
-            if let Some(val) = spec.metadata.get(col) {
+            if col == "PEAKS_LIST" {
+                // Le texte des pics compte comme avant, quand il était gardé dans les métadonnées
+                row_size += match spec.metadata.get(col) {
+                    Some(val) => val.chars().count(),
+                    None => crate::spectrum::peaks_text(&spec.peaks).len(),
+                };
+            } else if let Some(val) = spec.metadata.get(col) {
                 row_size += val.chars().count();
             }
         }
@@ -141,7 +147,11 @@ pub fn remove_duplicatas_processing(
             let mut record: Vec<String> = Vec::with_capacity(ordered_columns.len() + 1);
 
             for col in &ordered_columns {
-                record.push(spec.metadata.get(col).cloned().unwrap_or_default());
+                if col == "PEAKS_LIST" {
+                    record.push(crate::spectrum::peaks_list_text(spec));
+                } else {
+                    record.push(spec.metadata.get(col).cloned().unwrap_or_default());
+                }
             }
             record.push("spectrum deleted because it's a duplicate (SPLASH + INCHIKEY)".to_string());
             wtr.write_record(&record).map_err(|e| pyo3::exceptions::PyIOError::new_err(e.to_string()))?;

@@ -8,7 +8,6 @@ use std::path::Path;
 use csv::WriterBuilder;
 use std::io::{BufWriter, Write};
 use std::sync::atomic::{AtomicUsize, Ordering};
-use std::time::Duration;
 
 /// Moteur principal de nettoyage et de filtrage d'une liste de spectres.
 ///
@@ -70,7 +69,12 @@ pub fn spectrum_cleaning_processing(
 
     // CORRECTION : On stocke maintenant un tuple (metadata, peaks) pour ne pas perdre les pics !
     let mut kept_spectra = Vec::new();
-    let mut deleted_spectra: HashMap<String, Vec<HashMap<String, String>>> = HashMap::new();
+    // Spectres supprimés : écrits dans DELETED_SPECTRUMS après chaque paquet, puis libérés (avant, ils restaient
+    // tous en mémoire jusqu'à la fin de l'étape : plusieurs Go sur une base complète). Les fichiers sont identiques :
+    // mêmes lignes, dans le même ordre (ordre des paquets), en-tête écrit au premier paquet d'un motif.
+    let mut deleted_counts: HashMap<String, usize> = HashMap::new();
+    let del_dir = Path::new(&output_directory).join("DELETED_SPECTRUMS");
+    let written = AtomicUsize::new(0);
 
     // Les spectres sont DÉPLACÉS paquet par paquet (et non copiés) : chaque paquet est libéré
     // dès qu'il est traité, en parallèle, au lieu de libérer toute la liste d'un coup à la fin.
@@ -147,13 +151,8 @@ pub fn spectrum_cleaning_processing(
                     }
 
                     valid_meta.insert("NUM PEAKS".to_string(), peaks.len().to_string());
-
-                    let mut formatted_peaks = String::new();
-                    for (i, &(mz, int)) in peaks.iter().enumerate() {
-                        if i > 0 { formatted_peaks.push('\n'); }
-                        formatted_peaks.push_str(&format!("{:.8} {:.8}", mz, int));
-                    }
-                    valid_meta.insert("PEAKS_LIST".to_string(), formatted_peaks);
+                    // Les pics ne sont plus recopiés en texte dans PEAKS_LIST (ils étaient gardés deux fois en
+                    // mémoire) : le texte est fabriqué là où il est écrit (crate::spectrum::peaks_text).
 
                     // CORRECTION : On retourne les métadonnées ET les pics filtrés
                     Ok((valid_meta, peaks))
@@ -164,14 +163,31 @@ pub fn spectrum_cleaning_processing(
         });
 
         // Répartition des succès et des erreurs
+        let mut deleted_chunk: Vec<(String, Vec<HashMap<String, String>>)> = Vec::new();
         for res in results {
             match res {
                 Ok((meta, peaks)) => kept_spectra.push((meta, peaks)), // CORRECTION : on sauvegarde le tuple
                 Err((mut meta, reason)) => {
                     meta.insert("DELETION_REASON".to_string(), reason.clone());
-                    deleted_spectra.entry(reason).or_default().push(meta);
+                    match deleted_chunk.iter_mut().find(|(r, _)| *r == reason) {
+                        Some((_, group)) => group.push(meta),
+                        None => deleted_chunk.push((reason, vec![meta])),
+                    }
                 }
             }
+        }
+        // Écriture des suppressions de ce paquet : premier paquet d'un motif comme avant (ajout au fichier existant
+        // seulement en mise à jour), paquets suivants ajoutés à la suite
+        if !deleted_chunk.is_empty() {
+            fs::create_dir_all(&del_dir)?;
+            let (first, next): (Vec<_>, Vec<_>) = deleted_chunk.into_iter().partition(|(r, _)| !deleted_counts.contains_key(r));
+            for (r, group) in first.iter().chain(next.iter()) {
+                *deleted_counts.entry(r.clone()).or_insert(0) += group.len();
+            }
+            py.allow_threads(|| {
+                write_deletion_files(first, &del_dir, &ordered_columns, update, &written);
+                write_deletion_files(next, &del_dir, &ordered_columns, true, &written);
+            });
         }
 
         processed += chunk_len;
@@ -179,8 +195,7 @@ pub fn spectrum_cleaning_processing(
     }
 
     // 3. Mise à jour de L'OBJET RUST DeletionReport EN DIRECT (Nativement !)
-    for (reason, group) in &deleted_spectra {
-        let count = group.len();
+    for (reason, &count) in &deleted_counts {
         match reason.as_str() {
             "spectrum deleted because peaks list is empty" => deletion_report.no_peaks_list += count,
             "spectrum deleted because precursor mz is less than or equal to zero." => deletion_report.no_precursor_mz += count,
@@ -204,51 +219,27 @@ pub fn spectrum_cleaning_processing(
 
     if let Some(cb) = &progress_callback { cb.call1(py, (total_items,))?; }
 
-    // 4. Écriture des CSV de suppression.
-    // Nouvelle barre de progression (en lignes écrites) : avant, la barre restait figée pendant l'écriture.
-    let total_deleted: usize = deleted_spectra.values().map(|g| g.len()).sum();
+    // 4. Les CSV de suppression ont été écrits au fil des paquets (voir plus haut)
+    let total_deleted: usize = deleted_counts.values().sum();
     if total_deleted > 0 {
         if let Some(cb) = &total_items_callback { let _ = cb.call1(py, (total_deleted,)); }
-    }
-    if let Some(cb) = &prefix_callback { cb.call1(py, ("Writing deletion logs...",))?; }
-    if total_deleted > 0 {
         if let Some(cb) = &item_type_callback { let _ = cb.call1(py, ("rows",)); }
-    }
-
-    if !deleted_spectra.is_empty() {
-        let del_dir = Path::new(&output_directory).join("DELETED_SPECTRUMS");
-        fs::create_dir_all(&del_dir)?;
-
-        let deleted_spectra_vec: Vec<_> = deleted_spectra.into_iter().collect();
-        let written = AtomicUsize::new(0);
-        // L'écriture tourne dans un thread à part ; pendant ce temps, ce thread-ci (qui a le droit
-        // d'appeler Python) met à jour la barre toutes les 100 ms.
-        std::thread::scope(|scope| {
-            let worker = scope.spawn(|| write_deletion_files(deleted_spectra_vec, &del_dir, &ordered_columns, update, &written));
-            while !worker.is_finished() {
-                py.allow_threads(|| std::thread::sleep(Duration::from_millis(100)));
-                // let _ : comme avant, l'écriture n'est pas interrompue par le bouton stop
-                if let Some(cb) = &progress_callback { let _ = cb.call1(py, (written.load(Ordering::Relaxed),)); }
-            }
-            if let Err(panic) = worker.join() {
-                std::panic::resume_unwind(panic);
-            }
-        });
-        if let Some(cb) = &progress_callback { let _ = cb.call1(py, (total_deleted,)); }
+        if let Some(cb) = &progress_callback { let _ = cb.call1(py, (written.load(Ordering::Relaxed),)); }
     }
 
     let final_list = py.allow_threads(|| {
-        // 5. Reconstruction de la liste finale
-        let mut final_list = Vec::with_capacity(kept_spectra.len());
-        for (meta, peaks) in kept_spectra {
-            let mut spec = Spectrum::default();
-            spec.metadata = meta;
-            spec.peaks = peaks; // CORRECTION : On réinjecte le tableau de pics dans l'objet final !
-            final_list.push(spec);
-        }
-
-        Ok::<_, pyo3::PyErr>(final_list)
-    })?;
+        // 5. Reconstruction de la liste finale, avec une passe de « tassage » : la table des champs garde sa taille
+        // maximale après la lecture et la normalisation (champs bruts et clés internes retirés), et une liste de
+        // pics filtrée peut garder de la place réservée en trop. On rend cette place (valeurs inchangées).
+        kept_spectra.into_par_iter().map(|(mut meta, mut peaks)| {
+            for value in meta.values_mut() {
+                value.shrink_to_fit();
+            }
+            meta.shrink_to_fit();
+            peaks.shrink_to_fit();
+            Spectrum { metadata: meta, peaks }
+        }).collect::<Vec<Spectrum>>()
+    });
 
     Ok(final_list)
 }

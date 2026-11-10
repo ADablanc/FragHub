@@ -60,12 +60,18 @@ pub fn mz_correction_processing(
     // Spectres supprimés, par motif (dans l'ordre de première apparition), écrits à la fin dans DELETED_SPECTRUMS
     let mut deleted: Vec<(String, Vec<std::collections::HashMap<String, String>>)> = Vec::new();
     
-    let chunks: Vec<_> = spectrum_list.chunks(batch_size).collect();
-    
-    for chunk in chunks {
+    // Les spectres sont DÉPLACÉS paquet par paquet (et non copiés) : avant, chaque spectre était copié et la liste
+    // d'origine restait entière jusqu'à la fin de l'étape, à côté de la liste corrigée (deux fois la mémoire).
+    let mut remaining = spectrum_list.into_iter();
+    loop {
+        let chunk: Vec<Spectrum> = remaining.by_ref().take(batch_size).collect();
+        if chunk.is_empty() {
+            break;
+        }
+        let chunk_len = chunk.len();
         py.allow_threads(|| {
-            let processed_chunk: Vec<Result<Spectrum, (&'static str, Spectrum)>> = chunk.par_iter().map(|spec| {
-                let mut new_spec = spec.clone();
+            let processed_chunk: Vec<Result<Spectrum, (&'static str, Spectrum)>> = chunk.into_par_iter().map(|spec| {
+                let mut new_spec = spec;
                 
                 let formula = new_spec.metadata.get("FORMULA").cloned().unwrap_or_default();
                 let precursor_type = new_spec.metadata.get("PRECURSORTYPE").cloned().unwrap_or_default();
@@ -133,7 +139,7 @@ pub fn mz_correction_processing(
                 
                 // If STILL empty, it means we have no valid formula to test MS2 against. Skip crash test safely.
                 if final_formula.is_empty() {
-                    return Ok(new_spec.clone());
+                    return Ok(new_spec);
                 }
 
                 // ==========================================
@@ -224,7 +230,10 @@ pub fn mz_correction_processing(
                     "skip_mz_range" => { skipped_mz_range += 1; continue; }
                     _ => continue,
                 };
+                // Texte des pics écrit dans le fichier de suppression (il n'est plus gardé dans les métadonnées)
+                let peaks_list = crate::spectrum::peaks_list_text(&spec);
                 let mut meta = spec.metadata;
+                meta.insert("PEAKS_LIST".to_string(), peaks_list);
                 meta.insert("DELETION_REASON".to_string(), reason.to_string());
                 match deleted.iter_mut().find(|(r, _)| r == reason) {
                     Some((_, group)) => group.push(meta),
@@ -233,7 +242,7 @@ pub fn mz_correction_processing(
             }
         });
         
-        total_processed += chunk.len();
+        total_processed += chunk_len;
         if let Some(cb) = &progress_callback {
             cb.call1(py, (total_processed,))?;
         }

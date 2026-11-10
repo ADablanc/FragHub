@@ -18,7 +18,6 @@ use crate::normalize_to_not_found::normalize_to_not_found_processing;
 
 use crate::splitter::master_splitter;
 
-use crate::spectra_to_msp::spectra_to_msp_processing;
 use crate::writers::{writting_csv_processing, writting_msp_processing, writting_json_processing, sending_mzspeclib_processing};
 use crate::report::generate_report_processing;
 use crate::set_projects::{init_project, reset_updates};
@@ -323,16 +322,15 @@ pub fn main_orchestrator(
 
         let tuple_split = master_splitter(
             py,
-            &spectrum_list,
+            spectrum_list,
             progress_callback.clone(),
             total_items_callback.clone(),
             prefix_callback.clone(),
             item_type_callback.clone()
         )?;
 
-        // La liste complète n'est plus utilisée après le tri par catégories : on la libère tout de suite
-        // (avant, elle restait en mémoire pendant toute l'écriture, en plus des tables triées).
-        drop(spectrum_list);
+        // La liste complète est donnée au tri (déplacée, pas copiée) : avant, elle était copiée dans les tables puis
+        // libérée, d'où un pic de mémoire avec les deux en même temps.
 
         let pos_lc_df = tuple_split.0;
         let pos_lc_in_silico_df = tuple_split.1;
@@ -348,31 +346,9 @@ pub fn main_orchestrator(
         // STEP 11: MSP / CSV / JSON
         // Les tables sont passées par référence (&) aux fonctions d'écriture, qui ne font que les lire :
         // avant, chaque fonction recevait une copie complète (.clone()), d'où un pic de mémoire.
-        let mut pos_lc_msp = Vec::new();
-        let mut pos_lc_insilico_msp = Vec::new();
-        let mut pos_gc_msp = Vec::new();
-        let mut pos_gc_insilico_msp = Vec::new();
-        let mut neg_lc_msp = Vec::new();
-        let mut neg_lc_insilico_msp = Vec::new();
-        let mut neg_gc_msp = Vec::new();
-        let mut neg_gc_insilico_msp = Vec::new();
-
+        // Le texte MSP est fabriqué pendant l'écriture (writers/msp_writer.rs) : il n'est plus préparé d'avance
+        // pour tous les spectres (étape « Converting CSV to MSP » supprimée).
         let msp_val: f64 = parameters_dict.get_item("msp")?.map(|v| v.extract().unwrap_or(0.0)).unwrap_or(0.0);
-        if msp_val == 1.0 {
-            py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
-            if let Some(cb) = &step_callback { cb.call1(py, ("Converting CSV to MSP",))?; }
-            py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
-
-            let tuple_msp = spectra_to_msp_processing(py, &pos_lc_df, &pos_lc_in_silico_df, &pos_gc_df, &pos_gc_in_silico_df, &neg_lc_df, &neg_lc_in_silico_df, &neg_gc_df, &neg_gc_in_silico_df, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
-            pos_lc_msp = tuple_msp.0;
-            pos_lc_insilico_msp = tuple_msp.1;
-            pos_gc_msp = tuple_msp.2;
-            pos_gc_insilico_msp = tuple_msp.3;
-            neg_lc_msp = tuple_msp.4;
-            neg_lc_insilico_msp = tuple_msp.5;
-            neg_gc_msp = tuple_msp.6;
-            neg_gc_insilico_msp = tuple_msp.7;
-        }
         check_stop_flag()?;
 
         let csv_val: f64 = parameters_dict.get_item("csv")?.map(|v| v.extract().unwrap_or(0.0)).unwrap_or(0.0);
@@ -389,7 +365,7 @@ pub fn main_orchestrator(
             if let Some(cb) = &step_callback { cb.call1(py, ("Writing MSP",))?; }
             py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
-            writting_msp_processing(py, &pos_lc_msp, &pos_lc_insilico_msp, &pos_gc_msp, &pos_gc_insilico_msp, &neg_lc_msp, &neg_lc_insilico_msp, &neg_gc_msp, &neg_gc_insilico_msp, &output_directory, update, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+            writting_msp_processing(py, &pos_lc_df, &pos_lc_in_silico_df, &pos_gc_df, &pos_gc_in_silico_df, &neg_lc_df, &neg_lc_in_silico_df, &neg_gc_df, &neg_gc_in_silico_df, &output_directory, update, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
         }
 
         let json_val: f64 = parameters_dict.get_item("json")?.map(|v| v.extract().unwrap_or(0.0)).unwrap_or(0.0);

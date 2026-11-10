@@ -11,7 +11,7 @@ use crate::spectrum::Spectrum;
 /// tous ces paquets à la fin. Aucun thread ne bloque un autre, la RAM n'est pas fragmentée !
 pub fn master_splitter(
     py: Python,
-    spectrum_list: &Vec<Spectrum>,
+    spectrum_list: Vec<Spectrum>,
     progress_callback: Option<PyObject>,
     total_items_callback: Option<PyObject>,
     prefix_callback: Option<PyObject>,
@@ -29,8 +29,10 @@ pub fn master_splitter(
     if let Some(cb) = &total_items_callback { cb.call1(py, (total_items, 0))?; }
 
     let result = py.allow_threads(|| {
+        // Les spectres sont DÉPLACÉS dans les tables (et non copiés) : avant, la liste complète et sa copie triée
+        // existaient en même temps. Même ordre qu'avant dans chaque table (fold puis reduce gardent l'ordre).
         spectrum_list
-            .par_iter()
+            .into_par_iter()
             .fold(
                 || (
                     Vec::new(), Vec::new(), Vec::new(), Vec::new(),
@@ -51,14 +53,14 @@ pub fn master_splitter(
 
                         // On range directement dans la bonne combinaison
                         match (is_pos, is_gc, is_insilico) {
-                            (true, false, false)  => acc.0.push(spec.clone()),
-                            (true, false, true)   => acc.1.push(spec.clone()),
-                            (true, true, false)   => acc.2.push(spec.clone()),
-                            (true, true, true)    => acc.3.push(spec.clone()),
-                            (false, false, false) => acc.4.push(spec.clone()),
-                            (false, false, true)  => acc.5.push(spec.clone()),
-                            (false, true, false)  => acc.6.push(spec.clone()),
-                            (false, true, true)   => acc.7.push(spec.clone()),
+                            (true, false, false)  => acc.0.push(spec),
+                            (true, false, true)   => acc.1.push(spec),
+                            (true, true, false)   => acc.2.push(spec),
+                            (true, true, true)    => acc.3.push(spec),
+                            (false, false, false) => acc.4.push(spec),
+                            (false, false, true)  => acc.5.push(spec),
+                            (false, true, false)  => acc.6.push(spec),
+                            (false, true, true)   => acc.7.push(spec),
                         }
                     }
                     acc

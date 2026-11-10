@@ -198,7 +198,11 @@ pub fn process_mols(
             
             let mut row_vals = Vec::new();
             for col in &columns {
-                row_vals.push(spec.metadata.get(*col).cloned().unwrap_or_default());
+                if *col == "PEAKS_LIST" {
+                    row_vals.push(crate::spectrum::peaks_list_text(&spec));
+                } else {
+                    row_vals.push(spec.metadata.get(*col).cloned().unwrap_or_default());
+                }
             }
             deleted_rows.push(row_vals);
         }
