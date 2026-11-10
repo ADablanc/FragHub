@@ -36,8 +36,10 @@ Normalisation de l'énergie de collision (COLLISIONENERGY) et de la méthode de 
 
 - **spectraverse** (2026-11-10) : d'après l'article, rampe = champs 1 et 2, paliers = champs 1, 2, 3 ; écrit à la
   lecture (`Ramp 20/40`, `Stepped 5.361791/8.042687/10.723583`), liste neutre pour toute autre combinaison.
-  Échantillon : 302 rampes, 142 paliers. Point ouvert : ajouter `eV` (unité donnée par l'article, absente du
-  fichier) ? décision d'Axel attendue.
+  Échantillon : 302 rampes, 142 paliers. Unité `eV` (donnée par l'article Gupta et al., Anal. Chem. 2026,
+  doi 10.1021/acs.analchem.5c06256, absente du fichier) ajoutée **seulement pour un spectre Spectraverse sûr** :
+  TITLE `SPECTRAVERSE` + chiffres, champs `NORMALIZED_COLLISION_ENERGY_*` présents, nombres sans unité
+  (décision d'Axel, 2026-11-10).
 
 ## Méthode de fragmentation (FRAGMENTATIONMETHODE) — règles (2026-11-10)
 
