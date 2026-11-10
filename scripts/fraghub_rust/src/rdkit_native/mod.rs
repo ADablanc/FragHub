@@ -199,9 +199,12 @@ pub fn run_parallel(
     let total = mols_list.len();
     let cache = compute_cache(
         mols_list,
-        |done| match &progress_callback {
-            Some(cb) => cb.call1(py, (done,)).map(|_| ()),
-            None => Ok(()),
+        |done| {
+            crate::stop::check()?; // arrêt demandé (stop.rs)
+            match &progress_callback {
+                Some(cb) => cb.call1(py, (done,)).map(|_| ()),
+                None => Ok(()),
+            }
         },
         || py.allow_threads(|| std::thread::sleep(Duration::from_millis(100))),
     )?;
@@ -286,7 +289,8 @@ fn compute_cache<E>(
         while !worker.is_finished() {
             wait();
             let d = done.load(Ordering::Relaxed);
-            if d != last && tick_error.is_none() {
+            // Appel aussi sans progrès quand l'arrêt est demandé (une molécule longue ne le retarde plus)
+            if (d != last || crate::stop::requested()) && tick_error.is_none() {
                 last = d;
                 if let Err(e) = tick(d) {
                     cancel.store(true, Ordering::Relaxed); // bouton stop : on arrête le calcul

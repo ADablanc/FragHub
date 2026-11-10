@@ -62,6 +62,10 @@ By default, the CLI outputs real-time execution metrics to `stdout`:
 `▶ derivation and calculation (RDKit via Rust):`
 `  [█████████████░░░░░░░░░] 50.0% | 500/1000 [00:15 < 00:15, 33.3 it/s]`
 
+## ⏹️ Stopping a Run (Ctrl+C)
+
+Press **Ctrl+C** once to stop a run cleanly: the current task stops within about a second (at most the time of the RDKit molecule being computed), and the output directory is put back **exactly as it was before the run** (files added or completed by the run are removed or cut back, replaced files and the previous outputs set aside by `--reset_updates yes` are restored). The program then exits with code `130`. Press **Ctrl+C** a second time to quit immediately, without this clean-up. The Stop button of the interface works the same way.
+
 ## 🔇 Quiet Mode
 
 | Argument | Default | Description |

@@ -55,6 +55,7 @@ pub fn load_spectrum_list_from_mgf(
 
     let mut line = String::with_capacity(1024);
     loop {
+        crate::stop::check()?; // arrêt demandé (stop.rs)
         line.clear();
         let bytes_read = reader.read_line(&mut line)?;
         if bytes_read == 0 { break; }

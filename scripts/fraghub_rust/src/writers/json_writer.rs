@@ -77,7 +77,7 @@ pub fn writting_json_processing(
     });
 
     for res in results {
-        if let Err(e) = res { return Err(pyo3::exceptions::PyIOError::new_err(e)); }
+        if let Err(e) = res { return Err(crate::stop::io_error(e)); }
     }
 
     if let Some(cb) = &progress_callback { cb.call1(py, (total_items,))?; }
@@ -166,6 +166,8 @@ pub(crate) fn write_json_file(
     before_close: &dyn Fn(),
 ) -> Result<(), String> {
     let is_append_mode = update && file_path.exists() && fs::metadata(file_path).map(|m| m.len()).unwrap_or(0) > 2;
+    // Noté avant écriture (fin du fichier comprise, réécrite pour ajouter) : remis comme avant si le run s'arrête
+    crate::output_guard::prepare(file_path, is_append_mode).map_err(|e| e.to_string())?;
 
     let file_res = if is_append_mode {
         OpenOptions::new().read(true).write(true).open(file_path).and_then(|mut f| {
@@ -197,6 +199,7 @@ pub(crate) fn write_json_file(
     let round_size = WRITE_CHUNK * WRITE_CHUNKS_PER_ROUND;
 
     for (r, round) in data_list.chunks(round_size).enumerate() {
+        crate::stop::check_str()?; // arrêt demandé (stop.rs)
         let base = r * round_size;
         let buffers: Vec<Vec<u8>> = round.par_chunks(WRITE_CHUNK).enumerate().map(|(c, chunk)| {
             let mut out = Vec::with_capacity(chunk.len() * 2048);

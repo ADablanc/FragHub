@@ -45,6 +45,8 @@ pub mod main_orchestrator;
 pub mod mz_correction;
 pub mod adduct_mass_calculator;
 pub mod database_renormalization;
+pub mod stop;
+pub mod output_guard;
 
 #[pymodule]
 fn fraghub_rust(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -61,6 +63,12 @@ fn fraghub_rust(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     // --- Projets et rapports ---
     m.add_function(wrap_pyfunction!(set_projects::reset_updates, m)?)?;
     m.add_function(wrap_pyfunction!(set_projects::init_project, m)?)?;
+
+    // --- Arrêt (bouton stop, Ctrl+C) et protection du dossier de sortie ---
+    m.add_function(wrap_pyfunction!(stop::request_stop, m)?)?;
+    m.add_function(wrap_pyfunction!(stop::reset_stop, m)?)?;
+    m.add_function(wrap_pyfunction!(stop::install_ctrl_c_handler, m)?)?;
+    m.add_function(wrap_pyfunction!(output_guard::guard_output_file, m)?)?;
 
 
     Ok(())

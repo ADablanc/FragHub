@@ -314,6 +314,7 @@ pub fn de_novo_calculation_processing(
     let mut processed = 0;
 
     for chunk in spectrum_list.chunks_mut(chunk_size) {
+        crate::stop::check()?; // arrêt demandé (stop.rs)
         py.allow_threads(|| {
             chunk.par_iter_mut().for_each(|spec| {
                 let formula = spec.metadata.get("FORMULA").cloned().unwrap_or_default();

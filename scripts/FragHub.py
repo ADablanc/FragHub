@@ -199,6 +199,9 @@ def get_stop_flag(): return global_stop_flag
 async def stop_analysis():
     global global_stop_flag
     global_stop_flag = True
+    # Indicateur partagé du moteur Rust, regardé par toutes ses boucles : arrêt en moins d'une seconde, et
+    # dossier de sortie remis comme avant le run (src/stop.rs, src/output_guard.rs)
+    fraghub_rust.request_stop()
     return {"status": "stopped"}
 
 @app.get("/health")
@@ -472,6 +475,9 @@ if __name__ == "__main__":
         # Sortie mzSpecLib, comme dans l'interface (execute_main_safely) : le moteur Rust envoie les spectres
         # à cet objet, qui écrit <output_directory>/mzSpecLib pendant l'étape d'écriture des sorties.
         mzspeclib_sink = mzspeclib_converter.MzSpecLibSink() if with_mzspeclib else None
+        # Ctrl+C : arrêt propre par le moteur Rust (dossier de sortie remis comme avant le run) ; un deuxième Ctrl+C
+        # quitte tout de suite. Avant, Ctrl+C n'était vu qu'au retour du moteur dans Python.
+        fraghub_rust.install_ctrl_c_handler()
         try:
             # Lancement de l'orchestrateur de façon synchrone dans le thread principal
             fraghub_rust.main_orchestrator(
@@ -487,6 +493,10 @@ if __name__ == "__main__":
                 mzspeclib_sink=mzspeclib_sink
             )
         except Exception as e:
+            if str(e) == "Process stopped by user.":
+                print("\n[STOP] Traitement arrêté : le dossier de sortie a été remis comme avant le run.")
+                perf_log.finish("Arrêté par l'utilisateur")  # PERF_LOG
+                sys.exit(130)
             print(f"\n[ERROR] Une erreur s'est produite : {e}")
             perf_log.finish(f"Erreur : {e}")  # PERF_LOG
             sys.exit(1)

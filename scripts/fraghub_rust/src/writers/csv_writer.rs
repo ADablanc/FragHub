@@ -75,7 +75,7 @@ pub fn writting_csv_processing(
     });
 
     for res in results {
-        if let Err(e) = res { return Err(pyo3::exceptions::PyIOError::new_err(e)); }
+        if let Err(e) = res { return Err(crate::stop::io_error(e)); }
     }
 
     if let Some(cb) = &progress_callback { cb.call1(py, (total_items,))?; }
@@ -137,6 +137,8 @@ pub(crate) fn write_csv_file(
     is_append: bool,
     progress: &(dyn Fn(usize) + Sync),
 ) -> Result<(), String> {
+    // Noté avant écriture : remis comme avant si le run s'arrête (output_guard.rs)
+    crate::output_guard::prepare(file_path, is_append).map_err(|e| e.to_string())?;
     let file = OpenOptions::new().write(true).create(true).append(is_append).truncate(!is_append).open(file_path).map_err(|e| e.to_string())?;
     let mut file = std::io::BufWriter::with_capacity(1 << 20, file);
 
@@ -147,6 +149,7 @@ pub(crate) fn write_csv_file(
     }
 
     for round in data_list.chunks(WRITE_CHUNK * WRITE_CHUNKS_PER_ROUND) {
+        crate::stop::check_str()?; // arrêt demandé (stop.rs)
         let buffers: Vec<Result<Vec<u8>, String>> = round.par_chunks(WRITE_CHUNK).map(|chunk| {
             let mut w = csv_builder().has_headers(false).from_writer(Vec::new());
             for spec in chunk {

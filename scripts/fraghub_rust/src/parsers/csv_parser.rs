@@ -147,6 +147,7 @@ pub fn load_and_parse_csv(
             let mut last_update = std::time::Instant::now();
 
             for result in rdr.records() {
+                crate::stop::check_str()?; // arrêt demandé (stop.rs)
                 current_row += 1;
                 let record = result.map_err(|e| e.to_string())?;
                 let mut spec = Spectrum::default();
@@ -210,7 +211,7 @@ pub fn load_and_parse_csv(
                 }
             }
             Ok::<Vec<Spectrum>, String>(inner_result_list)
-        }).map_err(|e| pyo3::exceptions::PyIOError::new_err(e))?;
+        }).map_err(crate::stop::io_error)?;
         
         result_list.append(&mut local_result);
 
