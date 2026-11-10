@@ -24,6 +24,7 @@ from mzspeclib.analyte import Analyte
 from mzspeclib.backends.json import JSONSpectralLibraryWriter
 from mzspeclib.backends.memory import InMemorySpectrumLibrary
 from mzspeclib.spectrum import Spectrum
+from mzspeclib.annotation import parse_annotation  # mzPAF (réexporté par mzspeclib)
 
 # ---------------------------------------------------------------------------------------------
 # Correspondance FragHub -> PSI-MS
@@ -89,6 +90,8 @@ _ENERGY_RAMP = re.compile(rf"Ramp ({_NUM})/({_NUM}) (eV|NCE)")
 # Charge écrite à la fin de l'adduit normalisé : "[M-H]-" -> -1, "[M+2H]2+" -> 2, "[M]+" -> 1,
 # "[M]+*" (ion radical, GC-EI) -> 1
 _ADDUCT_CHARGE = re.compile(r"\](\d*)([+-])\*?$")
+# Formule de novo d'un pic : formule de l'ion, signe (toujours « + » aujourd'hui), « / », écart en ppm
+_DENOVO = re.compile(r"([A-Z][A-Za-z0-9]*)[+-]?/([+-]?\d+(?:\.\d+)?)")
 # Accession d'un terme de vocabulaire (« MS:1000133 », « UO:0000266 »)
 _CURIE = re.compile(r"[A-Za-z]+:\d+")
 
@@ -152,6 +155,16 @@ def adduct_charge(adduct):
         return None
     n = int(m.group(1)) if m.group(1) else 1
     return n if m.group(2) == "+" else -n
+
+
+def denovo_annotation(text):
+    """Formule de novo d'un pic (de_novo_calculation.rs : « C2H3O+/1.23 » = formule de l'ion / écart en ppm)
+    -> annotation mzPAF « f{C2H3O}/1.23ppm ». Charge 1 sous-entendue ; en mzPAF la charge est écrite sans signe,
+    le signe vient de la polarité du spectre (scan polarity). Écriture non reconnue : pas d'annotation."""
+    m = _DENOVO.fullmatch(str(text).strip())
+    if not m:
+        return []
+    return parse_annotation(f"f{{{m.group(1)}}}/{m.group(2)}ppm")
 
 
 def to_spectrum(d, key):
@@ -244,9 +257,9 @@ def to_spectrum(d, key):
                 _add_free(analyte, field, v)
     sp.add_analyte(analyte)
 
-    # Pics : m/z, intensité (une formule de novo éventuelle, 3e valeur, n'est pas encore écrite)
+    # Pics : m/z, intensité, et formule de novo éventuelle (3e valeur) en annotation mzPAF
     peaks = d.get("PEAKS_LIST") or []
-    sp.peak_list = [[float(p[0]), float(p[1]), [], []] for p in peaks]
+    sp.peak_list = [[float(p[0]), float(p[1]), denovo_annotation(p[2]) if len(p) > 2 else [], []] for p in peaks]
     sp.add_attribute("MS:1003059|number of peaks", len(peaks))
     return sp
 
