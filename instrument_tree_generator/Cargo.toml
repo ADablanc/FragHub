@@ -1,0 +1,12 @@
+[package]
+name = "instrument_tree_generator"
+version = "2.0.0"
+edition = "2021"
+description = "Génère instruments_tree.json (arbre des instruments de FragHub) à partir de Instrument_tree.xlsx"
+
+[dependencies]
+calamine = "0.38.0"
+rust_xlsxwriter = "0.102.0"
+serde_json = { version = "1.0", features = ["preserve_order"] }
+regex = "1.10"
+once_cell = "1.19"
