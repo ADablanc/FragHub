@@ -246,7 +246,14 @@ pub fn msp_to_dict_processing(
     // Ensemble des clés à garder : même réponse que keys_list.contains(), sans parcourir la liste à chaque champ
     let keys_set: HashSet<&str> = keys_list.iter().map(|s| s.as_str()).collect();
 
-    for chunk in rust_strings.chunks(chunk_size) {
+    // Textes bruts consommés paquet par paquet : chaque paquet est libéré dès qu'il est lu (avant, tout le fichier
+    // restait en mémoire jusqu'à la fin de la lecture, en plus des spectres lus)
+    let mut remaining = rust_strings.into_iter();
+    loop {
+        let chunk: Vec<String> = remaining.by_ref().take(chunk_size).collect();
+        if chunk.is_empty() {
+            break;
+        }
 
         let parsed_chunk: Vec<ParsedSpectrum> = py.allow_threads(|| {
             chunk.par_iter().filter_map(|spectrum| parse_msp_spectrum(spectrum, &keys_dict)).collect()

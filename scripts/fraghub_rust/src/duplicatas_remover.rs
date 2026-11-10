@@ -1,5 +1,6 @@
 // src/duplicatas_remover.rs
 use pyo3::prelude::*;
+use rayon::prelude::*;
 use crate::spectrum::Spectrum;
 use std::collections::{BTreeSet, HashMap, HashSet};
 use std::fs;
@@ -69,19 +70,28 @@ pub fn remove_duplicatas_processing(
 
     let mut processed = 0;
 
-    for (i, spec) in spectrum_list.iter().enumerate() {
-        let mut row_size = 0;
-        for col in &ordered_columns {
-            if col == "PEAKS_LIST" {
-                // Le texte des pics compte comme avant, quand il était gardé dans les métadonnées
-                row_size += match spec.metadata.get(col) {
-                    Some(val) => val.chars().count(),
-                    None => crate::spectrum::peaks_text(&spec.peaks).len(),
-                };
-            } else if let Some(val) = spec.metadata.get(col) {
-                row_size += val.chars().count();
+    // Taille des métadonnées de chaque spectre, calculée d'abord en parallèle (même valeur qu'avant ; le texte des
+    // pics, qui n'est plus gardé en mémoire, est refabriqué pour être compté, ce qui rendait la boucle plus lente)
+    let row_sizes: Vec<usize> = py.allow_threads(|| {
+        spectrum_list.par_iter().map(|spec| {
+            let mut row_size = 0;
+            for col in &ordered_columns {
+                if col == "PEAKS_LIST" {
+                    // Le texte des pics compte comme avant, quand il était gardé dans les métadonnées
+                    row_size += match spec.metadata.get(col) {
+                        Some(val) => val.chars().count(),
+                        None => crate::spectrum::peaks_text(&spec.peaks).len(),
+                    };
+                } else if let Some(val) = spec.metadata.get(col) {
+                    row_size += val.chars().count();
+                }
             }
-        }
+            row_size
+        }).collect()
+    });
+
+    for (i, spec) in spectrum_list.iter().enumerate() {
+        let row_size = row_sizes[i];
 
         let splash = spec.metadata.get("SPLASH").cloned().unwrap_or_default();
         let inchikey = spec.metadata.get("INCHIKEY").map(|s| s.trim().to_string()).unwrap_or_default();

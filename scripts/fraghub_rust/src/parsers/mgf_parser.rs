@@ -54,7 +54,14 @@ pub fn mgf_to_dict_processing(
     // Découpage par paquets (chunks) comme dans votre version Python
     let chunk_size = 2000;
 
-    for chunk in final_mgf.chunks(chunk_size) {
+    // Textes bruts consommés paquet par paquet : chaque paquet est libéré dès qu'il est lu (avant, tout le fichier
+    // restait en mémoire jusqu'à la fin de la lecture, en plus des spectres lus)
+    let mut remaining = final_mgf.into_iter();
+    loop {
+        let chunk: Vec<String> = remaining.by_ref().take(chunk_size).collect();
+        if chunk.is_empty() {
+            break;
+        }
 
         // ====================================================================
         // ÉTAPE 1 : MULTITHREADING PUR RUST (Équivalent de ThreadPoolExecutor)

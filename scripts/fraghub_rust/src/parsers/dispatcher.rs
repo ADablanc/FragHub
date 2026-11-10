@@ -1,5 +1,6 @@
 // src/parsers/dispatcher.rs
 use pyo3::prelude::*;
+use rayon::prelude::*;
 
 use crate::loaders::{load_spectrum_list_json, load_spectrum_list_json_2, load_spectrum_list_from_msp, load_spectrum_list_from_mgf};
 use crate::parsers::json_parser::json_to_dict_processing;
@@ -27,6 +28,21 @@ use crate::spectrum::Spectrum;
 /// # Returns
 /// * `PyResult<(Vec<Spectrum>, Vec<Spectrum>, Vec<Spectrum>, Vec<Spectrum>)>` : Un tuple de 4 listes
 ///   de spectres correspondant aux 4 formats de fichiers (MSP, CSV, JSON, MGF).
+/// Rend la place réservée en trop après la lecture (valeurs inchangées) : la liste des pics est remplie pic par
+/// pic et garde jusqu'au double de la place nécessaire ; les spectres lus restent ensemble en mémoire jusqu'au
+/// nettoyage (c'est le pic de mémoire d'un run).
+fn shrink_spectra(py: Python, spectra: &mut [Spectrum]) {
+    py.allow_threads(|| {
+        spectra.par_iter_mut().for_each(|spec| {
+            spec.peaks.shrink_to_fit();
+            for value in spec.metadata.values_mut() {
+                value.shrink_to_fit();
+            }
+            spec.metadata.shrink_to_fit();
+        });
+    });
+}
+
 pub fn parsing_to_dict_processing(
     py: Python,
     input_paths: Vec<String>,
@@ -81,7 +97,8 @@ pub fn parsing_to_dict_processing(
                 }
             };
 
-            let dict_list = json_to_dict_processing(py, rust_strings, keys_dict.clone(), keys_list.clone(), db_name, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+            let mut dict_list = json_to_dict_processing(py, rust_strings, keys_dict.clone(), keys_list.clone(), db_name, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+            shrink_spectra(py, &mut dict_list);
 
             final_json.extend(dict_list);
         }
@@ -97,7 +114,8 @@ pub fn parsing_to_dict_processing(
         for file in msp_files {
             let db_name = input_db_names.get(&file).cloned().unwrap_or_else(|| "Unknown".to_string());
             let rust_strings = load_spectrum_list_from_msp(py, &file, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
-            let dict_list = msp_to_dict_processing(py, rust_strings, keys_dict.clone(), keys_list.clone(), db_name, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+            let mut dict_list = msp_to_dict_processing(py, rust_strings, keys_dict.clone(), keys_list.clone(), db_name, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+            shrink_spectra(py, &mut dict_list);
 
             final_msp.extend(dict_list);
         }
@@ -113,7 +131,8 @@ pub fn parsing_to_dict_processing(
         for file in mgf_files {
             let db_name = input_db_names.get(&file).cloned().unwrap_or_else(|| "Unknown".to_string());
             let spectra = load_spectrum_list_from_mgf(py, &file, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
-            let dict_list = mgf_to_dict_processing(py, spectra, keys_dict.clone(), keys_list.clone(), db_name, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+            let mut dict_list = mgf_to_dict_processing(py, spectra, keys_dict.clone(), keys_list.clone(), db_name, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+            shrink_spectra(py, &mut dict_list);
             final_mgf.extend(dict_list);
         }
     }
@@ -127,6 +146,7 @@ pub fn parsing_to_dict_processing(
         if let Some(cb) = &step_callback { let _ = cb.call1(py, ("-- PARSING CSV TO DICT --",)); }
 
         final_csv = load_and_parse_csv(py, csv_files, keys_dict, keys_list, input_db_names, progress_callback, total_items_callback, prefix_callback, item_type_callback)?;
+        shrink_spectra(py, &mut final_csv);
     }
 
     Ok((final_msp, final_csv, final_json, final_mgf))
