@@ -84,8 +84,9 @@ pub fn writting_json_processing(
     Ok(())
 }
 
-/// Texte JSON d'un spectre (code inchangé, sorti de writting_json_processing).
-fn json_item(spec: &Spectrum, columns: &[String]) -> String {
+/// Champs d'un spectre tels qu'ils sont écrits dans le JSON FragHub (mêmes noms, mêmes types).
+/// Servent aussi à la sortie mzSpecLib (writers/mzspeclib_sender.rs).
+pub(crate) fn json_map(spec: &Spectrum, columns: &[String]) -> serde_json::Map<String, serde_json::Value> {
     let mut map = serde_json::Map::new();
 
     for col in columns {
@@ -141,7 +142,12 @@ fn json_item(spec: &Spectrum, columns: &[String]) -> String {
     }
 
     map.insert("PEAKS_LIST".to_string(), serde_json::Value::Array(peaks_array));
+    map
+}
 
+/// Texte JSON d'un spectre (code inchangé, sorti de writting_json_processing).
+fn json_item(spec: &Spectrum, columns: &[String]) -> String {
+    let map = json_map(spec, columns);
     let item_str_pretty = serde_json::to_string_pretty(&map).unwrap();
     // RE_3 compressera parfaitement tes JSON à 3 arguments !
     let compacted_1 = RE_3.replace_all(&item_str_pretty, "[$1, $2, \"$3\"]").to_string();

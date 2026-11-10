@@ -2,17 +2,19 @@
 //! Écriture des fichiers de sortie de FragHub, un fichier par format :
 //! - `csv_writer.rs`  : fichiers CSV (CSV/POS, CSV/NEG) ;
 //! - `json_writer.rs` : fichiers JSON (JSON/POS, JSON/NEG) ;
-//! - `msp_writer.rs`  : fichiers MSP (MSP/POS, MSP/NEG), à partir des textes préparés par spectra_to_msp.rs.
-//!
-//! (Le format mzSpecLib est écrit ensuite en Python, par scripts/mzspeclib_converter.py, à partir des MSP.)
+//! - `msp_writer.rs`  : fichiers MSP (MSP/POS, MSP/NEG), à partir des textes préparés par spectra_to_msp.rs ;
+//! - `mzspeclib_sender.rs` : fichiers mzSpecLib (mzSpecLib/POS, mzSpecLib/NEG) : les spectres sont envoyés par
+//!   paquets au Python (scripts/mzspeclib_converter.py), qui les écrit avec la bibliothèque mzspeclib.
 
 mod csv_writer;
 mod json_writer;
 mod msp_writer;
+mod mzspeclib_sender;
 
 pub use csv_writer::writting_csv_processing;
 pub use json_writer::writting_json_processing;
 pub use msp_writer::writting_msp_processing;
+pub use mzspeclib_sender::sending_mzspeclib_processing;
 
 // ---------------------------------------------------------------------------------------------
 // Écriture d'un fichier CSV ou JSON : mise en forme EN PARALLÈLE, écriture DANS L'ORDRE.

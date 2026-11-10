@@ -19,7 +19,7 @@ use crate::normalize_to_not_found::normalize_to_not_found_processing;
 use crate::splitter::master_splitter;
 
 use crate::spectra_to_msp::spectra_to_msp_processing;
-use crate::writers::{writting_csv_processing, writting_msp_processing, writting_json_processing};
+use crate::writers::{writting_csv_processing, writting_msp_processing, writting_json_processing, sending_mzspeclib_processing};
 use crate::report::generate_report_processing;
 use crate::set_projects::{init_project, reset_updates};
 use crate::deletion_report::DeletionReport;
@@ -44,11 +44,13 @@ use crate::mz_correction::mz_correction_processing;
 /// * `completion_callback` (Option<PyObject>) : Fonction de rappel pour la fin de processus.
 /// * `deletion_callback` (Option<PyObject>) : Fonction de rappel pour les rapports de suppression.
 /// * `stop_flag` (Option<PyObject>) : Fonction de rappel (bool) indiquant si l'utilisateur a cliqué sur "Stop".
+/// * `mzspeclib_sink` (Option<PyObject>) : Objet Python qui écrit les fichiers mzSpecLib
+///   (`mzspeclib_converter.MzSpecLibSink`) ; utilisé si le paramètre `mzspeclib_json` vaut 1.
 ///
 /// # Returns
 /// * `PyResult<i32>` : 0 si le traitement a réussi.
 #[pyfunction]
-#[pyo3(signature = (parameters_dict, progress_callback=None, total_items_callback=None, prefix_callback=None, item_type_callback=None, step_callback=None, completion_callback=None, deletion_callback=None, stop_flag=None))]
+#[pyo3(signature = (parameters_dict, progress_callback=None, total_items_callback=None, prefix_callback=None, item_type_callback=None, step_callback=None, completion_callback=None, deletion_callback=None, stop_flag=None, mzspeclib_sink=None))]
 pub fn main_orchestrator(
     py: Python,
     parameters_dict: &pyo3::Bound<'_, pyo3::types::PyDict>,
@@ -60,6 +62,7 @@ pub fn main_orchestrator(
     completion_callback: Option<PyObject>,
     deletion_callback: Option<PyObject>,
     stop_flag: Option<PyObject>,
+    mzspeclib_sink: Option<PyObject>,
 ) -> PyResult<i32> {
 
     let check_stop_flag = || -> PyResult<()> {
@@ -398,6 +401,19 @@ pub fn main_orchestrator(
             writting_json_processing(py, update, &pos_lc_df, &pos_gc_df, &neg_lc_df, &neg_gc_df, &pos_lc_in_silico_df, &pos_gc_in_silico_df, &neg_lc_in_silico_df, &neg_gc_in_silico_df, ordered_columns.clone(), &output_directory, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
 
 
+        }
+
+        // mzSpecLib : spectres envoyés par paquets au Python, qui les écrit avec la bibliothèque mzspeclib
+        // (ne dépend plus des fichiers MSP)
+        let mzspeclib_val: f64 = parameters_dict.get_item("mzspeclib_json")?.map(|v| v.extract().unwrap_or(0.0)).unwrap_or(0.0);
+        if mzspeclib_val == 1.0 {
+            if let Some(sink) = &mzspeclib_sink {
+                py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
+                if let Some(cb) = &step_callback { cb.call1(py, ("Writing mzSpecLib JSON",))?; }
+                py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
+
+                sending_mzspeclib_processing(py, update, &pos_lc_df, &pos_lc_in_silico_df, &pos_gc_df, &pos_gc_in_silico_df, &neg_lc_df, &neg_lc_in_silico_df, &neg_gc_df, &neg_gc_in_silico_df, &ordered_columns, &output_directory, sink, &check_stop_flag, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+            }
         }
 
         if let Some(cb) = &deletion_callback {
