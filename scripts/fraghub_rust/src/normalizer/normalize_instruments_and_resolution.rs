@@ -117,6 +117,49 @@ fn search_level<'a>(tree: &'a serde_json::Value, infos: &str) -> Option<(&'a Str
 
 const NOT_FOUND: &str = "not found";
 
+/// Descend les niveaux sous un nœud (première clé trouvée, sinon la branche « not found »).
+/// Retourne les clés choisies et le nœud atteint, ou None si un niveau n'a ni clé trouvée ni branche « not found ».
+fn walk<'a>(start: &'a serde_json::Value, infos: &str, levels: usize) -> Option<(Vec<&'a String>, &'a serde_json::Value)> {
+    let mut current = start;
+    let mut keys = Vec::with_capacity(levels);
+    for _ in 0..levels {
+        let (key, next) = search_level(current, infos)?;
+        keys.push(key);
+        current = next;
+    }
+    Some((keys, current))
+}
+
+/// Choisit la marque puis descend les 4 autres niveaux (modèle, LC/GC, analyseur, ionisation).
+/// Une seule marque citée : comme avant, c'est elle. Plusieurs marques citées (pompe, colonne ou chromatographe
+/// d'une autre marque : « LC-10ADVPmicro HPLC, Shimadzu; LTQ Orbitrap, Thermo », « QE Focus, Thermo; UPLC I-Class,
+/// Waters ») : on garde celle dont on trouve le modèle, sinon celle qui reconnaît le plus de niveaux, sinon la plus
+/// longue clé de modèle ; à égalité, la première dans l'ordre de l'arbre. Avant, la première marque de l'arbre
+/// gagnait toujours (Shimadzu, Waters) et l'instrument restait inconnu.
+/// Aucune marque citée : la branche « not found » (le modèle seul peut être reconnu).
+fn search_brand_and_levels<'a>(tree: &'a serde_json::Value, infos: &str) -> Option<(Vec<&'a String>, &'a serde_json::Value)> {
+    let map = tree.as_object()?;
+    let mut best: Option<((bool, usize, usize), Vec<&String>, &serde_json::Value)> = None;
+    let mut brand_cited = false;
+    for (brand, node) in map.iter().filter(|(k, _)| k.as_str() != NOT_FOUND && contains_word(infos, k)) {
+        brand_cited = true;
+        let Some((keys, leaf)) = walk(node, infos, 4) else { continue };
+        let score = (keys[0] != NOT_FOUND, keys.iter().filter(|k| k.as_str() != NOT_FOUND).count(), keys[0].len());
+        if best.as_ref().map_or(true, |(s, _, _)| score > *s) {
+            let mut all = vec![brand];
+            all.extend(keys);
+            best = Some((score, all, leaf));
+        }
+    }
+    if let Some((_, keys, leaf)) = best { return Some((keys, leaf)); }
+    if brand_cited { return None; } // comme avant : marque trouvée mais un niveau sans issue
+    let (brand, node) = map.get_key_value(NOT_FOUND)?;
+    let (keys, leaf) = walk(node, infos, 4)?;
+    let mut all = vec![brand];
+    all.extend(keys);
+    Some((all, leaf))
+}
+
 /// Éléments d'un type d'instrument que l'arbre ne doit pas faire disparaître.
 const TYPE_TOKENS: &[&str] = &[
     "lc", "gc", "ce",
@@ -151,18 +194,11 @@ pub fn normalize_instruments_and_resolution(mut metadata_dict: HashMap<String, S
     // Clé interne : lue une seule fois, ici
     metadata_dict.remove(crate::globals_vars::INSTRUMENT_HINTS_KEY);
 
-    let mut current_level = &context.instrument_tree;
-    let mut tree_levels = Vec::new();
-
     // On descend les 5 niveaux (Marque, Modèle, Type Spectre, Type Instrument, Ionisation)
-    for _ in 0..5 {
-        if let Some((key, next)) = search_level(current_level, &infos) {
-            tree_levels.push(key.clone());
-            current_level = next;
-        } else {
-            return metadata_dict; // Niveau sans clé correspondante ni branche "not found" : dico intact
-        }
-    }
+    let Some((keys, current_level)) = search_brand_and_levels(&context.instrument_tree, &infos) else {
+        return metadata_dict; // Niveau sans clé correspondante ni branche "not found" : dico intact
+    };
+    let tree_levels: Vec<String> = keys.into_iter().cloned().collect();
 
     if tree_levels.len() == 5 {
         metadata_dict.insert("TREE_MARQUE".to_string(), tree_levels[0].clone());
@@ -377,6 +413,39 @@ mod tests {
         let text = clean_spectrum_instrument_info(&[("COMMENT", "instrument=API 3200; rating=4.5")]
             .iter().map(|(k, v)| (k.to_string(), v.to_string())).collect());
         assert!(contains_word(&text, "3200") && contains_word(&text, "api"), "{text}");
+    }
+
+    #[test]
+    fn plusieurs_marques_citees_celle_dont_on_trouve_le_modele() {
+        let tree: serde_json::Value = serde_json::from_str(r#"{
+          "not found": {"not found": {"lc": {"not found": {"esi": {"not found": {"SOLUTION": "NOT FOUND, LC-ESI, NOT FOUND"}}}}}},
+          "shimadzu": {"not found": {"lc": {"not found": {"esi": {"not found": {"SOLUTION": "Shimadzu instrument, LC-ESI, NOT FOUND"}}}}}},
+          "waters": {"not found": {"lc": {"not found": {"esi": {"not found": {"SOLUTION": "Waters instrument, LC-ESI, NOT FOUND"}}}}}},
+          "thermo": {
+            "ltq orbitrap": {"lc": {"itft": {"esi": {"high": {"SOLUTION": "Thermo Fisher Scientific LTQ Orbitrap, LC-ESI-ITFT, HIGH"}}}}},
+            "not found": {"lc": {"qft": {"esi": {"high": {"SOLUTION": "Thermo Fisher Scientific instrument, LC-ESI-QFT, HIGH"}}},
+                                 "not found": {"esi": {"not found": {"SOLUTION": "Thermo Fisher Scientific instrument, LC-ESI, NOT FOUND"}}}}}
+          }
+        }"#).unwrap();
+        let ctx = super::super::NormalizerContext {
+            adduct_pos: HashMap::new(), adduct_neg: HashMap::new(),
+            adduct_massdiff_pos: HashMap::new(), adduct_massdiff_neg: HashMap::new(), instrument_tree: tree,
+        };
+        let run2 = |f: &[(&str, &str)]| normalize_instruments_and_resolution(f.iter().map(|(k, v)| (k.to_string(), v.to_string())).collect(), &ctx);
+        // Pompe Shimadzu + spectromètre Thermo : le modèle est chez Thermo
+        let m = run2(&[("INSTRUMENT", "LC-10ADVPmicro HPLC, Shimadzu; LTQ Orbitrap, Thermo Scientific"), ("INSTRUMENTTYPE", "LC-ESI-ITFT")]);
+        assert_eq!(m["TREE_MARQUE"], "thermo");
+        assert_eq!(m["RESOLUTION"], "HIGH");
+        // Modèle inconnu partout : la marque qui reconnaît le plus de niveaux (Thermo connaît le QFT, Waters non)
+        let m = run2(&[("INSTRUMENT", "QE Focus, Thermo Scientfic; UPLC I-Class, Waters"), ("INSTRUMENTTYPE", "LC-ESI-QFT")]);
+        assert_eq!(m["TREE_MARQUE"], "thermo");
+        assert_eq!(m["RESOLUTION"], "HIGH");
+        // Une seule marque : inchangé
+        let m = run2(&[("INSTRUMENT", "Waters Xevo"), ("INSTRUMENTTYPE", "LC-ESI")]);
+        assert_eq!(m["TREE_MARQUE"], "waters");
+        // Aucune marque : branche « not found »
+        let m = run2(&[("INSTRUMENTTYPE", "LC-ESI")]);
+        assert_eq!(m["TREE_MARQUE"], "not found");
     }
 
     #[test]
