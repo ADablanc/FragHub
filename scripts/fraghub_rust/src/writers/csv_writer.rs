@@ -16,7 +16,7 @@ use super::{WRITE_CHUNK, WRITE_CHUNKS_PER_ROUND};
 ///
 /// # Arguments
 /// * `py` (Python) : Token d'accès au GIL.
-/// * `pos_lc_df` (Vec<Spectrum>), `pos_gc_df`... : Les différentes listes de spectres formatés.
+/// * `libs` (&Libraries) : les 12 bibliothèques (POS/NEG × LC/GC/DI × expérimental/in silico).
 /// * `ordered_columns` (Vec<String>) : Liste ordonnée des colonnes du CSV.
 /// * `output_directory` (&str) : Dossier cible.
 /// * `update` (bool) : Indicateur pour savoir s'il faut écraser ou ajouter (append) au fichier existant.
@@ -26,18 +26,23 @@ use super::{WRITE_CHUNK, WRITE_CHUNKS_PER_ROUND};
 /// * `PyResult<()>` : Succès ou erreur IO.
 #[allow(clippy::too_many_arguments)]
 pub fn writting_csv_processing(
-    py: Python, pos_lc_df: &[Spectrum], pos_gc_df: &[Spectrum], neg_lc_df: &[Spectrum], neg_gc_df: &[Spectrum], pos_lc_df_insilico: &[Spectrum], pos_gc_df_insilico: &[Spectrum], neg_lc_df_insilico: &[Spectrum], neg_gc_df_insilico: &[Spectrum], ordered_columns: Vec<String>, output_directory: &str, update: bool, progress_callback: Option<PyObject>, total_items_callback: Option<PyObject>, prefix_callback: Option<PyObject>, item_type_callback: Option<PyObject>,
+    py: Python, libs: &crate::splitter::Libraries, ordered_columns: Vec<String>, output_directory: &str, update: bool, progress_callback: Option<PyObject>, total_items_callback: Option<PyObject>, prefix_callback: Option<PyObject>, item_type_callback: Option<PyObject>,
 ) -> PyResult<()> {
 
-    let tasks = vec![
-        (pos_lc_df, "POS_LC.csv", "POS"),
-        (pos_gc_df, "POS_GC.csv", "POS"),
-        (neg_lc_df, "NEG_LC.csv", "NEG"),
-        (neg_gc_df, "NEG_GC.csv", "NEG"),
-        (pos_lc_df_insilico, "POS_LC_In_Silico.csv", "POS"),
-        (pos_gc_df_insilico, "POS_GC_In_Silico.csv", "POS"),
-        (neg_lc_df_insilico, "NEG_LC_In_Silico.csv", "NEG"),
-        (neg_gc_df_insilico, "NEG_GC_In_Silico.csv", "NEG"),
+    let tasks: Vec<(&[Spectrum], &str, &str)> = vec![
+        (&libs.pos_lc, "POS_LC.csv", "POS"),
+        (&libs.pos_gc, "POS_GC.csv", "POS"),
+        (&libs.neg_lc, "NEG_LC.csv", "NEG"),
+        (&libs.neg_gc, "NEG_GC.csv", "NEG"),
+        (&libs.pos_lc_insilico, "POS_LC_In_Silico.csv", "POS"),
+        (&libs.pos_gc_insilico, "POS_GC_In_Silico.csv", "POS"),
+        (&libs.neg_lc_insilico, "NEG_LC_In_Silico.csv", "NEG"),
+        (&libs.neg_gc_insilico, "NEG_GC_In_Silico.csv", "NEG"),
+        // Injection directe (DI)
+        (&libs.pos_di, "POS_DI.csv", "POS"),
+        (&libs.neg_di, "NEG_DI.csv", "NEG"),
+        (&libs.pos_di_insilico, "POS_DI_In_Silico.csv", "POS"),
+        (&libs.neg_di_insilico, "NEG_DI_In_Silico.csv", "NEG"),
     ];
 
     let total_items: usize = tasks.iter().map(|(list, _, _)| list.len()).sum();

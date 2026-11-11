@@ -21,7 +21,7 @@ static RE_2: Lazy<Regex> = Lazy::new(|| Regex::new(r#"\[\n\s*(-?[\d\.eE\+\-]+),\
 /// # Arguments
 /// * `py` (Python) : Token d'accès au GIL.
 /// * `update` (bool) : Indicateur pour savoir s'il faut écraser ou ajouter (append) au fichier existant.
-/// * `pos_lc_df` (Vec<Spectrum>), `pos_gc_df`... : Les différentes listes de spectres formatés.
+/// * `libs` (&Libraries) : les 12 bibliothèques (POS/NEG × LC/GC/DI × expérimental/in silico).
 /// * `output_directory` (&str) : Dossier cible.
 /// * `progress_callback`, `total_items_callback`, `prefix_callback`, `item_type_callback` : Callbacks UI.
 ///
@@ -29,18 +29,23 @@ static RE_2: Lazy<Regex> = Lazy::new(|| Regex::new(r#"\[\n\s*(-?[\d\.eE\+\-]+),\
 /// * `PyResult<()>` : Succès ou erreur IO.
 #[allow(clippy::too_many_arguments)]
 pub fn writting_json_processing(
-    py: Python, update: bool, pos_lc_df: &[Spectrum], pos_gc_df: &[Spectrum], neg_lc_df: &[Spectrum], neg_gc_df: &[Spectrum], pos_lc_df_insilico: &[Spectrum], pos_gc_df_insilico: &[Spectrum], neg_lc_df_insilico: &[Spectrum], neg_gc_df_insilico: &[Spectrum], ordered_columns: Vec<String>, output_directory: &str, progress_callback: Option<PyObject>, total_items_callback: Option<PyObject>, prefix_callback: Option<PyObject>, item_type_callback: Option<PyObject>,
+    py: Python, update: bool, libs: &crate::splitter::Libraries, ordered_columns: Vec<String>, output_directory: &str, progress_callback: Option<PyObject>, total_items_callback: Option<PyObject>, prefix_callback: Option<PyObject>, item_type_callback: Option<PyObject>,
 ) -> PyResult<()> {
 
-    let tasks = vec![
-        (pos_lc_df, "POS_LC.json", "POS"),
-        (pos_gc_df, "POS_GC.json", "POS"),
-        (neg_lc_df, "NEG_LC.json", "NEG"),
-        (neg_gc_df, "NEG_GC.json", "NEG"),
-        (pos_lc_df_insilico, "POS_LC_In_Silico.json", "POS"),
-        (pos_gc_df_insilico, "POS_GC_In_Silico.json", "POS"),
-        (neg_lc_df_insilico, "NEG_LC_In_Silico.json", "NEG"),
-        (neg_gc_df_insilico, "NEG_GC_In_Silico.json", "NEG"),
+    let tasks: Vec<(&[Spectrum], &str, &str)> = vec![
+        (&libs.pos_lc, "POS_LC.json", "POS"),
+        (&libs.pos_gc, "POS_GC.json", "POS"),
+        (&libs.neg_lc, "NEG_LC.json", "NEG"),
+        (&libs.neg_gc, "NEG_GC.json", "NEG"),
+        (&libs.pos_lc_insilico, "POS_LC_In_Silico.json", "POS"),
+        (&libs.pos_gc_insilico, "POS_GC_In_Silico.json", "POS"),
+        (&libs.neg_lc_insilico, "NEG_LC_In_Silico.json", "NEG"),
+        (&libs.neg_gc_insilico, "NEG_GC_In_Silico.json", "NEG"),
+        // Injection directe (DI)
+        (&libs.pos_di, "POS_DI.json", "POS"),
+        (&libs.neg_di, "NEG_DI.json", "NEG"),
+        (&libs.pos_di_insilico, "POS_DI_In_Silico.json", "POS"),
+        (&libs.neg_di_insilico, "NEG_DI_In_Silico.json", "NEG"),
     ];
 
     let total_items: usize = tasks.iter().map(|(list, _, _)| list.len()).sum();

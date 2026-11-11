@@ -198,6 +198,28 @@ pub fn is_gc_spectrum(filename: &str, instrument_type: &str) -> bool {
     filename.contains("_GC") || GC_PATTERN.is_match(instrument_type)
 }
 
+/// Mot « DI » (injection directe, sans chromatographie) dans un type d'instrument : « DI-ESI-QTOF », « DI-PTR-TOF ».
+pub static DI_TYPE_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?i)(?:^|[^A-Za-z0-9])DI(?:[^A-Za-z0-9]|$)").unwrap());
+
+/// Injection directe écrite dans les champs d'instrument (INSTRUMENT, INSTRUMENTTYPE, IONIZATION, indices) :
+/// « Flow-injection QqQ/MS » (MSMS-Public, GNPS), « direct infusion », « infusion », « FIA ».
+pub static DIRECT_INJECTION_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(
+    r"(?i)\bdirect[\s_-]*(?:infusion|injection|inlet|introduction|insertion)\b|\bflow[\s_-]*injection\b|\binfusion\b|\bFIA\b"
+).unwrap());
+
+/// Injection directe écrite dans COMMENT : seulement des phrases sans ambiguïté (« The sample was injected by direct
+/// infusion. », « analyzed by direct infusion method », « Flow Injection » de MassBank).
+pub static DIRECT_INJECTION_COMMENT_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(
+    r"(?i)\bdirect[\s_-]*(?:infusion|injection|inlet|insertion)\b|\bflow[\s_-]*injection\b|\b(?:injected|introduced|infused|analy[sz]ed)\s+by\s+(?:direct\s+)?infusion\b"
+).unwrap());
+
+/// Règle UNIQUE « ce spectre est-il en injection directe (DI) ? », pour le tri des sorties (POS_DI, NEG_DI...) :
+/// le type d'instrument contient le mot DI (ajouté par la normalisation de l'instrument), et le spectre n'est pas
+/// GC (la règle GC passe avant). Pour tout le reste du traitement, un spectre DI suit les règles du LC.
+pub fn is_di_spectrum(filename: &str, instrument_type: &str) -> bool {
+    !is_gc_spectrum(filename, instrument_type) && DI_TYPE_PATTERN.is_match(instrument_type)
+}
+
 // Regex pour extraire Collision Energy du Compound_Name (ex: GNPS, supporte 20-30, 102040/13334, 10 20 30)
 pub static GNPS_COLLISION_ENERGY_EXTRACT_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?i)(?:\W|_)*collision[-\s_]?energy[\s:=]*(\d+(?:[\s.,\-/]+\d+)*\s*(?:eV|V)?)(?:\W|_)*").unwrap());
 
@@ -216,6 +238,24 @@ mod tests {
         // Sans clé interne (spectre construit à la main, tests) : FILENAME
         m.remove(INPUT_FILENAME_KEY);
         assert_eq!(input_filename(&m), "acquisition.mzML");
+    }
+
+    #[test]
+    fn di_reconnu_par_le_type_d_instrument() {
+        assert!(is_di_spectrum("x.msp", "DI-ESI-QTOF"));
+        assert!(is_di_spectrum("x.msp", "DI-PTR-TOF"));
+        assert!(is_di_spectrum("x.msp", "di-esi-qTof"));
+        assert!(!is_di_spectrum("x.msp", "LC-ESI-QTOF"));
+        assert!(!is_di_spectrum("x.msp", "ESI-DIA")); // DIA (acquisition) n'est pas DI
+        assert!(!is_di_spectrum("lib_GC.msp", "DI-EI-B")); // GC d'abord
+        assert!(!is_di_spectrum("x.msp", "DI-EI-B"));
+        assert!(DIRECT_INJECTION_PATTERN.is_match("Flow-injection QqQ/MS"));
+        assert!(DIRECT_INJECTION_PATTERN.is_match("direct infusion"));
+        assert!(!DIRECT_INJECTION_PATTERN.is_match("LC-ESI-QTOF"));
+        assert!(DIRECT_INJECTION_COMMENT_PATTERN.is_match("origin=MassBank; The sample was injected by direct infusion.;"));
+        assert!(DIRECT_INJECTION_COMMENT_PATTERN.is_match("Sample was analyzed by direct infusion method."));
+        assert!(DIRECT_INJECTION_COMMENT_PATTERN.is_match("HBM4EU; Flow Injection"));
+        assert!(!DIRECT_INJECTION_COMMENT_PATTERN.is_match("insulin infusion study"));
     }
 
     #[test]

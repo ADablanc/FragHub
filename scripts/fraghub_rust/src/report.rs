@@ -55,15 +55,10 @@ pub fn generate_report_processing(
     parameters_dict: &std::collections::HashMap<String, f64>,
     input_paths: &Vec<String>,
     deletion_report: &crate::deletion_report::DeletionReport,
-    pos_lc: &Vec<Spectrum>,
-    pos_lc_insilico: &Vec<Spectrum>,
-    pos_gc: &Vec<Spectrum>,
-    pos_gc_insilico: &Vec<Spectrum>,
-    neg_lc: &Vec<Spectrum>,
-    neg_lc_insilico: &Vec<Spectrum>,
-    neg_gc: &Vec<Spectrum>,
-    neg_gc_insilico: &Vec<Spectrum>,
+    libs: &crate::splitter::Libraries,
 ) -> PyResult<()> {
+    let (pos_lc, pos_lc_insilico, pos_gc, pos_gc_insilico) = (&libs.pos_lc, &libs.pos_lc_insilico, &libs.pos_gc, &libs.pos_gc_insilico);
+    let (neg_lc, neg_lc_insilico, neg_gc, neg_gc_insilico) = (&libs.neg_lc, &libs.neg_lc_insilico, &libs.neg_gc, &libs.neg_gc_insilico);
 
     // 1. Extraction des statistiques des 8 DataFrames
     let (pos_lc_len, pos_lc_uniq) = get_df_stats(pos_lc)?;
@@ -75,8 +70,16 @@ pub fn generate_report_processing(
     let (neg_gc_len, neg_gc_uniq) = get_df_stats(neg_gc)?;
     let (neg_gc_in_len, neg_gc_in_uniq) = get_df_stats(neg_gc_insilico)?;
 
-    let total_spectra = pos_lc_len + pos_lc_in_len + pos_gc_len + pos_gc_in_len + neg_lc_len + neg_lc_in_len + neg_gc_len + neg_gc_in_len;
-    let total_unique = pos_lc_uniq + pos_lc_in_uniq + pos_gc_uniq + pos_gc_in_uniq + neg_lc_uniq + neg_lc_in_uniq + neg_gc_uniq + neg_gc_in_uniq;
+    // Injection directe (DI)
+    let (pos_di_len, pos_di_uniq) = get_df_stats(&libs.pos_di)?;
+    let (pos_di_in_len, pos_di_in_uniq) = get_df_stats(&libs.pos_di_insilico)?;
+    let (neg_di_len, neg_di_uniq) = get_df_stats(&libs.neg_di)?;
+    let (neg_di_in_len, neg_di_in_uniq) = get_df_stats(&libs.neg_di_insilico)?;
+
+    let total_spectra = pos_lc_len + pos_lc_in_len + pos_gc_len + pos_gc_in_len + neg_lc_len + neg_lc_in_len + neg_gc_len + neg_gc_in_len
+        + pos_di_len + pos_di_in_len + neg_di_len + neg_di_in_len;
+    let total_unique = pos_lc_uniq + pos_lc_in_uniq + pos_gc_uniq + pos_gc_in_uniq + neg_lc_uniq + neg_lc_in_uniq + neg_gc_uniq + neg_gc_in_uniq
+        + pos_di_uniq + pos_di_in_uniq + neg_di_uniq + neg_di_in_uniq;
 
     // 2. Formatage des chaînes (Equivalent exact de votre Python)
 
@@ -245,15 +248,24 @@ pub fn generate_report_processing(
     html = html.replace("{T7}", &pos_gc_in_len.to_string()); html = html.replace("{U7}", &pos_gc_in_uniq.to_string());
     html = html.replace("{T8}", &neg_gc_in_len.to_string()); html = html.replace("{U8}", &neg_gc_in_uniq.to_string());
 
+    // Injection directe (DI)
+    let di_pos_tot = pos_di_len + pos_di_in_len;
+    let di_neg_tot = neg_di_len + neg_di_in_len;
+    let di_pos_uniq = pos_di_uniq + pos_di_in_uniq;
+    let di_neg_uniq = neg_di_uniq + neg_di_in_uniq;
+    html = html.replace("{DI_TOT}", &(di_pos_tot + di_neg_tot).to_string());
+    html = html.replace("{DI_UNIQ}", &(di_pos_uniq + di_neg_uniq).to_string());
+    html = html.replace("{DI_POS_TOT}", &di_pos_tot.to_string());
+    html = html.replace("{DI_NEG_TOT}", &di_neg_tot.to_string());
+    html = html.replace("{DI_POS_UNIQ}", &di_pos_uniq.to_string());
+    html = html.replace("{DI_NEG_UNIQ}", &di_neg_uniq.to_string());
+    html = html.replace("{T9}", &pos_di_len.to_string()); html = html.replace("{U9}", &pos_di_uniq.to_string());
+    html = html.replace("{T10}", &neg_di_len.to_string()); html = html.replace("{U10}", &neg_di_uniq.to_string());
+    html = html.replace("{T11}", &pos_di_in_len.to_string()); html = html.replace("{U11}", &pos_di_in_uniq.to_string());
+    html = html.replace("{T12}", &neg_di_in_len.to_string()); html = html.replace("{U12}", &neg_di_in_uniq.to_string());
+
     
-    let all_spectra = pos_lc.iter()
-        .chain(pos_lc_insilico.iter())
-        .chain(pos_gc.iter())
-        .chain(pos_gc_insilico.iter())
-        .chain(neg_lc.iter())
-        .chain(neg_lc_insilico.iter())
-        .chain(neg_gc.iter())
-        .chain(neg_gc_insilico.iter());
+    let all_spectra = libs.all_spectra(); // LC, GC puis DI
 
     let mut cf_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
     let mut np_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
@@ -471,14 +483,7 @@ pub fn generate_report_processing(
     let mut spec_to_dbs: std::collections::HashMap<String, std::collections::HashSet<String>> = std::collections::HashMap::new();
     let mut db_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
 
-    let all_spectra_2 = pos_lc.iter()
-        .chain(pos_lc_insilico.iter())
-        .chain(pos_gc.iter())
-        .chain(pos_gc_insilico.iter())
-        .chain(neg_lc.iter())
-        .chain(neg_lc_insilico.iter())
-        .chain(neg_gc.iter())
-        .chain(neg_gc_insilico.iter());
+    let all_spectra_2 = libs.all_spectra(); // LC, GC puis DI
 
     for spec in all_spectra_2 {
         let splash = spec.metadata.get("SPLASH").map(|s| s.as_str()).unwrap_or("");
@@ -530,14 +535,7 @@ pub fn generate_report_processing(
     let mut col_counts: std::collections::HashMap<&str, usize> = std::collections::HashMap::new();
     let mut total_spectra_count = 0;
 
-    let all_spectra_3 = pos_lc.iter()
-        .chain(pos_lc_insilico.iter())
-        .chain(pos_gc.iter())
-        .chain(pos_gc_insilico.iter())
-        .chain(neg_lc.iter())
-        .chain(neg_lc_insilico.iter())
-        .chain(neg_gc.iter())
-        .chain(neg_gc_insilico.iter());
+    let all_spectra_3 = libs.all_spectra(); // LC, GC puis DI
 
     for spec in all_spectra_3 {
         total_spectra_count += 1;

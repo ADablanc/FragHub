@@ -22,17 +22,22 @@ pub(super) const SEND_CHUNK: usize = 1000;
 /// `check_stop` est appelé entre deux paquets (bouton stop).
 #[allow(clippy::too_many_arguments)]
 pub fn sending_mzspeclib_processing(
-    py: Python, update: bool, pos_lc: &[Spectrum], pos_lc_insilico: &[Spectrum], pos_gc: &[Spectrum], pos_gc_insilico: &[Spectrum], neg_lc: &[Spectrum], neg_lc_insilico: &[Spectrum], neg_gc: &[Spectrum], neg_gc_insilico: &[Spectrum], ordered_columns: &[String], output_directory: &str, sink: &PyObject, check_stop: &dyn Fn() -> PyResult<()>, progress_callback: Option<PyObject>, total_items_callback: Option<PyObject>, prefix_callback: Option<PyObject>, item_type_callback: Option<PyObject>,
+    py: Python, update: bool, libs: &crate::splitter::Libraries, ordered_columns: &[String], output_directory: &str, sink: &PyObject, check_stop: &dyn Fn() -> PyResult<()>, progress_callback: Option<PyObject>, total_items_callback: Option<PyObject>, prefix_callback: Option<PyObject>, item_type_callback: Option<PyObject>,
 ) -> PyResult<()> {
-    let tasks = [
-        (pos_lc, "POS_LC", "POS"),
-        (pos_lc_insilico, "POS_LC_insilico", "POS"),
-        (pos_gc, "POS_GC", "POS"),
-        (pos_gc_insilico, "POS_GC_insilico", "POS"),
-        (neg_lc, "NEG_LC", "NEG"),
-        (neg_lc_insilico, "NEG_LC_insilico", "NEG"),
-        (neg_gc, "NEG_GC", "NEG"),
-        (neg_gc_insilico, "NEG_GC_insilico", "NEG"),
+    let tasks: [(&[Spectrum], &str, &str); 12] = [
+        (&libs.pos_lc, "POS_LC", "POS"),
+        (&libs.pos_lc_insilico, "POS_LC_insilico", "POS"),
+        (&libs.pos_gc, "POS_GC", "POS"),
+        (&libs.pos_gc_insilico, "POS_GC_insilico", "POS"),
+        (&libs.neg_lc, "NEG_LC", "NEG"),
+        (&libs.neg_lc_insilico, "NEG_LC_insilico", "NEG"),
+        (&libs.neg_gc, "NEG_GC", "NEG"),
+        (&libs.neg_gc_insilico, "NEG_GC_insilico", "NEG"),
+        // Injection directe (DI)
+        (&libs.pos_di, "POS_DI", "POS"),
+        (&libs.pos_di_insilico, "POS_DI_insilico", "POS"),
+        (&libs.neg_di, "NEG_DI", "NEG"),
+        (&libs.neg_di_insilico, "NEG_DI_insilico", "NEG"),
     ];
     let total_items: usize = tasks.iter().map(|(list, _, _)| list.len()).sum();
     if total_items == 0 { return Ok(()); }

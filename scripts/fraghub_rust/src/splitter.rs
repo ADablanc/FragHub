@@ -3,12 +3,72 @@ use pyo3::prelude::*;
 use rayon::prelude::*;
 use crate::spectrum::Spectrum;
 
-/// Trie les spectres dans 8 catégories (LC/GC, POS/NEG, IN_SILICO/EXP).
+/// Les 12 bibliothèques de sortie : POS / NEG × LC / GC / DI (injection directe) × expérimental / in silico.
+/// Avant : 8 tables (LC / GC) passées une à une à chaque fonction d'écriture ; DI ajouté le 2026-11-11.
+#[derive(Default)]
+pub struct Libraries {
+    pub pos_lc: Vec<Spectrum>, pub pos_lc_insilico: Vec<Spectrum>,
+    pub pos_gc: Vec<Spectrum>, pub pos_gc_insilico: Vec<Spectrum>,
+    pub pos_di: Vec<Spectrum>, pub pos_di_insilico: Vec<Spectrum>,
+    pub neg_lc: Vec<Spectrum>, pub neg_lc_insilico: Vec<Spectrum>,
+    pub neg_gc: Vec<Spectrum>, pub neg_gc_insilico: Vec<Spectrum>,
+    pub neg_di: Vec<Spectrum>, pub neg_di_insilico: Vec<Spectrum>,
+}
+
+/// Séparation d'une bibliothèque.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Separation { Lc, Gc, Di }
+
+impl Libraries {
+    fn table(&mut self, pos: bool, sep: Separation, in_silico: bool) -> &mut Vec<Spectrum> {
+        match (pos, sep, in_silico) {
+            (true, Separation::Lc, false) => &mut self.pos_lc,
+            (true, Separation::Lc, true) => &mut self.pos_lc_insilico,
+            (true, Separation::Gc, false) => &mut self.pos_gc,
+            (true, Separation::Gc, true) => &mut self.pos_gc_insilico,
+            (true, Separation::Di, false) => &mut self.pos_di,
+            (true, Separation::Di, true) => &mut self.pos_di_insilico,
+            (false, Separation::Lc, false) => &mut self.neg_lc,
+            (false, Separation::Lc, true) => &mut self.neg_lc_insilico,
+            (false, Separation::Gc, false) => &mut self.neg_gc,
+            (false, Separation::Gc, true) => &mut self.neg_gc_insilico,
+            (false, Separation::Di, false) => &mut self.neg_di,
+            (false, Separation::Di, true) => &mut self.neg_di_insilico,
+        }
+    }
+
+    fn append(&mut self, other: &mut Libraries) {
+        for (a, b) in self.tables_mut().into_iter().zip(other.tables_mut()) { a.append(b); }
+    }
+
+    fn tables_mut(&mut self) -> [&mut Vec<Spectrum>; 12] {
+        [&mut self.pos_lc, &mut self.pos_lc_insilico, &mut self.pos_gc, &mut self.pos_gc_insilico,
+         &mut self.pos_di, &mut self.pos_di_insilico, &mut self.neg_lc, &mut self.neg_lc_insilico,
+         &mut self.neg_gc, &mut self.neg_gc_insilico, &mut self.neg_di, &mut self.neg_di_insilico]
+    }
+
+    /// Tous les spectres : LC et GC dans l'ordre d'avant (POS LC, POS GC, NEG LC, NEG GC, expérimental puis in
+    /// silico), puis DI.
+    pub fn all_spectra(&self) -> impl Iterator<Item = &Spectrum> {
+        self.pos_lc.iter().chain(&self.pos_lc_insilico).chain(&self.pos_gc).chain(&self.pos_gc_insilico)
+            .chain(&self.neg_lc).chain(&self.neg_lc_insilico).chain(&self.neg_gc).chain(&self.neg_gc_insilico)
+            .chain(&self.pos_di).chain(&self.pos_di_insilico).chain(&self.neg_di).chain(&self.neg_di_insilico)
+    }
+}
+
+/// Séparation d'un spectre : GC d'abord (règle is_gc_spectrum), puis DI (injection directe), sinon LC.
+pub fn separation_of(spec: &Spectrum) -> Separation {
+    let instr = spec.metadata.get("INSTRUMENTTYPE").map(|s| s.as_str()).unwrap_or("");
+    let filename = crate::globals_vars::input_filename(&spec.metadata);
+    if crate::globals_vars::is_gc_spectrum(filename, instr) { Separation::Gc }
+    else if crate::globals_vars::is_di_spectrum(filename, instr) { Separation::Di }
+    else { Separation::Lc }
+}
+
+/// Trie les spectres dans les 12 bibliothèques (LC/GC/DI, POS/NEG, IN_SILICO/EXP).
 ///
-/// Pour un développeur Python : Voici une merveille de "Programmation Fonctionnelle" en Rust.
-/// On utilise `par_iter().fold(...).reduce(...)`. C'est le principe ultra-rapide de "Map-Reduce".
-/// Chaque cœur CPU trie son propre petit paquet de spectres (`fold`), puis Rust fusionne (`reduce`)
-/// tous ces paquets à la fin. Aucun thread ne bloque un autre, la RAM n'est pas fragmentée !
+/// `par_iter().fold(...).reduce(...)` : chaque cœur trie son paquet (`fold`), puis les paquets sont fusionnés
+/// (`reduce`) ; l'ordre des spectres est gardé dans chaque table.
 pub fn master_splitter(
     py: Python,
     spectrum_list: Vec<Spectrum>,
@@ -16,12 +76,7 @@ pub fn master_splitter(
     total_items_callback: Option<PyObject>,
     prefix_callback: Option<PyObject>,
     item_type_callback: Option<PyObject>,
-) -> PyResult<(
-    Vec<Spectrum>, Vec<Spectrum>, // POS_LC_EXP, POS_LC_INSILICO
-    Vec<Spectrum>, Vec<Spectrum>, // POS_GC_EXP, POS_GC_INSILICO
-    Vec<Spectrum>, Vec<Spectrum>, // NEG_LC_EXP, NEG_LC_INSILICO
-    Vec<Spectrum>, Vec<Spectrum>  // NEG_GC_EXP, NEG_GC_INSILICO
-)> {
+) -> PyResult<Libraries> {
     if let Some(cb) = &prefix_callback { cb.call1(py, ("Splitting spectra into categories:",))?; }
     if let Some(cb) = &item_type_callback { cb.call1(py, ("spectra",))?; }
 
@@ -33,60 +88,53 @@ pub fn master_splitter(
         // existaient en même temps. Même ordre qu'avant dans chaque table (fold puis reduce gardent l'ordre).
         spectrum_list
             .into_par_iter()
-            .fold(
-                || (
-                    Vec::new(), Vec::new(), Vec::new(), Vec::new(),
-                    Vec::new(), Vec::new(), Vec::new(), Vec::new()
-                ),
-                |mut acc, spec| {
-                    let ionmode = spec.metadata.get("IONMODE").map(|s| s.as_str()).unwrap_or("").to_lowercase();
+            .fold(Libraries::default, |mut acc, spec| {
+                let ionmode = spec.metadata.get("IONMODE").map(|s| s.as_str()).unwrap_or("").to_lowercase();
 
-                    // Ni positif ni négatif : ne devrait plus arriver, check_for_bad_adduct supprime ces spectres
-                    // avec un motif (ionmode_missing_or_invalid.csv). Avant, ils disparaissaient ici sans trace.
-                    if ionmode == "positive" || ionmode == "negative" {
-                        let is_pos = ionmode == "positive";
-                        let instr = spec.metadata.get("INSTRUMENTTYPE").map(|s| s.as_str()).unwrap_or("");
-                        let filename = crate::globals_vars::input_filename(&spec.metadata);
-                        let is_gc = crate::globals_vars::is_gc_spectrum(filename, instr);
-                        let pred = spec.metadata.get("PREDICTED").map(|s| s.as_str()).unwrap_or("").to_lowercase();
-                        let is_insilico = pred == "true";
-
-                        // On range directement dans la bonne combinaison
-                        match (is_pos, is_gc, is_insilico) {
-                            (true, false, false)  => acc.0.push(spec),
-                            (true, false, true)   => acc.1.push(spec),
-                            (true, true, false)   => acc.2.push(spec),
-                            (true, true, true)    => acc.3.push(spec),
-                            (false, false, false) => acc.4.push(spec),
-                            (false, false, true)  => acc.5.push(spec),
-                            (false, true, false)  => acc.6.push(spec),
-                            (false, true, true)   => acc.7.push(spec),
-                        }
-                    }
-                    acc
+                // Ni positif ni négatif : ne devrait plus arriver, check_for_bad_adduct supprime ces spectres
+                // avec un motif (ionmode_missing_or_invalid.csv). Avant, ils disparaissaient ici sans trace.
+                if ionmode == "positive" || ionmode == "negative" {
+                    let is_pos = ionmode == "positive";
+                    let sep = separation_of(&spec);
+                    let pred = spec.metadata.get("PREDICTED").map(|s| s.as_str()).unwrap_or("").to_lowercase();
+                    acc.table(is_pos, sep, pred == "true").push(spec);
                 }
-            )
-            .reduce(
-                || (
-                    Vec::new(), Vec::new(), Vec::new(), Vec::new(),
-                    Vec::new(), Vec::new(), Vec::new(), Vec::new()
-                ),
-                |mut a, mut b| {
-                    // On fusionne les résultats de tous les threads très rapidement
-                    a.0.append(&mut b.0);
-                    a.1.append(&mut b.1);
-                    a.2.append(&mut b.2);
-                    a.3.append(&mut b.3);
-                    a.4.append(&mut b.4);
-                    a.5.append(&mut b.5);
-                    a.6.append(&mut b.6);
-                    a.7.append(&mut b.7);
-                    a
-                }
-            )
+                acc
+            })
+            .reduce(Libraries::default, |mut a, mut b| {
+                // On fusionne les résultats de tous les threads
+                a.append(&mut b);
+                a
+            })
     });
 
     if let Some(cb) = &progress_callback { cb.call1(py, (total_items,))?; }
 
     Ok(result)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn spec(ionmode: &str, instr: &str, pred: &str) -> Spectrum {
+        let mut s = Spectrum::default();
+        for (k, v) in [("IONMODE", ionmode), ("INSTRUMENTTYPE", instr), ("PREDICTED", pred), ("FILENAME", "x.msp")] {
+            s.metadata.insert(k.to_string(), v.to_string());
+        }
+        s
+    }
+
+    #[test]
+    fn douze_bibliotheques() {
+        let mut libs = Libraries::default();
+        for (m, t, p) in [("positive", "LC-ESI-QTOF", "false"), ("positive", "DI-ESI-QTOF", "false"), ("negative", "DI-PTR-TOF", "true"),
+                          ("negative", "GC-EI-TOF", "false"), ("positive", "EI-B", "true")] {
+            let s = spec(m, t, p);
+            let sep = separation_of(&s);
+            libs.table(m == "positive", sep, p == "true").push(s);
+        }
+        assert_eq!((libs.pos_lc.len(), libs.pos_di.len(), libs.neg_di_insilico.len(), libs.neg_gc.len(), libs.pos_gc_insilico.len()), (1, 1, 1, 1, 1));
+        assert_eq!(libs.all_spectra().count(), 5);
+    }
 }

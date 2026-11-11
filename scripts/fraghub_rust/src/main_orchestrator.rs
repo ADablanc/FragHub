@@ -358,7 +358,7 @@ fn run_orchestrator(
         if let Some(cb) = &step_callback { cb.call1(py, ("Splitting Spectrums",))?; }
         py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
-        let tuple_split = master_splitter(
+        let libs = master_splitter(
             py,
             spectrum_list,
             progress_callback.clone(),
@@ -370,14 +370,7 @@ fn run_orchestrator(
         // La liste complète est donnée au tri (déplacée, pas copiée) : avant, elle était copiée dans les tables puis
         // libérée, d'où un pic de mémoire avec les deux en même temps.
 
-        let pos_lc_df = tuple_split.0;
-        let pos_lc_in_silico_df = tuple_split.1;
-        let pos_gc_df = tuple_split.2;
-        let pos_gc_in_silico_df = tuple_split.3;
-        let neg_lc_df = tuple_split.4;
-        let neg_lc_in_silico_df = tuple_split.5;
-        let neg_gc_df = tuple_split.6;
-        let neg_gc_in_silico_df = tuple_split.7;
+        // 12 bibliothèques : POS / NEG × LC / GC / DI × expérimental / in silico (splitter::Libraries)
 
         check_stop_flag()?;
 
@@ -395,7 +388,7 @@ fn run_orchestrator(
             if let Some(cb) = &step_callback { cb.call1(py, ("Writing CSV",))?; }
             py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
-            writting_csv_processing(py, &pos_lc_df, &pos_gc_df, &neg_lc_df, &neg_gc_df, &pos_lc_in_silico_df, &pos_gc_in_silico_df, &neg_lc_in_silico_df, &neg_gc_in_silico_df, ordered_columns.clone(), &output_directory, update, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+            writting_csv_processing(py, &libs, ordered_columns.clone(), &output_directory, update, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
         }
 
         if msp_val == 1.0 {
@@ -403,7 +396,7 @@ fn run_orchestrator(
             if let Some(cb) = &step_callback { cb.call1(py, ("Writing MSP",))?; }
             py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
-            writting_msp_processing(py, &pos_lc_df, &pos_lc_in_silico_df, &pos_gc_df, &pos_gc_in_silico_df, &neg_lc_df, &neg_lc_in_silico_df, &neg_gc_df, &neg_gc_in_silico_df, &output_directory, update, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+            writting_msp_processing(py, &libs, &output_directory, update, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
         }
 
         let json_val: f64 = parameters_dict.get_item("json")?.map(|v| v.extract().unwrap_or(0.0)).unwrap_or(0.0);
@@ -412,7 +405,7 @@ fn run_orchestrator(
             if let Some(cb) = &step_callback { cb.call1(py, ("Writing JSON",))?; }
             py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
-            writting_json_processing(py, update, &pos_lc_df, &pos_gc_df, &neg_lc_df, &neg_gc_df, &pos_lc_in_silico_df, &pos_gc_in_silico_df, &neg_lc_in_silico_df, &neg_gc_in_silico_df, ordered_columns.clone(), &output_directory, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+            writting_json_processing(py, update, &libs, ordered_columns.clone(), &output_directory, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
 
 
         }
@@ -426,7 +419,7 @@ fn run_orchestrator(
                 if let Some(cb) = &step_callback { cb.call1(py, ("Writing mzSpecLib JSON",))?; }
                 py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(10)); });
 
-                sending_mzspeclib_processing(py, update, &pos_lc_df, &pos_lc_in_silico_df, &pos_gc_df, &pos_gc_in_silico_df, &neg_lc_df, &neg_lc_in_silico_df, &neg_gc_df, &neg_gc_in_silico_df, &ordered_columns, &output_directory, sink, &check_stop_flag, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
+                sending_mzspeclib_processing(py, update, &libs, &ordered_columns, &output_directory, sink, &check_stop_flag, progress_callback.clone(), total_items_callback.clone(), prefix_callback.clone(), item_type_callback.clone())?;
             }
         }
 
@@ -453,7 +446,7 @@ fn run_orchestrator(
         let secs_r = elapsed_for_report % 60;
         let total_time_str = format!("{:02}:{:02}:{:02}", hours_r, mins_r, secs_r);
 
-        generate_report_processing(py, output_directory, current_datetime, total_time_str, &params_f64, &input_paths, &deletion_report, &pos_lc_df, &pos_lc_in_silico_df, &pos_gc_df, &pos_gc_in_silico_df, &neg_lc_df, &neg_lc_in_silico_df, &neg_gc_df, &neg_gc_in_silico_df)?;
+        generate_report_processing(py, output_directory, current_datetime, total_time_str, &params_f64, &input_paths, &deletion_report, &libs)?;
 
         if let Some(cb) = &completion_callback {
             let elapsed = start_time.elapsed().unwrap().as_secs();

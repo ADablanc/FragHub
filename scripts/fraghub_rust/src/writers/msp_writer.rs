@@ -19,7 +19,7 @@ use super::{WRITE_CHUNK, WRITE_CHUNKS_PER_ROUND};
 ///
 /// # Arguments
 /// * `py` (Python) : Token d'accès au GIL.
-/// * `pos_lc` (&[Spectrum]), `pos_lc_insilico`... : Les spectres de chaque fichier.
+/// * `libs` (&Libraries) : les 12 bibliothèques (POS/NEG × LC/GC/DI × expérimental/in silico).
 /// * `output_directory` (&str) : Dossier cible.
 /// * `update` (bool) : Indicateur pour savoir s'il faut écraser ou ajouter (append) au fichier existant.
 /// * `progress_callback`, `total_items_callback`, `prefix_callback`, `item_type_callback` : Callbacks UI.
@@ -28,18 +28,23 @@ use super::{WRITE_CHUNK, WRITE_CHUNKS_PER_ROUND};
 /// * `PyResult<()>` : Succès ou erreur IO.
 #[allow(clippy::too_many_arguments)]
 pub fn writting_msp_processing(
-    py: Python, pos_lc: &[Spectrum], pos_lc_insilico: &[Spectrum], pos_gc: &[Spectrum], pos_gc_insilico: &[Spectrum], neg_lc: &[Spectrum], neg_lc_insilico: &[Spectrum], neg_gc: &[Spectrum], neg_gc_insilico: &[Spectrum], output_directory: &str, update: bool, progress_callback: Option<PyObject>, total_items_callback: Option<PyObject>, prefix_callback: Option<PyObject>, item_type_callback: Option<PyObject>,
+    py: Python, libs: &crate::splitter::Libraries, output_directory: &str, update: bool, progress_callback: Option<PyObject>, total_items_callback: Option<PyObject>, prefix_callback: Option<PyObject>, item_type_callback: Option<PyObject>,
 ) -> PyResult<()> {
 
-    let tasks = vec![
-        (pos_lc, "POS_LC.msp", "POS"),
-        (pos_lc_insilico, "POS_LC_insilico.msp", "POS"),
-        (pos_gc, "POS_GC.msp", "POS"),
-        (pos_gc_insilico, "POS_GC_insilico.msp", "POS"),
-        (neg_lc, "NEG_LC.msp", "NEG"),
-        (neg_lc_insilico, "NEG_LC_insilico.msp", "NEG"),
-        (neg_gc, "NEG_GC.msp", "NEG"),
-        (neg_gc_insilico, "NEG_GC_insilico.msp", "NEG"),
+    let tasks: Vec<(&[Spectrum], &str, &str)> = vec![
+        (&libs.pos_lc, "POS_LC.msp", "POS"),
+        (&libs.pos_lc_insilico, "POS_LC_insilico.msp", "POS"),
+        (&libs.pos_gc, "POS_GC.msp", "POS"),
+        (&libs.pos_gc_insilico, "POS_GC_insilico.msp", "POS"),
+        (&libs.neg_lc, "NEG_LC.msp", "NEG"),
+        (&libs.neg_lc_insilico, "NEG_LC_insilico.msp", "NEG"),
+        (&libs.neg_gc, "NEG_GC.msp", "NEG"),
+        (&libs.neg_gc_insilico, "NEG_GC_insilico.msp", "NEG"),
+        // Injection directe (DI)
+        (&libs.pos_di, "POS_DI.msp", "POS"),
+        (&libs.pos_di_insilico, "POS_DI_insilico.msp", "POS"),
+        (&libs.neg_di, "NEG_DI.msp", "NEG"),
+        (&libs.neg_di_insilico, "NEG_DI_insilico.msp", "NEG"),
     ];
 
     let total_items: usize = tasks.iter().map(|(list, _, _)| list.len()).sum();

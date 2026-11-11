@@ -39,10 +39,13 @@ fn clean_field(value: &str) -> String {
 }
 
 /// Texte de recherche : ". mots ." (caractères spéciaux retirés, espaces simples).
+/// « QQ » (écriture MassBank du triple quadripôle) est cherché comme « qqq », l'écriture de l'arbre ; le type
+/// écrit dans le fichier n'est pas modifié.
 fn search_text(parts: &[String]) -> String {
     static CLEAN_CHARS: Lazy<Regex> = Lazy::new(|| Regex::new(r"[^-\w\s]").unwrap());
     let cleaned = CLEAN_CHARS.replace_all(&parts.join(" "), " ").into_owned();
-    format!(". {} .", cleaned.split_whitespace().collect::<Vec<&str>>().join(" "))
+    let words: Vec<&str> = cleaned.split_whitespace().map(|w| if w == "qq" { "qqq" } else { w }).collect();
+    format!(". {} .", words.join(" "))
 }
 
 /// Texte dans lequel on cherche l'instrument : INSTRUMENT, INSTRUMENTTYPE, IONIZATION et les autres champs qui
@@ -176,6 +179,52 @@ fn keeps_type_tokens(raw_type: &str, new_type: &str) -> bool {
     tokens(raw_type).iter().all(|t| new_tokens.contains(t))
 }
 
+/// LC/GC/CE manquant au type écrit. L'ionisation du type décide d'abord : ESI -> LC (jamais en GC), EI -> GC
+/// (jamais en LC) ; sinon le LC/GC du type de l'arbre (le modèle reconnu le donne). Ex. « ESI-QTOF » d'un
+/// TripleTOF 5600 : l'arbre propose « LC-ESI-TOF » (refusé, il perdrait le Q) ; on garde « ESI-QTOF » + LC.
+/// L'ionisation passe avant l'arbre : le JMS DX-300 n'a pas de ligne EI dans l'Excel, l'arbre propose LC ;
+/// « EI-B » doit pourtant devenir « GC-EI-B ».
+/// Rien n'est ajouté si le type dit déjà LC, GC ou CE, ou s'il est vide.
+fn add_missing_separation(final_type: &str, tree_type: &str) -> Option<String> {
+    let words = |t: &str| -> Vec<String> { clean_field(t).split_whitespace().map(|w| w.to_string()).collect() };
+    let have = words(final_type);
+    if final_type.trim().is_empty() || have.iter().any(|w| matches!(w.as_str(), "lc" | "gc" | "ce")) {
+        return None;
+    }
+    let from_ionization = if have.iter().any(|w| w == "esi") { Some("lc".to_string()) }
+        else if have.iter().any(|w| w == "ei") { Some("gc".to_string()) }
+        else { None };
+    let from_tree = || words(tree_type).into_iter().find(|w| matches!(w.as_str(), "lc" | "gc" | "ce"));
+    let separation = from_ionization.or_else(from_tree)?;
+    Some(format!("{}-{}", separation.to_uppercase(), final_type.trim()))
+}
+
+/// Le spectre a-t-il été fait en injection directe (sans chromatographie) ? Mot DI dans le type ou l'ionisation,
+/// mots qui le disent dans les champs d'instrument (« Flow-injection QqQ/MS », « direct infusion »), ou phrase
+/// sans ambiguïté dans COMMENT (« The sample was injected by direct infusion. »).
+fn is_direct_injection(metadata_dict: &HashMap<String, String>) -> bool {
+    use crate::globals_vars::{DI_TYPE_PATTERN, DIRECT_INJECTION_COMMENT_PATTERN, DIRECT_INJECTION_PATTERN};
+    let get = |k: &str| metadata_dict.get(k).map(|s| s.as_str()).unwrap_or("");
+    DI_TYPE_PATTERN.is_match(get("INSTRUMENTTYPE")) || DI_TYPE_PATTERN.is_match(get("IONIZATION"))
+        || ["INSTRUMENT", "INSTRUMENTTYPE", "IONIZATION", crate::globals_vars::INSTRUMENT_HINTS_KEY]
+            .iter().any(|k| DIRECT_INJECTION_PATTERN.is_match(get(k)))
+        || DIRECT_INJECTION_COMMENT_PATTERN.is_match(get("COMMENT"))
+}
+
+/// Type d'un spectre en injection directe : DI à la place du LC (« LC-ESI-QTOF » -> « DI-ESI-QTOF »), ou devant
+/// (« ESI-QTOF » -> « DI-ESI-QTOF », « Flow-injection QqQ/MS » -> « DI-Flow-injection QqQ/MS »).
+/// Rien si le type dit déjà DI, ou GC / EI / CE (la règle GC passe avant ; le CE est une séparation).
+fn with_direct_injection(final_type: &str) -> Option<String> {
+    static LC_WORD: once_cell::sync::Lazy<regex::Regex> =
+        once_cell::sync::Lazy::new(|| regex::Regex::new(r"(?i)(^|[^A-Za-z0-9])LC([^A-Za-z0-9]|$)").unwrap());
+    let words: Vec<String> = clean_field(final_type).split_whitespace().map(|w| w.to_string()).collect();
+    if words.iter().any(|w| matches!(w.as_str(), "di" | "gc" | "ei" | "ce")) { return None; }
+    let t = final_type.trim();
+    if t.is_empty() { return Some("DI".to_string()); }
+    if LC_WORD.is_match(t) { return Some(LC_WORD.replace(t, "${1}DI${2}").into_owned()); }
+    Some(format!("DI-{}", t))
+}
+
 /// Une valeur de l'arbre qui ne dit rien ("NOT FOUND") ne remplace jamais la valeur du fichier.
 fn is_known(value: &str) -> bool {
     !value.is_empty() && !value.eq_ignore_ascii_case(NOT_FOUND)
@@ -191,6 +240,7 @@ fn is_known(value: &str) -> bool {
 /// * `HashMap<String, String>` : Le dictionnaire mis à jour avec INSTRUMENT, INSTRUMENTTYPE, RESOLUTION.
 pub fn normalize_instruments_and_resolution(mut metadata_dict: HashMap<String, String>, context: &super::NormalizerContext) -> HashMap<String, String> {
     let infos = clean_spectrum_instrument_info(&metadata_dict);
+    let direct_injection = is_direct_injection(&metadata_dict);
     // Clé interne : lue une seule fois, ici
     metadata_dict.remove(crate::globals_vars::INSTRUMENT_HINTS_KEY);
 
@@ -235,6 +285,14 @@ pub fn normalize_instruments_and_resolution(mut metadata_dict: HashMap<String, S
                 // "GC-EI-TOF" devenait "GC", "EI-B" perdait son EI (utilisé pour reconnaître le GC).
                 if is_known(parts[1]) && keeps_type_tokens(&raw_type, parts[1]) {
                     metadata_dict.insert("INSTRUMENTTYPE".to_string(), parts[1].to_string());
+                }
+                // Injection directe : DI (à la place du LC) ; sinon LC/GC/CE absent du type gardé complété
+                // (depuis l'arbre, ou LC pour l'ESI, GC pour l'EI)
+                let kept = metadata_dict.get("INSTRUMENTTYPE").cloned().unwrap_or_default();
+                let separated = if direct_injection { with_direct_injection(&kept) }
+                    else { add_missing_separation(&kept, if is_known(parts[1]) { parts[1] } else { "" }) };
+                if let Some(t) = separated {
+                    metadata_dict.insert("INSTRUMENTTYPE".to_string(), t);
                 }
 
                 // RESOLUTION : une résolution écrite comme nominale / basse n'est pas remplacée
@@ -337,9 +395,9 @@ mod tests {
 
     #[test]
     fn mention_ei_jamais_effacee() {
-        // Hitachi "EI-B" : la solution de l'arbre dit "B" ; on garde "EI-B" pour reconnaître le GC
+        // Hitachi "EI-B" : la solution de l'arbre dit "B" ; on garde le EI (et le GC est ajouté : EI -> GC)
         let m = run(&[("INSTRUMENT", "HITACHI M-80B"), ("INSTRUMENTTYPE", "EI-B")]);
-        assert_eq!(m["INSTRUMENTTYPE"], "EI-B");
+        assert_eq!(m["INSTRUMENTTYPE"], "GC-EI-B");
         assert_eq!(m["INSTRUMENT"], "HITACHI M-80B");
         assert_eq!(m["RESOLUTION"], "LOW");
     }
@@ -368,7 +426,7 @@ mod tests {
     fn ionisation_prise_au_niveau_ionisation() {
         // Avant : 2e morceau du type, "ESI-QFT" donnait IONIZATION = "QFT"
         let m = run(&[("INSTRUMENT", "Thermo Q Exactive HF"), ("INSTRUMENTTYPE", "ESI-QFT"), ("IONIZATION", "ESI")]);
-        assert_eq!(m["INSTRUMENTTYPE"], "ESI-QFT");
+        assert_eq!(m["INSTRUMENTTYPE"], "LC-ESI-QFT"); // l'ESI est toujours en LC
         assert_eq!(m["IONIZATION"], "ESI");
         // IONIZATION du fichier connue : jamais remplacée
         let m = run(&[("INSTRUMENT", "Orbitrap"), ("IONIZATION", "APCI")]);
@@ -446,6 +504,56 @@ mod tests {
         // Aucune marque : branche « not found »
         let m = run2(&[("INSTRUMENTTYPE", "LC-ESI")]);
         assert_eq!(m["TREE_MARQUE"], "not found");
+    }
+
+    #[test]
+    fn lc_ajoute_quand_le_type_garde_n_a_pas_de_separation() {
+        // Depuis l'arbre : le type de l'arbre est refusé (perd le Q) mais son LC est repris
+        assert_eq!(add_missing_separation("ESI-QTOF", "LC-ESI-TOF").as_deref(), Some("LC-ESI-QTOF"));
+        assert_eq!(add_missing_separation("EI-B", "GC-EI-B").as_deref(), Some("GC-EI-B"));
+        // Sans information de l'arbre : l'ESI est toujours en LC
+        assert_eq!(add_missing_separation("ESI-QFT", "").as_deref(), Some("LC-ESI-QFT"));
+        // Rien à ajouter ou rien de sûr
+        assert_eq!(add_missing_separation("LC-ESI-QTOF", "GC-EI-TOF"), None);
+        assert_eq!(add_missing_separation("CE-ESI-TOF", ""), None);
+        assert_eq!(add_missing_separation("APCI-QTOF", ""), None); // l'APCI existe en LC et en GC
+        // L'ionisation passe avant l'arbre : EI toujours en GC, même si l'arbre dit LC (JMS DX-300)
+        assert_eq!(add_missing_separation("EI-B", "LC-B").as_deref(), Some("GC-EI-B"));
+        assert_eq!(add_missing_separation("EI-B", "").as_deref(), Some("GC-EI-B"));
+        assert_eq!(add_missing_separation("ESI-QTOF", "GC-QTOF").as_deref(), Some("LC-ESI-QTOF"));
+        // Ionisation qui ne dit rien de sûr : l'arbre
+        assert_eq!(add_missing_separation("FAB-B", "LC-FAB-B").as_deref(), Some("LC-FAB-B"));
+        assert_eq!(add_missing_separation("CI-B", "").as_deref(), None);
+        assert_eq!(add_missing_separation("", "LC-ESI-QTOF"), None);
+    }
+
+    #[test]
+    fn injection_directe_en_di() {
+        assert_eq!(with_direct_injection("LC-ESI-QTOF").as_deref(), Some("DI-ESI-QTOF"));
+        assert_eq!(with_direct_injection("ESI-QTOF").as_deref(), Some("DI-ESI-QTOF"));
+        assert_eq!(with_direct_injection("").as_deref(), Some("DI"));
+        assert_eq!(with_direct_injection("DI-ESI-qTof"), None);
+        assert_eq!(with_direct_injection("GC-EI-TOF"), None);
+        assert_eq!(with_direct_injection("EI-B"), None);
+        assert_eq!(with_direct_injection("CE-ESI-TOF"), None);
+        // Détection : type, champs d'instrument, phrase du commentaire ; rien sinon
+        let m = |f: &[(&str, &str)]| f.iter().map(|(k, v)| (k.to_string(), v.to_string())).collect::<HashMap<_, _>>();
+        assert!(is_direct_injection(&m(&[("INSTRUMENTTYPE", "DI-ESI-qTof")])));
+        assert!(is_direct_injection(&m(&[("INSTRUMENT", "Flow-injection QqQ/MS")])));
+        assert!(is_direct_injection(&m(&[("COMMENT", "origin=MassBank; The sample was injected by direct infusion.")])));
+        assert!(!is_direct_injection(&m(&[("INSTRUMENTTYPE", "LC-ESI-QTOF"), ("COMMENT", "infusion study")])));
+        // Bout à bout : LC du fichier remplacé par DI quand le commentaire dit injection directe
+        let r = run(&[("INSTRUMENT", "X500R QTOF (AB Sciex LLC, MA, USA)"), ("INSTRUMENTTYPE", "ESI-QTOF"),
+                      ("COMMENT", "The sample was injected by direct infusion.")]);
+        assert!(r["INSTRUMENTTYPE"].starts_with("DI-"), "{}", r["INSTRUMENTTYPE"]);
+        let r = run(&[("INSTRUMENT", "X500R QTOF"), ("INSTRUMENTTYPE", "ESI-QTOF")]);
+        assert!(r["INSTRUMENTTYPE"].starts_with("LC-"), "{}", r["INSTRUMENTTYPE"]);
+    }
+
+    #[test]
+    fn qq_cherche_comme_qqq() {
+        assert_eq!(search_text(&[clean_field("LC-ESI-QQ")]), ". lc esi qqq .");
+        assert_eq!(search_text(&[clean_field("Xevo TQ")]), ". xevo tq ."); // seul le mot QQ change
     }
 
     #[test]
