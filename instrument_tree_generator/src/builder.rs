@@ -266,6 +266,7 @@ pub fn build_tree(leaves: &[Leaf]) -> Value {
         let models = brand.as_object_mut().expect("marque");
         add_word_order_aliases(models);
         sort_models(models);
+        for node in models.values_mut() { sort_levels(node); }
     }
     Value::Object(root)
 }
@@ -323,6 +324,17 @@ fn sort_models(models: &mut Map<String, Value>) {
     let mut entries: Vec<(String, Value)> = std::mem::take(models).into_iter().collect();
     entries.sort_by_key(|(k, _)| (k == "not found", std::cmp::Reverse(k.chars().count())));
     models.extend(entries);
+}
+
+/// Niveaux LC/GC, analyseur et ionisation : clés rangées de la plus longue à la plus courte, comme les modèles
+/// (tri stable, « not found » en dernier). La recherche prend la première clé trouvée : avec « q » avant « qqq »
+/// (Waters, depuis que le ZQ est un simple quadripôle), un triple quadripôle dont le commentaire dit aussi
+/// « precursor selection=Q » devenait un simple quadripôle (MoNA, « Flow-injection QqQ/MS », TQD Waters).
+fn sort_levels(node: &mut Value) {
+    let Some(map) = node.as_object_mut() else { return };
+    if map.contains_key("SOLUTION") { return; }
+    sort_models(map);
+    for child in map.values_mut() { sort_levels(child); }
 }
 
 /// Niveau résolution : une seule solution, celle que FragHub prendra.
@@ -555,6 +567,9 @@ mod tests {
         let pos = |k: &str| models.iter().position(|m| *m == k).unwrap();
         assert!(pos("esquire 3000") < pos("3000"), "{models:?}");
         assert_eq!(models.last().unwrap().as_str(), "not found");
+        // Autres niveaux : la clé la plus longue d'abord (« qqq » avant « qit », « qtof » avant les deux)
+        let analyzers: Vec<&String> = tree["not found"]["not found"]["not found"].as_object().unwrap().keys().collect();
+        assert_eq!(analyzers, ["qtof", "qqq", "qit", "not found"]);
         // Modèle de plusieurs mots : trouvé dans les deux ordres (« TripleTOF 6600 »), même branche
         assert_eq!(sol(["sciex", "qtof 6600", "lc", "qtof", "esi", "high"]).unwrap(), "AB SCIEX 6600 TripleTOF, LC-ESI-QTOF, HIGH");
         // L'alias passe après le modèle de l'Excel de même longueur
