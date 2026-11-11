@@ -27,7 +27,14 @@
 //!   format), PAS dans le fichier de reprise, et son fichier .parquet n'est donc pas écrit. Un lancement
 //!   suivant avec le temps limite saute les molécules déjà notées ; sans le temps limite, il les calcule
 //!   normalement. Le temps limite ne change jamais un résultat écrit : une molécule est calculée en entier ou
-//!   pas du tout.
+//!   pas du tout. RDKit ne vérifie le temps qu'entre deux transformations de tautomère : sur les très grands
+//!   systèmes aromatiques, il reste des heures dans une étape qu'on ne peut pas interrompre. Le thread
+//!   principal surveille donc aussi les molécules en cours : au-delà du temps limite, il les note lui-même
+//!   (une seule fois) et leur résultat, s'il arrive un jour, est ignoré. Quand il ne reste que des molécules
+//!   notées en cours, le programme se termine sans les attendre ;
+//! - retrait (FRAGHUB_RENORM_DROP_TOO_LONG=1, avec le temps limite) : les molécules notées trop longues sont
+//!   RETIRÉES de la base de sortie (ligne supprimée) et leur fichier est écrit. À n'utiliser qu'après avoir
+//!   vérifié qu'aucune n'est un produit naturel (COCONUT, LOTUS) : celles-là se calculent sans temps limite.
 use polars::prelude::*;
 use pyo3::prelude::*;
 use rayon::prelude::*;
@@ -106,9 +113,23 @@ fn compute_one_limited(target: &str, max_secs: f64) -> Option<Vec<(&'static str,
     Some(if out.iter().any(|(k, _)| *k == "INCHIKEY") { out } else { Vec::new() })
 }
 
-/// Temps limite du mode diagnostic (FRAGHUB_RENORM_MAX_SECS), None = pas de limite (cas normal).
-fn max_secs() -> Option<f64> {
-    std::env::var("FRAGHUB_RENORM_MAX_SECS").ok().and_then(|v| v.trim().parse::<f64>().ok()).filter(|&s| s > 0.0)
+/// Réglages d'une re-normalisation (par défaut : calcul normal, sans temps limite).
+#[derive(Default, Debug, Clone, Copy, PartialEq)]
+pub struct RenormOptions {
+    /// Mode diagnostic : temps limite (s) de la recherche du tautomère ; None = pas de limite (cas normal)
+    pub max_secs: Option<f64>,
+    /// Avec le temps limite : les molécules notées trop longues sont retirées de la sortie au lieu de
+    /// bloquer l'écriture de leur fichier
+    pub drop_too_long: bool,
+}
+
+impl RenormOptions {
+    /// Réglages lus dans l'environnement : FRAGHUB_RENORM_MAX_SECS=N et FRAGHUB_RENORM_DROP_TOO_LONG=1.
+    pub fn from_env() -> Self {
+        let max_secs = std::env::var("FRAGHUB_RENORM_MAX_SECS").ok().and_then(|v| v.trim().parse::<f64>().ok()).filter(|&s| s > 0.0);
+        let drop = std::env::var("FRAGHUB_RENORM_DROP_TOO_LONG").map(|v| matches!(v.trim(), "1" | "true" | "oui")).unwrap_or(false);
+        RenormOptions { max_secs, drop_too_long: drop && max_secs.is_some() }
+    }
 }
 
 /// Molécules déjà notées trop longues : (fichier, ligne).
@@ -284,6 +305,18 @@ struct Part {
     remaining: AtomicUsize,
     writer: std::sync::Mutex<Option<std::io::BufWriter<fs::File>>>,
     written: AtomicBool,
+    /// Lignes notées trop longues (mode diagnostic) : jamais calculées ; retirées de la sortie en mode retrait
+    too_long_rows: std::sync::Mutex<std::collections::BTreeSet<usize>>,
+}
+
+/// Molécule en cours sur un thread de calcul.
+#[derive(Clone, Copy)]
+struct Running {
+    start: Instant,
+    part: usize,
+    row: usize,
+    /// Déjà notée trop longue par le thread principal : son résultat sera ignoré
+    noted: bool,
 }
 
 /// Données partagées entre le thread principal et le thread de calcul.
@@ -294,13 +327,76 @@ struct Shared {
     next: AtomicUsize,
     done: AtomicUsize,
     cancel: AtomicBool,
-    /// Molécule en cours sur chaque thread : (début, fichier, ligne)
-    running: std::sync::Mutex<Vec<Option<(Instant, usize, usize)>>>,
+    /// Threads qui ont pris (ou sont en train de prendre) une molécule et ne l'ont pas finie
+    active: AtomicUsize,
+    /// Molécule en cours sur chaque thread
+    running: std::sync::Mutex<Vec<Option<Running>>>,
     slow_log: std::sync::Mutex<fs::File>,
-    /// Mode diagnostic : temps limite et fichier des molécules trop longues
-    max_secs: Option<f64>,
+    /// Mode diagnostic : réglages et fichier des molécules trop longues
+    opts: RenormOptions,
     too_long_log: std::sync::Mutex<Option<fs::File>>,
     too_long: AtomicUsize,
+}
+
+impl Shared {
+    /// Note une molécule trop longue (une ligne dans _molecules_trop_longues.tsv) : elle compte comme
+    /// traitée, sans résultat ni ligne de reprise ; en mode retrait, elle ne retient plus l'écriture de
+    /// son fichier. Appelé une seule fois par molécule, par le thread de calcul (RDKit arrêté par le temps
+    /// limite) ou par le thread principal (RDKit qui ne s'arrête pas).
+    fn note_too_long(&self, secs: f64, p: usize, row: usize) {
+        use std::io::Write;
+        let part = &self.parts[p];
+        if let Some(f) = self.too_long_log.lock().unwrap().as_mut() {
+            let _ = writeln!(f, "{secs:.0}\t{}\t{row}\t{}", part.name, part.targets[row].as_deref().unwrap_or(""));
+            let _ = f.flush();
+        }
+        part.too_long_rows.lock().unwrap().insert(row);
+        if self.opts.drop_too_long { part.remaining.fetch_sub(1, Ordering::Relaxed); }
+        self.too_long.fetch_add(1, Ordering::Relaxed);
+        self.done.fetch_add(1, Ordering::Relaxed);
+    }
+
+    /// Thread principal : note les molécules en cours depuis plus que le temps limite (RDKit ne les arrêtera
+    /// peut-être jamais). Renvoie vrai s'il ne reste plus rien à attendre : file vide et toutes les molécules
+    /// encore en cours notées.
+    fn watch_running(&self, now: Instant) -> bool {
+        let mut running = self.running.lock().unwrap();
+        if let Some(limit) = self.opts.max_secs {
+            for r in running.iter_mut().flatten() {
+                if !r.noted && now.duration_since(r.start).as_secs_f64() > limit {
+                    r.noted = true;
+                    self.note_too_long(now.duration_since(r.start).as_secs_f64(), r.part, r.row);
+                }
+            }
+        }
+        let noted = running.iter().flatten().filter(|r| r.noted).count();
+        self.next.load(Ordering::Relaxed) >= self.queue.len() && self.active.load(Ordering::Relaxed) == noted
+    }
+
+    /// Thread de calcul : fin d'une molécule. `out` : None si RDKit a été arrêté par le temps limite.
+    /// Le résultat d'une molécule déjà notée par le thread principal est ignoré.
+    fn finish(&self, slot: usize, p: usize, row: usize, out: Option<Vec<(&'static str, String)>>, secs: f64) {
+        use std::io::Write;
+        let noted = {
+            let mut running = self.running.lock().unwrap();
+            let noted = running[slot].map_or(false, |r| r.noted);
+            running[slot] = None;
+            self.active.fetch_sub(1, Ordering::Relaxed);
+            noted
+        };
+        if noted { return; }
+        let part = &self.parts[p];
+        let Some(out) = out else { self.note_too_long(secs, p, row); return };
+        if secs >= SLOW_SECS {
+            let _ = writeln!(self.slow_log.lock().unwrap(), "{secs:.0}\t{}\t{row}\t{}", part.name, part.targets[row].as_deref().unwrap_or(""));
+        }
+        if let Some(w) = part.writer.lock().unwrap().as_mut() {
+            let _ = w.write_all(checkpoint_line(row, &out).as_bytes());
+        }
+        part.results.lock().unwrap()[row] = Some(out);
+        part.remaining.fetch_sub(1, Ordering::Relaxed);
+        self.done.fetch_add(1, Ordering::Relaxed);
+    }
 }
 
 /// Re-normalise tous les fichiers *.parquet de `input_dir` dans `output_dir` (mêmes noms de fichiers).
@@ -312,10 +408,12 @@ struct Shared {
 ///
 /// `progress` est appelé toutes les 0,5 s ; s'il renvoie false, le calcul s'arrête (ce qui est calculé est
 /// gardé dans les fichiers de reprise). `only` : noms des fichiers à traiter (None = tous).
+/// `opts` : temps limite et retrait des molécules trop longues (voir RenormOptions).
 pub fn renormalize_database(
     input_dir: &Path,
     output_dir: &Path,
     only: Option<&[String]>,
+    opts: RenormOptions,
     log: &dyn Fn(&str),
     progress: &dyn Fn(&Progress) -> bool,
 ) -> Result<RenormStats, String> {
@@ -371,6 +469,7 @@ pub fn renormalize_database(
             remaining: AtomicUsize::new(remaining),
             writer: std::sync::Mutex::new(Some(writer)),
             written: AtomicBool::new(false),
+            too_long_rows: Default::default(),
         });
     }
 
@@ -378,11 +477,12 @@ pub fn renormalize_database(
     //     d'abord dans chaque fichier), puis les très grosses molécules de toute la base, de la plus petite à la
     //     plus grosse (les fichiers qui en ont peu sont écrits plus tôt) ---
     let big = big_atoms_threshold();
-    let limit = max_secs();
+    let limit = opts.max_secs;
     let too_long_path = output_dir.join("_molecules_trop_longues.tsv");
     let already_too_long = if limit.is_some() { read_too_long(&too_long_path) } else { Default::default() };
     if let Some(s) = limit {
-        log(&format!("Mode diagnostic : recherche du tautomère arrêtée après {s:.0} s ; molécules trop longues notées dans {} (non écrites)", too_long_path.display()));
+        log(&format!("Mode diagnostic : recherche du tautomère arrêtée après {s:.0} s ; molécules trop longues notées dans {} ({})",
+            too_long_path.display(), if opts.drop_too_long { "retirées de la sortie" } else { "non écrites" }));
     }
     let mut skipped = 0usize;
     let mut queue: Vec<(usize, usize)> = Vec::new();
@@ -391,7 +491,13 @@ pub fn renormalize_database(
         let res = part.results.lock().unwrap();
         let mut rows: Vec<usize> = Vec::new();
         for i in (0..part.targets.len()).filter(|&i| part.targets[i].is_some() && res[i].is_none()) {
-            if already_too_long.contains(&(part.name.clone(), i)) { skipped += 1; continue; }
+            if already_too_long.contains(&(part.name.clone(), i)) {
+                skipped += 1;
+                part.too_long_rows.lock().unwrap().insert(i);
+                // En mode retrait, une molécule déjà notée ne retient plus l'écriture du fichier
+                if opts.drop_too_long { part.remaining.fetch_sub(1, Ordering::Relaxed); }
+                continue;
+            }
             let atoms = heavy_atoms(part.targets[i].as_ref().unwrap());
             if atoms > big { big_queue.push((atoms, p, i)); } else { rows.push(i); }
         }
@@ -399,7 +505,8 @@ pub fn renormalize_database(
         queue.extend(rows.into_iter().map(|r| (p, r)));
     }
     if skipped > 0 {
-        log(&format!("{skipped} molécules déjà notées trop longues : sautées (relancer sans FRAGHUB_RENORM_MAX_SECS pour les calculer)"));
+        log(&format!("{skipped} molécules déjà notées trop longues : {}", if opts.drop_too_long { "retirées de la sortie" }
+            else { "sautées (relancer sans FRAGHUB_RENORM_MAX_SECS pour les calculer)" }));
     }
     if !big_queue.is_empty() {
         log(&format!("{} très grosses molécules (plus de {big} atomes lourds) gardées pour la fin", big_queue.len()));
@@ -415,10 +522,11 @@ pub fn renormalize_database(
         next: AtomicUsize::new(0),
         done: AtomicUsize::new(0),
         cancel: AtomicBool::new(false),
+        active: AtomicUsize::new(0),
         running: std::sync::Mutex::new(vec![None; workers + 1]),
         slow_log: std::sync::Mutex::new(
             fs::OpenOptions::new().create(true).append(true).open(output_dir.join("_molecules_lentes.tsv")).map_err(|e| e.to_string())?),
-        max_secs: limit,
+        opts,
         too_long_log: std::sync::Mutex::new(if limit.is_some() {
             Some(fs::OpenOptions::new().create(true).append(true).open(&too_long_path).map_err(|e| e.to_string())?)
         } else { None }),
@@ -433,15 +541,23 @@ pub fn renormalize_database(
         let mut file = fs::File::open(&part.path).map_err(|e| e.to_string())?;
         let df = ParquetReader::new(&mut file).finish().map_err(|e| e.to_string())?;
         let results = std::mem::take(&mut *part.results.lock().unwrap());
-        let (mut out, st) = apply_results(&df, &results).map_err(|e| e.to_string())?;
+        let (mut out, mut st) = apply_results(&df, &results).map_err(|e| e.to_string())?;
+        // Mode retrait : les lignes notées trop longues sont supprimées de la sortie
+        let dropped = part.too_long_rows.lock().unwrap().clone();
+        if !dropped.is_empty() {
+            let keep: BooleanChunked = (0..out.height()).map(|i| !dropped.contains(&i)).collect();
+            out = out.filter(&keep).map_err(|e| e.to_string())?;
+            st.rows -= dropped.len();   // with_structure ne compte que les lignes calculées : rien à retirer
+        }
         let tmp = output_dir.join(format!("{}.en_cours", part.name));
         let f = fs::File::create(&tmp).map_err(|e| e.to_string())?;
         ParquetWriter::new(f).with_compression(ParquetCompression::Zstd(None)).finish(&mut out).map_err(|e| e.to_string())?;
         fs::rename(&tmp, &part.dest).map_err(|e| e.to_string())?;
         let _ = fs::remove_file(&part.checkpoint);
         part.written.store(true, Ordering::Relaxed);
-        log(&format!("{} : écrit - {} lignes, {} avec structure, {} InChIKey modifiées, {} SMILES modifiés, {} illisibles (gardées) ({:.0} s d'écriture)",
-            part.name, st.rows, st.with_structure, st.key_changed, st.smiles_changed, st.failed, t.elapsed().as_secs_f64()));
+        log(&format!("{} : écrit - {} lignes, {} avec structure, {} InChIKey modifiées, {} SMILES modifiés, {} illisibles (gardées){} ({:.0} s d'écriture)",
+            part.name, st.rows, st.with_structure, st.key_changed, st.smiles_changed, st.failed,
+            if dropped.is_empty() { String::new() } else { format!(", {} trop longues retirées", dropped.len()) }, t.elapsed().as_secs_f64()));
         total.add(&st);
         Ok(())
     };
@@ -454,44 +570,29 @@ pub fn renormalize_database(
             (0..workers).into_par_iter().for_each(|_| {
                 let slot = rayon::current_thread_index().unwrap_or(workers);
                 while !sh.cancel.load(Ordering::Relaxed) {
+                    // « actif » avant de prendre la molécule : le thread principal ne peut pas croire la file
+                    // finie pendant qu'un thread prend sa dernière molécule
+                    sh.active.fetch_add(1, Ordering::Relaxed);
                     let k = sh.next.fetch_add(1, Ordering::Relaxed);
-                    let Some(&(p, row)) = sh.queue.get(k) else { break };
-                    let part = &sh.parts[p];
-                    let target = part.targets[row].as_ref().unwrap();
+                    let Some(&(p, row)) = sh.queue.get(k) else { sh.active.fetch_sub(1, Ordering::Relaxed); break };
+                    let target = sh.parts[p].targets[row].as_ref().unwrap();
                     let start = Instant::now();
-                    sh.running.lock().unwrap()[slot] = Some((start, p, row));
-                    let out = match sh.max_secs {
+                    sh.running.lock().unwrap()[slot] = Some(Running { start, part: p, row, noted: false });
+                    let out = match sh.opts.max_secs {
                         None => Some(compute_one(target)),
                         Some(s) => compute_one_limited(target, s),
                     };
-                    sh.running.lock().unwrap()[slot] = None;
-                    let secs = start.elapsed().as_secs_f64();
-                    let Some(out) = out else {
-                        // Temps dépassé : notée, pas de résultat ni de ligne de reprise (fichier non écrit)
-                        if let Some(f) = sh.too_long_log.lock().unwrap().as_mut() {
-                            let _ = writeln!(f, "{secs:.0}\t{}\t{row}\t{target}", part.name);
-                            let _ = f.flush();
-                        }
-                        sh.too_long.fetch_add(1, Ordering::Relaxed);
-                        sh.done.fetch_add(1, Ordering::Relaxed);
-                        continue;
-                    };
-                    if secs >= SLOW_SECS {
-                        let _ = writeln!(sh.slow_log.lock().unwrap(), "{secs:.0}\t{}\t{row}\t{target}", part.name);
-                    }
-                    if let Some(w) = part.writer.lock().unwrap().as_mut() {
-                        let _ = w.write_all(checkpoint_line(row, &out).as_bytes());
-                    }
-                    part.results.lock().unwrap()[row] = Some(out);
-                    part.remaining.fetch_sub(1, Ordering::Relaxed);
-                    sh.done.fetch_add(1, Ordering::Relaxed);
+                    sh.finish(slot, p, row, out, start.elapsed().as_secs_f64());
                 }
             });
         })
     };
-    // Thread principal : écrit les fichiers terminés, affiche l'avancement, gère l'arrêt
+    // Thread principal : écrit les fichiers terminés, affiche l'avancement, note les molécules qui dépassent le
+    // temps limite, gère l'arrêt
+    let mut abandoned = false;
     loop {
         let finished = worker.is_finished();
+        let nothing_left = shared.watch_running(Instant::now());
         for part in parts {
             if !part.written.load(Ordering::Relaxed) && part.remaining.load(Ordering::Relaxed) == 0 && error.is_none() {
                 if let Err(e) = write_part(part, &mut total) { error = Some(e); shared.cancel.store(true, Ordering::Relaxed); }
@@ -500,8 +601,8 @@ pub fn renormalize_database(
             if let Some(w) = part.writer.lock().unwrap().as_mut() { let _ = w.flush(); }
         }
         let slow: Vec<(f64, String, String)> = shared.running.lock().unwrap().iter().flatten()
-            .filter(|(s, _, _)| s.elapsed().as_secs_f64() >= SLOW_SECS)
-            .map(|(s, p, r)| (s.elapsed().as_secs_f64(), parts[*p].name.clone(), parts[*p].targets[*r].clone().unwrap_or_default()))
+            .filter(|r| r.start.elapsed().as_secs_f64() >= SLOW_SECS)
+            .map(|r| (r.start.elapsed().as_secs_f64(), parts[r.part].name.clone(), parts[r.part].targets[r.row].clone().unwrap_or_default()))
             .collect();
         let written = files_done + parts.iter().filter(|p| p.written.load(Ordering::Relaxed)).count();
         let info = Progress { done: shared.done.load(Ordering::Relaxed), total: todo, files_done: written, files_total, slow };
@@ -513,10 +614,24 @@ pub fn renormalize_database(
             break;
         }
         if finished || error.is_some() { break; }
+        if nothing_left {
+            // Il ne reste que des molécules notées trop longues, que RDKit ne lâchera peut-être jamais : on
+            // n'attend pas ces threads (ils s'arrêteront avec le programme), leur résultat serait ignoré
+            abandoned = true;
+            break;
+        }
         std::thread::sleep(Duration::from_millis(500));
     }
-    if !stopped && error.is_none() {
+    if !stopped && !abandoned && error.is_none() {
         if let Err(panic) = worker.join() { std::panic::resume_unwind(panic); }
+    }
+    if !stopped && error.is_none() {
+        // Fichiers terminés pendant le dernier tour de boucle
+        for part in parts {
+            if !part.written.load(Ordering::Relaxed) && part.remaining.load(Ordering::Relaxed) == 0 {
+                if let Err(e) = write_part(part, &mut total) { error = Some(e); break; }
+            }
+        }
     }
     for part in parts {
         // Arrêt : on vide le fichier de reprise sans le fermer (le thread de calcul peut encore y écrire)
@@ -527,7 +642,9 @@ pub fn renormalize_database(
     let too_long = shared.too_long.load(Ordering::Relaxed);
     if too_long + skipped > 0 {
         let left = parts.iter().filter(|p| !p.written.load(Ordering::Relaxed)).count();
-        log(&format!("Mode diagnostic : {too_long} molécules trop longues cette fois, {skipped} déjà notées ; {left} fichiers non écrits (voir {})",
+        let still = shared.running.lock().unwrap().iter().flatten().filter(|r| r.noted).count();
+        log(&format!("Mode diagnostic : {too_long} molécules trop longues cette fois ({still} encore en calcul, abandonnées), {skipped} déjà notées ; {} (voir {})",
+            if opts.drop_too_long { format!("{} lignes retirées de la sortie", too_long + skipped) } else { format!("{left} fichiers non écrits") },
             too_long_path.display()));
     }
 
@@ -567,6 +684,7 @@ pub fn renormalize_internal_database(py: Python, input_dir: &str, output_dir: &s
         Path::new(input_dir),
         Path::new(output_dir),
         only.as_deref(),
+        RenormOptions::from_env(),
         &|m| println!("\r{prefix}{m}{}", " ".repeat(30)),
         // Progression, molécules lentes, et Ctrl+C vérifié toutes les 0,5 s (Python reprend la main un instant)
         &|p: &Progress| {
@@ -668,7 +786,7 @@ mod tests {
         ParquetWriter::new(fs::File::create(src.join("part_0000.parquet")).unwrap()).finish(&mut df).unwrap();
         let mut sans = DataFrame::new(vec![Series::new("INCHIKEY", &[Some("ZZZZZZZZZZZZZZ-UHFFFAOYSA-N")]), Series::new("EXACTMASS", &[Some(3.0)])]).unwrap();
         ParquetWriter::new(fs::File::create(src.join("part_0001.parquet")).unwrap()).finish(&mut sans).unwrap();
-        let st = renormalize_database(&src, &dst, None, &|_| {}, &|_: &Progress| true).unwrap();
+        let st = renormalize_database(&src, &dst, None, RenormOptions::default(), &|_| {}, &|_: &Progress| true).unwrap();
         assert_eq!(st.duplicate_keys, 0);
         assert_eq!(fs::read(src.join("part_0001.parquet")).unwrap(), fs::read(dst.join("part_0001.parquet")).unwrap());
         let db = CompoundDb::load(&dst, "INCHIKEY");
@@ -690,10 +808,10 @@ mod tests {
             ParquetWriter::new(fs::File::create(src.join(name)).unwrap()).finish(&mut df).unwrap();
         }
         // Référence : traitement d'un coup
-        renormalize_database(&src, &ref_, None, &|_| {}, &|_: &Progress| true).unwrap();
+        renormalize_database(&src, &ref_, None, RenormOptions::default(), &|_| {}, &|_: &Progress| true).unwrap();
 
         // Arrêt demandé dès le début : erreur « interrompu », aucun fichier .en_cours laissé à moitié
-        let r = renormalize_database(&src, &dst, None, &|_| {}, &|_: &Progress| false);
+        let r = renormalize_database(&src, &dst, None, RenormOptions::default(), &|_| {}, &|_: &Progress| false);
         assert!(r.is_err());
         assert!(fs::read_dir(&dst).unwrap().all(|e| !e.unwrap().file_name().to_string_lossy().ends_with(".en_cours")));
         // Fichier de reprise fabriqué : la ligne 0 du 2e fichier est « déjà calculée » avec un SMILES repère ;
@@ -701,7 +819,7 @@ mod tests {
         let _ = fs::remove_file(dst.join("part_0001.parquet"));
         fs::write(dst.join("part_0001.parquet.reprise"),
             format!("{}{{coupé", checkpoint_line(0, &[("INCHIKEY", "OKJIRPAQVSHGFK-UHFFFAOYSA-N".into()), ("SMILES", "REPERE".into())]))).unwrap();
-        let st = renormalize_database(&src, &dst, None, &|_| {}, &|_: &Progress| true).unwrap();
+        let st = renormalize_database(&src, &dst, None, RenormOptions::default(), &|_| {}, &|_: &Progress| true).unwrap();
         assert!(st.rows <= 10);
         assert!(!dst.join("part_0001.parquet.reprise").exists(), "fichier de reprise supprimé après écriture");
         let read = |p: &Path| { let mut f = fs::File::open(p).unwrap(); ParquetReader::new(&mut f).finish().unwrap() };
@@ -738,6 +856,136 @@ mod tests {
 
     const GEANT: &str = "InChI=1S/C99H90O54/c100-82(101)28-136-64-12-48-2-50-14-70(142-34-88(112)113)52(16-68(50)140-32-86(108)109)4-54-18-74(146-38-92(120)121)56(20-72(54)144-36-90(116)117)6-58-22-78(150-42-96(128)129)60(24-76(58)148-40-94(124)125)8-62-26-81(153-45-99(134)135)63(27-80(62)152-44-98(132)133)9-61-25-77(149-41-95(126)127)59(23-79(61)151-43-97(130)131)7-57-21-73(145-37-91(118)119)55(19-75(57)147-39-93(122)123)5-53-17-69(141-33-87(110)111)51(15-71(53)143-35-89(114)115)3-49-13-65(137-29-83(102)103)47(11-67(49)139-31-85(106)107)1-46(64)10-66(48)138-30-84(104)105/h10-27H,1-9,28-45H2,(H,100,101)(H,102,103)(H,104,105)(H,106,107)(H,108,109)(H,110,111)(H,112,113)(H,114,115)(H,116,117)(H,118,119)(H,120,121)(H,122,123)(H,124,125)(H,126,127)(H,128,129)(H,130,131)(H,132,133)(H,134,135)";
 
+    /// État partagé réduit à un fichier (celui de `frame()`), pour tester la surveillance sans RDKit.
+    fn shared_for_test(dir: &Path, opts: RenormOptions) -> Shared {
+        use std::sync::Mutex;
+        let targets = targets_of(&frame()).unwrap();
+        let n = targets.iter().filter(|t| t.is_some()).count();
+        let checkpoint = dir.join("part_0000.parquet.reprise");
+        let writer = std::io::BufWriter::new(fs::OpenOptions::new().create(true).append(true).open(&checkpoint).unwrap());
+        let part = Part {
+            name: "part_0000.parquet".into(), path: dir.join("in.parquet"), dest: dir.join("part_0000.parquet"), checkpoint,
+            results: Mutex::new(vec![None; targets.len()]), remaining: AtomicUsize::new(n), targets,
+            writer: Mutex::new(Some(writer)), written: AtomicBool::new(false), too_long_rows: Default::default(),
+        };
+        Shared {
+            parts: vec![part], queue: vec![(0, 0), (0, 1)], next: AtomicUsize::new(2), done: AtomicUsize::new(0),
+            cancel: AtomicBool::new(false), active: AtomicUsize::new(0), running: Mutex::new(vec![None; 2]),
+            slow_log: Mutex::new(fs::File::create(dir.join("_molecules_lentes.tsv")).unwrap()), opts,
+            too_long_log: Mutex::new(Some(fs::File::create(dir.join("_molecules_trop_longues.tsv")).unwrap())),
+            too_long: AtomicUsize::new(0),
+        }
+    }
+
+    #[test]
+    fn surveillance_par_le_thread_principal() {
+        // Une molécule en cours depuis 400 s avec une limite de 300 s : notée une seule fois par le thread
+        // principal, son résultat ignoré quand il arrive ; une molécule ordinaire est traitée normalement.
+        use std::io::Write;
+        let dir = std::env::temp_dir().join(format!("fraghub_renorm_watch_{}", std::process::id()));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir).unwrap();
+        let sh = shared_for_test(&dir, RenormOptions { max_secs: Some(300.0), drop_too_long: false });
+        let now = Instant::now();
+        let long_ago = now.checked_sub(Duration::from_secs(400)).unwrap();
+        let remaining = sh.parts[0].remaining.load(Ordering::Relaxed);
+        // Rien en cours, file vide : plus rien à attendre
+        assert!(sh.watch_running(now));
+        // Molécule 1 en cours depuis 400 s sur le thread 0
+        sh.active.store(1, Ordering::Relaxed);
+        sh.running.lock().unwrap()[0] = Some(Running { start: long_ago, part: 0, row: 1, noted: false });
+        assert!(sh.watch_running(now), "il ne reste qu'une molécule notée : plus rien à attendre");
+        assert!(sh.watch_running(now));
+        let tsv = || fs::read_to_string(dir.join("_molecules_trop_longues.tsv")).unwrap();
+        let lines: Vec<String> = tsv().lines().map(String::from).collect();
+        assert_eq!(lines.len(), 1, "notée une seule fois : {lines:?}");
+        assert_eq!(lines[0], format!("400\tpart_0000.parquet\t1\t{}", sh.parts[0].targets[1].as_ref().unwrap()));
+        assert_eq!((sh.too_long.load(Ordering::Relaxed), sh.done.load(Ordering::Relaxed)), (1, 1));
+        assert_eq!(sh.parts[0].remaining.load(Ordering::Relaxed), remaining, "sans retrait, le fichier reste retenu");
+        // Son résultat arrive : ignoré (pas de reprise, pas de résultat, rien de compté)
+        sh.finish(0, 0, 1, Some(vec![("SMILES", "TARD".into())]), 400.0);
+        sh.parts[0].writer.lock().unwrap().as_mut().unwrap().flush().unwrap();
+        assert_eq!(fs::read_to_string(dir.join("part_0000.parquet.reprise")).unwrap(), "");
+        assert!(sh.parts[0].results.lock().unwrap()[1].is_none());
+        assert_eq!((sh.too_long.load(Ordering::Relaxed), sh.done.load(Ordering::Relaxed), sh.active.load(Ordering::Relaxed)), (1, 1, 0));
+        assert_eq!(tsv().lines().count(), 1);
+        // Une molécule ordinaire finie en 1 s : reprise, résultat, compteurs
+        sh.active.store(1, Ordering::Relaxed);
+        sh.running.lock().unwrap()[1] = Some(Running { start: now, part: 0, row: 0, noted: false });
+        assert!(!sh.watch_running(now), "une molécule ordinaire en cours : il faut l'attendre");
+        sh.finish(1, 0, 0, Some(vec![("SMILES", "OK".into())]), 1.0);
+        sh.parts[0].writer.lock().unwrap().as_mut().unwrap().flush().unwrap();
+        assert_eq!(fs::read_to_string(dir.join("part_0000.parquet.reprise")).unwrap(), checkpoint_line(0, &[("SMILES", "OK".into())]));
+        assert_eq!(sh.parts[0].results.lock().unwrap()[0].as_ref().unwrap()[0].1, "OK");
+        assert_eq!((sh.done.load(Ordering::Relaxed), sh.parts[0].remaining.load(Ordering::Relaxed)), (2, remaining - 1));
+        // RDKit arrêté par le temps limite (résultat None), molécule non notée par le thread principal : notée ici
+        sh.active.store(1, Ordering::Relaxed);
+        sh.running.lock().unwrap()[1] = Some(Running { start: now, part: 0, row: 2, noted: false });
+        sh.finish(1, 0, 2, None, 300.0);
+        assert_eq!(tsv().lines().count(), 2);
+        assert_eq!(sh.too_long.load(Ordering::Relaxed), 2);
+        // Mode retrait : la molécule notée ne retient plus le fichier
+        let sh2 = shared_for_test(&dir, RenormOptions { max_secs: Some(300.0), drop_too_long: true });
+        sh2.active.store(1, Ordering::Relaxed);
+        sh2.running.lock().unwrap()[0] = Some(Running { start: long_ago, part: 0, row: 1, noted: false });
+        assert!(sh2.watch_running(now));
+        assert_eq!(sh2.parts[0].remaining.load(Ordering::Relaxed), remaining - 1);
+        assert!(sh2.parts[0].too_long_rows.lock().unwrap().contains(&1));
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn retrait_des_molecules_trop_longues() {
+        // Fichier : éthanol, macrocycle géant, acétate. Diagnostic (3 s) sans retrait : fichier non écrit ;
+        // puis avec retrait : fichier écrit sans le géant, identique au calcul direct des deux autres lignes,
+        // molécules ordinaires reprises sans recalcul, géant noté une seule fois.
+        let dir = std::env::temp_dir().join(format!("fraghub_renorm_drop_{}", std::process::id()));
+        let (src, dst, src2, ref_) = (dir.join("in"), dir.join("out"), dir.join("in2"), dir.join("ref"));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&src).unwrap();
+        fs::create_dir_all(&src2).unwrap();
+        let mut df = DataFrame::new(vec![
+            Series::new("INCHIKEY", &[Some("LFQSCWFLJHTTHZ-UHFFFAOYSA-N"), Some("AAAAAAAAAAAAAA-UHFFFAOYSA-N"), Some("QTBSBXVTEAMEQO-UHFFFAOYSA-M")]),
+            Series::new("INCHI", &[Some("InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"), Some(GEANT), None]),
+            Series::new("SMILES", &[Some("CCO"), None, Some("CC(=O)[O-]")]),
+            Series::new("NAME", &[Some("ethanol"), Some("geant"), Some("acetate")]),
+        ]).unwrap();
+        ParquetWriter::new(fs::File::create(src.join("part_0000.parquet")).unwrap()).finish(&mut df).unwrap();
+        let mut sans = df.filter(&BooleanChunked::from_slice("k", &[true, false, true])).unwrap();
+        ParquetWriter::new(fs::File::create(src2.join("part_0000.parquet")).unwrap()).finish(&mut sans).unwrap();
+        renormalize_database(&src2, &ref_, None, RenormOptions::default(), &|_| {}, &|_: &Progress| true).unwrap();
+
+        let diag = RenormOptions { max_secs: Some(3.0), drop_too_long: false };
+        let st = renormalize_database(&src, &dst, None, diag, &|_| {}, &|_: &Progress| true).unwrap();
+        assert_eq!(st.rows, 0, "fichier non écrit : rien compté");
+        assert!(!dst.join("part_0000.parquet").exists());
+        let tsv = dst.join("_molecules_trop_longues.tsv");
+        assert_eq!(read_too_long(&tsv), [("part_0000.parquet".to_string(), 1)].into_iter().collect());
+        let reprise = fs::read_to_string(dst.join("part_0000.parquet.reprise")).unwrap();
+        assert_eq!(reprise.lines().count(), 2);
+
+        // Reprise avec retrait : les deux lignes de reprise sont reprises telles quelles (repère sur l'une)
+        let marked = reprise.replace("\"CCO\"", "\"REPERE\"");
+        assert_ne!(marked, reprise);
+        fs::write(dst.join("part_0000.parquet.reprise"), &marked).unwrap();
+        let st = renormalize_database(&src, &dst, None, RenormOptions { drop_too_long: true, ..diag }, &|_| {}, &|_: &Progress| true).unwrap();
+        assert_eq!((st.rows, st.with_structure), (2, 2));
+        assert_eq!(fs::read_to_string(&tsv).unwrap().lines().count(), 1, "pas notée de nouveau");
+        assert!(!dst.join("part_0000.parquet.reprise").exists());
+        let read = |p: &Path| { let mut f = fs::File::open(p).unwrap(); ParquetReader::new(&mut f).finish().unwrap() };
+        let out = read(&dst.join("part_0000.parquet"));
+        assert_eq!(out.height(), 2);
+        let names: Vec<Option<&str>> = out.column("NAME").unwrap().str().unwrap().into_iter().collect();
+        assert_eq!(names, vec![Some("ethanol"), Some("acetate")]);
+        assert_eq!(out.column("SMILES").unwrap().str().unwrap().get(0), Some("REPERE"));
+        // Sans le repère, identique au calcul direct des deux lignes gardées
+        let reference = read(&ref_.join("part_0000.parquet"));
+        let same_cols = |d: &DataFrame| d.select(["INCHIKEY", "INCHI", "NAME"]).unwrap();
+        assert!(same_cols(&out).equals_missing(&same_cols(&reference)));
+        assert_eq!(out.column("SMILES").unwrap().str().unwrap().get(1), reference.column("SMILES").unwrap().str().unwrap().get(1));
+        let _ = fs::remove_dir_all(&dir);
+    }
+
     #[test]
     fn arret_sans_attendre_une_molecule_geante() {
         // Macrocycle C99H90O54 de la base : environ 270 s de calcul du tautomère. L'arrêt doit rendre la main
@@ -754,7 +1002,7 @@ mod tests {
         ParquetWriter::new(fs::File::create(src.join("part_0000.parquet")).unwrap()).finish(&mut df).unwrap();
         let t = Instant::now();
         let calls = AtomicUsize::new(0);
-        let r = renormalize_database(&src, &dst, None, &|_| {}, &|_: &Progress| calls.fetch_add(1, Ordering::Relaxed) < 4);
+        let r = renormalize_database(&src, &dst, None, RenormOptions::default(), &|_| {}, &|_: &Progress| calls.fetch_add(1, Ordering::Relaxed) < 4);
         assert!(r.is_err());
         assert!(t.elapsed() < Duration::from_secs(20), "arrêt en {:?}", t.elapsed());
         assert!(!dst.join("part_0000.parquet").exists());
@@ -770,7 +1018,7 @@ mod tests {
         fs::create_dir_all(&src).unwrap();
         let mut df = frame();
         ParquetWriter::new(fs::File::create(src.join("part_0000.parquet")).unwrap()).finish(&mut df).unwrap();
-        renormalize_database(&src, &dst, None, &|_| {}, &|_: &Progress| true).unwrap();
+        renormalize_database(&src, &dst, None, RenormOptions::default(), &|_| {}, &|_: &Progress| true).unwrap();
         let (direct, _) = renormalize_frame(&frame()).unwrap().unwrap();
         let mut f = fs::File::open(dst.join("part_0000.parquet")).unwrap();
         assert!(ParquetReader::new(&mut f).finish().unwrap().equals_missing(&direct));
@@ -799,7 +1047,7 @@ mod tests {
             ParquetWriter::new(fs::File::create(src.join(name)).unwrap()).finish(&mut df).unwrap();
         }
         let only = vec!["part_0001.parquet".to_string()];
-        renormalize_database(&src, &dst, Some(&only), &|_| {}, &|_: &Progress| true).unwrap();
+        renormalize_database(&src, &dst, Some(&only), RenormOptions::default(), &|_| {}, &|_: &Progress| true).unwrap();
         assert!(!dst.join("part_0000.parquet").exists());
         assert!(dst.join("part_0001.parquet").exists());
         let _ = fs::remove_dir_all(&dir);
@@ -808,7 +1056,7 @@ mod tests {
     #[test]
     fn refuse_d_ecrire_dans_le_dossier_d_entree() {
         let d = std::env::temp_dir();
-        assert!(renormalize_database(&d, &d, None, &|_| {}, &|_: &Progress| true).is_err());
+        assert!(renormalize_database(&d, &d, None, RenormOptions::default(), &|_| {}, &|_: &Progress| true).is_err());
     }
 }
 
@@ -818,6 +1066,6 @@ mod tests {
 #[ignore]
 fn vraie_base() {
     let (i, o) = (std::env::var("FRAGHUB_RENORM_IN").unwrap(), std::env::var("FRAGHUB_RENORM_OUT").unwrap());
-    renormalize_database(Path::new(&i), Path::new(&o), None, &|m| println!("{m}"), &|_: &Progress| true).unwrap();
+    renormalize_database(Path::new(&i), Path::new(&o), None, RenormOptions::from_env(), &|m| println!("{m}"), &|_: &Progress| true).unwrap();
 }
 

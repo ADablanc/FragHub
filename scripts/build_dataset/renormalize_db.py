@@ -25,6 +25,11 @@ Mode diagnostic (variable d'environnement FRAGHUB_RENORM_MAX_SECS=N) : la recher
 molécule est arrêtée après N secondes ; la molécule est notée dans _molecules_trop_longues.tsv, sans résultat,
 et son fichier n'est pas écrit (il le sera par un lancement sans temps limite). Exemple sous macOS :
   FRAGHUB_RENORM_MAX_SECS=300 .venv/bin/python scripts/build_dataset/renormalize_db.py
+Les molécules que RDKit ne lâche pas (très grands systèmes aromatiques) sont notées aussi, par surveillance, et
+le programme se termine sans les attendre.
+Retrait (FRAGHUB_RENORM_DROP_TOO_LONG=1, avec le temps limite) : les molécules notées dans
+_molecules_trop_longues.tsv sont RETIRÉES de la base de sortie et leurs fichiers sont écrits. À n'utiliser
+qu'après avoir vérifié qu'aucune n'est un produit naturel (COCONUT, LOTUS) : celles-là se calculent sans limite.
 """
 import argparse
 import os
