@@ -251,10 +251,6 @@ pub fn build_tree(leaves: &[Leaf]) -> Value {
         }
         node.insert("SOLUTION".to_string(), Value::String(leaf.solution.clone()));
     }
-    for brand in root.values_mut() {
-        let models = brand.as_object_mut().expect("marque");
-        sort_models(models);
-    }
     let mut path = Vec::new();
     for (brand, models) in root.iter_mut() {
         path.push(brand.clone());
@@ -265,7 +261,59 @@ pub fn build_tree(leaves: &[Leaf]) -> Value {
         }
         path.pop();
     }
+    // Après la résolution (les alias recopient des branches déjà réglées), puis le tri
+    for brand in root.values_mut() {
+        let models = brand.as_object_mut().expect("marque");
+        add_word_order_aliases(models);
+        sort_models(models);
+    }
     Value::Object(root)
+}
+
+/// Modèles de plusieurs mots : la clé est aussi ajoutée avec les mots dans tous les autres ordres, menant à la
+/// même branche. La recherche trouve une clé d'un bloc ; l'Excel écrit « 6600 TripleTOF » (clé « 6600 qtof »)
+/// mais les fichiers « TripleTOF 6600 » (texte « qtof 6600 ») : le modèle n'était jamais reconnu.
+/// Un alias ne remplace jamais un modèle de l'Excel, et un alias venant de deux modèles différents n'est pas ajouté
+/// (« Orbitrap Exploris 240 » et « Exploris 240 Orbitrap » sont deux lignes de l'Excel aux types différents).
+/// Les modèles ont au plus 4 mots dans l'Excel (24 ordres) ; au-delà de 5 mots, pas d'alias.
+fn add_word_order_aliases(models: &mut Map<String, Value>) {
+    const MAX_WORDS: usize = 5;
+    let mut aliases: Vec<(String, String)> = Vec::new(); // (alias, modèle d'origine)
+    for model in models.keys() {
+        let words: Vec<&str> = model.split(' ').collect();
+        if words.len() < 2 || words.len() > MAX_WORDS { continue; }
+        for order in permutations(words.len()) {
+            let alias = order.iter().map(|&i| words[i]).collect::<Vec<_>>().join(" ");
+            if alias != *model && !models.contains_key(&alias) { aliases.push((alias, model.clone())); }
+        }
+    }
+    let mut sources: HashMap<&str, Vec<&str>> = HashMap::new();
+    for (alias, model) in &aliases {
+        let v = sources.entry(alias.as_str()).or_default();
+        if !v.contains(&model.as_str()) { v.push(model.as_str()); }
+    }
+    let mut added: Vec<(String, Value)> = Vec::new();
+    for (alias, model) in &aliases {
+        if sources[alias.as_str()].len() == 1 && !added.iter().any(|(a, _)| a == alias) {
+            added.push((alias.clone(), models[model].clone()));
+        }
+    }
+    models.extend(added);
+}
+
+/// Tous les ordres de 0..n (n petit), le premier étant l'ordre d'origine.
+fn permutations(n: usize) -> Vec<Vec<usize>> {
+    if n == 0 { return vec![Vec::new()]; }
+    let mut out = Vec::new();
+    for p in permutations(n - 1) {
+        for pos in 0..=p.len() {
+            let mut q = p.clone();
+            q.insert(pos, n - 1);
+            out.push(q);
+        }
+    }
+    out.sort();
+    out
 }
 
 /// Range les modèles du plus long au plus court (tri stable, « not found » en dernier).
@@ -507,5 +555,24 @@ mod tests {
         let pos = |k: &str| models.iter().position(|m| *m == k).unwrap();
         assert!(pos("esquire 3000") < pos("3000"), "{models:?}");
         assert_eq!(models.last().unwrap().as_str(), "not found");
+        // Modèle de plusieurs mots : trouvé dans les deux ordres (« TripleTOF 6600 »), même branche
+        assert_eq!(sol(["sciex", "qtof 6600", "lc", "qtof", "esi", "high"]).unwrap(), "AB SCIEX 6600 TripleTOF, LC-ESI-QTOF, HIGH");
+        // L'alias passe après le modèle de l'Excel de même longueur
+        let sciex: Vec<&String> = tree["sciex"].as_object().unwrap().keys().collect();
+        assert!(sciex.iter().position(|m| *m == "6600 qtof") < sciex.iter().position(|m| *m == "qtof 6600"));
+    }
+
+    #[test]
+    fn alias_jamais_a_la_place_d_un_modele_ni_ambigu() {
+        let mut models: Map<String, Value> = serde_json::from_str(r#"{
+            "orbitrap exploris 240": {"x": 1}, "exploris 240 orbitrap": {"x": 2}, "6600 qtof": {"x": 3}, "5600": {"x": 4}}"#).unwrap();
+        add_word_order_aliases(&mut models);
+        assert_eq!(models["orbitrap exploris 240"]["x"], 1);
+        assert_eq!(models["exploris 240 orbitrap"]["x"], 2);
+        assert!(models.get("240 orbitrap exploris").is_none()); // vient des deux modèles : ambigu
+        assert_eq!(models["qtof 6600"]["x"], 3);
+        assert_eq!(models.len(), 5);
+        assert_eq!(permutations(3).len(), 6);
+        assert_eq!(permutations(3)[0], vec![0, 1, 2]);
     }
 }

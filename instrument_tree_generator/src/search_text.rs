@@ -41,10 +41,13 @@ fn clean_field(value: &str) -> String {
 }
 
 /// Texte de recherche : ". mots ." (caractères spéciaux retirés, espaces simples).
+/// « QQ » (écriture MassBank du triple quadripôle) est cherché comme « qqq », l'écriture de l'arbre ; le type
+/// écrit dans le fichier n'est pas modifié.
 fn search_text(parts: &[String]) -> String {
     static CLEAN_CHARS: Lazy<Regex> = Lazy::new(|| Regex::new(r"[^-\w\s]").unwrap());
     let cleaned = CLEAN_CHARS.replace_all(&parts.join(" "), " ").into_owned();
-    format!(". {} .", cleaned.split_whitespace().collect::<Vec<&str>>().join(" "))
+    let words: Vec<&str> = cleaned.split_whitespace().map(|w| if w == "qq" { "qqq" } else { w }).collect();
+    format!(". {} .", words.join(" "))
 }
 
 /// Clé de l'arbre des instruments, écrite comme le texte de recherche (`clean_spectrum_instrument_info`) :
@@ -93,6 +96,7 @@ mod tests {
         assert_eq!(tree_key("JMS-HX/HX 110A"), "jms hx hx 110a");
         assert_eq!(tree_key("Q-Exactive Orbitrap HF-X"), "qexactive orbitrap hf x");
         assert_eq!(tree_key("NOT FOUND"), "not found");
+        assert_eq!(search_text(&[clean_field("LC-ESI-QQ")]), ". lc esi qqq .");
         assert_eq!(clean_field("TripleTOF 6600"), " qtof  6600");
         assert_eq!(clean_field("GC-EI-TOF"), "gc ei tof");
         assert_eq!(clean_field("LC-ESI-Q-TOF"), "lc esi qtof");
