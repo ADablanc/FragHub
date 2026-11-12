@@ -15,14 +15,21 @@ Dans chaque groupe de lignes de même InChIKey, la ligne gardée est, dans l'ord
 Si la ligne gardée n'a pas de classes ClassyFire et qu'une autre ligne du groupe en a, elle les reprend (même
 molécule). Les groupes dont les formules diffèrent ne sont PAS touchés : ils sont listés pour être regardés.
 
-L'ancienne base est lue dans l'historique git (commit donné par --old-commit) ; --old-dir permet de la lire dans un
-dossier. La sortie est écrite dans un NOUVEAU dossier (nom temporaire puis renommage) ; la base d'origine n'est pas
+Lignes « classes seules » : la base contient aussi des lignes qui n'ont qu'une InChIKey et des classes (ni structure,
+ni nom, ni formule : tout part_0015 et une partie de part_0014). Quand la même InChIKey a aussi une ligne complète,
+c'est la ligne complète qui est gardée (choisie parmi les lignes complètes avec les critères ci-dessus) ; elle
+reprend les classes ClassyFire de la ligne « classes seules » si elle n'en a pas, et celle-ci est retirée. Une
+formule vide en face d'une formule remplie n'est donc pas une « formule différente ».
+
+L'ancienne base (avant re-normalisation) sert au critère 1. Elle est lue dans un dossier (--old-dir) ou dans
+l'historique git (--old-commit) ; sans l'un ni l'autre, le critère 1 n'est pas appliqué. Depuis que la base est
+sortie du dépôt (historique réécrit, base publiée sur Zenodo), elle n'est plus dans l'historique git. La sortie est écrite dans un NOUVEAU dossier (nom temporaire puis renommage) ; la base d'origine n'est pas
 modifiée. Les fichiers sans ligne retirée ni classe reprise sont recopiés octet pour octet.
 
 Usage (depuis la racine du projet, environnement du classifieur pour pyarrow) :
   %USERPROFILE%\\rdkit_npc\\python.exe scripts\\build_dataset\\dedupe_db.py
-Options : --input, --output (défaut scratch/dedupe_db/internal_databases.parquet), --old-commit (défaut 398d2ec7),
-          --old-dir DOSSIER, --dry-run (constat seulement, aucun parquet écrit)
+Options : --input, --output (défaut scratch/dedupe_db/internal_databases.parquet), --old-dir DOSSIER,
+          --old-commit COMMIT, --dry-run (constat seulement, aucun parquet écrit)
 Journal : <sortie>/_dedupe_journal.txt ; lignes retirées : _dedupe_lignes_retirees.tsv ;
 classes reprises : _dedupe_classes_reprises.tsv ; groupes laissés : _dedupe_groupes_laisses.tsv
 """
@@ -70,6 +77,8 @@ def has_classyfire(values):
 
 def read_old(name, old_dir, commit):
     """NAME et INCHI de l'ancienne base (avant re-normalisation) pour ce fichier, ou None s'il est introuvable."""
+    if not old_dir and not commit:
+        return None
     try:
         if old_dir:
             source = os.path.join(old_dir, name)
@@ -118,7 +127,7 @@ def main():
     ap = argparse.ArgumentParser(description="Une seule ligne par InChIKey dans la base interne.")
     ap.add_argument("--input", default=os.path.join(ROOT, "datas", "internal_databases.parquet"))
     ap.add_argument("--output", default=os.path.join(ROOT, "scratch", "dedupe_db", "internal_databases.parquet"))
-    ap.add_argument("--old-commit", default="398d2ec7", help="commit de la base AVANT la re-normalisation")
+    ap.add_argument("--old-commit", default=None, help="commit de la base AVANT la re-normalisation (si elle est dans git)")
     ap.add_argument("--old-dir", default=None, help="ancienne base dans un dossier (à la place de git)")
     ap.add_argument("--dry-run", action="store_true", help="constat seulement : aucun parquet écrit")
     a = ap.parse_args()
@@ -182,17 +191,23 @@ def main():
     w_left.writerow(["INCHIKEY", "fichier", "ligne", "nom", "formule"])
     for key in sorted(groups):
         g = groups[key]
-        if len(set(r["formula"] for r in g)) > 1:
+        # Lignes « classes seules » (ni formule ni nom) : mises à part quand le groupe a aussi des lignes complètes
+        complete = [r for r in g if r["formula"] or r["name"]]
+        classes_only = [r for r in g if not (r["formula"] or r["name"])] if complete else []
+        candidates = complete or g
+        if len(set(r["formula"] for r in candidates)) > 1:
             stats["groupes laissés (formules différentes)"] += 1
             for r in g:
                 w_left.writerow([key, r["file"], r["row"], r["name"], r["formula"]])
             continue
         # Clé de tri : la meilleure ligne en premier ; l'ordre de lecture départage (tri stable)
         rank = lambda r: (0 if r["charged"] is False else 1, 0 if has_classyfire(r["cf"]) else 1, 1 if IDENTIFIER.match(r["name"].strip()) else 0)
-        ordered = sorted(g, key=rank)
+        ordered = sorted(candidates, key=rank) + classes_only
         best = ordered[0]
-        ranks = [rank(r) for r in ordered]
-        if ranks[0][0] < ranks[1][0]:
+        ranks = [rank(r) for r in ordered[:len(candidates)]]
+        if len(candidates) == 1:
+            reason = "ligne complète (l'autre n'a que des classes)"
+        elif ranks[0][0] < ranks[1][0]:
             reason = "déjà neutre avant la re-normalisation"
         elif ranks[0][1] < ranks[1][1]:
             reason = "a des classes ClassyFire"
@@ -200,6 +215,8 @@ def main():
             reason = "nom non identifiant"
         else:
             reason = "première dans l'ordre de lecture"
+        if classes_only:
+            stats["groupes avec une ligne « classes seules » retirée"] += 1
         stats["groupes traités"] += 1
         stats["critère : " + reason] += 1
         if best is not g[-1]:
