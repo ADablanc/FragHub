@@ -87,7 +87,7 @@ const filters = [
   {
     id: 'remove_peak_above_precursormz',
     name: 'remove_peak_above_precursormz',
-    desc: "This function removes all peaks from the spectrum whose m/z value is greater than the precursor's m/z value + 5 Da."
+    desc: "This function removes all peaks from the spectrum whose m/z value is greater than the precursor's m/z value + 5 Da. For a multiply charged precursor (e.g. [M+2H]2+), the limit is charge × precursor m/z + 5 Da, since a singly charged fragment can be heavier than its precursor's m/z. If no peak remains, the spectrum is deleted."
   },
   {
     id: 'check_minimum_peak_requiered',
@@ -110,7 +110,7 @@ const filters = [
   {
     id: 'keep_mz_in_range',
     name: 'keep_mz_in_range',
-    desc: 'This function deletes all spectra whose precursor m/z is not between the specified `min` and `max` values.',
+    desc: 'This function removes all peaks whose m/z value is not between the specified `From` and `To` values (both included). If no peak remains, the spectrum is deleted.',
     params: [
       { label: 'From:', key: 'keep_mz_in_range_from_mz', default: 50.0 },
       { label: 'To:', key: 'keep_mz_in_range_to_mz', default: 2000.0 }
