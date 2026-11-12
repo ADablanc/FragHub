@@ -129,6 +129,9 @@ function waitForBackend() {
             const res = await fetch('http://127.0.0.1:8000/health')
             if (res.ok) {
                 clearInterval(poll)
+
+                // Base interne absente (code source sans la base) : le back-end la télécharge, on affiche l'avancement
+                if (!(await waitForDatabase())) return
                 setSplashMessage("Loading internal databases…")
 
                 try {
@@ -151,6 +154,34 @@ function waitForBackend() {
             }
         }
     }, 1000)
+}
+
+// Attend que la base interne soit sur le disque. Le back-end lance son téléchargement au premier appel de
+// /database-status s'il ne la trouve pas, et donne le message à afficher. Renvoie false en cas d'échec
+// (le message d'erreur reste affiché). Un back-end sans cette adresse (ancienne version) : on continue comme avant.
+async function waitForDatabase() {
+    let failures = 0
+    while (true) {
+        try {
+            const res = await fetch('http://127.0.0.1:8000/database-status')
+            if (!res.ok) return true
+            const status = await res.json()
+            failures = 0
+            if (status.state === 'ready') return true
+            if (status.state === 'error') {
+                setSplashMessage(status.message || "Error preparing the database. Please restart.")
+                return false
+            }
+            if (status.message) setSplashMessage(status.message)
+        } catch (err) {
+            failures++
+            if (failures >= 30) {
+                setSplashMessage("Backend unreachable. Please restart.")
+                return false
+            }
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000))
+    }
 }
 
 function maybeShowMain() {

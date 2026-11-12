@@ -95,7 +95,7 @@ def _sha256(path):
     return h.hexdigest()
 
 
-def _download(ref, part_path, log):
+def _download(ref, part_path, log, progress):
     """Télécharge l'archive dans part_path, en reprenant ce qui est déjà là. Plusieurs essais."""
     total = ref["size"]
     context = _ssl_context()
@@ -125,6 +125,8 @@ def _download(ref, part_path, log):
                             last_shown = now
                             speed = (done - start) / max(now - t0, 1e-6) / 1e6
                             log("  base interne : %5.1f %%  (%d / %d Mo, %.1f Mo/s)" % (100.0 * done / total, done // 10 ** 6, total // 10 ** 6, speed))
+                            if progress:
+                                progress("download", done, total)
             if done == total:
                 return
             last_error = "connexion fermée après %d octets sur %d" % (done, total)
@@ -135,9 +137,11 @@ def _download(ref, part_path, log):
     raise InternalDatabaseError(last_error or "téléchargement impossible")
 
 
-def ensure_internal_database(base_dir, log=print):
+def ensure_internal_database(base_dir, log=print, progress=None):
     """
     Fait en sorte que la base interne soit sur le disque. Renvoie "reference", "differente" ou "telechargee".
+    progress, s'il est donné, est appelé avec (étape, octets faits, octets au total) ; les étapes sont "download",
+    "verify" et "extract" (pour l'écran de démarrage de l'interface).
     Lève InternalDatabaseError (message complet, avec le lien de téléchargement à la main) si la base manque et
     ne peut pas être obtenue.
     """
@@ -161,7 +165,7 @@ def ensure_internal_database(base_dir, log=print):
     archive = os.path.join(datas, "internal_database_%s.zip" % ref["version"])
     part = archive + ".part"
     try:
-        _download(ref, part, log)
+        _download(ref, part, log, progress)
     except InternalDatabaseError as e:
         raise InternalDatabaseError("Base interne absente, et son téléchargement a échoué : %s\n"
                                     "Relancer FragHub reprendra le téléchargement là où il s'est arrêté.\n%s" % (e, manual))
@@ -169,11 +173,15 @@ def ensure_internal_database(base_dir, log=print):
         raise InternalDatabaseError("Base interne absente, et impossible d'écrire dans %s : %s\n%s" % (datas, e, manual))
 
     log("  vérification de l'archive (SHA-256)...")
+    if progress:
+        progress("verify", ref["size"], ref["size"])
     if os.path.getsize(part) != ref["size"] or _sha256(part) != ref["sha256"]:
         os.remove(part)
         raise InternalDatabaseError("L'archive téléchargée n'est pas celle attendue (taille ou somme SHA-256 différente) : "
                                     "elle a été supprimée. Relancer FragHub pour la télécharger de nouveau.\n%s" % manual)
 
+    if progress:
+        progress("extract", ref["size"], ref["size"])
     tmp_dir = db_dir + ".tmp"
     shutil.rmtree(tmp_dir, ignore_errors=True)
     os.makedirs(tmp_dir)

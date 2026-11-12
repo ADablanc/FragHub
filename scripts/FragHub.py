@@ -2,6 +2,7 @@ import asyncio
 import socketio
 import uvicorn
 import multiprocessing
+import threading
 import traceback
 import mzspeclib_converter
 import time
@@ -215,8 +216,55 @@ async def get_report(path: str):
         return FileResponse(path)
     return {"error": "Report not found"}
 
+# --- BASE INTERNE : téléchargement au premier démarrage, suivi par l'écran de démarrage ---
+# state : "idle" (pas encore regardé), "downloading", "ready" ou "error". message : texte à afficher.
+database_status = {"state": "idle", "percent": 0.0, "message": ""}
+database_status_lock = threading.Lock()
+
+def _database_progress(phase, done, total):
+    if phase == "download":
+        percent = 100.0 * done / total if total else 0.0
+        database_status.update(percent=percent, message="Downloading molecule database… %d %% of %.1f GB" % (percent, total / 1e9))
+    elif phase == "verify":
+        database_status.update(percent=100.0, message="Checking the downloaded database…")
+    else:
+        database_status.update(percent=100.0, message="Installing the molecule database…")
+
+def _prepare_database():
+    """Fil à part : télécharge la base interne absente, et note l'état pour /database-status."""
+    try:
+        internal_database.ensure_internal_database(BASE_DIR, progress=_database_progress)
+        database_status.update(state="ready", message="")
+    except internal_database.InternalDatabaseError as e:
+        print(str(e), flush=True)   # message complet (cause, lien pour l'installer à la main) dans la console
+        database_status.update(state="error", message="Database download failed. Check your connection and restart FragHub.")
+
+@app.get("/database-status")
+async def get_database_status():
+    """
+    État de la base interne. Au premier appel, lance son téléchargement si elle n'est pas sur le disque
+    (code source sans la base ; l'exécutable installé la contient déjà) et répond tout de suite : l'écran de
+    démarrage interroge cette adresse jusqu'à "ready" avant de demander /init-data.
+    """
+    with database_status_lock:
+        if database_status["state"] == "idle":
+            try:
+                missing = internal_database.local_state(BASE_DIR, internal_database.read_reference(BASE_DIR)) == "absente"
+            except internal_database.InternalDatabaseError as e:
+                print(str(e), flush=True)
+                database_status.update(state="error", message="Database reference file unreadable. Please reinstall FragHub.")
+            else:
+                if missing:
+                    database_status.update(state="downloading", message="Downloading molecule database…")
+                    threading.Thread(target=_prepare_database, daemon=True).start()
+                else:
+                    database_status.update(state="ready")
+    return dict(database_status)
+
 @app.get("/init-data")
 async def init_data():
+    if database_status["state"] == "downloading":
+        raise HTTPException(status_code=503, detail="Database download in progress.")
     # Base interne absente (code source sans la base) : téléchargée ici, dans un fil à part pour que le serveur
     # continue de répondre pendant ce temps. Si elle est déjà là, l'appel ne fait que comparer des tailles.
     try:
