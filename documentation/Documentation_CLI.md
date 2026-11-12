@@ -18,7 +18,7 @@ To trigger the CLI mode, you **must** append the `--cli` flag when executing Fra
 uv run python scripts/FragHub.py --cli --input_directory "data/input" --output_directory "data/output"
 ```
 > [!IMPORTANT]
-> Running from source requires **RDKit C++** (installed with mamba/micromamba in `~/rdkit_cpp`, or in the folder given by `RDKIT_PREFIX`) and the Rust module compiled with `python build_backend.py --rust-only`. See section 7 of the developer documentation for your platform. The compiled executable needs nothing: RDKit is bundled inside it.
+> Running from source requires **RDKit C++** (installed with mamba/micromamba in `~/rdkit_cpp`, or in the folder given by `RDKIT_PREFIX`) and the Rust module compiled with `python build_backend.py --rust-only`. See section 7 of the developer documentation for your platform. The internal molecule database (1.1 GB) is not in the git repository: it is downloaded from Zenodo the first time FragHub starts, or when `build_backend.py` is run. The compiled executable needs nothing: RDKit and the database are bundled inside it.
 
 ### Running the compiled binary
 If FragHub is packaged as an executable (e.g., via PyInstaller/Electron), you can pass the arguments directly to the executable:

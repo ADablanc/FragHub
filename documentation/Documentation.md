@@ -47,6 +47,8 @@ cd GUI
 npm install
 ```
 
+> **📌 Internal database:** the molecule database (`datas/internal_databases.parquet`, 1.1 GB) is not in the git repository. It is downloaded from Zenodo the first time it is needed: when `python build_backend.py` is run, or when FragHub starts from source. See "Internal database" in section 7.
+
 ---
 
 ## 3. Backend Compilation (Python)
@@ -171,7 +173,31 @@ Processing of one molecule (`shim.cc`, `process_single`), in this order:
 5. **SMILES**: RDKit canonical tautomer with stereochemistry kept (`tautomerRemoveSp3Stereo` and `tautomerRemoveBondStereo` set to false); if this tautomer has another InChI than step 4, the SMILES of step 3 is written instead.
 
 ### Internal database
-The InChIKeys of the spectra are looked up in `datas/internal_databases.parquet` (PubChem completion, ontologies). For keys and SMILES to be computed the same way on both sides, the database must be re-normalized with the same processing whenever this processing (or the RDKit version) changes:
+The InChIKeys of the spectra are looked up in `datas/internal_databases.parquet` (names, ClassyFire and NPClassifier classes): 17 parquet files, one row per InChIKey.
+
+**Where it comes from.** The database is published on Zenodo ([10.5281/zenodo.24171531](https://doi.org/10.5281/zenodo.24171531)) and is not tracked by git. `datas/internal_database.json` says which version FragHub uses: address, size and SHA-256 of the archive, and the list of its files. `scripts/internal_database.py` downloads it when the folder holds no parquet file:
+* at build time: `build_backend.py` and `build_all.py` check it before compiling, and PyInstaller then copies the whole `datas/` folder into the executable, so **the installers bundle the database** and end users download nothing;
+* from source: at the first start of the interface (the start screen shows the progress) or of the `--cli` mode.
+
+```bash
+python scripts/internal_database.py --check   # says whether the database on disk is the reference one
+python scripts/internal_database.py           # downloads it if it is missing
+```
+The download resumes after an interruption, the archive is checked (size and SHA-256) before being unzipped, and about 2.2 GB of free space is needed during the installation. **A database already on disk is never replaced**, even when it differs from the reference (a locally recomputed database is kept as it is). To go back to the reference version, delete `datas/internal_databases.parquet` and start again. Without a connection, download the archive from the Zenodo page and unzip its parquet files into that folder.
+
+**Publishing a new version.** On Zenodo, open the record of the database and choose "New version" (the number of the new record is reserved as soon as the draft exists), then:
+```bash
+python scripts/build_dataset/make_archive.py --version YYYY-MM-DD --record NUMBER
+```
+It writes the archive and its reference file in `scratch/internal_database/`. Upload the `.zip` to the draft, publish it, copy the `.json` over `datas/internal_database.json` and commit it.
+
+**Scripts that build the database** (`scripts/build_dataset/`, each one writes a new folder in `scratch/` and never modifies `datas/`):
+* `renormalize_db.py`: same RDKit processing as the spectra (below);
+* `npclassifier_db.py`: NPClassifier classes (COCONUT classes when the full InChIKey is in COCONUT, otherwise the NP-Classifier V1 models). **These models need RDKit 2021.09 or older** (the Morgan fingerprint hashing changed in RDKit 2022.03, and the classes computed with a newer RDKit are wrong): the script runs in a dedicated environment, `mamba create -p ~/rdkit_npc -c conda-forge python=3.7 rdkit=2020.03.6 numpy pyarrow h5py`, and refuses a newer RDKit;
+* `dedupe_db.py`: one row per InChIKey;
+* `add_new_molecules.py`: adds the molecules of a FragHub run that are not yet in the database.
+
+**Re-normalization.** For keys and SMILES to be computed the same way on both sides, the database must be re-normalized with the same processing whenever this processing (or the RDKit version) changes:
 ```bash
 python scripts/build_dataset/renormalize_db.py              # one process using all cores
 python scripts/build_dataset/renormalize_db.py --processes 4 # 4 processes sharing the 16 files
