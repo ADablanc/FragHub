@@ -27489,28 +27489,28 @@
       }
     },
     "jms s3000": {
-      "lc": {
+      "di": {
         "tof": {
           "maldi": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-MALDI-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-MALDI-TOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-TOF, HIGH"
             }
           }
         },
         "not found": {
           "maldi": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-MALDI-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-MALDI-TOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-TOF, HIGH"
             }
           }
         }
@@ -27519,24 +27519,24 @@
         "tof": {
           "maldi": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-MALDI-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-MALDI-TOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-TOF, HIGH"
             }
           }
         },
         "not found": {
           "maldi": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-MALDI-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-MALDI-TOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-TOF, HIGH"
             }
           }
         }
@@ -27888,18 +27888,6 @@
     },
     "found not": {
       "lc": {
-        "qittof": {
-          "maldi": {
-            "high": {
-              "SOLUTION": "NOT FOUND, LC-MALDI-QITTOF, HIGH"
-            }
-          },
-          "not found": {
-            "high": {
-              "SOLUTION": "NOT FOUND, LC-QITTOF, HIGH"
-            }
-          }
-        },
         "ittof": {
           "esi": {
             "high": {
@@ -27976,11 +27964,6 @@
           }
         },
         "qit": {
-          "maldi": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-MALDI-QIT, LOW"
-            }
-          },
           "esi": {
             "low": {
               "SOLUTION": "NOT FOUND, LC-ESI-QIT, LOW"
@@ -27993,11 +27976,6 @@
           }
         },
         "tof": {
-          "maldi": {
-            "high": {
-              "SOLUTION": "NOT FOUND, LC-MALDI-TOF, HIGH"
-            }
-          },
           "esi": {
             "high": {
               "SOLUTION": "NOT FOUND, LC-ESI-TOF, HIGH"
@@ -28107,11 +28085,6 @@
           }
         },
         "not found": {
-          "maldi": {
-            "not found": {
-              "SOLUTION": "NOT FOUND, LC-MALDI, NOT FOUND"
-            }
-          },
           "appi": {
             "low": {
               "SOLUTION": "NOT FOUND, LC-APPI, LOW"
@@ -28140,6 +28113,88 @@
           "not found": {
             "not found": {
               "SOLUTION": "NOT FOUND, LC, NOT FOUND"
+            }
+          }
+        }
+      },
+      "di": {
+        "qittof": {
+          "maldi": {
+            "high": {
+              "SOLUTION": "NOT FOUND, DI-MALDI-QITTOF, HIGH"
+            }
+          },
+          "not found": {
+            "high": {
+              "SOLUTION": "NOT FOUND, DI-QITTOF, HIGH"
+            }
+          }
+        },
+        "qit": {
+          "maldi": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-MALDI-QIT, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-QIT, LOW"
+            }
+          }
+        },
+        "tof": {
+          "maldi": {
+            "high": {
+              "SOLUTION": "NOT FOUND, DI-MALDI-TOF, HIGH"
+            }
+          },
+          "ptr": {
+            "high": {
+              "SOLUTION": "NOT FOUND, DI-PTR-TOF, HIGH"
+            }
+          },
+          "ci": {
+            "high": {
+              "SOLUTION": "NOT FOUND, DI-CI-TOF, HIGH"
+            }
+          },
+          "not found": {
+            "high": {
+              "SOLUTION": "NOT FOUND, DI-TOF, HIGH"
+            }
+          }
+        },
+        "q": {
+          "ci": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-CI-Q, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-Q, LOW"
+            }
+          }
+        },
+        "not found": {
+          "maldi": {
+            "not found": {
+              "SOLUTION": "NOT FOUND, DI-MALDI, NOT FOUND"
+            }
+          },
+          "ptr": {
+            "not found": {
+              "SOLUTION": "NOT FOUND, DI-PTR, NOT FOUND"
+            }
+          },
+          "ci": {
+            "not found": {
+              "SOLUTION": "NOT FOUND, DI-CI, NOT FOUND"
+            }
+          },
+          "not found": {
+            "not found": {
+              "SOLUTION": "NOT FOUND, DI, NOT FOUND"
             }
           }
         }
@@ -28256,54 +28311,6 @@
           "not found": {
             "not found": {
               "SOLUTION": "NOT FOUND, GC, NOT FOUND"
-            }
-          }
-        }
-      },
-      "di": {
-        "tof": {
-          "ptr": {
-            "high": {
-              "SOLUTION": "NOT FOUND, DI-PTR-TOF, HIGH"
-            }
-          },
-          "ci": {
-            "high": {
-              "SOLUTION": "NOT FOUND, DI-CI-TOF, HIGH"
-            }
-          },
-          "not found": {
-            "high": {
-              "SOLUTION": "NOT FOUND, DI-TOF, HIGH"
-            }
-          }
-        },
-        "q": {
-          "ci": {
-            "low": {
-              "SOLUTION": "NOT FOUND, DI-CI-Q, LOW"
-            }
-          },
-          "not found": {
-            "low": {
-              "SOLUTION": "NOT FOUND, DI-Q, LOW"
-            }
-          }
-        },
-        "not found": {
-          "ptr": {
-            "not found": {
-              "SOLUTION": "NOT FOUND, DI-PTR, NOT FOUND"
-            }
-          },
-          "ci": {
-            "not found": {
-              "SOLUTION": "NOT FOUND, DI-CI, NOT FOUND"
-            }
-          },
-          "not found": {
-            "not found": {
-              "SOLUTION": "NOT FOUND, DI, NOT FOUND"
             }
           }
         }
@@ -29043,28 +29050,28 @@
       }
     },
     "s3000 jms": {
-      "lc": {
+      "di": {
         "tof": {
           "maldi": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-MALDI-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-MALDI-TOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-TOF, HIGH"
             }
           }
         },
         "not found": {
           "maldi": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-MALDI-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-MALDI-TOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-TOF, HIGH"
             }
           }
         }
@@ -29073,24 +29080,24 @@
         "tof": {
           "maldi": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-MALDI-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-MALDI-TOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-TOF, HIGH"
             }
           }
         },
         "not found": {
           "maldi": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-MALDI-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-MALDI-TOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-TOF, HIGH"
             }
           }
         }
@@ -31919,28 +31926,28 @@
       }
     },
     "axima": {
-      "lc": {
+      "di": {
         "qit": {
           "maldi": {
             "low": {
-              "SOLUTION": "Shimadzu Axima, LC-MALDI-QIT, LOW"
+              "SOLUTION": "Shimadzu Axima, DI-MALDI-QIT, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "Shimadzu Axima, LC-QIT, LOW"
+              "SOLUTION": "Shimadzu Axima, DI-QIT, LOW"
             }
           }
         },
         "not found": {
           "maldi": {
             "low": {
-              "SOLUTION": "Shimadzu Axima, LC-MALDI-QIT, LOW"
+              "SOLUTION": "Shimadzu Axima, DI-MALDI-QIT, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "Shimadzu Axima, LC-QIT, LOW"
+              "SOLUTION": "Shimadzu Axima, DI-QIT, LOW"
             }
           }
         }
@@ -31949,24 +31956,24 @@
         "qit": {
           "maldi": {
             "low": {
-              "SOLUTION": "Shimadzu Axima, LC-MALDI-QIT, LOW"
+              "SOLUTION": "Shimadzu Axima, DI-MALDI-QIT, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "Shimadzu Axima, LC-QIT, LOW"
+              "SOLUTION": "Shimadzu Axima, DI-QIT, LOW"
             }
           }
         },
         "not found": {
           "maldi": {
             "low": {
-              "SOLUTION": "Shimadzu Axima, LC-MALDI-QIT, LOW"
+              "SOLUTION": "Shimadzu Axima, DI-MALDI-QIT, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "Shimadzu Axima, LC-QIT, LOW"
+              "SOLUTION": "Shimadzu Axima, DI-QIT, LOW"
             }
           }
         }
@@ -32695,28 +32702,28 @@
       }
     },
     "flex": {
-      "lc": {
+      "di": {
         "qittof": {
           "maldi": {
             "high": {
-              "SOLUTION": "Bruker FLEX, LC-MALDI-QITTOF, HIGH"
+              "SOLUTION": "Bruker FLEX, DI-MALDI-QITTOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "Bruker FLEX, LC-QITTOF, HIGH"
+              "SOLUTION": "Bruker FLEX, DI-QITTOF, HIGH"
             }
           }
         },
         "not found": {
           "maldi": {
             "high": {
-              "SOLUTION": "Bruker FLEX, LC-MALDI-QITTOF, HIGH"
+              "SOLUTION": "Bruker FLEX, DI-MALDI-QITTOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "Bruker FLEX, LC-QITTOF, HIGH"
+              "SOLUTION": "Bruker FLEX, DI-QITTOF, HIGH"
             }
           }
         }
@@ -32725,24 +32732,24 @@
         "qittof": {
           "maldi": {
             "high": {
-              "SOLUTION": "Bruker FLEX, LC-MALDI-QITTOF, HIGH"
+              "SOLUTION": "Bruker FLEX, DI-MALDI-QITTOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "Bruker FLEX, LC-QITTOF, HIGH"
+              "SOLUTION": "Bruker FLEX, DI-QITTOF, HIGH"
             }
           }
         },
         "not found": {
           "maldi": {
             "high": {
-              "SOLUTION": "Bruker FLEX, LC-MALDI-QITTOF, HIGH"
+              "SOLUTION": "Bruker FLEX, DI-MALDI-QITTOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "Bruker FLEX, LC-QITTOF, HIGH"
+              "SOLUTION": "Bruker FLEX, DI-QITTOF, HIGH"
             }
           }
         }
@@ -41656,18 +41663,6 @@
     },
     "not found": {
       "lc": {
-        "qittof": {
-          "maldi": {
-            "high": {
-              "SOLUTION": "NOT FOUND, LC-MALDI-QITTOF, HIGH"
-            }
-          },
-          "not found": {
-            "high": {
-              "SOLUTION": "NOT FOUND, LC-QITTOF, HIGH"
-            }
-          }
-        },
         "ittof": {
           "esi": {
             "high": {
@@ -41744,11 +41739,6 @@
           }
         },
         "qit": {
-          "maldi": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-MALDI-QIT, LOW"
-            }
-          },
           "esi": {
             "low": {
               "SOLUTION": "NOT FOUND, LC-ESI-QIT, LOW"
@@ -41761,11 +41751,6 @@
           }
         },
         "tof": {
-          "maldi": {
-            "high": {
-              "SOLUTION": "NOT FOUND, LC-MALDI-TOF, HIGH"
-            }
-          },
           "esi": {
             "high": {
               "SOLUTION": "NOT FOUND, LC-ESI-TOF, HIGH"
@@ -41875,11 +41860,6 @@
           }
         },
         "not found": {
-          "maldi": {
-            "not found": {
-              "SOLUTION": "NOT FOUND, LC-MALDI, NOT FOUND"
-            }
-          },
           "appi": {
             "low": {
               "SOLUTION": "NOT FOUND, LC-APPI, LOW"
@@ -41908,6 +41888,88 @@
           "not found": {
             "not found": {
               "SOLUTION": "NOT FOUND, LC, NOT FOUND"
+            }
+          }
+        }
+      },
+      "di": {
+        "qittof": {
+          "maldi": {
+            "high": {
+              "SOLUTION": "NOT FOUND, DI-MALDI-QITTOF, HIGH"
+            }
+          },
+          "not found": {
+            "high": {
+              "SOLUTION": "NOT FOUND, DI-QITTOF, HIGH"
+            }
+          }
+        },
+        "qit": {
+          "maldi": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-MALDI-QIT, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-QIT, LOW"
+            }
+          }
+        },
+        "tof": {
+          "maldi": {
+            "high": {
+              "SOLUTION": "NOT FOUND, DI-MALDI-TOF, HIGH"
+            }
+          },
+          "ptr": {
+            "high": {
+              "SOLUTION": "NOT FOUND, DI-PTR-TOF, HIGH"
+            }
+          },
+          "ci": {
+            "high": {
+              "SOLUTION": "NOT FOUND, DI-CI-TOF, HIGH"
+            }
+          },
+          "not found": {
+            "high": {
+              "SOLUTION": "NOT FOUND, DI-TOF, HIGH"
+            }
+          }
+        },
+        "q": {
+          "ci": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-CI-Q, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-Q, LOW"
+            }
+          }
+        },
+        "not found": {
+          "maldi": {
+            "not found": {
+              "SOLUTION": "NOT FOUND, DI-MALDI, NOT FOUND"
+            }
+          },
+          "ptr": {
+            "not found": {
+              "SOLUTION": "NOT FOUND, DI-PTR, NOT FOUND"
+            }
+          },
+          "ci": {
+            "not found": {
+              "SOLUTION": "NOT FOUND, DI-CI, NOT FOUND"
+            }
+          },
+          "not found": {
+            "not found": {
+              "SOLUTION": "NOT FOUND, DI, NOT FOUND"
             }
           }
         }
@@ -42024,54 +42086,6 @@
           "not found": {
             "not found": {
               "SOLUTION": "NOT FOUND, GC, NOT FOUND"
-            }
-          }
-        }
-      },
-      "di": {
-        "tof": {
-          "ptr": {
-            "high": {
-              "SOLUTION": "NOT FOUND, DI-PTR-TOF, HIGH"
-            }
-          },
-          "ci": {
-            "high": {
-              "SOLUTION": "NOT FOUND, DI-CI-TOF, HIGH"
-            }
-          },
-          "not found": {
-            "high": {
-              "SOLUTION": "NOT FOUND, DI-TOF, HIGH"
-            }
-          }
-        },
-        "q": {
-          "ci": {
-            "low": {
-              "SOLUTION": "NOT FOUND, DI-CI-Q, LOW"
-            }
-          },
-          "not found": {
-            "low": {
-              "SOLUTION": "NOT FOUND, DI-Q, LOW"
-            }
-          }
-        },
-        "not found": {
-          "ptr": {
-            "not found": {
-              "SOLUTION": "NOT FOUND, DI-PTR, NOT FOUND"
-            }
-          },
-          "ci": {
-            "not found": {
-              "SOLUTION": "NOT FOUND, DI-CI, NOT FOUND"
-            }
-          },
-          "not found": {
-            "not found": {
-              "SOLUTION": "NOT FOUND, DI, NOT FOUND"
             }
           }
         }
@@ -42543,6 +42557,32 @@
       }
     },
     "found not": {
+      "di": {
+        "qit": {
+          "maldi": {
+            "low": {
+              "SOLUTION": "Shimadzu instrument, DI-MALDI-QIT, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "Shimadzu instrument, DI-QIT, LOW"
+            }
+          }
+        },
+        "not found": {
+          "maldi": {
+            "low": {
+              "SOLUTION": "Shimadzu instrument, DI-MALDI, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "Shimadzu instrument, DI, LOW"
+            }
+          }
+        }
+      },
       "lc": {
         "ittof": {
           "esi": {
@@ -42553,18 +42593,6 @@
           "not found": {
             "high": {
               "SOLUTION": "Shimadzu instrument, LC-ITTOF, HIGH"
-            }
-          }
-        },
-        "qit": {
-          "maldi": {
-            "low": {
-              "SOLUTION": "Shimadzu instrument, LC-MALDI-QIT, LOW"
-            }
-          },
-          "not found": {
-            "low": {
-              "SOLUTION": "Shimadzu instrument, LC-QIT, LOW"
             }
           }
         },
@@ -42598,11 +42626,6 @@
           }
         },
         "not found": {
-          "maldi": {
-            "low": {
-              "SOLUTION": "Shimadzu instrument, LC-MALDI, LOW"
-            }
-          },
           "apci": {
             "low": {
               "SOLUTION": "Shimadzu instrument, LC-APCI, LOW"
@@ -42742,28 +42765,28 @@
       }
     },
     "axima": {
-      "lc": {
+      "di": {
         "qit": {
           "maldi": {
             "low": {
-              "SOLUTION": "Shimadzu Axima, LC-MALDI-QIT, LOW"
+              "SOLUTION": "Shimadzu Axima, DI-MALDI-QIT, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "Shimadzu Axima, LC-QIT, LOW"
+              "SOLUTION": "Shimadzu Axima, DI-QIT, LOW"
             }
           }
         },
         "not found": {
           "maldi": {
             "low": {
-              "SOLUTION": "Shimadzu Axima, LC-MALDI-QIT, LOW"
+              "SOLUTION": "Shimadzu Axima, DI-MALDI-QIT, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "Shimadzu Axima, LC-QIT, LOW"
+              "SOLUTION": "Shimadzu Axima, DI-QIT, LOW"
             }
           }
         }
@@ -42772,24 +42795,24 @@
         "qit": {
           "maldi": {
             "low": {
-              "SOLUTION": "Shimadzu Axima, LC-MALDI-QIT, LOW"
+              "SOLUTION": "Shimadzu Axima, DI-MALDI-QIT, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "Shimadzu Axima, LC-QIT, LOW"
+              "SOLUTION": "Shimadzu Axima, DI-QIT, LOW"
             }
           }
         },
         "not found": {
           "maldi": {
             "low": {
-              "SOLUTION": "Shimadzu Axima, LC-MALDI-QIT, LOW"
+              "SOLUTION": "Shimadzu Axima, DI-MALDI-QIT, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "Shimadzu Axima, LC-QIT, LOW"
+              "SOLUTION": "Shimadzu Axima, DI-QIT, LOW"
             }
           }
         }
@@ -43012,6 +43035,32 @@
       }
     },
     "not found": {
+      "di": {
+        "qit": {
+          "maldi": {
+            "low": {
+              "SOLUTION": "Shimadzu instrument, DI-MALDI-QIT, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "Shimadzu instrument, DI-QIT, LOW"
+            }
+          }
+        },
+        "not found": {
+          "maldi": {
+            "low": {
+              "SOLUTION": "Shimadzu instrument, DI-MALDI, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "Shimadzu instrument, DI, LOW"
+            }
+          }
+        }
+      },
       "lc": {
         "ittof": {
           "esi": {
@@ -43022,18 +43071,6 @@
           "not found": {
             "high": {
               "SOLUTION": "Shimadzu instrument, LC-ITTOF, HIGH"
-            }
-          }
-        },
-        "qit": {
-          "maldi": {
-            "low": {
-              "SOLUTION": "Shimadzu instrument, LC-MALDI-QIT, LOW"
-            }
-          },
-          "not found": {
-            "low": {
-              "SOLUTION": "Shimadzu instrument, LC-QIT, LOW"
             }
           }
         },
@@ -43067,11 +43104,6 @@
           }
         },
         "not found": {
-          "maldi": {
-            "low": {
-              "SOLUTION": "Shimadzu instrument, LC-MALDI, LOW"
-            }
-          },
           "apci": {
             "low": {
               "SOLUTION": "Shimadzu instrument, LC-APCI, LOW"
@@ -44690,18 +44722,6 @@
     },
     "found not": {
       "lc": {
-        "qittof": {
-          "maldi": {
-            "high": {
-              "SOLUTION": "Bruker instrument, LC-MALDI-QITTOF, HIGH"
-            }
-          },
-          "not found": {
-            "high": {
-              "SOLUTION": "Bruker instrument, LC-QITTOF, HIGH"
-            }
-          }
-        },
         "itft": {
           "esi": {
             "high": {
@@ -44739,11 +44759,6 @@
           }
         },
         "not found": {
-          "maldi": {
-            "high": {
-              "SOLUTION": "Bruker instrument, LC-MALDI, HIGH"
-            }
-          },
           "esi": {
             "not found": {
               "SOLUTION": "Bruker instrument, LC-ESI, NOT FOUND"
@@ -44778,6 +44793,32 @@
           "not found": {
             "high": {
               "SOLUTION": "Bruker instrument, GC, HIGH"
+            }
+          }
+        }
+      },
+      "di": {
+        "qittof": {
+          "maldi": {
+            "high": {
+              "SOLUTION": "Bruker instrument, DI-MALDI-QITTOF, HIGH"
+            }
+          },
+          "not found": {
+            "high": {
+              "SOLUTION": "Bruker instrument, DI-QITTOF, HIGH"
+            }
+          }
+        },
+        "not found": {
+          "maldi": {
+            "high": {
+              "SOLUTION": "Bruker instrument, DI-MALDI, HIGH"
+            }
+          },
+          "not found": {
+            "high": {
+              "SOLUTION": "Bruker instrument, DI, HIGH"
             }
           }
         }
@@ -45293,28 +45334,28 @@
       }
     },
     "flex": {
-      "lc": {
+      "di": {
         "qittof": {
           "maldi": {
             "high": {
-              "SOLUTION": "Bruker FLEX, LC-MALDI-QITTOF, HIGH"
+              "SOLUTION": "Bruker FLEX, DI-MALDI-QITTOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "Bruker FLEX, LC-QITTOF, HIGH"
+              "SOLUTION": "Bruker FLEX, DI-QITTOF, HIGH"
             }
           }
         },
         "not found": {
           "maldi": {
             "high": {
-              "SOLUTION": "Bruker FLEX, LC-MALDI-QITTOF, HIGH"
+              "SOLUTION": "Bruker FLEX, DI-MALDI-QITTOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "Bruker FLEX, LC-QITTOF, HIGH"
+              "SOLUTION": "Bruker FLEX, DI-QITTOF, HIGH"
             }
           }
         }
@@ -45323,24 +45364,24 @@
         "qittof": {
           "maldi": {
             "high": {
-              "SOLUTION": "Bruker FLEX, LC-MALDI-QITTOF, HIGH"
+              "SOLUTION": "Bruker FLEX, DI-MALDI-QITTOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "Bruker FLEX, LC-QITTOF, HIGH"
+              "SOLUTION": "Bruker FLEX, DI-QITTOF, HIGH"
             }
           }
         },
         "not found": {
           "maldi": {
             "high": {
-              "SOLUTION": "Bruker FLEX, LC-MALDI-QITTOF, HIGH"
+              "SOLUTION": "Bruker FLEX, DI-MALDI-QITTOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "Bruker FLEX, LC-QITTOF, HIGH"
+              "SOLUTION": "Bruker FLEX, DI-QITTOF, HIGH"
             }
           }
         }
@@ -45348,18 +45389,6 @@
     },
     "not found": {
       "lc": {
-        "qittof": {
-          "maldi": {
-            "high": {
-              "SOLUTION": "Bruker instrument, LC-MALDI-QITTOF, HIGH"
-            }
-          },
-          "not found": {
-            "high": {
-              "SOLUTION": "Bruker instrument, LC-QITTOF, HIGH"
-            }
-          }
-        },
         "itft": {
           "esi": {
             "high": {
@@ -45397,11 +45426,6 @@
           }
         },
         "not found": {
-          "maldi": {
-            "high": {
-              "SOLUTION": "Bruker instrument, LC-MALDI, HIGH"
-            }
-          },
           "esi": {
             "not found": {
               "SOLUTION": "Bruker instrument, LC-ESI, NOT FOUND"
@@ -45436,6 +45460,32 @@
           "not found": {
             "high": {
               "SOLUTION": "Bruker instrument, GC, HIGH"
+            }
+          }
+        }
+      },
+      "di": {
+        "qittof": {
+          "maldi": {
+            "high": {
+              "SOLUTION": "Bruker instrument, DI-MALDI-QITTOF, HIGH"
+            }
+          },
+          "not found": {
+            "high": {
+              "SOLUTION": "Bruker instrument, DI-QITTOF, HIGH"
+            }
+          }
+        },
+        "not found": {
+          "maldi": {
+            "high": {
+              "SOLUTION": "Bruker instrument, DI-MALDI, HIGH"
+            }
+          },
+          "not found": {
+            "high": {
+              "SOLUTION": "Bruker instrument, DI, HIGH"
             }
           }
         }
@@ -52535,28 +52585,28 @@
       }
     },
     "jms s3000": {
-      "lc": {
+      "di": {
         "tof": {
           "maldi": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-MALDI-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-MALDI-TOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-TOF, HIGH"
             }
           }
         },
         "not found": {
           "maldi": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-MALDI-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-MALDI-TOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-TOF, HIGH"
             }
           }
         }
@@ -52565,24 +52615,24 @@
         "tof": {
           "maldi": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-MALDI-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-MALDI-TOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-TOF, HIGH"
             }
           }
         },
         "not found": {
           "maldi": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-MALDI-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-MALDI-TOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-TOF, HIGH"
             }
           }
         }
@@ -52859,28 +52909,28 @@
       }
     },
     "s3000 jms": {
-      "lc": {
+      "di": {
         "tof": {
           "maldi": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-MALDI-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-MALDI-TOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-TOF, HIGH"
             }
           }
         },
         "not found": {
           "maldi": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-MALDI-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-MALDI-TOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-TOF, HIGH"
             }
           }
         }
@@ -52889,24 +52939,24 @@
         "tof": {
           "maldi": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-MALDI-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-MALDI-TOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-TOF, HIGH"
             }
           }
         },
         "not found": {
           "maldi": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-MALDI-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-MALDI-TOF, HIGH"
             }
           },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL JMS-S3000, LC-TOF, HIGH"
+              "SOLUTION": "JEOL JMS-S3000, DI-TOF, HIGH"
             }
           }
         }
@@ -52982,11 +53032,6 @@
           }
         },
         "tof": {
-          "maldi": {
-            "high": {
-              "SOLUTION": "JEOL instrument, LC-MALDI-TOF, HIGH"
-            }
-          },
           "esi": {
             "high": {
               "SOLUTION": "JEOL instrument, LC-ESI-TOF, HIGH"
@@ -53028,11 +53073,6 @@
           }
         },
         "not found": {
-          "maldi": {
-            "high": {
-              "SOLUTION": "JEOL instrument, LC-MALDI, HIGH"
-            }
-          },
           "fab": {
             "low": {
               "SOLUTION": "JEOL instrument, LC-FAB, LOW"
@@ -53051,6 +53091,32 @@
           "not found": {
             "not found": {
               "SOLUTION": "JEOL instrument, LC, NOT FOUND"
+            }
+          }
+        }
+      },
+      "di": {
+        "tof": {
+          "maldi": {
+            "high": {
+              "SOLUTION": "JEOL instrument, DI-MALDI-TOF, HIGH"
+            }
+          },
+          "not found": {
+            "high": {
+              "SOLUTION": "JEOL instrument, DI-TOF, HIGH"
+            }
+          }
+        },
+        "not found": {
+          "maldi": {
+            "high": {
+              "SOLUTION": "JEOL instrument, DI-MALDI, HIGH"
+            }
+          },
+          "not found": {
+            "high": {
+              "SOLUTION": "JEOL instrument, DI, HIGH"
             }
           }
         }
@@ -53454,11 +53520,6 @@
           }
         },
         "tof": {
-          "maldi": {
-            "high": {
-              "SOLUTION": "JEOL instrument, LC-MALDI-TOF, HIGH"
-            }
-          },
           "esi": {
             "high": {
               "SOLUTION": "JEOL instrument, LC-ESI-TOF, HIGH"
@@ -53500,11 +53561,6 @@
           }
         },
         "not found": {
-          "maldi": {
-            "high": {
-              "SOLUTION": "JEOL instrument, LC-MALDI, HIGH"
-            }
-          },
           "fab": {
             "low": {
               "SOLUTION": "JEOL instrument, LC-FAB, LOW"
@@ -53523,6 +53579,32 @@
           "not found": {
             "not found": {
               "SOLUTION": "JEOL instrument, LC, NOT FOUND"
+            }
+          }
+        }
+      },
+      "di": {
+        "tof": {
+          "maldi": {
+            "high": {
+              "SOLUTION": "JEOL instrument, DI-MALDI-TOF, HIGH"
+            }
+          },
+          "not found": {
+            "high": {
+              "SOLUTION": "JEOL instrument, DI-TOF, HIGH"
+            }
+          }
+        },
+        "not found": {
+          "maldi": {
+            "high": {
+              "SOLUTION": "JEOL instrument, DI-MALDI, HIGH"
+            }
+          },
+          "not found": {
+            "high": {
+              "SOLUTION": "JEOL instrument, DI, HIGH"
             }
           }
         }

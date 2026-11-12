@@ -167,7 +167,7 @@ fn search_brand_and_levels<'a>(tree: &'a serde_json::Value, infos: &str) -> Opti
 const TYPE_TOKENS: &[&str] = &[
     "lc", "gc", "ce",
     "esi", "apci", "appi", "ei", "ci", "fab", "fd", "maldi", "ptr",
-    "qtof", "qft", "itft", "tof", "qqq", "qq", "q", "it", "ittof", "qittof", "qit", "b", "eb", "ebeb", "ft",
+    "qtof", "qft", "itft", "tof", "toftof", "qqq", "qq", "q", "it", "ittof", "qittof", "qit", "b", "eb", "ebeb", "ft",
 ];
 
 /// Le type proposé par l'arbre contient-il tous les éléments connus du type écrit dans le fichier ?
@@ -179,22 +179,24 @@ fn keeps_type_tokens(raw_type: &str, new_type: &str) -> bool {
     tokens(raw_type).iter().all(|t| new_tokens.contains(t))
 }
 
-/// LC/GC/CE manquant au type écrit. L'ionisation du type décide d'abord : ESI -> LC (jamais en GC), EI -> GC
-/// (jamais en LC) ; sinon le LC/GC du type de l'arbre (le modèle reconnu le donne). Ex. « ESI-QTOF » d'un
-/// TripleTOF 5600 : l'arbre propose « LC-ESI-TOF » (refusé, il perdrait le Q) ; on garde « ESI-QTOF » + LC.
+/// LC/GC/CE/DI manquant au type écrit. L'ionisation du type décide d'abord : ESI -> LC (jamais en GC), EI -> GC
+/// (jamais en LC), MALDI -> DI (désorption depuis une plaque : pas de chromatographie) ; sinon le LC/GC/CE/DI du
+/// type de l'arbre (le modèle reconnu le donne). Ex. « ESI-QTOF » d'un TripleTOF 5600 : l'arbre propose
+/// « LC-ESI-TOF » (refusé, il perdrait le Q) ; on garde « ESI-QTOF » + LC.
 /// L'ionisation passe avant l'arbre : le JMS DX-300 n'a pas de ligne EI dans l'Excel, l'arbre propose LC ;
 /// « EI-B » doit pourtant devenir « GC-EI-B ».
-/// Rien n'est ajouté si le type dit déjà LC, GC ou CE, ou s'il est vide.
 fn add_missing_separation(final_type: &str, tree_type: &str) -> Option<String> {
     let words = |t: &str| -> Vec<String> { clean_field(t).split_whitespace().map(|w| w.to_string()).collect() };
+    let is_separation = |w: &str| matches!(w, "lc" | "gc" | "ce" | "di");
     let have = words(final_type);
-    if final_type.trim().is_empty() || have.iter().any(|w| matches!(w.as_str(), "lc" | "gc" | "ce")) {
+    if final_type.trim().is_empty() || have.iter().any(|w| is_separation(w)) {
         return None;
     }
     let from_ionization = if have.iter().any(|w| w == "esi") { Some("lc".to_string()) }
         else if have.iter().any(|w| w == "ei") { Some("gc".to_string()) }
+        else if have.iter().any(|w| w == "maldi") { Some("di".to_string()) }
         else { None };
-    let from_tree = || words(tree_type).into_iter().find(|w| matches!(w.as_str(), "lc" | "gc" | "ce"));
+    let from_tree = || words(tree_type).into_iter().find(|w| is_separation(w));
     let separation = from_ionization.or_else(from_tree)?;
     Some(format!("{}-{}", separation.to_uppercase(), final_type.trim()))
 }
@@ -525,6 +527,16 @@ mod tests {
         assert_eq!(add_missing_separation("FAB-B", "LC-FAB-B").as_deref(), Some("LC-FAB-B"));
         assert_eq!(add_missing_separation("CI-B", "").as_deref(), None);
         assert_eq!(add_missing_separation("", "LC-ESI-QTOF"), None);
+        // MALDI : pas de chromatographie, rangé en DI même sans modèle reconnu ; un type déjà en DI n'est pas touché
+        assert_eq!(add_missing_separation("MALDI-TOF", "").as_deref(), Some("DI-MALDI-TOF"));
+        assert_eq!(add_missing_separation("MALDI-TOFTOF", "MALDI").as_deref(), Some("DI-MALDI-TOFTOF"));
+        assert_eq!(add_missing_separation("DI-MALDI-TOF", "LC-TOF"), None);
+        assert_eq!(add_missing_separation("LC-MALDI-TOF", ""), None); // écrit dans le fichier : gardé
+        // le DI de l'arbre (modèle sans chromatographie) complète comme le LC ou le GC
+        assert_eq!(add_missing_separation("PTR-QTOF", "DI-PTR-TOF").as_deref(), Some("DI-PTR-QTOF"));
+        // l'analyseur TOFTOF n'est pas effacé par un type d'arbre qui ne l'a pas
+        assert!(!keeps_type_tokens("MALDI-TOFTOF", "MALDI"));
+        assert!(keeps_type_tokens("MALDI-TOF", "DI-MALDI-TOF"));
     }
 
     #[test]
