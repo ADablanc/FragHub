@@ -9,7 +9,7 @@ Résultat : scripts/dist/FragHub_Backend/
 import subprocess
 import sys
 
-from build_utils import (BuildError, DRY_RUN, IS_WINDOWS, RDKIT_PREFIX, RUST_DIR, SCRIPTS_DIR, VENV_DIR, ensure_venv,
+from build_utils import (BuildError, DRY_RUN, IS_WINDOWS, RDKIT_PREFIX, ROOT, RUST_DIR, SCRIPTS_DIR, VENV_DIR, ensure_venv,
                          main_wrapper, require_tool, run, step, venv_bin)
 
 # Commande d'installation de RDKit C++, rappelée si on ne le trouve pas
@@ -28,6 +28,24 @@ def rdkit_lib_dirs():
                          f"Installez-le avec :\n  {_RDKIT_INSTALL}\n"
                          "ou indiquez son emplacement avec la variable d'environnement RDKIT_PREFIX.")
     return include, libs
+
+
+def ensure_database():
+    """La base interne n'est plus dans le dépôt git : elle est téléchargée depuis Zenodo si elle manque
+    (scripts/internal_database.py). PyInstaller copie ensuite tout le dossier datas/ dans l'exécutable."""
+    step("Base interne de molécules (datas/internal_databases.parquet)")
+    if DRY_RUN:
+        print("  (dry-run) vérification de la base, téléchargement si elle est absente")
+        return
+    sys.path.insert(0, str(SCRIPTS_DIR))
+    import internal_database
+    try:
+        state = internal_database.ensure_internal_database(str(ROOT))
+    except internal_database.InternalDatabaseError as e:
+        raise BuildError(str(e))
+    print("  base interne : " + {"reference": "version de référence, déjà sur le disque",
+                                 "differente": "fichiers locaux différents de la référence, gardés tels quels",
+                                 "telechargee": "téléchargée"}[state])
 
 
 def build_rust():
@@ -95,6 +113,7 @@ def build_backend():
     """Recompile le back-end FragHub : Rust (maturin) puis PyInstaller.
 
 Usage :  python build_backend.py [--rust-only] [--dry-run]"""
+    ensure_database()
     build_rust()
     if "--rust-only" not in sys.argv:
         build_pyinstaller()

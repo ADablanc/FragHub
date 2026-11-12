@@ -11,7 +11,7 @@ Résultat : GUI/dist_electron/ (.dmg sur macOS, .exe sur Windows)
 """
 import sys
 
-from build_backend import build_pyinstaller, build_rust
+from build_backend import build_pyinstaller, build_rust, ensure_database
 from build_frontend import build_frontend, npm
 from build_utils import (BuildError, DRY_RUN, GUI_DIR, IS_WINDOWS, SCRIPTS_DIR,
                          main_wrapper, run, step)
@@ -33,6 +33,7 @@ def build_all():
 Usage :  python build_all.py [--skip-rust] [--skip-backend] [--skip-frontend] [--no-installer] [--dry-run]"""
     args = sys.argv
     if "--skip-backend" not in args:
+        ensure_database()
         if "--skip-rust" not in args:
             build_rust()
         build_pyinstaller()

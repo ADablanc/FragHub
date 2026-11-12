@@ -6,7 +6,7 @@ import traceback
 import mzspeclib_converter
 import time
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, BackgroundTasks
+from fastapi import FastAPI, BackgroundTasks, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, ConfigDict
@@ -25,6 +25,7 @@ if sys.platform == 'win32' and not getattr(sys, 'frozen', False):
 
 import fraghub_rust
 import perf_log  # PERF_LOG : journal de performances temporaire (voir perf_log.py)
+import internal_database  # base interne de molécules : téléchargée depuis Zenodo si elle n'est pas sur le disque
 
 parameters_dict = {}
 
@@ -216,6 +217,13 @@ async def get_report(path: str):
 
 @app.get("/init-data")
 async def init_data():
+    # Base interne absente (code source sans la base) : téléchargée ici, dans un fil à part pour que le serveur
+    # continue de répondre pendant ce temps. Si elle est déjà là, l'appel ne fait que comparer des tailles.
+    try:
+        await asyncio.to_thread(internal_database.ensure_internal_database, BASE_DIR)
+    except internal_database.InternalDatabaseError as e:
+        print(str(e), flush=True)
+        raise HTTPException(status_code=503, detail=str(e))
     perf_t0 = time.perf_counter()  # PERF_LOG
     fraghub_rust.load_internal_databases(BASE_DIR)
     perf_log.record_init(time.perf_counter() - perf_t0)  # PERF_LOG
@@ -377,6 +385,13 @@ if __name__ == "__main__":
             print("          FragHub CLI Mode Actif          ")
             print("========================================\n")
         
+        # Base interne absente (code source sans la base) : téléchargée depuis Zenodo avant le chargement
+        try:
+            internal_database.ensure_internal_database(BASE_DIR)
+        except internal_database.InternalDatabaseError as e:
+            print(str(e), file=sys.stderr)
+            sys.exit(1)
+
         # Chargement initial des bases
         perf_t0 = time.perf_counter()  # PERF_LOG
         fraghub_rust.load_internal_databases(BASE_DIR)
