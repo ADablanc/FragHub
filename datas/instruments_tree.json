@@ -16499,28 +16499,28 @@
       }
     },
     "jms hx hx 110a": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -16555,7 +16555,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -16565,14 +16565,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -16582,7 +16582,7 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -17237,28 +17237,28 @@
       }
     },
     "jms hx 110a hx": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -17293,7 +17293,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -17303,14 +17303,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -17320,35 +17320,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "jms 110a hx hx": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -17383,7 +17383,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -17393,14 +17393,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -17410,35 +17410,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "hx jms hx 110a": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -17473,7 +17473,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -17483,14 +17483,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -17500,35 +17500,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "hx jms 110a hx": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -17563,7 +17563,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -17573,14 +17573,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -17590,35 +17590,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "hx hx jms 110a": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -17653,7 +17653,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -17663,14 +17663,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -17680,35 +17680,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "hx hx 110a jms": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -17743,7 +17743,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -17753,14 +17753,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -17770,35 +17770,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "hx 110a jms hx": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -17833,7 +17833,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -17843,14 +17843,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -17860,35 +17860,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "hx 110a hx jms": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -17923,7 +17923,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -17933,14 +17933,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -17950,35 +17950,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "110a jms hx hx": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -18013,7 +18013,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -18023,14 +18023,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -18040,35 +18040,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "110a hx jms hx": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -18103,7 +18103,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -18113,14 +18113,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -18130,35 +18130,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "110a hx hx jms": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -18193,7 +18193,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -18203,14 +18203,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -18220,7 +18220,7 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -25065,38 +25065,38 @@
       }
     },
     "jms dx 300": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
@@ -25131,12 +25131,12 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -25146,19 +25146,19 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -25168,35 +25168,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
       }
     },
     "jms dx 303": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
@@ -25205,52 +25205,52 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
       }
     },
     "jms hx 110": {
-      "lc": {
+      "di": {
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
@@ -25259,24 +25259,24 @@
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
@@ -25643,38 +25643,38 @@
       }
     },
     "jms 300 dx": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
@@ -25709,12 +25709,12 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -25724,19 +25724,19 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -25746,45 +25746,45 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
       }
     },
     "dx jms 300": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
@@ -25819,12 +25819,12 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -25834,19 +25834,19 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -25856,45 +25856,45 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
       }
     },
     "dx 300 jms": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
@@ -25929,12 +25929,12 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -25944,19 +25944,19 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -25966,45 +25966,45 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
       }
     },
     "300 jms dx": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
@@ -26039,12 +26039,12 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -26054,19 +26054,19 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -26076,45 +26076,45 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
       }
     },
     "300 dx jms": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
@@ -26149,12 +26149,12 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -26164,19 +26164,19 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -26186,35 +26186,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
       }
     },
     "jms 303 dx": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
@@ -26223,52 +26223,52 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
       }
     },
     "dx jms 303": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
@@ -26277,52 +26277,52 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
       }
     },
     "dx 303 jms": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
@@ -26331,52 +26331,52 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
       }
     },
     "303 jms dx": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
@@ -26385,52 +26385,52 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
       }
     },
     "303 dx jms": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
@@ -26439,52 +26439,52 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
       }
     },
     "jms 110 hx": {
-      "lc": {
+      "di": {
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
@@ -26493,52 +26493,52 @@
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
       }
     },
     "hx jms 110": {
-      "lc": {
+      "di": {
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
@@ -26547,52 +26547,52 @@
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
       }
     },
     "hx 110 jms": {
-      "lc": {
+      "di": {
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
@@ -26601,52 +26601,52 @@
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
       }
     },
     "110 jms hx": {
-      "lc": {
+      "di": {
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
@@ -26655,52 +26655,52 @@
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
       }
     },
     "110 hx jms": {
-      "lc": {
+      "di": {
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
@@ -26709,24 +26709,24 @@
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
@@ -27934,18 +27934,6 @@
             }
           }
         },
-        "ebeb": {
-          "fab": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-FAB-EBEB, LOW"
-            }
-          },
-          "not found": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-EBEB, LOW"
-            }
-          }
-        },
         "qqq": {
           "appi": {
             "low": {
@@ -28005,11 +27993,6 @@
           }
         },
         "eb": {
-          "fab": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-FAB-EB, LOW"
-            }
-          },
           "esi": {
             "low": {
               "SOLUTION": "NOT FOUND, LC-ESI-EB, LOW"
@@ -28067,23 +28050,6 @@
             }
           }
         },
-        "b": {
-          "fab": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-FAB-B, LOW"
-            }
-          },
-          "fd": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-FD-B, LOW"
-            }
-          },
-          "not found": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-B, LOW"
-            }
-          }
-        },
         "not found": {
           "appi": {
             "low": {
@@ -28098,16 +28064,6 @@
           "esi": {
             "not found": {
               "SOLUTION": "NOT FOUND, LC-ESI, NOT FOUND"
-            }
-          },
-          "fab": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-FAB, LOW"
-            }
-          },
-          "fd": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-FD, LOW"
             }
           },
           "not found": {
@@ -28127,6 +28083,18 @@
           "not found": {
             "high": {
               "SOLUTION": "NOT FOUND, DI-QITTOF, HIGH"
+            }
+          }
+        },
+        "ebeb": {
+          "fab": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-FAB-EBEB, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-EBEB, LOW"
             }
           }
         },
@@ -28164,6 +28132,18 @@
             }
           }
         },
+        "eb": {
+          "fab": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-FAB-EB, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-EB, LOW"
+            }
+          }
+        },
         "q": {
           "ci": {
             "low": {
@@ -28173,6 +28153,23 @@
           "not found": {
             "low": {
               "SOLUTION": "NOT FOUND, DI-Q, LOW"
+            }
+          }
+        },
+        "b": {
+          "fab": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-FAB-B, LOW"
+            }
+          },
+          "fd": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-FD-B, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-B, LOW"
             }
           }
         },
@@ -28187,9 +28184,19 @@
               "SOLUTION": "NOT FOUND, DI-PTR, NOT FOUND"
             }
           },
+          "fab": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-FAB, LOW"
+            }
+          },
           "ci": {
             "not found": {
               "SOLUTION": "NOT FOUND, DI-CI, NOT FOUND"
+            }
+          },
+          "fd": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-FD, LOW"
             }
           },
           "not found": {
@@ -30606,28 +30613,28 @@
       }
     },
     "jms 700": {
-      "lc": {
+      "di": {
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-EB, LOW"
             }
           }
         }
@@ -30636,24 +30643,24 @@
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-EB, LOW"
             }
           }
         }
@@ -30984,28 +30991,28 @@
       }
     },
     "700 jms": {
-      "lc": {
+      "di": {
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-EB, LOW"
             }
           }
         }
@@ -31014,24 +31021,24 @@
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-EB, LOW"
             }
           }
         }
@@ -41709,18 +41716,6 @@
             }
           }
         },
-        "ebeb": {
-          "fab": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-FAB-EBEB, LOW"
-            }
-          },
-          "not found": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-EBEB, LOW"
-            }
-          }
-        },
         "qqq": {
           "appi": {
             "low": {
@@ -41780,11 +41775,6 @@
           }
         },
         "eb": {
-          "fab": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-FAB-EB, LOW"
-            }
-          },
           "esi": {
             "low": {
               "SOLUTION": "NOT FOUND, LC-ESI-EB, LOW"
@@ -41842,23 +41832,6 @@
             }
           }
         },
-        "b": {
-          "fab": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-FAB-B, LOW"
-            }
-          },
-          "fd": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-FD-B, LOW"
-            }
-          },
-          "not found": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-B, LOW"
-            }
-          }
-        },
         "not found": {
           "appi": {
             "low": {
@@ -41873,16 +41846,6 @@
           "esi": {
             "not found": {
               "SOLUTION": "NOT FOUND, LC-ESI, NOT FOUND"
-            }
-          },
-          "fab": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-FAB, LOW"
-            }
-          },
-          "fd": {
-            "low": {
-              "SOLUTION": "NOT FOUND, LC-FD, LOW"
             }
           },
           "not found": {
@@ -41902,6 +41865,18 @@
           "not found": {
             "high": {
               "SOLUTION": "NOT FOUND, DI-QITTOF, HIGH"
+            }
+          }
+        },
+        "ebeb": {
+          "fab": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-FAB-EBEB, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-EBEB, LOW"
             }
           }
         },
@@ -41939,6 +41914,18 @@
             }
           }
         },
+        "eb": {
+          "fab": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-FAB-EB, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-EB, LOW"
+            }
+          }
+        },
         "q": {
           "ci": {
             "low": {
@@ -41948,6 +41935,23 @@
           "not found": {
             "low": {
               "SOLUTION": "NOT FOUND, DI-Q, LOW"
+            }
+          }
+        },
+        "b": {
+          "fab": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-FAB-B, LOW"
+            }
+          },
+          "fd": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-FD-B, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-B, LOW"
             }
           }
         },
@@ -41962,9 +41966,19 @@
               "SOLUTION": "NOT FOUND, DI-PTR, NOT FOUND"
             }
           },
+          "fab": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-FAB, LOW"
+            }
+          },
           "ci": {
             "not found": {
               "SOLUTION": "NOT FOUND, DI-CI, NOT FOUND"
+            }
+          },
+          "fd": {
+            "low": {
+              "SOLUTION": "NOT FOUND, DI-FD, LOW"
             }
           },
           "not found": {
@@ -48739,28 +48753,28 @@
   },
   "jeol": {
     "jms hx hx 110a": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -48795,7 +48809,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -48805,14 +48819,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -48822,35 +48836,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "jms hx 110a hx": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -48885,7 +48899,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -48895,14 +48909,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -48912,35 +48926,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "jms 110a hx hx": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -48975,7 +48989,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -48985,14 +48999,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49002,35 +49016,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "hx jms hx 110a": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -49065,7 +49079,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49075,14 +49089,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49092,35 +49106,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "hx jms 110a hx": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -49155,7 +49169,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49165,14 +49179,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49182,35 +49196,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "hx hx jms 110a": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -49245,7 +49259,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49255,14 +49269,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49272,35 +49286,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "hx hx 110a jms": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -49335,7 +49349,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49345,14 +49359,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49362,35 +49376,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "hx 110a jms hx": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -49425,7 +49439,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49435,14 +49449,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49452,35 +49466,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "hx 110a hx jms": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -49515,7 +49529,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49525,14 +49539,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49542,35 +49556,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "110a jms hx hx": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -49605,7 +49619,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49615,14 +49629,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49632,35 +49646,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "110a hx jms hx": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -49695,7 +49709,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49705,14 +49719,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49722,35 +49736,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
       }
     },
     "110a hx hx jms": {
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -49785,7 +49799,7 @@
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49795,14 +49809,14 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-FAB-EBEB, LOW"
             }
           },
           "ei": {
@@ -49812,7 +49826,7 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX/HX 110A, GC-EBEB, LOW"
+              "SOLUTION": "JEOL JMS-HX/HX 110A, DI-EBEB, LOW"
             }
           }
         }
@@ -51115,38 +51129,38 @@
       }
     },
     "jms dx 300": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
@@ -51181,12 +51195,12 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -51196,19 +51210,19 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -51218,35 +51232,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
       }
     },
     "jms dx 303": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
@@ -51255,52 +51269,52 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
       }
     },
     "jms hx 110": {
-      "lc": {
+      "di": {
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
@@ -51309,24 +51323,24 @@
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
@@ -51387,38 +51401,38 @@
       }
     },
     "jms 300 dx": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
@@ -51453,12 +51467,12 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -51468,19 +51482,19 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -51490,45 +51504,45 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
       }
     },
     "dx jms 300": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
@@ -51563,12 +51577,12 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -51578,19 +51592,19 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -51600,45 +51614,45 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
       }
     },
     "dx 300 jms": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
@@ -51673,12 +51687,12 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -51688,19 +51702,19 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -51710,45 +51724,45 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
       }
     },
     "300 jms dx": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
@@ -51783,12 +51797,12 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -51798,19 +51812,19 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -51820,45 +51834,45 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
       }
     },
     "300 dx jms": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
@@ -51893,12 +51907,12 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -51908,19 +51922,19 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FAB-B, LOW"
             }
           },
           "fd": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-FD-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-FD-B, LOW"
             }
           },
           "ci": {
@@ -51930,35 +51944,35 @@
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-300, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-300, DI-B, LOW"
             }
           }
         }
       }
     },
     "jms 303 dx": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
@@ -51967,52 +51981,52 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
       }
     },
     "dx jms 303": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
@@ -52021,52 +52035,52 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
       }
     },
     "dx 303 jms": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
@@ -52075,52 +52089,52 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
       }
     },
     "303 jms dx": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
@@ -52129,52 +52143,52 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
       }
     },
     "303 dx jms": {
-      "lc": {
+      "di": {
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
@@ -52183,52 +52197,52 @@
         "b": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-FAB-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-FAB-B, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS DX-303, LC-B, LOW"
+              "SOLUTION": "JEOL JMS DX-303, DI-B, LOW"
             }
           }
         }
       }
     },
     "jms 110 hx": {
-      "lc": {
+      "di": {
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
@@ -52237,52 +52251,52 @@
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
       }
     },
     "hx jms 110": {
-      "lc": {
+      "di": {
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
@@ -52291,52 +52305,52 @@
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
       }
     },
     "hx 110 jms": {
-      "lc": {
+      "di": {
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
@@ -52345,52 +52359,52 @@
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
       }
     },
     "110 jms hx": {
-      "lc": {
+      "di": {
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
@@ -52399,52 +52413,52 @@
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
       }
     },
     "110 hx jms": {
-      "lc": {
+      "di": {
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
@@ -52453,24 +52467,24 @@
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-HX 110, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-HX 110, DI-EB, LOW"
             }
           }
         }
@@ -53018,84 +53032,19 @@
           }
         }
       },
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL instrument, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL instrument, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL instrument, LC-EBEB, LOW"
+              "SOLUTION": "JEOL instrument, DI-EBEB, LOW"
             }
           }
         },
-        "tof": {
-          "esi": {
-            "high": {
-              "SOLUTION": "JEOL instrument, LC-ESI-TOF, HIGH"
-            }
-          },
-          "not found": {
-            "high": {
-              "SOLUTION": "JEOL instrument, LC-TOF, HIGH"
-            }
-          }
-        },
-        "eb": {
-          "fab": {
-            "low": {
-              "SOLUTION": "JEOL instrument, LC-FAB-EB, LOW"
-            }
-          },
-          "not found": {
-            "low": {
-              "SOLUTION": "JEOL instrument, LC-EB, LOW"
-            }
-          }
-        },
-        "b": {
-          "fab": {
-            "low": {
-              "SOLUTION": "JEOL instrument, LC-FAB-B, LOW"
-            }
-          },
-          "fd": {
-            "low": {
-              "SOLUTION": "JEOL instrument, LC-FD-B, LOW"
-            }
-          },
-          "not found": {
-            "low": {
-              "SOLUTION": "JEOL instrument, LC-B, LOW"
-            }
-          }
-        },
-        "not found": {
-          "fab": {
-            "low": {
-              "SOLUTION": "JEOL instrument, LC-FAB, LOW"
-            }
-          },
-          "esi": {
-            "high": {
-              "SOLUTION": "JEOL instrument, LC-ESI, HIGH"
-            }
-          },
-          "fd": {
-            "low": {
-              "SOLUTION": "JEOL instrument, LC-FD, LOW"
-            }
-          },
-          "not found": {
-            "not found": {
-              "SOLUTION": "JEOL instrument, LC, NOT FOUND"
-            }
-          }
-        }
-      },
-      "di": {
         "tof": {
           "maldi": {
             "high": {
@@ -53108,15 +53057,80 @@
             }
           }
         },
+        "eb": {
+          "fab": {
+            "low": {
+              "SOLUTION": "JEOL instrument, DI-FAB-EB, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "JEOL instrument, DI-EB, LOW"
+            }
+          }
+        },
+        "b": {
+          "fab": {
+            "low": {
+              "SOLUTION": "JEOL instrument, DI-FAB-B, LOW"
+            }
+          },
+          "fd": {
+            "low": {
+              "SOLUTION": "JEOL instrument, DI-FD-B, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "JEOL instrument, DI-B, LOW"
+            }
+          }
+        },
         "not found": {
           "maldi": {
             "high": {
               "SOLUTION": "JEOL instrument, DI-MALDI, HIGH"
             }
           },
+          "fab": {
+            "low": {
+              "SOLUTION": "JEOL instrument, DI-FAB, LOW"
+            }
+          },
+          "fd": {
+            "low": {
+              "SOLUTION": "JEOL instrument, DI-FD, LOW"
+            }
+          },
+          "not found": {
+            "not found": {
+              "SOLUTION": "JEOL instrument, DI, NOT FOUND"
+            }
+          }
+        }
+      },
+      "lc": {
+        "tof": {
+          "esi": {
+            "high": {
+              "SOLUTION": "JEOL instrument, LC-ESI-TOF, HIGH"
+            }
+          },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL instrument, DI, HIGH"
+              "SOLUTION": "JEOL instrument, LC-TOF, HIGH"
+            }
+          }
+        },
+        "not found": {
+          "esi": {
+            "high": {
+              "SOLUTION": "JEOL instrument, LC-ESI, HIGH"
+            }
+          },
+          "not found": {
+            "high": {
+              "SOLUTION": "JEOL instrument, LC, HIGH"
             }
           }
         }
@@ -53343,28 +53357,28 @@
       }
     },
     "jms 700": {
-      "lc": {
+      "di": {
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-EB, LOW"
             }
           }
         }
@@ -53373,52 +53387,52 @@
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-EB, LOW"
             }
           }
         }
       }
     },
     "700 jms": {
-      "lc": {
+      "di": {
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-EB, LOW"
             }
           }
         }
@@ -53427,24 +53441,24 @@
         "eb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-EB, LOW"
             }
           }
         },
         "not found": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-FAB-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-FAB-EB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL JMS-700, LC-EB, LOW"
+              "SOLUTION": "JEOL JMS-700, DI-EB, LOW"
             }
           }
         }
@@ -53506,84 +53520,19 @@
           }
         }
       },
-      "lc": {
+      "di": {
         "ebeb": {
           "fab": {
             "low": {
-              "SOLUTION": "JEOL instrument, LC-FAB-EBEB, LOW"
+              "SOLUTION": "JEOL instrument, DI-FAB-EBEB, LOW"
             }
           },
           "not found": {
             "low": {
-              "SOLUTION": "JEOL instrument, LC-EBEB, LOW"
+              "SOLUTION": "JEOL instrument, DI-EBEB, LOW"
             }
           }
         },
-        "tof": {
-          "esi": {
-            "high": {
-              "SOLUTION": "JEOL instrument, LC-ESI-TOF, HIGH"
-            }
-          },
-          "not found": {
-            "high": {
-              "SOLUTION": "JEOL instrument, LC-TOF, HIGH"
-            }
-          }
-        },
-        "eb": {
-          "fab": {
-            "low": {
-              "SOLUTION": "JEOL instrument, LC-FAB-EB, LOW"
-            }
-          },
-          "not found": {
-            "low": {
-              "SOLUTION": "JEOL instrument, LC-EB, LOW"
-            }
-          }
-        },
-        "b": {
-          "fab": {
-            "low": {
-              "SOLUTION": "JEOL instrument, LC-FAB-B, LOW"
-            }
-          },
-          "fd": {
-            "low": {
-              "SOLUTION": "JEOL instrument, LC-FD-B, LOW"
-            }
-          },
-          "not found": {
-            "low": {
-              "SOLUTION": "JEOL instrument, LC-B, LOW"
-            }
-          }
-        },
-        "not found": {
-          "fab": {
-            "low": {
-              "SOLUTION": "JEOL instrument, LC-FAB, LOW"
-            }
-          },
-          "esi": {
-            "high": {
-              "SOLUTION": "JEOL instrument, LC-ESI, HIGH"
-            }
-          },
-          "fd": {
-            "low": {
-              "SOLUTION": "JEOL instrument, LC-FD, LOW"
-            }
-          },
-          "not found": {
-            "not found": {
-              "SOLUTION": "JEOL instrument, LC, NOT FOUND"
-            }
-          }
-        }
-      },
-      "di": {
         "tof": {
           "maldi": {
             "high": {
@@ -53596,15 +53545,80 @@
             }
           }
         },
+        "eb": {
+          "fab": {
+            "low": {
+              "SOLUTION": "JEOL instrument, DI-FAB-EB, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "JEOL instrument, DI-EB, LOW"
+            }
+          }
+        },
+        "b": {
+          "fab": {
+            "low": {
+              "SOLUTION": "JEOL instrument, DI-FAB-B, LOW"
+            }
+          },
+          "fd": {
+            "low": {
+              "SOLUTION": "JEOL instrument, DI-FD-B, LOW"
+            }
+          },
+          "not found": {
+            "low": {
+              "SOLUTION": "JEOL instrument, DI-B, LOW"
+            }
+          }
+        },
         "not found": {
           "maldi": {
             "high": {
               "SOLUTION": "JEOL instrument, DI-MALDI, HIGH"
             }
           },
+          "fab": {
+            "low": {
+              "SOLUTION": "JEOL instrument, DI-FAB, LOW"
+            }
+          },
+          "fd": {
+            "low": {
+              "SOLUTION": "JEOL instrument, DI-FD, LOW"
+            }
+          },
+          "not found": {
+            "not found": {
+              "SOLUTION": "JEOL instrument, DI, NOT FOUND"
+            }
+          }
+        }
+      },
+      "lc": {
+        "tof": {
+          "esi": {
+            "high": {
+              "SOLUTION": "JEOL instrument, LC-ESI-TOF, HIGH"
+            }
+          },
           "not found": {
             "high": {
-              "SOLUTION": "JEOL instrument, DI, HIGH"
+              "SOLUTION": "JEOL instrument, LC-TOF, HIGH"
+            }
+          }
+        },
+        "not found": {
+          "esi": {
+            "high": {
+              "SOLUTION": "JEOL instrument, LC-ESI, HIGH"
+            }
+          },
+          "not found": {
+            "high": {
+              "SOLUTION": "JEOL instrument, LC, HIGH"
             }
           }
         }

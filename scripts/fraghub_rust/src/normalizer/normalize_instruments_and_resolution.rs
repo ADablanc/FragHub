@@ -180,7 +180,8 @@ fn keeps_type_tokens(raw_type: &str, new_type: &str) -> bool {
 }
 
 /// LC/GC/CE/DI manquant au type écrit. L'ionisation du type décide d'abord : ESI -> LC (jamais en GC), EI -> GC
-/// (jamais en LC), MALDI -> DI (désorption depuis une plaque : pas de chromatographie) ; sinon le LC/GC/CE/DI du
+/// (jamais en LC), MALDI / FAB / FD -> DI (échantillon déposé sur une plaque, une sonde ou un émetteur : pas de
+/// chromatographie ; un rare couplage LC-FAB écrit dans le fichier est gardé) ; sinon le LC/GC/CE/DI du
 /// type de l'arbre (le modèle reconnu le donne). Ex. « ESI-QTOF » d'un TripleTOF 5600 : l'arbre propose
 /// « LC-ESI-TOF » (refusé, il perdrait le Q) ; on garde « ESI-QTOF » + LC.
 /// L'ionisation passe avant l'arbre : le JMS DX-300 n'a pas de ligne EI dans l'Excel, l'arbre propose LC ;
@@ -194,7 +195,7 @@ fn add_missing_separation(final_type: &str, tree_type: &str) -> Option<String> {
     }
     let from_ionization = if have.iter().any(|w| w == "esi") { Some("lc".to_string()) }
         else if have.iter().any(|w| w == "ei") { Some("gc".to_string()) }
-        else if have.iter().any(|w| w == "maldi") { Some("di".to_string()) }
+        else if have.iter().any(|w| matches!(w.as_str(), "maldi" | "fab" | "fd")) { Some("di".to_string()) }
         else { None };
     let from_tree = || words(tree_type).into_iter().find(|w| is_separation(w));
     let separation = from_ionization.or_else(from_tree)?;
@@ -523,8 +524,13 @@ mod tests {
         assert_eq!(add_missing_separation("EI-B", "LC-B").as_deref(), Some("GC-EI-B"));
         assert_eq!(add_missing_separation("EI-B", "").as_deref(), Some("GC-EI-B"));
         assert_eq!(add_missing_separation("ESI-QTOF", "GC-QTOF").as_deref(), Some("LC-ESI-QTOF"));
-        // Ionisation qui ne dit rien de sûr : l'arbre
-        assert_eq!(add_missing_separation("FAB-B", "LC-FAB-B").as_deref(), Some("LC-FAB-B"));
+        // FAB et FD : introduction directe, DI même si l'arbre propose autre chose ou rien
+        assert_eq!(add_missing_separation("FAB-B", "LC-FAB-B").as_deref(), Some("DI-FAB-B"));
+        assert_eq!(add_missing_separation("FAB-EBEB", "").as_deref(), Some("DI-FAB-EBEB"));
+        assert_eq!(add_missing_separation("FD-B", "").as_deref(), Some("DI-FD-B"));
+        assert_eq!(add_missing_separation("LC-FAB-EBEB", ""), None); // couplage écrit dans le fichier : gardé
+        // Ionisation qui ne dit rien de sûr : l'arbre, sinon rien
+        assert_eq!(add_missing_separation("CI-B", "GC-CI-B").as_deref(), Some("GC-CI-B"));
         assert_eq!(add_missing_separation("CI-B", "").as_deref(), None);
         assert_eq!(add_missing_separation("", "LC-ESI-QTOF"), None);
         // MALDI : pas de chromatographie, rangé en DI même sans modèle reconnu ; un type déjà en DI n'est pas touché
