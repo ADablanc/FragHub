@@ -1,104 +1,805 @@
-<mxfile host="Electron">
-  <diagram name="Page-1" id="-7TRybUAfpzxLOQG0p0Q">
-    <mxGraphModel dx="1059" dy="788" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+<mxfile host="FragHub" version="24.0.0" type="device">
+  <diagram name="1 · Vue d'ensemble" id="f-overview">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1654" pageHeight="2339" background="#FFFFFF" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="vYlSyrvaL-nILZxWqhl--1" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;aspect=fixed;fillColor=none;strokeColor=none;resizable=0;perimeter=centerPerimeter;rotatable=0;allowArrows=0;points=[];outlineConnect=1;" value="" vertex="1">
-          <mxGeometry height="10" width="10" x="520.0699999999999" y="790" as="geometry" />
+        <mxCell id="f-overview-auto-t1" value="FragHub — front-end : vue d'ensemble" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=24;fontColor=#263238;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="40" y="26" width="1200" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--2" parent="1" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;container=0;" value="&lt;b&gt;app.vue&lt;/b&gt;" vertex="1">
-          <mxGeometry height="245" width="500" x="60" y="809" as="geometry" />
+        <mxCell id="f-overview-auto-t2" value="Branche Rust_FragHub · dossier GUI/ · état du code au 12 novembre 2026" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="40" y="64" width="1200" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=default;fontStyle=1;container=0;" value="&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;• Point d&#39;entrée de l&#39;interface utilisateur configuré avec un thème visuel clair&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;• Chargement et affichage dynamique des différentes vues/pages de l&#39;application&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;• Blocage de la sélection de texte et du défilement global de la page pour imiter le comportement d&#39;un logiciel de bureau classique&lt;/span&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="169.5" width="479.93" x="70.02999999999997" y="874.75" as="geometry" />
+        <mxCell id="f-overview-auto-t3" value="&lt;b&gt;Processus principal Electron&lt;/b&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#455A64;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="40" y="112" width="400" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--4" parent="1" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;container=0;" value="&lt;b&gt;app.vue&lt;/b&gt;" vertex="1">
-          <mxGeometry height="1780" width="532" x="827" y="41.5" as="geometry" />
+        <UserObject id="f-overview-main" label="" link="data:page/id,f-startup">
+          <mxCell style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
+            <mxGeometry x="40" y="140" width="400" height="194" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="f-overview-main-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="f-overview-main">
+          <mxGeometry x="0" y="14.0" width="400" height="14.0" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--5" parent="1" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;container=0;" value="&lt;b&gt;InputTab.vue&lt;/b&gt;" vertex="1">
-          <mxGeometry height="245" width="500" x="843.0100000000002" y="150" as="geometry" />
+        <mxCell id="f-overview-main-h" value="Chef d'orchestre de l'application" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#3949AB;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-overview-main">
+          <mxGeometry x="0" y="0" width="400" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--6" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=default;fontStyle=1;container=0;" value="&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Sélection des fichiers d&#39;entrée au format &quot;.mzML&quot; via l&#39;explorateur de fichiers du système grâce à l&#39;API Electron.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Gestion séparée et affichage dynamique en liste des fichiers pour les modes d&#39;ionisation POS et NEG.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Options de gestion permettant de supprimer individuellement un fichier ou de vider entièrement la liste.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Validation automatique en temps réel (nécessite au moins un fichier POS ou NEG pour que l&#39;onglet soit valide).&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="169.5" width="479.93" x="853.04" y="215.75" as="geometry" />
+        <mxCell id="f-overview-main-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;GUI/electron/main.js&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Point d'entrée de l'application (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;&quot;main&quot;&lt;/span&gt; de &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;package.json&lt;/span&gt;).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Ouvre la fenêtre de démarrage, lance le back-end, prépare la fenêtre principale et ne la montre que quand tout est prêt.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Protocole &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;app://&lt;/span&gt; : sert à la fenêtre les fichiers générés par Nuxt (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;.output/public/&lt;/span&gt;).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Boîtes de dialogue fichiers et dossier, demandées par l'interface (IPC).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;À la fermeture : arrête le back-end.&lt;/div&gt;&lt;div style=&quot;color:#3949AB;font-weight:bold&quot;&gt;Détail du démarrage : page 2&amp;nbsp;→&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-overview-main">
+          <mxGeometry x="0" y="28" width="400" height="166" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--17" edge="1" parent="1" source="vYlSyrvaL-nILZxWqhl--2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=10;entryDy=0;entryPerimeter=0;dashed=1;dashPattern=8 8;strokeWidth=4;" target="vYlSyrvaL-nILZxWqhl--4">
+        <mxCell id="f-overview-splash" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="374" width="400" height="119" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-splash-s" value="" style="rounded=0;html=1;fillColor=#37474F;strokeColor=none;" vertex="1" parent="f-overview-splash">
+          <mxGeometry x="0" y="14.0" width="400" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-splash-h" value="Fenêtre de démarrage" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#37474F;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-overview-splash">
+          <mxGeometry x="0" y="0" width="400" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-splash-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;GUI/electron/Splash.html&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Petite fenêtre transparente, sans cadre, toujours devant : logo, roue qui tourne, message.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Le message (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;#message&lt;/span&gt;) est réécrit par &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;main.js&lt;/span&gt; à chaque étape (téléchargement de la base, chargement, erreur).&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-overview-splash">
+          <mxGeometry x="0" y="28" width="400" height="91" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-e4" value="crée" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-overview-main" target="f-overview-splash">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--18" parent="1" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;container=0;" value="&lt;b&gt;OutputTab.vue&lt;/b&gt;" vertex="1">
-          <mxGeometry height="245" width="500" x="843.01" y="420" as="geometry" />
+        <mxCell id="f-overview-preload" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF2F4;strokeColor=#546E7A;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="533" width="400" height="119" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--19" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=default;fontStyle=1;container=0;" value="&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Sélection des fichiers d&#39;entrée au format &quot;.mzML&quot; via l&#39;explorateur de fichiers du système grâce à l&#39;API Electron.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Gestion séparée et affichage dynamique en liste des fichiers pour les modes d&#39;ionisation POS et NEG.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Options de gestion permettant de supprimer individuellement un fichier ou de vider entièrement la liste.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Validation automatique en temps réel (nécessite au moins un fichier POS ou NEG pour que l&#39;onglet soit valide).&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="169.5" width="479.93" x="853.0399999999997" y="485.75" as="geometry" />
+        <mxCell id="f-overview-preload-s" value="" style="rounded=0;html=1;fillColor=#546E7A;strokeColor=none;" vertex="1" parent="f-overview-preload">
+          <mxGeometry x="0" y="14.0" width="400" height="14.0" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--20" parent="1" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;container=0;" value="&lt;b&gt;FiltersTab.vue&lt;/b&gt;" vertex="1">
-          <mxGeometry height="245" width="500" x="843.01" y="690" as="geometry" />
+        <mxCell id="f-overview-preload-h" value="Pont vers l'interface" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#546E7A;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-overview-preload">
+          <mxGeometry x="0" y="0" width="400" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--21" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=default;fontStyle=1;container=0;" value="&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Sélection des fichiers d&#39;entrée au format &quot;.mzML&quot; via l&#39;explorateur de fichiers du système grâce à l&#39;API Electron.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Gestion séparée et affichage dynamique en liste des fichiers pour les modes d&#39;ionisation POS et NEG.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Options de gestion permettant de supprimer individuellement un fichier ou de vider entièrement la liste.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Validation automatique en temps réel (nécessite au moins un fichier POS ou NEG pour que l&#39;onglet soit valide).&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="169.5" width="479.93" x="853.0399999999997" y="755.75" as="geometry" />
+        <mxCell id="f-overview-preload-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;GUI/electron/preload.cjs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Expose à l'interface &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;window.electronAPI.selectFiles()&lt;/span&gt; et &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;selectFolder()&lt;/span&gt;, sans lui donner accès au reste du système.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Ces appels deviennent les messages IPC &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;dialog:openFiles&lt;/span&gt; et &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;dialog:openFolder&lt;/span&gt;, traités par &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;main.js&lt;/span&gt;.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-overview-preload">
+          <mxGeometry x="0" y="28" width="400" height="91" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--22" parent="1" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;container=0;" value="&lt;b&gt;DeNovoTab.vue&lt;/b&gt;" vertex="1">
-          <mxGeometry height="245" width="500" x="843.01" y="960" as="geometry" />
+        <mxCell id="f-overview-auto-e5" value="IPC" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.85;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-overview-preload" target="f-overview-main">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="22" y="592.5" />
+              <mxPoint x="22" y="304.9" />
+            </Array>
+          </mxGeometry>
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--23" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=default;fontStyle=1;container=0;" value="&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Sélection des fichiers d&#39;entrée au format &quot;.mzML&quot; via l&#39;explorateur de fichiers du système grâce à l&#39;API Electron.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Gestion séparée et affichage dynamique en liste des fichiers pour les modes d&#39;ionisation POS et NEG.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Options de gestion permettant de supprimer individuellement un fichier ou de vider entièrement la liste.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Validation automatique en temps réel (nécessite au moins un fichier POS ou NEG pour que l&#39;onglet soit valide).&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="169.5" width="479.93" x="853.0399999999997" y="1025.75" as="geometry" />
+        <mxCell id="f-overview-auto-t6" value="&lt;b&gt;Fenêtre principale&lt;/b&gt; &amp;nbsp;&lt;span style=&quot;color:#607D8B&quot;&gt;Nuxt 4 + Vuetify, application d'une seule page&lt;/span&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#455A64;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="520" y="112" width="520" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--24" parent="1" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;container=0;" value="&lt;b&gt;OutputSettingTab.vue&lt;/b&gt;" vertex="1">
-          <mxGeometry height="245" width="500" x="843" y="1230" as="geometry" />
+        <UserObject id="f-overview-app" label="" link="data:page/id,f-interface">
+          <mxCell style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
+            <mxGeometry x="520" y="140" width="520" height="149" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="f-overview-app-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="f-overview-app">
+          <mxGeometry x="0" y="14.0" width="520" height="14.0" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--25" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=default;fontStyle=1;container=0;" value="&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Sélection des fichiers d&#39;entrée au format &quot;.mzML&quot; via l&#39;explorateur de fichiers du système grâce à l&#39;API Electron.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Gestion séparée et affichage dynamique en liste des fichiers pour les modes d&#39;ionisation POS et NEG.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Options de gestion permettant de supprimer individuellement un fichier ou de vider entièrement la liste.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Validation automatique en temps réel (nécessite au moins un fichier POS ou NEG pour que l&#39;onglet soit valide).&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="169.5" width="479.93" x="853.0299999999997" y="1295.75" as="geometry" />
+        <mxCell id="f-overview-app-h" value="Racine de l'interface" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-overview-app">
+          <mxGeometry x="0" y="0" width="520" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--26" parent="1" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;container=0;" value="&lt;b&gt;ProjectsTab.vue&lt;/b&gt;" vertex="1">
-          <mxGeometry height="245" width="500" x="843.01" y="1500" as="geometry" />
+        <mxCell id="f-overview-app-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;GUI/app/app.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Bandeau de 6 onglets de réglage, bouton START, interrupteur de mode sombre (DarkReader).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;START : affiche le suivi du run, puis envoie les paramètres au back-end (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;POST /run-analysis&lt;/span&gt;).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Crée l'état partagé &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;parameters&lt;/span&gt; avec ses valeurs par défaut.&lt;/div&gt;&lt;div style=&quot;color:#3949AB;font-weight:bold&quot;&gt;Détail de l'interface : page 3&amp;nbsp;→&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-overview-app">
+          <mxGeometry x="0" y="28" width="520" height="121" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--27" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=default;fontStyle=1;container=0;" value="&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Sélection des fichiers d&#39;entrée au format &quot;.mzML&quot; via l&#39;explorateur de fichiers du système grâce à l&#39;API Electron.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Gestion séparée et affichage dynamique en liste des fichiers pour les modes d&#39;ionisation POS et NEG.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Options de gestion permettant de supprimer individuellement un fichier ou de vider entièrement la liste.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Validation automatique en temps réel (nécessite au moins un fichier POS ou NEG pour que l&#39;onglet soit valide).&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="169.5" width="479.93" x="853.0399999999997" y="1565.75" as="geometry" />
-        </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--28" parent="1" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;container=0;" value="&lt;b&gt;ProgressView.vue&lt;/b&gt;" vertex="1">
-          <mxGeometry height="499" width="540" x="1620" y="682" as="geometry" />
-        </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--29" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=default;fontStyle=1;container=0;" value="&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;• Connexion au backend Python (via Socket.IO) pour recevoir en direct l&#39;avancement détaillé des opérations.&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;• Affichage dynamique d&#39;une barre de progression (ActiveProgress) estimant le temps écoulé, le temps restant (ETA) et la vitesse de traitement.&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;• Génération d&#39;un rapport textuel continu qui consigne chaque grande étape du workflow (tout en filtrant certaines informations mineures pour ne pas surcharger l&#39;écran).&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;• Conservation automatique dans l&#39;historique des barres de progression terminées pour assurer la traçabilité des tâches achevées.&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;• Bouton d&#39;urgence permettant à l&#39;utilisateur d&#39;interrompre l&#39;analyse en cours si nécessaire.&lt;/span&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="169.5" width="479.93" x="1640.0699999999997" y="723" as="geometry" />
-        </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--30" parent="1" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;container=0;" value="&lt;b&gt;ActiveProgress.vue&lt;/b&gt;" vertex="1">
-          <mxGeometry height="245" width="500" x="1640" y="918" as="geometry" />
-        </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--31" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=default;fontStyle=1;container=0;" value="&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;• Affichage d&#39;une barre de progression dynamique intégrant des animations visuelles (effet de pulsation lumineuse et icône de chargement tournante) pour indiquer que le système travaille.&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;• Intégration en temps réel des statistiques d&#39;exécution transmises par le composant parent : pourcentage d&#39;avancement, nombre d&#39;éléments traités sur le total.&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;• Affichage détaillé des métriques de temps sous la barre : temps écoulé (Elapsed), temps restant estimé (ETA) et vitesse de traitement actuelle.&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;• Formatage et nettoyage automatique du nom de la tâche en cours (suppression des deux-points superflus en fin de chaîne) pour un rendu visuel propre.&lt;/span&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="169.5" width="479.93" x="1650.0299999999997" y="970.5" as="geometry" />
-        </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--32" edge="1" parent="1" source="vYlSyrvaL-nILZxWqhl--4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=10;entryDy=0;entryPerimeter=0;" target="vYlSyrvaL-nILZxWqhl--28">
+        <mxCell id="f-overview-auto-e7" value="charge app://-/index.html" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-overview-main" target="f-overview-app">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--33" parent="1" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;container=0;" value="&lt;b&gt;nuxt.config.js&lt;/b&gt;" vertex="1">
-          <mxGeometry height="245" width="500" x="1696" y="1701" as="geometry" />
+        <mxCell id="f-overview-t1" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="520.0" y="319" width="250.0" height="89" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--34" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=default;fontStyle=1;container=0;" value="&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Désactivation totale du rendu côté serveur (SSR défini sur &quot;false&quot;) pour forcer la création d&#39;une Single Page Application (SPA), indispensable pour un fonctionnement de type logiciel de bureau.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Activation du mode &quot;hash&quot; pour le routeur (hashMode), garantissant que la navigation entre les pages fonctionne correctement via des fichiers locaux sans nécessiter de serveur web classique.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Déclaration des modules externes, notamment l&#39;intégration et l&#39;activation du framework d&#39;interface graphique Vuetify.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Désactivation de certaines fonctionnalités expérimentales de Nuxt (payloadExtraction, appManifest) pour éviter des erreurs lors de la compilation de l&#39;application finale.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="169.5" width="479.93" x="1706.0299999999997" y="1766.75" as="geometry" />
+        <mxCell id="f-overview-t1-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="f-overview-t1">
+          <mxGeometry x="0" y="14.0" width="250.0" height="14.0" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--35" parent="1" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;container=0;" value="&lt;b&gt;main.js&lt;/b&gt;" vertex="1">
-          <mxGeometry height="245" width="500" x="1696" y="1400" as="geometry" />
+        <mxCell id="f-overview-t1-h" value="InputTab" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-overview-t1">
+          <mxGeometry x="0" y="0" width="250.0" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--36" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=default;fontStyle=1;container=0;" value="&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Lancement conditionnel du backend : Détecte l&#39;environnement (développement ou production) pour cibler et exécuter en tâche de fond le binaire compilé du serveur Python, avec destruction automatique de ce processus à la fermeture de l&#39;app.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Gestion intelligente de l&#39;affichage : Création d&#39;un écran de chargement d&#39;attente (Splash Screen) qui reste affiché tant que l&#39;interface Nuxt et le serveur backend Python (via une route de ping /health) ne sont pas tous les deux entièrement chargés.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Protocole personnalisé et sécurisé : Mise en place du protocole &quot;app://&quot; pour intercepter et résoudre proprement le chargement des fichiers statiques de la Single Page Application Nuxt, en gérant le nettoyage des URL (retrait des paramètres et ancres).&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Ponts de communication (IPC) : Déclaration des canaux permettant à l&#39;interface Vue/Nuxt (frontend) de déclencher des actions natives de l&#39;OS, comme l&#39;ouverture des explorateurs de fichiers (pour les .mzML et le dossier de travail) et la lecture sécurisée de la base de données Excel locale.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="215.25" width="479.93" x="1706.0299999999997" y="1420" as="geometry" />
+        <mxCell id="f-overview-t1-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;app/components/InputTab.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Fichiers d'entrée et nom de base de chacun&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-overview-t1">
+          <mxGeometry x="0" y="28" width="250.0" height="61" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--37" parent="1" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;container=0;" value="&lt;b&gt;Splash.html&lt;/b&gt;" vertex="1">
-          <mxGeometry height="245" width="500" x="2269" y="1400" as="geometry" />
+        <mxCell id="f-overview-t2" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="790.0" y="319" width="250.0" height="74" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--38" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=default;fontStyle=1;container=0;" value="&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Structure une interface transparente et sans bordure, stylisée avec CSS pour inclure des animations fluides de chargement (pulsation du logo et roue de progression).&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Rend la fenêtre de chargement déplaçable librement à la souris grâce à l&#39;utilisation de la propriété CSS spécifique à Electron (`-webkit-app-region: drag`).&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Prépare un conteneur d&#39;image vide dont la source (le logo complet) est injectée dynamiquement par le processus principal (main.js) une fois le chemin local résolu.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Expose une fonction JavaScript locale (`setSplashMessage`) destinée à permettre la mise à jour dynamique du texte d&#39;état pendant l&#39;initialisation des différents services en arrière-plan.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="215.25" width="479.93" x="2279.0299999999997" y="1420" as="geometry" />
+        <mxCell id="f-overview-t2-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="f-overview-t2">
+          <mxGeometry x="0" y="14.0" width="250.0" height="14.0" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--39" parent="1" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;container=0;" value="&lt;b&gt;package.json&lt;/b&gt;" vertex="1">
-          <mxGeometry height="310" width="500" x="2268" y="1701" as="geometry" />
+        <mxCell id="f-overview-t2-h" value="OutputTab" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-overview-t2">
+          <mxGeometry x="0" y="0" width="250.0" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--40" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=default;fontStyle=1;container=0;" value="&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Déclaration du point d&#39;entrée principal (main) pointant sur le script Electron (`electron/main.js`) et utilisation du format ES Modules (&quot;type&quot;: &quot;module&quot;).&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Orchestration des scripts de développement : définition de commandes dédiées pour lancer séparément ou conjointement le serveur de dev Nuxt et la fenêtre Electron (`electron:dev`).&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Gestion des dépendances techniques clés pour le frontend : Nuxt/Vue (framework), Vuetify (composants UI), Socket.IO (communication temps réel avec le backend) et XLSX (lecture des bases de données locales).&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Configuration critique du packaging via `electron-builder` : définit l&#39;inclusion stricte des dossiers nécessaires (le build statique de Nuxt `.output/public` et les scripts Electron) dans l&#39;exécutable final.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Stratégie d&#39;encapsulation du Backend (extraResources) : instruction vitale demandant au compilateur d&#39;embarquer l&#39;exécutable Python pré-compilé dans les ressources internes de l&#39;application (dossier `bin`), ce qui garantit un fonctionnement 100% hors-ligne sans installation de Python chez l&#39;utilisateur.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Définition des formats de distribution spécifiques aux systèmes d&#39;exploitation : installeur NSIS pour Windows et image disque DMG pour macOS.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="271" width="479.93" x="2278.04" y="1731" as="geometry" />
+        <mxCell id="f-overview-t2-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;app/components/OutputTab.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Dossier de sortie&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-overview-t2">
+          <mxGeometry x="0" y="28" width="250.0" height="46" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--41" parent="1" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;container=0;" value="&lt;b&gt;preload.cjs&lt;/b&gt;" vertex="1">
-          <mxGeometry height="245" width="500" x="2808" y="1400" as="geometry" />
+        <mxCell id="f-overview-t3" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="520.0" y="424" width="250.0" height="74" as="geometry" />
         </mxCell>
-        <mxCell id="vYlSyrvaL-nILZxWqhl--42" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=default;fontStyle=1;container=0;" value="&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Utilisation de l&#39;API `useState` de Nuxt pour créer un état partagé et réactif accessible instantanément par tous les composants de l&#39;interface (évitant ainsi le passage complexe de props d&#39;un composant à l&#39;autre).&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Initialisation de la structure de données &quot;Single Source of Truth&quot; (source de vérité unique) qui représente le projet entier : listes de fichiers (POS/NEG), métadonnées des échantillons et standards internes.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Définition des valeurs par défaut critiques pour l&#39;application, telles que les seuils de détection ND/NQ (ex: 500 et 1000) et les booléens du workflow (conversion MZmine, génération de rapports).&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;strike&gt;• Préparation du payload exact : c&#39;est ce dictionnaire de paramètres (et lui seul) qui sera mis à jour en temps réel par les actions de l&#39;utilisateur, puis expédié au backend Python au moment du lancement de l&#39;analyse.&lt;/strike&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="215.25" width="479.93" x="2818.0299999999997" y="1420" as="geometry" />
+        <mxCell id="f-overview-t3-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="f-overview-t3">
+          <mxGeometry x="0" y="14.0" width="250.0" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-t3-h" value="FiltersTab" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-overview-t3">
+          <mxGeometry x="0" y="0" width="250.0" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-t3-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;app/components/FiltersTab.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;7 filtres de pics et leurs seuils&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-overview-t3">
+          <mxGeometry x="0" y="28" width="250.0" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-t4" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="790.0" y="424" width="250.0" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-t4-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="f-overview-t4">
+          <mxGeometry x="0" y="14.0" width="250.0" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-t4-h" value="DeNovoTab" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-overview-t4">
+          <mxGeometry x="0" y="0" width="250.0" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-t4-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;app/components/DeNovoTab.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Calcul de novo et tolérance (ppm)&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-overview-t4">
+          <mxGeometry x="0" y="28" width="250.0" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-t5" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="520.0" y="514" width="250.0" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-t5-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="f-overview-t5">
+          <mxGeometry x="0" y="14.0" width="250.0" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-t5-h" value="OutputSettingTab" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-overview-t5">
+          <mxGeometry x="0" y="0" width="250.0" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-t5-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;app/components/OutputSettingTab.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Formats : CSV, MSP, JSON, mzSpecLib&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-overview-t5">
+          <mxGeometry x="0" y="28" width="250.0" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-t6" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="790.0" y="514" width="250.0" height="89" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-t6-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="f-overview-t6">
+          <mxGeometry x="0" y="14.0" width="250.0" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-t6-h" value="ProjectsTab" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-overview-t6">
+          <mxGeometry x="0" y="0" width="250.0" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-t6-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;app/components/ProjectsTab.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Remise à zéro des mises à jour, journal de performances&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-overview-t6">
+          <mxGeometry x="0" y="28" width="250.0" height="61" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-e8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-overview-app" target="f-overview-t1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-e9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-overview-app" target="f-overview-t2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-state" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF2F4;strokeColor=#546E7A;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="520" y="648" width="520" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-state-s" value="" style="rounded=0;html=1;fillColor=#546E7A;strokeColor=none;" vertex="1" parent="f-overview-state">
+          <mxGeometry x="0" y="14.0" width="520" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-state-h" value="État partagé entre les composants" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#546E7A;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-overview-state">
+          <mxGeometry x="0" y="0" width="520" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-state-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;useState('parameters') · useState('isExecuting')&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;parameters&lt;/span&gt; : tout ce que les onglets règlent, envoyé tel quel au back-end (oui / non écrits 1.0 / 0.0).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;isExecuting&lt;/span&gt; : vrai pendant un run ; &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;app.vue&lt;/span&gt; montre alors le suivi au lieu des onglets.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-overview-state">
+          <mxGeometry x="0" y="28" width="520" height="76" as="geometry" />
+        </mxCell>
+        <UserObject id="f-overview-prog" label="" link="data:page/id,f-interface">
+          <mxCell style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E8F0FA;strokeColor=#1565C0;strokeWidth=1.5;" vertex="1" parent="1">
+            <mxGeometry x="520" y="782" width="520" height="134" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="f-overview-prog-s" value="" style="rounded=0;html=1;fillColor=#1565C0;strokeColor=none;" vertex="1" parent="f-overview-prog">
+          <mxGeometry x="0" y="14.0" width="520" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-prog-h" value="Suivi du run" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#1565C0;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-overview-prog">
+          <mxGeometry x="0" y="0" width="520" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-prog-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;app/components/ProgressView.vue · ActiveProgress.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Reçoit en continu les messages du back-end (Socket.IO) : étape, barre de progression, temps écoulé et restant, spectres supprimés.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;STOP pendant le run (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;GET /stop-analysis&lt;/span&gt;), FINISH à la fin ; rapport HTML affiché dans un onglet.&lt;/div&gt;&lt;div style=&quot;color:#3949AB;font-weight:bold&quot;&gt;Détail : page 3&amp;nbsp;→&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-overview-prog">
+          <mxGeometry x="0" y="28" width="520" height="106" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-e10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-overview-state" target="f-overview-prog">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-e11" value="selectFiles()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#90A4AE;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#90A4AE;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;dashed=1;dashPattern=6 3;" edge="1" parent="1" source="f-overview-t1" target="f-overview-preload">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-e12" value="selectFolder()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#90A4AE;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#90A4AE;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.7;entryDx=0;entryDy=0;dashed=1;dashPattern=6 3;" edge="1" parent="1" source="f-overview-t2" target="f-overview-preload">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="780.0" y="356.0" />
+              <mxPoint x="780.0" y="630" />
+              <mxPoint x="480" y="630" />
+              <mxPoint x="480" y="616.3" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f-overview-auto-t13" value="&lt;b&gt;Back-end&lt;/b&gt; &amp;nbsp;&lt;span style=&quot;color:#607D8B&quot;&gt;processus séparé&lt;/span&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#455A64;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="112" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-srv" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FBF4E6;strokeColor=#B7791F;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="140" width="420" height="209" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-srv-s" value="" style="rounded=0;html=1;fillColor=#B7791F;strokeColor=none;" vertex="1" parent="f-overview-srv">
+          <mxGeometry x="0" y="14.0" width="420" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-srv-h" value="Serveur Python sur 127.0.0.1:8000" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#B7791F;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-overview-srv">
+          <mxGeometry x="0" y="0" width="420" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-srv-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;FragHub_Backend (scripts/FragHub.py)&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Lancé par &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;main.js&lt;/span&gt; au démarrage, arrêté à la fermeture.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Appelé par &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;main.js&lt;/span&gt; : &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;/health&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;/database-status&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;/init-data&lt;/span&gt;.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Appelé par l'interface : &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;POST /run-analysis&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;/stop-analysis&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;/report&lt;/span&gt;.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Messages Socket.IO vers &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;ProgressView&lt;/span&gt; : &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;progress&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;total_items&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;prefix&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;item_type&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;step&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;deletion&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;completion&lt;/span&gt;.&lt;/div&gt;&lt;div style=&quot;color:#607D8B;font-style:italic&quot;&gt;Diagramme du back-end : documentation/Backend_component_diagram.drawio, page 5.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-overview-srv">
+          <mxGeometry x="0" y="28" width="420" height="181" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-e14" value="lance, puis attend qu'il soit prêt" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.12;exitDx=0;exitDy=0;entryX=0;entryY=0.12;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-overview-main" target="f-overview-srv">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="470" y="163.28" />
+              <mxPoint x="470" y="96" />
+              <mxPoint x="1080" y="96" />
+              <mxPoint x="1080" y="165.07999999999998" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f-overview-auto-e15" value="POST /run-analysis" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.6;exitDx=0;exitDy=0;entryX=0;entryY=0.6;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-overview-app" target="f-overview-srv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-e16" value="Socket.IO" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#B7791F;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#B7791F;labelBackgroundColor=#FFFFFF;exitX=0.06;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.4;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-overview-srv" target="f-overview-prog">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-e17" value="stop, rapport" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#B7791F;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#B7791F;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=0.16;entryY=1;entryDx=0;entryDy=0;dashed=1;dashPattern=6 3;" edge="1" parent="1" source="f-overview-prog" target="f-overview-srv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-t18" value="&lt;b&gt;Construction et configuration&lt;/b&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#455A64;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="40" y="946" width="600" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-nuxt" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF2F4;strokeColor=#546E7A;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="40.0" y="976" width="483.3" height="89" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-nuxt-s" value="" style="rounded=0;html=1;fillColor=#546E7A;strokeColor=none;" vertex="1" parent="f-overview-nuxt">
+          <mxGeometry x="0" y="14.0" width="483.3" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-nuxt-h" value="Configuration de Nuxt" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#546E7A;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-overview-nuxt">
+          <mxGeometry x="0" y="0" width="483.3" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-nuxt-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;GUI/nuxt.config.js&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Application d'une seule page (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;ssr: false&lt;/span&gt;), routes en mode hash, Vuetify ; pas de requête vers &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;_payload.json&lt;/span&gt; ni le manifeste (fichiers absents sous &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;app://&lt;/span&gt;).&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-overview-nuxt">
+          <mxGeometry x="0" y="28" width="483.3" height="61" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-pkg" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF2F4;strokeColor=#546E7A;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="543.3" y="976" width="483.3" height="119" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-pkg-s" value="" style="rounded=0;html=1;fillColor=#546E7A;strokeColor=none;" vertex="1" parent="f-overview-pkg">
+          <mxGeometry x="0" y="14.0" width="483.3" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-pkg-h" value="Paquet et installateur" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#546E7A;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-overview-pkg">
+          <mxGeometry x="0" y="0" width="483.3" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-pkg-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;GUI/package.json&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Version 2.0.0 (recopiée par &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;sync_version.py&lt;/span&gt;) ; scripts &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;generate&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;electron&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;build:electron&lt;/span&gt;.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;electron-builder : installateur NSIS (Windows) ou DMG (macOS) ; le back-end compilé est copié dans &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;resources/bin/&lt;/span&gt;.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-overview-pkg">
+          <mxGeometry x="0" y="28" width="483.3" height="91" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-bld" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF2F4;strokeColor=#546E7A;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1046.7" y="976" width="483.3" height="89" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-bld-s" value="" style="rounded=0;html=1;fillColor=#546E7A;strokeColor=none;" vertex="1" parent="f-overview-bld">
+          <mxGeometry x="0" y="14.0" width="483.3" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-bld-h" value="Commandes de construction" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#546E7A;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-overview-bld">
+          <mxGeometry x="0" y="0" width="483.3" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-bld-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;build_frontend.py · build_all.py&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;npm run generate&lt;/span&gt; → &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;GUI/.output/public/&lt;/span&gt; ; puis &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;npm run build:electron&lt;/span&gt; → &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;GUI/dist_electron/&lt;/span&gt;.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-overview-bld">
+          <mxGeometry x="0" y="28" width="483.3" height="61" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-t19" value="Légende" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#263238;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1270" y="399" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-l20" value="" style="rounded=1;arcSize=20;fillColor=#3949AB;strokeColor=#3949AB;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1270" y="425" width="22" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-t21" value="Electron : processus principal" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="422" width="270" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-l22" value="" style="rounded=1;arcSize=20;fillColor=#00897B;strokeColor=#00897B;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1270" y="444" width="22" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-t23" value="Interface : onglets de réglage (Vue)" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="441" width="270" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-l24" value="" style="rounded=1;arcSize=20;fillColor=#1565C0;strokeColor=#1565C0;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1270" y="463" width="22" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-t25" value="Interface : suivi du run (Vue)" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="460" width="270" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-l26" value="" style="rounded=1;arcSize=20;fillColor=#546E7A;strokeColor=#546E7A;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1270" y="482" width="22" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-t27" value="État partagé, pont, configuration" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="479" width="270" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-l28" value="" style="rounded=1;arcSize=20;fillColor=#B7791F;strokeColor=#B7791F;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1270" y="501" width="22" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-t29" value="Back-end Python (autre diagramme)" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="498" width="270" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-l30" value="" style="rounded=1;arcSize=20;fillColor=#37474F;strokeColor=#37474F;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1270" y="520" width="22" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-t31" value="Fenêtres et fichiers" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="517" width="270" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="f-overview-auto-t32" value="&lt;b style=&quot;color:#3949AB&quot;&gt;… →&lt;/b&gt;&amp;nbsp; carte cliquable : ouvre la page de détail&lt;br&gt;&lt;span style=&quot;color:#90A4AE&quot;&gt;- - →&lt;/span&gt;&amp;nbsp; appel depuis l'interface" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1270" y="549" width="260" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="2 · Démarrage de l'application" id="f-startup">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1654" pageHeight="2339" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="f-startup-auto-t1" value="Démarrage et arrêt de l'application" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=24;fontColor=#263238;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="40" y="26" width="1200" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-t2" value="Branche Rust_FragHub · dossier GUI/ · état du code au 12 novembre 2026 · electron/main.js" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="40" y="64" width="1200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-t3" value="&lt;b&gt;Dans l'ordre&lt;/b&gt; &amp;nbsp;&lt;span style=&quot;color:#607D8B&quot;&gt;app.whenReady()&lt;/span&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#455A64;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="40" y="112" width="620" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s1" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="140" width="620" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s1-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="f-startup-s1">
+          <mxGeometry x="0" y="14.0" width="620" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s1-h" value="1 · Fenêtre de démarrage" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#3949AB;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-startup-s1">
+          <mxGeometry x="0" y="0" width="620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s1-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;createSplashWindow&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;Splash.html&lt;/span&gt;, 600 × 750, transparente, sans cadre, toujours devant ; le logo est chargé une fois la page prête.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;Message : « Starting FragHub… »&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-startup-s1">
+          <mxGeometry x="0" y="28" width="620" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s2" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="266" width="620" height="119" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s2-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="f-startup-s2">
+          <mxGeometry x="0" y="14.0" width="620" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s2-h" value="2 · Lancement du back-end" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#3949AB;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-startup-s2">
+          <mxGeometry x="0" y="0" width="620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s2-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;startPythonServer&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Exécutable &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;FragHub_Backend&lt;/span&gt; : &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;resources/bin/&lt;/span&gt; une fois installé, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;scripts/dist/FragHub_Backend/&lt;/span&gt; en développement ; droits d'exécution forcés hors Windows.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Introuvable : erreur dans la console seulement ; l'écran affichera « Backend unreachable » au bout d'une minute.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-startup-s2">
+          <mxGeometry x="0" y="28" width="620" height="91" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s3" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="407" width="620" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s3-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="f-startup-s3">
+          <mxGeometry x="0" y="14.0" width="620" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s3-h" value="3 · Fenêtre principale, cachée" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#3949AB;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-startup-s3">
+          <mxGeometry x="0" y="0" width="620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s3-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;createMainWindow&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;1280 × 720, avec &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;preload.cjs&lt;/span&gt; ; charge &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;app://-/index.html&lt;/span&gt;. Quand Nuxt est prêt : &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;_nuxtReady&lt;/span&gt;.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-startup-s3">
+          <mxGeometry x="0" y="28" width="620" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s4" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="503" width="620" height="89" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s4-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="f-startup-s4">
+          <mxGeometry x="0" y="14.0" width="620" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s4-h" value="4 · Attente du serveur" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#3949AB;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-startup-s4">
+          <mxGeometry x="0" y="0" width="620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s4-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;waitForBackend&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;GET /health&lt;/span&gt; toutes les secondes, 60 essais au plus.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#C62828&quot;&gt;✕&amp;nbsp;Échec : « Backend unreachable. Please restart. »&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-startup-s4">
+          <mxGeometry x="0" y="28" width="620" height="61" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s5" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="614" width="620" height="119" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s5-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="f-startup-s5">
+          <mxGeometry x="0" y="14.0" width="620" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s5-h" value="5 · Base interne présente ?" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#3949AB;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-startup-s5">
+          <mxGeometry x="0" y="0" width="620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s5-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;waitForDatabase&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;GET /database-status&lt;/span&gt; toutes les secondes jusqu'à « ready ». Base absente (code source) : le back-end la télécharge, et l'écran affiche son message (« Downloading molecule database… 42 % of 1.1 GB »).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Back-end sans cette adresse (ancienne version) : on passe à la suite.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#C62828&quot;&gt;✕&amp;nbsp;Échec : message d'erreur du back-end ; 30 réponses manquées : « Backend unreachable »&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-startup-s5">
+          <mxGeometry x="0" y="28" width="620" height="91" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s6" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="755" width="620" height="119" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s6-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="f-startup-s6">
+          <mxGeometry x="0" y="14.0" width="620" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s6-h" value="6 · Chargement des données" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#3949AB;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-startup-s6">
+          <mxGeometry x="0" y="0" width="620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s6-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;fetch /init-data&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;Message : « Loading internal databases… »&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Le back-end charge la base interne, les adduits, les clés et l'arbre des instruments. Réussi : &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;_backendReady&lt;/span&gt;.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#C62828&quot;&gt;✕&amp;nbsp;Échec : « Error loading databases. Please restart. »&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-startup-s6">
+          <mxGeometry x="0" y="28" width="620" height="91" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s7" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="896" width="620" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s7-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="f-startup-s7">
+          <mxGeometry x="0" y="14.0" width="620" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s7-h" value="7 · Affichage" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#3949AB;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-startup-s7">
+          <mxGeometry x="0" y="0" width="620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s7-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;maybeShowMain&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Quand Nuxt ET le back-end sont prêts : fenêtre de démarrage fermée, fenêtre principale montrée.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-startup-s7">
+          <mxGeometry x="0" y="28" width="620" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s8" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="992" width="620" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s8-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="f-startup-s8">
+          <mxGeometry x="0" y="14.0" width="620" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s8-h" value="Fermeture de l'application" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#3949AB;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-startup-s8">
+          <mxGeometry x="0" y="0" width="620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-s8-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;app.on('will-quit')&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Le processus du back-end est arrêté.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-startup-s8">
+          <mxGeometry x="0" y="28" width="620" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-startup-s1" target="f-startup-s2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-startup-s2" target="f-startup-s3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-e6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-startup-s3" target="f-startup-s4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-e7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-startup-s4" target="f-startup-s5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-e8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-startup-s5" target="f-startup-s6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-e9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-startup-s6" target="f-startup-s7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-e10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-startup-s7" target="f-startup-s8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-t11" value="&lt;b&gt;Ce que l'utilisateur voit&lt;/b&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#455A64;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="740" y="112" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-splash" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FFFFFF;strokeColor=#37474F;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="740" y="140" width="420" height="119" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-splash-s" value="" style="rounded=0;html=1;fillColor=#37474F;strokeColor=none;" vertex="1" parent="f-startup-splash">
+          <mxGeometry x="0" y="14.0" width="420" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-splash-h" value="Fenêtre de démarrage" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#37474F;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-startup-splash">
+          <mxGeometry x="0" y="0" width="420" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-splash-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;GUI/electron/Splash.html&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Logo, roue, et une ligne de message.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;setSplashMessage(texte)&lt;/span&gt; (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;main.js&lt;/span&gt;) réécrit cette ligne ; les messages en rouge ci-contre restent affichés : il faut relancer l'application.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-startup-splash">
+          <mxGeometry x="0" y="28" width="420" height="91" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-e12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-startup-s1" target="f-startup-splash">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-srv" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FBF4E6;strokeColor=#B7791F;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="740" y="614" width="420" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-srv-s" value="" style="rounded=0;html=1;fillColor=#B7791F;strokeColor=none;" vertex="1" parent="f-startup-srv">
+          <mxGeometry x="0" y="14.0" width="420" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-srv-h" value="Back-end" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#B7791F;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-startup-srv">
+          <mxGeometry x="0" y="0" width="420" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-srv-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;scripts/FragHub.py&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;/health&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;/database-status&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;/init-data&lt;/span&gt;.&lt;/div&gt;&lt;div style=&quot;color:#607D8B;font-style:italic&quot;&gt;Diagramme du back-end : documentation/Backend_component_diagram.drawio, page 5.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-startup-srv">
+          <mxGeometry x="0" y="28" width="420" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-e13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#B7791F;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#B7791F;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.2;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-startup-s4" target="f-startup-srv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-e14" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#B7791F;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#B7791F;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-startup-s5" target="f-startup-srv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-e15" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#B7791F;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#B7791F;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.8;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-startup-s6" target="f-startup-srv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-e16" value="lance" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#B7791F;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#B7791F;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;dashPattern=6 3;" edge="1" parent="1" source="f-startup-s2" target="f-startup-srv">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="724" y="301.7" />
+              <mxPoint x="724" y="590" />
+              <mxPoint x="950.0" y="590" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f-startup-auto-t17" value="&lt;b&gt;Services de main.js&lt;/b&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#455A64;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="112" width="380" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-proto" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="140" width="380" height="119" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-proto-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="f-startup-proto">
+          <mxGeometry x="0" y="14.0" width="380" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-proto-h" value="Protocole app://" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#3949AB;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-startup-proto">
+          <mxGeometry x="0" y="0" width="380" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-proto-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;protocol.handle('app')&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Déclaré avant le démarrage (sûr, avec &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;fetch&lt;/span&gt;) ; chaque adresse &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;app://-/…&lt;/span&gt; est lue dans &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;.output/public/&lt;/span&gt;.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Racine : dossier de l'application une fois installée, dossier &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;GUI/&lt;/span&gt; en développement.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-startup-proto">
+          <mxGeometry x="0" y="28" width="380" height="91" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-e18" value="app://" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#90A4AE;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#90A4AE;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;dashed=1;dashPattern=6 3;" edge="1" parent="1" source="f-startup-s3" target="f-startup-proto">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1190" y="429.2" />
+              <mxPoint x="1190" y="229.25" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f-startup-ipc" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="281" width="380" height="119" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-ipc-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="f-startup-ipc">
+          <mxGeometry x="0" y="14.0" width="380" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-ipc-h" value="Boîtes de dialogue (IPC)" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#3949AB;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-startup-ipc">
+          <mxGeometry x="0" y="0" width="380" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-ipc-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;ipcMain.handle&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;dialog:openFiles&lt;/span&gt; : plusieurs fichiers &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;.json&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;.jsonl&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;.csv&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;.msp&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;.mgf&lt;/span&gt;.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;dialog:openFolder&lt;/span&gt; : un dossier, création possible.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;appelées par &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;preload.cjs&lt;/span&gt; (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;electronAPI&lt;/span&gt;)&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-startup-ipc">
+          <mxGeometry x="0" y="28" width="380" height="91" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-t19" value="Légende" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#263238;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="440" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-l20" value="" style="rounded=1;arcSize=20;fillColor=#3949AB;strokeColor=#3949AB;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="466" width="22" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-t21" value="Electron : processus principal" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="463" width="270" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-l22" value="" style="rounded=1;arcSize=20;fillColor=#37474F;strokeColor=#37474F;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="485" width="22" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-t23" value="Fenêtres et fichiers" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="482" width="270" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-l24" value="" style="rounded=1;arcSize=20;fillColor=#B7791F;strokeColor=#B7791F;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="504" width="22" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-t25" value="Back-end Python (autre diagramme)" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="501" width="270" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-auto-t26" value="&lt;span style=&quot;color:#C62828&quot;&gt;✕&lt;/span&gt;&amp;nbsp; message d'erreur affiché sur la fenêtre de démarrage" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="525" width="380" height="16" as="geometry" />
+        </mxCell>
+        <UserObject id="f-startup-back" label="" link="data:page/id,f-overview">
+          <mxCell style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
+            <mxGeometry x="1220" y="561" width="380" height="74" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="f-startup-back-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="f-startup-back">
+          <mxGeometry x="0" y="14.0" width="380" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-back-h" value="Retour" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#3949AB;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-startup-back">
+          <mxGeometry x="0" y="0" width="380" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-startup-back-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Vue d'ensemble du front-end.&lt;/div&gt;&lt;div style=&quot;color:#3949AB;font-weight:bold&quot;&gt;Retour : vue d'ensemble&amp;nbsp;→&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-startup-back">
+          <mxGeometry x="0" y="28" width="380" height="46" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="3 · Interface" id="f-interface">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1654" pageHeight="2339" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="f-interface-auto-z3" value="Six onglets de réglage (app/components/)" style="rounded=1;arcSize=2;fillColor=none;strokeColor=#00897B;dashed=1;dashPattern=8 4;html=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;fontSize=13;fontStyle=1;fontColor=#00897B;" vertex="1" parent="1">
+          <mxGeometry x="28" y="255" width="1504" height="357" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-t1" value="L'interface : réglages, lancement et suivi d'un run" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=24;fontColor=#263238;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="40" y="26" width="1200" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-t2" value="Branche Rust_FragHub · dossier GUI/ · état du code au 12 novembre 2026 · app/app.vue, app/components/" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="40" y="64" width="1200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-app" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="1480" height="89" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-app-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="f-interface-app">
+          <mxGeometry x="0" y="14.0" width="1480" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-app-h" value="Racine de l'interface" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-interface-app">
+          <mxGeometry x="0" y="0" width="1480" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-app-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;app/app.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Hors run (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;isExecuting&lt;/span&gt; faux) : bandeau INPUT · OUTPUT · Filters · De Novo · Output settings · Projects settings, et bouton START. Pendant un run : &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;ProgressView&lt;/span&gt; à la place.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Crée &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;parameters&lt;/span&gt; avec toutes les valeurs par défaut ; interrupteur de mode sombre (bibliothèque DarkReader, appliquée à toute la page).&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-interface-app">
+          <mxGeometry x="0" y="28" width="1480" height="61" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t1" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="289" width="480" height="119" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t1-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="f-interface-t1">
+          <mxGeometry x="0" y="14.0" width="480" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t1-h" value="INPUT" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-interface-t1">
+          <mxGeometry x="0" y="0" width="480" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t1-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;InputTab.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Parcourir (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;electronAPI.selectFiles&lt;/span&gt;), retirer un fichier, tout effacer.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Pour chaque fichier, nom de sa base : MoNA, GNPS, MassBank, HMDB, NIST, Respect, ou texte libre ; « Unknown » par défaut.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;input_directory&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;input_db_names&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-interface-t1">
+          <mxGeometry x="0" y="28" width="480" height="91" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t2" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="540" y="289" width="480" height="89" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t2-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="f-interface-t2">
+          <mxGeometry x="0" y="14.0" width="480" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t2-h" value="OUTPUT" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-interface-t2">
+          <mxGeometry x="0" y="0" width="480" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t2-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;OutputTab.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Parcourir (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;electronAPI.selectFolder&lt;/span&gt;) : chemin absolu du dossier.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;output_directory&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-interface-t2">
+          <mxGeometry x="0" y="28" width="480" height="61" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t3" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="289" width="480" height="164" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t3-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="f-interface-t3">
+          <mxGeometry x="0" y="14.0" width="480" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t3-h" value="Filters" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-interface-t3">
+          <mxGeometry x="0" y="0" width="480" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t3-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;FiltersTab.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Un interrupteur et ses seuils par filtre, avec une description ; virgule décimale acceptée.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;normalize_intensity&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;remove_peak_above_precursormz&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;check_minimum_peak_requiered&lt;/span&gt; (3 pics), &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;reduce_peak_list&lt;/span&gt; (500 pics)&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;remove_spectrum_under_entropy_score&lt;/span&gt; (0.5)&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;keep_mz_in_range&lt;/span&gt; (50 à 2000)&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;check_minimum_of_high_peaks_requiered&lt;/span&gt; (5 %, 2 pics)&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-interface-t3">
+          <mxGeometry x="0" y="28" width="480" height="136" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t4" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="477" width="480" height="89" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t4-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="f-interface-t4">
+          <mxGeometry x="0" y="14.0" width="480" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t4-h" value="De Novo" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-interface-t4">
+          <mxGeometry x="0" y="0" width="480" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t4-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;DeNovoTab.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Calcul de novo, désactivé par défaut, et sa tolérance.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;calculate_de_novo&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;de_novo_ppm_tolerance&lt;/span&gt; (10)&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-interface-t4">
+          <mxGeometry x="0" y="28" width="480" height="61" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t5" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="540" y="477" width="480" height="89" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t5-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="f-interface-t5">
+          <mxGeometry x="0" y="14.0" width="480" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t5-h" value="Output settings" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-interface-t5">
+          <mxGeometry x="0" y="0" width="480" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t5-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;OutputSettingTab.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Formats écrits, tous cochés par défaut.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;csv&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;msp&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;json&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;mzspeclib_json&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-interface-t5">
+          <mxGeometry x="0" y="28" width="480" height="61" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t6" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="477" width="480" height="119" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t6-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="f-interface-t6">
+          <mxGeometry x="0" y="14.0" width="480" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t6-h" value="Projects settings" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-interface-t6">
+          <mxGeometry x="0" y="0" width="480" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-t6-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;ProjectsTab.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Remise à zéro des mises à jour : possible seulement si le chemin du dossier de sortie contient « FragHub », sinon forcée à NO.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Journal de performances, désactivé par défaut.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;reset_updates&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;write_perf_logs&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-interface-t6">
+          <mxGeometry x="0" y="28" width="480" height="91" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-interface-app" target="f-interface-auto-z3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-state" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF2F4;strokeColor=#546E7A;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="646" width="1480" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-state-s" value="" style="rounded=0;html=1;fillColor=#546E7A;strokeColor=none;" vertex="1" parent="f-interface-state">
+          <mxGeometry x="0" y="14.0" width="1480" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-state-h" value="État partagé : parameters" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#546E7A;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-interface-state">
+          <mxGeometry x="0" y="0" width="1480" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-state-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;useState('parameters')&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Un seul dictionnaire, rempli par les six onglets ; « oui » = 1.0, « non » = 0.0. START l'envoie tel quel au back-end, qui le lit comme les arguments de la ligne de commande.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-interface-state">
+          <mxGeometry x="0" y="28" width="1480" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-e5" value="remplissent" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-interface-auto-z3" target="f-interface-state">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-start" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="760" width="470" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-start-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="f-interface-start">
+          <mxGeometry x="0" y="14.0" width="470" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-start-h" value="START" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-interface-start">
+          <mxGeometry x="0" y="0" width="470" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-start-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;app.vue · startExecution&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Passe &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;isExecuting&lt;/span&gt; à vrai (le suivi s'affiche et se connecte), puis 0,5 s plus tard envoie &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;parameters&lt;/span&gt; : &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;POST /run-analysis&lt;/span&gt;.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Refus ou serveur injoignable : retour aux onglets (erreur dans la console).&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-interface-start">
+          <mxGeometry x="0" y="28" width="470" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-e6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.16;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-interface-state" target="f-interface-start">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-pv" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E8F0FA;strokeColor=#1565C0;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="560" y="760" width="520" height="164" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-pv-s" value="" style="rounded=0;html=1;fillColor=#1565C0;strokeColor=none;" vertex="1" parent="f-interface-pv">
+          <mxGeometry x="0" y="14.0" width="520" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-pv-h" value="Suivi du run" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#1565C0;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-interface-pv">
+          <mxGeometry x="0" y="0" width="520" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-pv-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;ProgressView.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Se connecte à Socket.IO (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;127.0.0.1:8000&lt;/span&gt;) dès son affichage.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;step&lt;/span&gt; : titre d'étape dans le journal ; &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;deletion&lt;/span&gt; : spectres supprimés, en rouge ; &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;total_items&lt;/span&gt; et &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;progress&lt;/span&gt; : nouvelle tâche et avancement (les messages d'une tâche déjà dépassée sont ignorés) ; &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;completion&lt;/span&gt; : message final et chemin du rapport.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Onglet EXECUTION REPORT (journal) et, à la fin, onglet du rapport HTML, affiché dans un cadre depuis &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;GET /report?path=…&lt;/span&gt;.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;STOP : &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;GET /stop-analysis&lt;/span&gt; ; FINISH : &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;isExecuting&lt;/span&gt; faux, retour aux onglets.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-interface-pv">
+          <mxGeometry x="0" y="28" width="520" height="136" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-e7" value="affiche" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-interface-start" target="f-interface-pv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-ap" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E8F0FA;strokeColor=#1565C0;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="760" width="390" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-ap-s" value="" style="rounded=0;html=1;fillColor=#1565C0;strokeColor=none;" vertex="1" parent="f-interface-ap">
+          <mxGeometry x="0" y="14.0" width="390" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-ap-h" value="Barre de la tâche en cours" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#1565C0;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-interface-ap">
+          <mxGeometry x="0" y="0" width="390" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-ap-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;ActiveProgress.vue&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Nom de la tâche, pourcentage, éléments traités / total, temps écoulé, temps restant estimé, vitesse.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Les tâches terminées restent dans le journal, encadrées en vert.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-interface-ap">
+          <mxGeometry x="0" y="28" width="390" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-e8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-interface-pv" target="f-interface-ap">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-srv" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FBF4E6;strokeColor=#B7791F;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="560" y="974" width="520" height="89" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-srv-s" value="" style="rounded=0;html=1;fillColor=#B7791F;strokeColor=none;" vertex="1" parent="f-interface-srv">
+          <mxGeometry x="0" y="14.0" width="520" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-srv-h" value="Back-end" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#B7791F;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-interface-srv">
+          <mxGeometry x="0" y="0" width="520" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-srv-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;scripts/FragHub.py · 127.0.0.1:8000&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;POST /run-analysis&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;GET /stop-analysis&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;GET /report&lt;/span&gt;, messages Socket.IO.&lt;/div&gt;&lt;div style=&quot;color:#607D8B;font-style:italic&quot;&gt;Diagramme du back-end : documentation/Backend_component_diagram.drawio, page 5.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-interface-srv">
+          <mxGeometry x="0" y="28" width="520" height="61" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-e9" value="POST /run-analysis" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#B7791F;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#B7791F;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-interface-start" target="f-interface-srv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-e10" value="Socket.IO" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#B7791F;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#B7791F;labelBackgroundColor=#FFFFFF;exitX=0.35;exitY=0;exitDx=0;exitDy=0;entryX=0.35;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="f-interface-srv" target="f-interface-pv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-e11" value="stop, rapport" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#B7791F;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#B7791F;labelBackgroundColor=#FFFFFF;exitX=0.7;exitY=1;exitDx=0;exitDy=0;entryX=0.7;entryY=0;entryDx=0;entryDy=0;dashed=1;dashPattern=6 3;" edge="1" parent="1" source="f-interface-pv" target="f-interface-srv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-t12" value="Légende" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#263238;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="974" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-l13" value="" style="rounded=1;arcSize=20;fillColor=#00897B;strokeColor=#00897B;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="1000" width="22" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-t14" value="Interface : onglets de réglage (Vue)" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="997" width="270" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-l15" value="" style="rounded=1;arcSize=20;fillColor=#1565C0;strokeColor=#1565C0;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="1019" width="22" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-t16" value="Interface : suivi du run (Vue)" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="1016" width="270" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-l17" value="" style="rounded=1;arcSize=20;fillColor=#546E7A;strokeColor=#546E7A;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="1038" width="22" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-t18" value="État partagé, pont, configuration" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="1035" width="270" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-l19" value="" style="rounded=1;arcSize=20;fillColor=#B7791F;strokeColor=#B7791F;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="1057" width="22" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-t20" value="Back-end Python (autre diagramme)" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="1054" width="270" height="16" as="geometry" />
+        </mxCell>
+        <UserObject id="f-interface-back" label="" link="data:page/id,f-overview">
+          <mxCell style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
+            <mxGeometry x="1130" y="1108" width="390" height="74" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="f-interface-back-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="f-interface-back">
+          <mxGeometry x="0" y="14.0" width="390" height="14.0" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-back-h" value="Retour" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#3949AB;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="f-interface-back">
+          <mxGeometry x="0" y="0" width="390" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-back-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Vue d'ensemble du front-end.&lt;/div&gt;&lt;div style=&quot;color:#3949AB;font-weight:bold&quot;&gt;Retour : vue d'ensemble&amp;nbsp;→&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="f-interface-back">
+          <mxGeometry x="0" y="28" width="390" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f-interface-auto-t21" value="&lt;span style=&quot;color:#607D8B&quot;&gt;↳&lt;/span&gt;&amp;nbsp; clés de parameters réglées par l'onglet (valeur par défaut)" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="1078" width="390" height="16" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
