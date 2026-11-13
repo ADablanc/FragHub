@@ -91,6 +91,25 @@ def test_archive_et_reference(base, tmp_path, monkeypatch, capsys):
     assert "notes.txt" in capsys.readouterr().out   # signalé comme laissé hors de l'archive
 
 
+def test_reference_garde_les_versions_publiees_avant(base, tmp_path, monkeypatch):
+    # La référence actuelle (2099-01-01) et sa liste deviennent les versions précédentes de la nouvelle
+    root = tmp_path / "depot"
+    (root / "datas").mkdir(parents=True)
+    current = {"version": "2099-01-01", "doi": "10.5281/zenodo.2", "files": [{"name": "part_0000.parquet", "size": 5, "sha256": "x"}],
+               "previous_versions": [{"version": "2098-01-01", "doi": "10.5281/zenodo.1", "files": [{"name": "part_0000.parquet", "size": 4}]}]}
+    (root / "datas" / "internal_database.json").write_text(json.dumps(current), encoding="utf-8")
+    monkeypatch.setattr(make_archive, "ROOT", str(root))
+    run_main(make_archive, monkeypatch, "--base", base, "--version", "2099-02-01", "--output", tmp_path / "o")
+    ref = json.loads((tmp_path / "o" / "internal_database_2099-02-01.json").read_text(encoding="utf-8"))
+    assert ref["previous_versions"] == [
+        {"version": "2099-01-01", "doi": "10.5281/zenodo.2", "files": [{"name": "part_0000.parquet", "size": 5}]},
+        {"version": "2098-01-01", "doi": "10.5281/zenodo.1", "files": [{"name": "part_0000.parquet", "size": 4}]}]
+    # Même version refaite (archive recalculée) : elle ne se liste pas elle-même
+    run_main(make_archive, monkeypatch, "--base", base, "--version", "2099-01-01", "--output", tmp_path / "p")
+    ref = json.loads((tmp_path / "p" / "internal_database_2099-01-01.json").read_text(encoding="utf-8"))
+    assert [v["version"] for v in ref["previous_versions"]] == ["2098-01-01"]
+
+
 def test_archive_reproductible(base, tmp_path, monkeypatch):
     sums = []
     for out in ("a", "b"):

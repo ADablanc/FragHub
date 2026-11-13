@@ -30,7 +30,7 @@ Key features:<br>
   - **InChI and InChIKey** are the standard IUPAC identifiers of this desalted, neutralized molecule, so they can be compared with PubChem and other databases.
   - **Output SMILES are normalized with RDKit**: they are written in the RDKit canonical tautomer form (stereochemistry kept), so that the same molecule is always written the same way. When the canonical tautomer would describe a different molecule (different InChI, e.g. keto/enol), the SMILES of the molecule as given is written instead. Output SMILES may therefore differ from the SMILES of the input files.
 - **Ontologies**: FragHub completes the name and the chemical classes (ClassyFire and NPClassifier) of each molecule from its internal database, by InChIKey.
-  - The internal molecule database used for this (names, ClassyFire and NPClassifier classes of 7.9 million molecules) is archived on Zenodo: [10.5281/zenodo.24203577](https://doi.org/10.5281/zenodo.24203577). It is bundled in the installers. It is not in the git repository: when FragHub runs from source, it downloads the database (1.1 GB) from Zenodo the first time it starts, or when `python build_backend.py` is run. See [Internal database](#internal-database) for its content.
+  - The internal molecule database used for this (names, ClassyFire and NPClassifier classes of 7.9 million molecules) is archived on Zenodo: [10.5281/zenodo.24203577](https://doi.org/10.5281/zenodo.24203577). It is bundled in the installers. It is not in the git repository: when FragHub runs from source, it downloads the database (1.1 GB) from Zenodo the first time it starts, or when `python build_backend.py` is run, and downloads it again when a new version of FragHub uses a newer database. See [Internal database](#internal-database) for its content.
 - **Spectra organization**: FragHub separates spectra based on different experimental parameters such as polarity (positive/negative), chromatographic mode (LC/GC, or DI for direct injection without chromatography), and acquisition type (experimental/in silico), facilitating their use and subsequent analysis.![img_8.png](img_8.png)
 - **Compatibility with various analysis software**: Standardized spectra produced by FragHub are compatible with multiple analysis software, including MSdial, MZmine, and Flash Entropy Search, providing users with maximum flexibility in choosing analysis tools.
 
@@ -44,7 +44,7 @@ FragHub completes every spectrum from an internal database of molecules, indexed
 [![Zenodo](https://img.shields.io/badge/Zenodo-10.5281%2Fzenodo.24203577-1f73b7?style=for-the-badge)](https://doi.org/10.5281/zenodo.24203577)
 
 - **Version 2026-11-13**, archived on Zenodo: [10.5281/zenodo.24203577](https://doi.org/10.5281/zenodo.24203577) (17 Parquet files, 1.1 GB).
-- Bundled in the installers; downloaded automatically from Zenodo when FragHub runs from source (`datas/internal_database.json` gives the version to use).
+- Bundled in the installers; downloaded automatically from Zenodo when FragHub runs from source (`datas/internal_database.json` gives the version to use), and replaced at the first start when a new version of FragHub uses a newer database.
 
 | | Molecules | Share |
 |---|---:|---:|

@@ -249,13 +249,16 @@ async def get_database_status():
     with database_status_lock:
         if database_status["state"] == "idle":
             try:
-                missing = internal_database.local_state(BASE_DIR, internal_database.read_reference(BASE_DIR)) == "absente"
+                # Absente, ou version précédente publiée (nouvelle version de FragHub) : téléchargée avec la progression
+                state = internal_database.local_state(BASE_DIR, internal_database.read_reference(BASE_DIR))
+                missing = state in ("absente", "ancienne")
             except internal_database.InternalDatabaseError as e:
                 print(str(e), flush=True)
                 database_status.update(state="error", message="Database reference file unreadable. Please reinstall FragHub.")
             else:
                 if missing:
-                    database_status.update(state="downloading", message="Downloading molecule database…")
+                    database_status.update(state="downloading", message="Downloading molecule database…" if state == "absente"
+                                           else "Updating molecule database to the new version…")
                     threading.Thread(target=_prepare_database, daemon=True).start()
                 else:
                     database_status.update(state="ready")
@@ -265,13 +268,16 @@ async def get_database_status():
 async def init_data():
     if database_status["state"] == "downloading":
         raise HTTPException(status_code=503, detail="Database download in progress.")
-    # Base interne absente (code source sans la base) : téléchargée ici, dans un fil à part pour que le serveur
+    # Base interne absente (code source sans la base) ou version précédente publiée : téléchargée ici, dans un fil à part pour que le serveur
     # continue de répondre pendant ce temps. Si elle est déjà là, l'appel ne fait que comparer des tailles.
-    try:
-        await asyncio.to_thread(internal_database.ensure_internal_database, BASE_DIR)
-    except internal_database.InternalDatabaseError as e:
-        print(str(e), flush=True)
-        raise HTTPException(status_code=503, detail=str(e))
+    # Déjà faite par /database-status (« ready ») : pas refaite ici. Sinon, une mise à jour qui vient d'échouer
+    # (ancienne base gardée) serait retentée tout de suite, avec ses minutes d'attente.
+    if database_status["state"] != "ready":
+        try:
+            await asyncio.to_thread(internal_database.ensure_internal_database, BASE_DIR)
+        except internal_database.InternalDatabaseError as e:
+            print(str(e), flush=True)
+            raise HTTPException(status_code=503, detail=str(e))
     perf_t0 = time.perf_counter()  # PERF_LOG
     fraghub_rust.load_internal_databases(BASE_DIR)
     perf_log.record_init(time.perf_counter() - perf_t0)  # PERF_LOG
@@ -433,7 +439,7 @@ if __name__ == "__main__":
             print("          FragHub CLI Mode Actif          ")
             print("========================================\n")
         
-        # Base interne absente (code source sans la base) : téléchargée depuis Zenodo avant le chargement
+        # Base interne absente (code source sans la base) ou version précédente : téléchargée depuis Zenodo avant le chargement
         try:
             internal_database.ensure_internal_database(BASE_DIR)
         except internal_database.InternalDatabaseError as e:

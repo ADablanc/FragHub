@@ -47,7 +47,7 @@ cd GUI
 npm install
 ```
 
-> **📌 Internal database:** the molecule database (`datas/internal_databases.parquet`, 1.1 GB) is not in the git repository. It is downloaded from Zenodo the first time it is needed: when `python build_backend.py` is run, or when FragHub starts from source. See "Internal database" in section 7.
+> **📌 Internal database:** the molecule database (`datas/internal_databases.parquet`, 1.1 GB) is not in the git repository. It is downloaded from Zenodo the first time it is needed (when `python build_backend.py` is run, or when FragHub starts from source), and downloaded again when `datas/internal_database.json` asks for a newer version. See "Internal database" in section 7.
 
 ---
 
@@ -71,18 +71,19 @@ uv run pyinstaller --noconfirm --onedir --noconsole --paths . --icon="GUI/assets
 
 ## 4. Development Mode (Dev)
 
-To work on the graphical interface in real time (with hot reloading) and test the application:
+**Run the application as it will be installed (Electron).** In the `GUI` folder:
+```bash
+npm run generate
+npm run electron
+```
+*   Electron always loads the generated pages (`GUI/.output/public`): there is no hot reloading, so run `npm run generate` again after changing the interface.
+*   The back-end it starts is the PyInstaller executable in `scripts/dist/FragHub_Backend/`, not `scripts/FragHub.py`: rebuild it (`python build_backend.py`) after changing the back-end.
 
-1. Navigate to the `GUI` folder.
-2. In a first terminal, start the Nuxt development server:
-```bash
-npm run dev
-```
-3. In a second terminal (still in `GUI`), launch the Electron application in dev mode:
-```bash
-npm run electron:dev
-```
-*(You can also use `npm run electron` to launch the wrapper without the extended development tools).*
+**Work on the page in a web browser (hot reloading).** For quick changes of the interface only:
+1. At the root of the repository, start the back-end from source: `python scripts/FragHub.py` (it answers on `http://127.0.0.1:8000`).
+2. In the `GUI` folder, start the Nuxt development server: `npm run dev`, then open the address it prints (`http://localhost:3000`).
+
+Without Electron, the file and folder selection dialogs do not exist: the INPUT tab only knows the names of the files, and the OUTPUT tab cannot choose a folder. This mode is for working on the page, not for running FragHub.
 
 ---
 
@@ -175,21 +176,23 @@ Processing of one molecule (`shim.cc`, `process_single`), in this order:
 ### Internal database
 The InChIKeys of the spectra are looked up in `datas/internal_databases.parquet` (names, ClassyFire and NPClassifier classes): 17 parquet files, one row per InChIKey.
 
-**Where it comes from.** The database is published on Zenodo ([10.5281/zenodo.24203577](https://doi.org/10.5281/zenodo.24203577)) and is not tracked by git. `datas/internal_database.json` says which version FragHub uses: address, size and SHA-256 of the archive, and the list of its files. `scripts/internal_database.py` downloads it when the folder holds no parquet file:
+**Where it comes from.** The database is published on Zenodo ([10.5281/zenodo.24203577](https://doi.org/10.5281/zenodo.24203577)) and is not tracked by git. `datas/internal_database.json` says which version FragHub uses: address, size and SHA-256 of the archive, and the list of its files. `scripts/internal_database.py` downloads it when the folder holds no parquet file, or when it holds a previous published version (see below):
 * at build time: `build_backend.py` and `build_all.py` check it before compiling, and PyInstaller then copies the whole `datas/` folder into the executable, so **the installers bundle the database** and end users download nothing;
 * from source: at the first start of the interface (the start screen shows the progress) or of the `--cli` mode.
 
 ```bash
 python scripts/internal_database.py --check   # says whether the database on disk is the reference one
-python scripts/internal_database.py           # downloads it if it is missing
+python scripts/internal_database.py           # downloads it if it is missing or a previous version
 ```
-The download resumes after an interruption, the archive is checked (size and SHA-256) before being unzipped, and about 2.2 GB of free space is needed during the installation. **A database already on disk is never replaced**, even when it differs from the reference (a locally recomputed database is kept as it is). To go back to the reference version, delete `datas/internal_databases.parquet` and start again. Without a connection, download the archive from the Zenodo page and unzip its parquet files into that folder.
+The download resumes after an interruption, the archive is checked (size and SHA-256) before being unzipped, and about 2.2 GB of free space is needed during the installation. **New version of the database.** `datas/internal_database.json` also lists the versions published before (`previous_versions`, names and sizes of their files). When the database on disk is one of them, for example after updating FragHub from git, it is replaced by the new version at the first start: the archive is downloaded and checked, the old folder is set aside (`internal_databases.parquet.old`) and deleted once the new one is in place. If the download fails (no connection, not enough space), the previous version is kept and used, and the update is tried again at the next start. The installers do not need this: each one bundles its own database.
+
+**Any other database is never replaced** (a locally recomputed database is kept as it is). To go back to the reference version, delete `datas/internal_databases.parquet` and start again. Without a connection, download the archive from the Zenodo page and unzip its parquet files into that folder.
 
 **Publishing a new version.** On Zenodo, open the record of the database and choose "New version" (the number of the new record is reserved as soon as the draft exists), then:
 ```bash
 python scripts/build_dataset/make_archive.py --version YYYY-MM-DD --record NUMBER
 ```
-It writes the archive and its reference file in `scratch/internal_database/`. Upload the `.zip` to the draft, publish it, copy the `.json` over `datas/internal_database.json` and commit it.
+It writes the archive and its reference file in `scratch/internal_database/`. The reference file takes over the version described by the current `datas/internal_database.json`, and its own `previous_versions`, as the versions published before: a database of any of them is updated at the first start. Upload the `.zip` to the draft, publish it, copy the `.json` over `datas/internal_database.json` and commit it.
 
 **Scripts that build the database** (`scripts/build_dataset/`, each one writes a new folder in `scratch/` and never modifies `datas/`):
 * `renormalize_db.py`: same RDKit processing as the spectra (below);

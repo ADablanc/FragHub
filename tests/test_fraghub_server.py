@@ -115,8 +115,19 @@ def test_init_data_charge_la_base(client, monkeypatch):
     assert loaded == [fh.BASE_DIR]
 
 
-def test_init_data_echec_du_telechargement(client, monkeypatch):
+def test_init_data_ne_refait_pas_la_preparation_de_la_base(client, monkeypatch):
+    # « ready » : la base a déjà été préparée par /database-status (une mise à jour qui a échoué n'est pas retentée)
     monkeypatch.setattr(fh, "database_status", {"state": "ready", "percent": 100.0, "message": ""})
+    called = []
+    monkeypatch.setattr(fh.internal_database, "ensure_internal_database", lambda base, **k: called.append(base))
+    monkeypatch.setattr(fh.fraghub_rust, "load_internal_databases", lambda base: None)
+    assert client.get("/init-data").json() == {"status": "loaded"}
+    assert called == []
+
+
+def test_init_data_echec_du_telechargement(client, monkeypatch):
+    # /database-status jamais appelé (« idle ») : la base est préparée ici
+    monkeypatch.setattr(fh, "database_status", {"state": "idle", "percent": 0.0, "message": ""})
 
     def fail(base, **k):
         raise fh.internal_database.InternalDatabaseError("pas de connexion")

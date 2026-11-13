@@ -40,6 +40,25 @@ def sha256(path):
     return h.hexdigest()
 
 
+def previous_versions(new_version):
+    """
+    Versions publiées avant celle-ci, reprises de datas/internal_database.json (la version qu'il décrit, puis sa liste
+    "previous_versions") : FragHub reconnaît ainsi une ancienne base publiée et la remplace par la nouvelle
+    (scripts/internal_database.py). Seuls le nom et la taille des fichiers servent.
+    """
+    try:
+        with open(os.path.join(ROOT, "datas", "internal_database.json"), encoding="utf-8") as f:
+            current = json.load(f)
+    except (OSError, ValueError):
+        return []
+    out = []
+    for v in [current] + current.get("previous_versions", []):
+        if v.get("version") and v.get("version") != new_version and v.get("version") not in [o["version"] for o in out]:
+            out.append({"version": v["version"], "doi": v.get("doi", ""),
+                        "files": [{"name": f["name"], "size": f["size"]} for f in v.get("files", [])]})
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(description="Fabrique l'archive de la base interne de FragHub.")
     ap.add_argument("--base", default=os.path.join(ROOT, "datas", "internal_databases.parquet"))
@@ -89,7 +108,8 @@ def main():
 
     url = "https://zenodo.org/records/%s/files/%s?download=1" % (a.record, name) if a.record else ""
     doi = "10.5281/zenodo.%s" % a.record if a.record else ""
-    reference = {"version": a.version, "doi": doi, "url": url, "size": os.path.getsize(dst), "sha256": sha256(dst), "files": files}
+    reference = {"version": a.version, "doi": doi, "url": url, "size": os.path.getsize(dst), "sha256": sha256(dst), "files": files,
+                 "previous_versions": previous_versions(a.version)}
     ref_path = os.path.join(a.output, "internal_database_%s.json" % a.version)
     with open(ref_path, "w", encoding="utf-8", newline="\n") as f:
         json.dump(reference, f, indent=2)

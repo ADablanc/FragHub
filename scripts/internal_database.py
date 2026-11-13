@@ -5,9 +5,12 @@ Base interne de molécules : téléchargée depuis Zenodo quand elle n'est pas s
 La base (17 fichiers parquet, environ 1,1 Go) n'est plus dans le dépôt git. Le fichier datas/internal_database.json
 dit quelle version il faut : adresse de l'archive, taille, somme SHA-256, liste des fichiers.
 
-Règle : on ne télécharge QUE si datas/internal_databases.parquet ne contient aucun fichier .parquet. Une base déjà
-présente n'est jamais remplacée ni complétée, même si elle diffère de la référence (base recalculée localement) :
-on le signale seulement. Pour reprendre la base de référence, supprimer le dossier et relancer.
+Règle : on télécharge si datas/internal_databases.parquet ne contient aucun fichier .parquet, ou si c'est une
+version précédente publiée sur Zenodo (mêmes fichiers et mêmes tailles qu'une des versions de « previous_versions »
+dans la référence) : une nouvelle version de FragHub qui demande une nouvelle base la remplace alors au premier
+démarrage. Une base qui n'est ni la référence ni une version publiée (base recalculée localement) n'est jamais
+remplacée ni complétée : on le signale seulement. Pour reprendre la base de référence, supprimer le dossier et
+relancer.
 
 Le téléchargement reprend là où il s'était arrêté après une coupure. L'archive est vérifiée (taille et SHA-256)
 avant d'être ouverte, puis décompressée dans un dossier provisoire renommé à la fin : le dossier de la base
@@ -60,7 +63,8 @@ def read_reference(base_dir):
 def local_state(base_dir, ref):
     """
     État de la base sur le disque : "absente" (aucun .parquet), "reference" (mêmes fichiers et mêmes tailles que
-    la référence) ou "differente" (autre chose : base recalculée localement, autre version...).
+    la référence), "ancienne" (mêmes fichiers et mêmes tailles qu'une version précédente publiée, listée dans
+    "previous_versions" de la référence) ou "differente" (autre chose : base recalculée localement...).
     """
     _, _, db_dir = _paths(base_dir)
     if os.path.isfile(db_dir):
@@ -73,7 +77,24 @@ def local_state(base_dir, ref):
     if not present:
         return "absente"
     expected = {f["name"]: f["size"] for f in ref["files"]}
-    return "reference" if present == expected else "differente"
+    if present == expected:
+        return "reference"
+    for old in ref.get("previous_versions", []):
+        if present == {f["name"]: f["size"] for f in old.get("files", [])}:
+            return "ancienne"
+    return "differente"
+
+
+def installed_previous_version(base_dir, ref):
+    """Version publiée précédente installée sur le disque (son champ "version"), ou None."""
+    _, _, db_dir = _paths(base_dir)
+    if not os.path.isdir(db_dir):
+        return None
+    present = {n: os.path.getsize(os.path.join(db_dir, n)) for n in os.listdir(db_dir) if n.endswith(".parquet")}
+    for old in ref.get("previous_versions", []):
+        if present and present == {f["name"]: f["size"] for f in old.get("files", [])}:
+            return old.get("version", "?")
+    return None
 
 
 def _ssl_context():
@@ -139,14 +160,15 @@ def _download(ref, part_path, log, progress):
 
 def ensure_internal_database(base_dir, log=print, progress=None):
     """
-    Fait en sorte que la base interne soit sur le disque. Renvoie "reference", "differente" ou "telechargee".
+    Fait en sorte que la base interne soit sur le disque. Renvoie "reference", "differente", "telechargee" (base
+    absente, installée), "mise_a_jour" (version précédente publiée, remplacée par celle de la référence) ou
+    "ancienne" (version précédente gardée parce que la mise à jour a échoué : FragHub fonctionne avec elle).
     progress, s'il est donné, est appelé avec (étape, octets faits, octets au total) ; les étapes sont "download",
     "verify" et "extract" (pour l'écran de démarrage de l'interface).
     Lève InternalDatabaseError (message complet, avec le lien de téléchargement à la main) si la base manque et
     ne peut pas être obtenue.
     """
     ref = read_reference(base_dir)
-    datas, _, db_dir = _paths(base_dir)
     state = local_state(base_dir, ref)
     if state == "reference":
         return state
@@ -154,14 +176,34 @@ def ensure_internal_database(base_dir, log=print, progress=None):
         log("Base interne : les fichiers présents ne sont pas ceux de la version %s de référence ; ils sont utilisés tels quels." % ref["version"])
         return state
 
+    if state == "ancienne":
+        old_version = installed_previous_version(base_dir, ref)
+        try:
+            return _install(base_dir, ref, log, progress, old_version)
+        except InternalDatabaseError as e:
+            # Pas de connexion, pas de place... : l'ancienne base reste utilisée, la mise à jour sera retentée au
+            # prochain démarrage (le téléchargement reprend là où il s'est arrêté)
+            log("Base interne : la mise à jour de la version %s vers la version %s n'a pas pu se faire ; la version %s "
+                "est utilisée en attendant.\n%s" % (old_version, ref["version"], old_version, e))
+            return "ancienne"
+    return _install(base_dir, ref, log, progress, None)
+
+
+def _install(base_dir, ref, log, progress, old_version):
+    """Télécharge, vérifie et met en place la base de la référence (old_version : version publiée remplacée)."""
+    datas, _, db_dir = _paths(base_dir)
     where = "https://doi.org/%s" % ref["doi"] if ref.get("doi") else ref["url"]
     manual = ("Pour l'installer à la main : télécharger %s depuis %s et décompresser ses fichiers .parquet dans %s"
               % (os.path.basename(ref["url"].split("?")[0]), where, db_dir))
     free = shutil.disk_usage(datas).free
     if free < 2 * ref["size"] + 200 * 10 ** 6:
-        raise InternalDatabaseError("Base interne absente, et pas assez de place sur le disque pour la télécharger "
+        raise InternalDatabaseError("Base interne absente ou ancienne, et pas assez de place sur le disque pour la télécharger "
                                     "(%.1f Go libres, %.1f Go nécessaires).\n%s" % (free / 1e9, (2 * ref["size"] + 200 * 10 ** 6) / 1e9, manual))
-    log("Base interne absente : téléchargement de la version %s (%.2f Go) depuis Zenodo, une seule fois." % (ref["version"], ref["size"] / 1e9))
+    if old_version:
+        log("Base interne : la version %s installée est remplacée par la version %s (%.2f Go, depuis Zenodo, une seule fois)."
+            % (old_version, ref["version"], ref["size"] / 1e9))
+    else:
+        log("Base interne absente : téléchargement de la version %s (%.2f Go) depuis Zenodo, une seule fois." % (ref["version"], ref["size"] / 1e9))
     archive = os.path.join(datas, "internal_database_%s.zip" % ref["version"])
     part = archive + ".part"
     try:
@@ -194,14 +236,25 @@ def ensure_internal_database(base_dir, log=print, progress=None):
                 shutil.copyfileobj(src, dst, BLOCK)   # zipfile vérifie le CRC de chaque fichier à la lecture
             if os.path.getsize(os.path.join(tmp_dir, name)) != expected[name]:
                 raise InternalDatabaseError("%s : taille différente de la référence après décompression." % name)
+    old_dir = db_dir + ".old"
     try:
-        if os.path.isdir(db_dir):
+        if old_version:
+            # Ancienne version publiée : mise de côté, puis supprimée une fois la nouvelle en place
+            shutil.rmtree(old_dir, ignore_errors=True)
+            os.replace(db_dir, old_dir)
+        elif os.path.isdir(db_dir):
             os.rmdir(db_dir)   # dossier sans .parquet ; refusé s'il contient autre chose
         os.replace(tmp_dir, db_dir)
     except OSError as e:
+        if old_version and os.path.isdir(old_dir) and not os.path.exists(db_dir):
+            os.replace(old_dir, db_dir)   # l'ancienne base est remise à sa place
         raise InternalDatabaseError("Base téléchargée dans %s, mais impossible de la mettre à sa place (%s).\n"
                                     "Supprimer ou vider le dossier %s puis relancer : rien ne sera retéléchargé." % (tmp_dir, e, db_dir))
+    shutil.rmtree(old_dir, ignore_errors=True)
     os.remove(part)
+    if old_version:
+        log("Base interne mise à jour (%s -> %s) : %d fichiers dans %s" % (old_version, ref["version"], len(expected), db_dir))
+        return "mise_a_jour"
     log("Base interne installée : %d fichiers dans %s" % (len(expected), db_dir))
     return "telechargee"
 

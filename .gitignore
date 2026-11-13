@@ -46,6 +46,7 @@ __pycache__/
 # --- Base interne de molécules : publiée sur Zenodo, téléchargée par scripts/internal_database.py ---
 /datas/internal_databases.parquet/
 /datas/internal_databases.parquet.tmp/
+/datas/internal_databases.parquet.old/
 /datas/internal_database_*.zip
 /datas/internal_database_*.zip.part
 

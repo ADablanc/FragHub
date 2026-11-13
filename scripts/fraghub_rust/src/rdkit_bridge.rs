@@ -89,7 +89,8 @@ pub fn process_mols(
     for spec in &mut spectrum_list {
         let inchi = spec.metadata.get("INCHI").cloned().unwrap_or_default();
         let smiles = spec.metadata.get("SMILES").cloned().unwrap_or_default();
-        let mut target_mol = if !inchi.is_empty() && inchi != "nan" { inchi } else { smiles };
+        let used_inchi = !inchi.is_empty() && inchi != "nan";
+        let mut target_mol = if used_inchi { inchi } else { smiles.clone() };
 
         if !target_mol.is_empty() && target_mol != "nan" {
             if !target_mol.contains("InChI=") {
@@ -115,7 +116,17 @@ pub fn process_mols(
         }
 
         if !is_valid {
-            // RDKit a échoué. On tente de trouver un SMILES de secours via l'INCHIKEY.
+            // RDKit a échoué. Premier secours (option 3) : le SMILES du spectre, quand c'est son InChI qui a été
+            // calculée et qu'il a aussi un SMILES. Il est calculé dans la passe 2 ; s'il échoue lui aussi, le SMILES
+            // de la base (ci-dessous) est pris à la place, comme avant.
+            if used_inchi && !smiles.trim().is_empty() && smiles != "nan" {
+                let own_smiles = INDIGO_SMILES_CORRECTION_PATTERN.replace_all(&smiles, "").to_string();
+                if !own_smiles.trim().is_empty() {
+                    unique_mols_pass2.insert((own_smiles.clone(), precursortype.clone(), precursormz_str.clone()));
+                    spec.metadata.insert(FALLBACK_OWN_SMILES.to_string(), own_smiles);
+                }
+            }
+            // Second secours : le SMILES de la base, trouvé par l'INCHIKEY.
             let inchikey = spec.metadata.get("INCHIKEY").cloned().unwrap_or_default();
             if INCHIKEY_PATTERN.is_match(&inchikey) {
                 if let Some(loc) = db.locate(&inchikey) {
@@ -160,14 +171,6 @@ pub fn process_mols(
             }
         }
 
-        // Si on a un fallback défini, on l'utilise à la place du clean_mol original
-        if let Some(fallback) = spec.metadata.get("FALLBACK_SMILES_PY1") {
-            clean_mol = fallback.clone();
-            // On met à jour la colonne SMILES pour que l'export contienne le bon SMILES de PubChem
-            spec.metadata.insert("SMILES".to_string(), fallback.clone());
-            spec.metadata.remove("FALLBACK_SMILES_PY1");
-        }
-
         let precursortype = spec.metadata.get("PRECURSORTYPE").cloned().unwrap_or_default();
         let precursormz_raw = spec.metadata.get("PRECURSORMZ").map(|s| s.as_str()).unwrap_or("");
         let precursormz_str = if let Ok(mz) = precursormz_raw.parse::<f64>() {
@@ -175,6 +178,21 @@ pub fn process_mols(
         } else {
             "".to_string()
         };
+
+        // Secours quand le calcul de la molécule du spectre a échoué (passe 2) : SMILES du spectre s'il a donné un
+        // résultat, sinon SMILES de la base (qui remplace alors le SMILES du spectre dans la sortie, comme avant).
+        let own = spec.metadata.remove(FALLBACK_OWN_SMILES);
+        let from_db = spec.metadata.remove("FALLBACK_SMILES_PY1");
+        let computed = |mol: &str| cache.get(&format!("{}|{}|{}", mol, precursortype, precursormz_str))
+            .map_or(false, |t| t.contains_key("EXACTMASS"));
+        match choose_fallback(own, from_db, computed) {
+            Some(Fallback::OwnSmiles(s)) => clean_mol = s,
+            Some(Fallback::DatabaseSmiles(s)) => {
+                clean_mol = s.clone();
+                spec.metadata.insert("SMILES".to_string(), s);
+            }
+            None => {}
+        }
         
         let cache_key = format!("{}|{}|{}", clean_mol, precursortype, precursormz_str);
 
@@ -242,6 +260,27 @@ pub fn process_mols(
 }
 
 
+/// Clé provisoire : SMILES du spectre à essayer quand son InChI n'a pas pu être calculée (retirée avant l'écriture).
+const FALLBACK_OWN_SMILES: &str = "FALLBACK_SMILES_OWN";
+
+/// Secours retenu pour un spectre dont la molécule n'a pas pu être calculée.
+#[derive(Debug, PartialEq)]
+enum Fallback {
+    /// SMILES du spectre (son InChI avait échoué) : la colonne SMILES du spectre est gardée.
+    OwnSmiles(String),
+    /// SMILES de la base interne : il remplace le SMILES du spectre.
+    DatabaseSmiles(String),
+}
+
+/// Ordre des secours : le SMILES du spectre s'il a été calculé, sinon le SMILES de la base (gardé même s'il a
+/// échoué, comme avant : le spectre est alors supprimé à la vérification finale).
+fn choose_fallback(own: Option<String>, from_db: Option<String>, computed: impl Fn(&str) -> bool) -> Option<Fallback> {
+    match own {
+        Some(s) if computed(&s) => Some(Fallback::OwnSmiles(s)),
+        _ => from_db.map(Fallback::DatabaseSmiles),
+    }
+}
+
 /// Calcule les molécules avec RDKit et renvoie le dictionnaire "molécule|adduit|m/z" -> résultats.
 /// Calcul en C++ (src/rdkit_native), réparti sur tous les cœurs.
 /// Masses calculées par RDKit (EXACTMASS, AVERAGEMASS) : écrites avec 8 décimales au plus. La somme des masses des
@@ -269,6 +308,22 @@ fn run_rdkit(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn secours_smiles_du_spectre_avant_la_base() {
+        let ok = |m: &str| m == "CCO" || m == "OCC";
+        // InChI en échec, SMILES du spectre calculé : il est pris, même si la base a un SMILES
+        assert_eq!(choose_fallback(Some("CCO".into()), Some("OCC".into()), ok), Some(Fallback::OwnSmiles("CCO".into())));
+        // SMILES du spectre en échec lui aussi : SMILES de la base
+        assert_eq!(choose_fallback(Some("C1CC".into()), Some("OCC".into()), ok), Some(Fallback::DatabaseSmiles("OCC".into())));
+        // Pas de SMILES dans le spectre : la base, comme avant l'option 3
+        assert_eq!(choose_fallback(None, Some("OCC".into()), ok), Some(Fallback::DatabaseSmiles("OCC".into())));
+        // Secours de la base gardé même en échec (le spectre sera supprimé à la vérification finale, comme avant)
+        assert_eq!(choose_fallback(None, Some("X".into()), ok), Some(Fallback::DatabaseSmiles("X".into())));
+        // Rien à essayer
+        assert_eq!(choose_fallback(Some("C1CC".into()), None, ok), None);
+        assert_eq!(choose_fallback(None, None, ok), None);
+    }
 
     #[test]
     fn masses_calculees_huit_decimales_au_plus() {

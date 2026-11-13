@@ -120,6 +120,62 @@ def test_base_differente_gardee_telle_quelle(tmp_path, file_server):
     assert "utilisés tels quels" in messages[0]
 
 
+# --- Version précédente publiée : remplacée par celle de la référence ---
+
+OLD = {"part_0000.parquet": b"a" * 900, "part_0001.parquet": b"b" * 1900}   # version précédente (autres tailles)
+
+
+def previous(files=OLD, version="2098-01-01"):
+    return [{"version": version, "doi": "10.5281/zenodo.0", "files": [{"name": n, "size": len(d)} for n, d in files.items()]}]
+
+
+def test_etat_ancienne_version_publiee(tmp_path):
+    ref = write_reference(tmp_path, make_archive(), "http://x/a.zip", previous_versions=previous())
+    install(tmp_path, OLD)
+    assert idb.local_state(str(tmp_path), ref) == "ancienne"
+    assert idb.installed_previous_version(str(tmp_path), ref) == "2098-01-01"
+    (db_dir(tmp_path) / "part_0000.parquet").write_bytes(b"a" * 901)   # retouchée : plus une version publiée
+    assert idb.local_state(str(tmp_path), ref) == "differente"
+
+
+def test_ancienne_version_remplacee(tmp_path, file_server):
+    serve, url, handler = file_server
+    archive = make_archive()
+    serve(archive)
+    write_reference(tmp_path, archive, url, previous_versions=previous())
+    install(tmp_path, OLD)
+    messages = []
+    assert idb.ensure_internal_database(str(tmp_path), log=messages.append) == "mise_a_jour"
+    # Nouvelle base seule (l'ancienne ne laisse aucun fichier), rien d'autre dans datas/
+    assert sorted(os.listdir(db_dir(tmp_path))) == sorted(FILES)
+    for name, data in FILES.items():
+        assert (db_dir(tmp_path) / name).read_bytes() == data
+    assert sorted(os.listdir(tmp_path / "datas")) == ["internal_database.json", "internal_databases.parquet"]
+    assert "2098-01-01" in messages[0] and "remplacée" in messages[0]
+    # Au démarrage suivant : rien à faire
+    assert idb.ensure_internal_database(str(tmp_path), log=lambda m: None) == "reference"
+    assert len(handler.requests) == 1
+
+
+def test_mise_a_jour_impossible_ancienne_base_gardee(tmp_path):
+    archive = make_archive()
+    write_reference(tmp_path, archive, "http://127.0.0.1:9/archive.zip", previous_versions=previous())   # injoignable
+    install(tmp_path, OLD)
+    messages = []
+    assert idb.ensure_internal_database(str(tmp_path), log=messages.append) == "ancienne"
+    for name, data in OLD.items():
+        assert (db_dir(tmp_path) / name).read_bytes() == data
+    assert "en attendant" in messages[-1]
+
+
+def test_base_recalculee_jamais_remplacee_meme_avec_versions_precedentes(tmp_path, file_server):
+    serve, url, handler = file_server
+    write_reference(tmp_path, make_archive(), url, previous_versions=previous())
+    install(tmp_path, {"part_0000.parquet": "base recalculée".encode()})
+    assert idb.ensure_internal_database(str(tmp_path), log=lambda m: None) == "differente"
+    assert handler.requests == []
+
+
 # --- Téléchargement ---
 
 def test_telechargement_complet(tmp_path, file_server):

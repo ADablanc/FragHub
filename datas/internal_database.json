@@ -90,5 +90,81 @@
       "size": 39245698,
       "sha256": "6e0aa4f7e450241e2023381f0d02a3cb55cf488241af352ce4762f643388031c"
     }
+  ],
+  "previous_versions": [
+    {
+      "version": "2026-11-12",
+      "doi": "10.5281/zenodo.24171531",
+      "files": [
+        {
+          "name": "part_0000.parquet",
+          "size": 71705824
+        },
+        {
+          "name": "part_0001.parquet",
+          "size": 71334846
+        },
+        {
+          "name": "part_0002.parquet",
+          "size": 71346206
+        },
+        {
+          "name": "part_0003.parquet",
+          "size": 71536712
+        },
+        {
+          "name": "part_0004.parquet",
+          "size": 71463591
+        },
+        {
+          "name": "part_0005.parquet",
+          "size": 71719546
+        },
+        {
+          "name": "part_0006.parquet",
+          "size": 71286435
+        },
+        {
+          "name": "part_0007.parquet",
+          "size": 71760226
+        },
+        {
+          "name": "part_0008.parquet",
+          "size": 71638322
+        },
+        {
+          "name": "part_0009.parquet",
+          "size": 71350001
+        },
+        {
+          "name": "part_0010.parquet",
+          "size": 71541420
+        },
+        {
+          "name": "part_0011.parquet",
+          "size": 71450124
+        },
+        {
+          "name": "part_0012.parquet",
+          "size": 71360293
+        },
+        {
+          "name": "part_0013.parquet",
+          "size": 71738384
+        },
+        {
+          "name": "part_0014.parquet",
+          "size": 30567576
+        },
+        {
+          "name": "part_0015.parquet",
+          "size": 2694172
+        },
+        {
+          "name": "part_0016.parquet",
+          "size": 39305999
+        }
+      ]
+    }
   ]
 }
