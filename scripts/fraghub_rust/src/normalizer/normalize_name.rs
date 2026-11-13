@@ -35,6 +35,11 @@ static COMMENT_ENERGY: Lazy<Vec<Regex>> = Lazy::new(|| {
     ]
 });
 
+/// Mention des bibliothèques GNPS de synthèse multiplexée en fin de nom :
+/// "Acetyl-L-Carnitine_palmitic-acid (known isomers: 0; isobaric peaks: 1)".
+static NAME_ISOMERS_NOTE: Lazy<Regex> = Lazy::new(|| Regex::new(
+    r"(?i)^(?P<head>.*?\S)\s*\((?P<note>(?:known isomers|isobaric peaks)[^()]*)\)\s*$").unwrap());
+
 fn is_empty(v: &str) -> bool {
     crate::globals_vars::EMPTY_PATTERN.is_match(v)
 }
@@ -57,6 +62,9 @@ fn is_gc(metadata_dict: &HashMap<String, String>) -> bool {
 ///   Seuls les derniers morceaux qui sont exactement une InChIKey ou une énergie ("CE30", "CE 20V", "30eV") sont
 ///   retirés : deux noms séparés par « ; » ("Isosaxalin; Heraclenol") restent tels quels, et le premier morceau
 ///   est toujours gardé. Une énergie au milieu ("Sucrose; AIF; 30eV; MS2Dec") est lue, le nom reste tel quel.
+/// - Bibliothèques GNPS de synthèse multiplexée : "A_B (known isomers: 0; isobaric peaks: 1)" -> "A_B", la mention
+///   étant ajoutée à la fin de COMMENT. Elle décrit l'annotation de ce spectre (structure choisie parmi N isomères),
+///   pas la molécule : elle ne doit pas passer dans le nom (ni dans la base interne, qui reprend les noms).
 /// - GNPS / Metaboanalyst : énergie avec son unité en fin de nom ("TYRAMINE - 20.0 eV",
 ///   "LIPOAMIDE - 50.0 eV M+H" -> "LIPOAMIDE M+H", "Asperterrol(10-30V+20V)" -> "Asperterrol"). Pas pour un
 ///   spectre GC / EI (70 eV = énergie d'ionisation).
@@ -65,9 +73,17 @@ pub fn clean_name_suffixes(mut metadata_dict: HashMap<String, String>) -> HashMa
     let gc = is_gc(&metadata_dict);
     let mut energies: Vec<String> = Vec::new();
     let mut name_out = name.clone();
-    if let Some(caps) = crate::globals_vars::GNPS_COLLISION_ENERGY_EXTRACT_PATTERN.captures(&name) {
+    if let Some(c) = NAME_ISOMERS_NOTE.captures(&name) {
+        let note = c["note"].trim().to_string();
+        name_out = c["head"].trim_end().to_string();
+        let comment = metadata_dict.get("COMMENT").map(|s| s.trim().to_string()).unwrap_or_default();
+        let comment = if is_empty(&comment) { note } else { format!("{comment}; {note}") };
+        metadata_dict.insert("COMMENT".to_string(), comment);
+    }
+    let probe = name_out.clone();
+    if let Some(caps) = crate::globals_vars::GNPS_COLLISION_ENERGY_EXTRACT_PATTERN.captures(&probe) {
         if let Some(e) = caps.get(1) {
-            let real = crate::globals_vars::GNPS_COLLISION_ENERGY_EXTRACT_PATTERN.replace(&name, " ").trim().to_string();
+            let real = crate::globals_vars::GNPS_COLLISION_ENERGY_EXTRACT_PATTERN.replace(&probe, " ").trim().to_string();
             if !real.is_empty() {
                 energies.push(e.as_str().trim().to_string());
                 name_out = real;
@@ -176,6 +192,29 @@ mod tests {
         m.insert("COLLISIONENERGY".to_string(), ce.to_string());
         let m = clean_name_suffixes(m);
         (m["NAME"].clone(), m["COLLISIONENERGY"].clone())
+    }
+
+    #[test]
+    fn mention_known_isomers_passee_du_nom_au_commentaire() {
+        // GNPS, bibliothèques de synthèse multiplexée (CCMSLIB00017390183, CCMSLIB00017390599)
+        let mut m = HashMap::new();
+        m.insert("NAME".to_string(), "Acetyl-L-Carnitine_eicosanoic-acid (known isomers: 0; isobaric peaks: 1)".to_string());
+        let m = clean_name_suffixes(m);
+        assert_eq!(m["NAME"], "Acetyl-L-Carnitine_eicosanoic-acid");
+        assert_eq!(m["COMMENT"], "known isomers: 0; isobaric peaks: 1");
+        // Commentaire déjà rempli : mention ajoutée à la fin ; "isobaric peaks in run" aussi
+        let mut m = HashMap::new();
+        m.insert("NAME".to_string(), "Serotonin_acetoacetamide (known isomers: 0; isobaric peaks in run: 2)".to_string());
+        m.insert("COMMENT".to_string(), "autre".to_string());
+        let m = clean_name_suffixes(m);
+        assert_eq!(m["NAME"], "Serotonin_acetoacetamide");
+        assert_eq!(m["COMMENT"], "autre; known isomers: 0; isobaric peaks in run: 2");
+        // Parenthèse ordinaire en fin de nom : inchangée, commentaire non créé
+        let mut m = HashMap::new();
+        m.insert("NAME".to_string(), "Quercetin (aglycone)".to_string());
+        let m = clean_name_suffixes(m);
+        assert_eq!(m["NAME"], "Quercetin (aglycone)");
+        assert!(!m.contains_key("COMMENT"));
     }
 
     #[test]
