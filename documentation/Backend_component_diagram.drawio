@@ -7,7 +7,7 @@
         <mxCell id="p-overview-t1" value="FragHub — back-end : vue d'ensemble du pipeline" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=24;fontColor=#263238;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="26" width="1200" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="p-overview-t2" value="Branche Rust_FragHub · scripts/fraghub_rust/src · état du code au 12 novembre 2026" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+        <mxCell id="p-overview-t2" value="Branche Rust_FragHub · scripts/fraghub_rust/src · état du code au 13 novembre 2026" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="64" width="1200" height="20" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-t3" value="&lt;b&gt;Qui lance un run&lt;/b&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#455A64;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
@@ -69,7 +69,7 @@
           <mxGeometry x="0" y="28" width="450" height="91" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s2" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="448" width="450" height="89" as="geometry" />
+          <mxGeometry x="440" y="448" width="450" height="119" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s2-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="p-overview-s2">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -77,11 +77,11 @@
         <mxCell id="p-overview-s2-h" value="2 · Empreinte SPLASH" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#3949AB;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-overview-s2">
           <mxGeometry x="0" y="0" width="450" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-overview-s2-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;splash_generator.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Retire les pics inutilisables (m/z ou intensité ≤ 0), puis calcule le SPLASH de chaque spectre, en parallèle.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-overview-s2">
-          <mxGeometry x="0" y="28" width="450" height="61" as="geometry" />
+        <mxCell id="p-overview-s2-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;splash_generator.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Retire les pics inutilisables (m/z ou intensité ≤ 0), puis calcule le SPLASH de chaque spectre, en parallèle. Il sert à reconnaître les spectres déjà traités (étape 4) ; le SPLASH écrit est recalculé à la fin du nettoyage (étape 5).&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-overview-s2">
+          <mxGeometry x="0" y="28" width="450" height="91" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s3" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="563" width="450" height="74" as="geometry" />
+          <mxGeometry x="440" y="593" width="450" height="74" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s3-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="p-overview-s3">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -93,7 +93,7 @@
           <mxGeometry x="0" y="28" width="450" height="46" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s4" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="663" width="450" height="104" as="geometry" />
+          <mxGeometry x="440" y="693" width="450" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s4-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="p-overview-s4">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -106,7 +106,7 @@
         </mxCell>
         <UserObject id="p-overview-s5" label="" link="data:page/id,p-cleaning">
           <mxCell style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-            <mxGeometry x="440" y="793" width="450" height="149" as="geometry" />
+            <mxGeometry x="440" y="823" width="450" height="164" as="geometry" />
           </mxCell>
         </UserObject>
         <mxCell id="p-overview-s5-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-overview-s5">
@@ -115,12 +115,12 @@
         <mxCell id="p-overview-s5-h" value="5 · Nettoyage des spectres" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#8E24AA;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-overview-s5">
           <mxGeometry x="0" y="0" width="450" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-overview-s5-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;spectrum_cleaning.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Pour chaque spectre, en parallèle : métadonnées normalisées en 15 étapes (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;normalizer/&lt;/span&gt;), m/z précurseur vérifié, pics filtrés (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;peaks_filters/&lt;/span&gt;), entropie calculée.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;STATE&lt;/span&gt; : adduits, arbre des instruments&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#C62828&quot;&gt;✕&amp;nbsp;14 motifs : structure absente, adduit, précurseur, pics, entropie…&lt;/div&gt;&lt;div style=&quot;color:#3949AB;font-weight:bold&quot;&gt;Détail : page 3&amp;nbsp;→&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-overview-s5">
-          <mxGeometry x="0" y="28" width="450" height="121" as="geometry" />
+        <mxCell id="p-overview-s5-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;spectrum_cleaning.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Pour chaque spectre, en parallèle : métadonnées normalisées en 15 étapes (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;normalizer/&lt;/span&gt;), m/z précurseur vérifié, pics filtrés (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;peaks_filters/&lt;/span&gt;), entropie calculée, SPLASH recalculé sur les pics gardés.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;STATE&lt;/span&gt; : adduits, arbre des instruments&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#C62828&quot;&gt;✕&amp;nbsp;14 motifs : structure absente, adduit, précurseur, pics, entropie…&lt;/div&gt;&lt;div style=&quot;color:#3949AB;font-weight:bold&quot;&gt;Détail : page 3&amp;nbsp;→&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-overview-s5">
+          <mxGeometry x="0" y="28" width="450" height="136" as="geometry" />
         </mxCell>
         <UserObject id="p-overview-s6" label="" link="data:page/id,p-chemistry">
           <mxCell style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-            <mxGeometry x="440" y="968" width="450" height="149" as="geometry" />
+            <mxGeometry x="440" y="1013" width="450" height="149" as="geometry" />
           </mxCell>
         </UserObject>
         <mxCell id="p-overview-s6-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-overview-s6">
@@ -134,7 +134,7 @@
         </mxCell>
         <UserObject id="p-overview-s65" label="" link="data:page/id,p-chemistry">
           <mxCell style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-            <mxGeometry x="440" y="1143" width="450" height="134" as="geometry" />
+            <mxGeometry x="440" y="1188" width="450" height="134" as="geometry" />
           </mxCell>
         </UserObject>
         <mxCell id="p-overview-s65-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-overview-s65">
@@ -147,7 +147,7 @@
           <mxGeometry x="0" y="28" width="450" height="106" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s67" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="1303" width="450" height="104" as="geometry" />
+          <mxGeometry x="440" y="1348" width="450" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s67-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="p-overview-s67">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -159,7 +159,7 @@
           <mxGeometry x="0" y="28" width="450" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s7" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="1433" width="450" height="89" as="geometry" />
+          <mxGeometry x="440" y="1478" width="450" height="119" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s7-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-overview-s7">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -167,11 +167,11 @@
         <mxCell id="p-overview-s7-h" value="7 · Base interne : nom, formule, masses" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#2E7D32;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-overview-s7">
           <mxGeometry x="0" y="0" width="450" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-overview-s7-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;complete_from_pubchem_datas.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Complète les champs vides d'après l'InChIKey du spectre.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;STATE&lt;/span&gt; : base interne (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;compound_db&lt;/span&gt;)&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-overview-s7">
-          <mxGeometry x="0" y="28" width="450" height="61" as="geometry" />
+        <mxCell id="p-overview-s7-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;complete_from_pubchem_datas.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;D'après l'InChIKey du spectre : nom toujours repris de la base ; InChI, SMILES, formule et masses seulement si le champ du spectre est vide.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;STATE&lt;/span&gt; : base interne (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;compound_db&lt;/span&gt;)&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-overview-s7">
+          <mxGeometry x="0" y="28" width="450" height="91" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s8" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="1548" width="450" height="104" as="geometry" />
+          <mxGeometry x="440" y="1623" width="450" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s8-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-overview-s8">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -183,7 +183,7 @@
           <mxGeometry x="0" y="28" width="450" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s9" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="1678" width="450" height="89" as="geometry" />
+          <mxGeometry x="440" y="1753" width="450" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s9-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-overview-s9">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -195,7 +195,7 @@
           <mxGeometry x="0" y="28" width="450" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s95" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="1793" width="450" height="74" as="geometry" />
+          <mxGeometry x="440" y="1868" width="450" height="74" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s95-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="p-overview-s95">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -207,7 +207,7 @@
           <mxGeometry x="0" y="28" width="450" height="46" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s10" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E8F0FA;strokeColor=#1565C0;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="1893" width="450" height="89" as="geometry" />
+          <mxGeometry x="440" y="1968" width="450" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s10-s" value="" style="rounded=0;html=1;fillColor=#1565C0;strokeColor=none;" vertex="1" parent="p-overview-s10">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -220,7 +220,7 @@
         </mxCell>
         <UserObject id="p-overview-s11" label="" link="data:page/id,p-chemistry">
           <mxCell style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E8F0FA;strokeColor=#1565C0;strokeWidth=1.5;" vertex="1" parent="1">
-            <mxGeometry x="440" y="2008" width="450" height="104" as="geometry" />
+            <mxGeometry x="440" y="2083" width="450" height="104" as="geometry" />
           </mxCell>
         </UserObject>
         <mxCell id="p-overview-s11-s" value="" style="rounded=0;html=1;fillColor=#1565C0;strokeColor=none;" vertex="1" parent="p-overview-s11">
@@ -233,7 +233,7 @@
           <mxGeometry x="0" y="28" width="450" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s12" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E8F0FA;strokeColor=#1565C0;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="2138" width="450" height="119" as="geometry" />
+          <mxGeometry x="440" y="2213" width="450" height="119" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s12-s" value="" style="rounded=0;html=1;fillColor=#1565C0;strokeColor=none;" vertex="1" parent="p-overview-s12">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -359,7 +359,7 @@
           <mxGeometry x="0" y="28" width="340" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-del" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF2F4;strokeColor=#546E7A;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="960" y="803" width="340" height="89" as="geometry" />
+          <mxGeometry x="960" y="803" width="340" height="134" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-del-s" value="" style="rounded=0;html=1;fillColor=#546E7A;strokeColor=none;" vertex="1" parent="p-overview-del">
           <mxGeometry x="0" y="14.0" width="340" height="14.0" as="geometry" />
@@ -367,11 +367,11 @@
         <mxCell id="p-overview-del-h" value="Compteurs de suppression" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#546E7A;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-overview-del">
           <mxGeometry x="0" y="0" width="340" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-overview-del-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;deletion_report.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Un compteur par motif, affiché pendant le run et repris dans le rapport.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-overview-del">
-          <mxGeometry x="0" y="28" width="340" height="61" as="geometry" />
+        <mxCell id="p-overview-del-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;deletion_report.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Un compteur par motif, affiché pendant le run et repris dans le rapport.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Total de fin de run : tous les compteurs, y compris la basse résolution MS2 et le contrôle chimique des fragments.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-overview-del">
+          <mxGeometry x="0" y="28" width="340" height="106" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-stop" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF2F4;strokeColor=#546E7A;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="960" y="914" width="340" height="104" as="geometry" />
+          <mxGeometry x="960" y="959" width="340" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-stop-s" value="" style="rounded=0;html=1;fillColor=#546E7A;strokeColor=none;" vertex="1" parent="p-overview-stop">
           <mxGeometry x="0" y="14.0" width="340" height="14.0" as="geometry" />
@@ -383,7 +383,7 @@
           <mxGeometry x="0" y="28" width="340" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-guard" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF2F4;strokeColor=#546E7A;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="960" y="1040" width="340" height="104" as="geometry" />
+          <mxGeometry x="960" y="1085" width="340" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-guard-s" value="" style="rounded=0;html=1;fillColor=#546E7A;strokeColor=none;" vertex="1" parent="p-overview-guard">
           <mxGeometry x="0" y="14.0" width="340" height="14.0" as="geometry" />
@@ -522,7 +522,7 @@
         <mxCell id="p-reading-t1" value="Étape 1 — lecture des fichiers d'entrée" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=24;fontColor=#263238;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="26" width="1200" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="p-reading-t2" value="Branche Rust_FragHub · scripts/fraghub_rust/src · état du code au 12 novembre 2026 · parsers/ et loaders/" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+        <mxCell id="p-reading-t2" value="Branche Rust_FragHub · scripts/fraghub_rust/src · état du code au 13 novembre 2026 · parsers/ et loaders/" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="64" width="1200" height="20" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-disp" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
@@ -556,7 +556,7 @@
           <mxGeometry x="0" y="28" width="360" height="91" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-pmsp" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="488" width="360" height="134" as="geometry" />
+          <mxGeometry x="40" y="488" width="360" height="179" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-pmsp-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="p-reading-pmsp">
           <mxGeometry x="0" y="14.0" width="360" height="14.0" as="geometry" />
@@ -564,8 +564,8 @@
         <mxCell id="p-reading-pmsp-h" value="Parseur MSP" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-reading-pmsp">
           <mxGeometry x="0" y="0" width="360" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-reading-pmsp-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;parsers/msp_parser.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Lignes &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;CLÉ: valeur&lt;/span&gt;, puis les pics : un par ligne (espace, tabulation ou « : »), ou plusieurs par ligne au format NIST (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;85 999; 86 23;&lt;/span&gt;).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Champ &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;Comments&lt;/span&gt; de MoNA (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;&quot;clé=valeur&quot;&lt;/span&gt;) découpé en champs ; virgule décimale acceptée.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-reading-pmsp">
-          <mxGeometry x="0" y="28" width="360" height="106" as="geometry" />
+        <mxCell id="p-reading-pmsp-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;parsers/msp_parser.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Lignes &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;CLÉ: valeur&lt;/span&gt;, puis les pics : un par ligne (espace, tabulation ou « : »), ou plusieurs par ligne au format NIST (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;85 999; 86 23;&lt;/span&gt;).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Champ &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;Comments&lt;/span&gt; de MoNA (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;&quot;clé=valeur&quot;&lt;/span&gt;) découpé en champs.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Pics : virgule décimale (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;56,0495 20&lt;/span&gt;) et écriture scientifique (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;1.5E+05&lt;/span&gt;) acceptées, dans le m/z comme dans l'intensité.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-reading-pmsp">
+          <mxGeometry x="0" y="28" width="360" height="151" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="p-reading-lmsp" target="p-reading-pmsp">
           <mxGeometry relative="1" as="geometry" />
@@ -592,7 +592,7 @@
           <mxGeometry x="0" y="28" width="360" height="46" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-pmgf" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="430" y="443" width="360" height="74" as="geometry" />
+          <mxGeometry x="430" y="443" width="360" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-pmgf-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="p-reading-pmgf">
           <mxGeometry x="0" y="14.0" width="360" height="14.0" as="geometry" />
@@ -600,8 +600,8 @@
         <mxCell id="p-reading-pmgf-h" value="Parseur MGF" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-reading-pmgf">
           <mxGeometry x="0" y="0" width="360" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-reading-pmgf-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;parsers/mgf_parser.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Lignes &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;CLÉ=valeur&lt;/span&gt;, puis un pic par ligne.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-reading-pmgf">
-          <mxGeometry x="0" y="28" width="360" height="46" as="geometry" />
+        <mxCell id="p-reading-pmgf-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;parsers/mgf_parser.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Lignes &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;CLÉ=valeur&lt;/span&gt;, puis un pic par ligne (espace, tabulation ou « : ») ; virgule décimale et écriture scientifique acceptées dans le m/z et l'intensité.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-reading-pmgf">
+          <mxGeometry x="0" y="28" width="360" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-e7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="p-reading-lmgf" target="p-reading-pmgf">
           <mxGeometry relative="1" as="geometry" />
@@ -628,7 +628,7 @@
           <mxGeometry x="0" y="28" width="360" height="91" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-pjson" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="820" y="488" width="360" height="104" as="geometry" />
+          <mxGeometry x="820" y="488" width="360" height="134" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-pjson-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="p-reading-pjson">
           <mxGeometry x="0" y="14.0" width="360" height="14.0" as="geometry" />
@@ -636,8 +636,8 @@
         <mxCell id="p-reading-pjson-h" value="Parseur JSON" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-reading-pjson">
           <mxGeometry x="0" y="0" width="360" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-reading-pjson-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;parsers/json_parser.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Format GNPS (pics dans &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;peaks_json&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;peaks&lt;/span&gt; ou &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;spectrum&lt;/span&gt;) et format MoNA (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;compound&lt;/span&gt; / &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;metaData&lt;/span&gt; / &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;spectrum&lt;/span&gt;, reconnu seul).&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-reading-pjson">
-          <mxGeometry x="0" y="28" width="360" height="76" as="geometry" />
+        <mxCell id="p-reading-pjson-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;parsers/json_parser.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Format GNPS (pics dans &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;peaks_json&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;peaks&lt;/span&gt; ou &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;spectrum&lt;/span&gt;) et format MoNA (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;compound&lt;/span&gt; / &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;metaData&lt;/span&gt; / &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;spectrum&lt;/span&gt;, reconnu seul).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Pics en texte ou en tableau de nombres ; écriture scientifique acceptée.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-reading-pjson">
+          <mxGeometry x="0" y="28" width="360" height="106" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-e10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="p-reading-ljson" target="p-reading-pjson">
           <mxGeometry relative="1" as="geometry" />
@@ -667,7 +667,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-raw" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="420" y="682" width="760" height="119" as="geometry" />
+          <mxGeometry x="420" y="742" width="760" height="149" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-raw-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="p-reading-raw">
           <mxGeometry x="0" y="14.0" width="760" height="14.0" as="geometry" />
@@ -675,8 +675,8 @@
         <mxCell id="p-reading-raw-h" value="Renommage des champs (commun aux quatre parseurs)" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#00897B;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-reading-raw">
           <mxGeometry x="0" y="0" width="760" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-reading-raw-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;parsers/raw_metadata.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Chaque champ brut prend sa clé FragHub (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;key_to_convert.csv&lt;/span&gt;), dans l'ordre du fichier : le résultat ne dépend pas du hasard.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Unité portée par le nom du champ gardée : &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;RTINSECONDS=70.99&lt;/span&gt; → &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;RT = 70.99 s&lt;/span&gt;.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Énergies numérotées (Spectraverse : &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;COLLISION_ENERGY_1&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;_2&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;_3&lt;/span&gt;) réunies en une valeur (rampe ou paliers).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;FILENAME&lt;/span&gt; : fichier d'origine donné par le spectre (MSnLib, GNPS), sinon le fichier d'entrée ; le fichier d'entrée reste connu en interne.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-reading-raw">
-          <mxGeometry x="0" y="28" width="760" height="91" as="geometry" />
+        <mxCell id="p-reading-raw-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;parsers/raw_metadata.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Chaque champ brut prend sa clé FragHub (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;key_to_convert.csv&lt;/span&gt;), dans l'ordre du fichier : le résultat ne dépend pas du hasard.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Unité portée par le nom du champ gardée : &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;RTINSECONDS=70.99&lt;/span&gt; → &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;RT = 70.99 s&lt;/span&gt;.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Énergies numérotées (Spectraverse : &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;COLLISION_ENERGY_1&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;_2&lt;/span&gt;, &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;_3&lt;/span&gt;) réunies en une valeur (rampe ou paliers).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;FILENAME&lt;/span&gt; : fichier d'origine donné par le spectre (MSnLib, GNPS), sinon le fichier d'entrée ; le fichier d'entrée reste connu en interne.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Une InChI valide n'est jamais remplacée par une valeur qui n'en est pas une (MoNA : indicateur &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;&quot;inchi=1&quot;&lt;/span&gt; des Comments, qui faisait perdre la stéréochimie).&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-reading-raw">
+          <mxGeometry x="0" y="28" width="760" height="121" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-e14" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=-0.2631578947368421;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="p-reading-pmsp" target="p-reading-raw">
           <mxGeometry relative="1" as="geometry" />
@@ -697,7 +697,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-ident" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="841" width="360" height="104" as="geometry" />
+          <mxGeometry x="40" y="886" width="360" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-ident-s" value="" style="rounded=0;html=1;fillColor=#00897B;strokeColor=none;" vertex="1" parent="p-reading-ident">
           <mxGeometry x="0" y="14.0" width="360" height="14.0" as="geometry" />
@@ -709,7 +709,7 @@
           <mxGeometry x="0" y="28" width="360" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-spec" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF2F4;strokeColor=#546E7A;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="420" y="841" width="760" height="74" as="geometry" />
+          <mxGeometry x="420" y="931" width="760" height="74" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-spec-s" value="" style="rounded=0;html=1;fillColor=#546E7A;strokeColor=none;" vertex="1" parent="p-reading-spec">
           <mxGeometry x="0" y="14.0" width="760" height="14.0" as="geometry" />
@@ -769,11 +769,11 @@
         <mxCell id="p-cleaning-t1" value="Étape 5 — nettoyage des spectres" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=24;fontColor=#263238;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="26" width="1200" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="p-cleaning-t2" value="Branche Rust_FragHub · scripts/fraghub_rust/src · état du code au 12 novembre 2026 · spectrum_cleaning.rs, normalizer/, peaks_filters/" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+        <mxCell id="p-cleaning-t2" value="Branche Rust_FragHub · scripts/fraghub_rust/src · état du code au 13 novembre 2026 · spectrum_cleaning.rs, normalizer/, peaks_filters/" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="64" width="1200" height="20" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-sc" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="120" width="1300" height="89" as="geometry" />
+          <mxGeometry x="40" y="120" width="1300" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-sc-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-sc">
           <mxGeometry x="0" y="14.0" width="1300" height="14.0" as="geometry" />
@@ -781,11 +781,11 @@
         <mxCell id="p-cleaning-sc-h" value="Nettoyage d'un spectre (tous les spectres en parallèle, par paquets)" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#8E24AA;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-cleaning-sc">
           <mxGeometry x="0" y="0" width="1300" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-cleaning-sc-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;spectrum_cleaning.rs · spectrum_cleaning_processing&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Dans l'ordre : ① métadonnées normalisées (colonne de gauche) → ② m/z précurseur vérifié → ③ pics filtrés → ④ entropie. Le premier refus arrête le spectre.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Chaque spectre supprimé est écrit dans &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;DELETED_SPECTRUMS/&lt;/span&gt; avec son motif et compté (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;deletion_report.rs&lt;/span&gt;).&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-cleaning-sc">
-          <mxGeometry x="0" y="28" width="1300" height="61" as="geometry" />
+        <mxCell id="p-cleaning-sc-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;spectrum_cleaning.rs · spectrum_cleaning_processing&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Dans l'ordre : ① métadonnées normalisées (colonne de gauche) → ② m/z précurseur vérifié → ③ pics filtrés → ④ entropie → ⑤ SPLASH des pics gardés (celui qui est écrit ; un spectre supprimé garde celui de ses pics d'origine). Le premier refus arrête le spectre.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Chaque spectre supprimé est écrit dans &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;DELETED_SPECTRUMS/&lt;/span&gt; avec son motif et compté (&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;deletion_report.rs&lt;/span&gt;).&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-cleaning-sc">
+          <mxGeometry x="0" y="28" width="1300" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-vn" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="249" width="760" height="89" as="geometry" />
+          <mxGeometry x="40" y="264" width="760" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-vn-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-vn">
           <mxGeometry x="0" y="14.0" width="760" height="14.0" as="geometry" />
@@ -800,7 +800,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n1" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="362" width="370" height="89" as="geometry" />
+          <mxGeometry x="40" y="377" width="370" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n1-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n1">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -812,7 +812,7 @@
           <mxGeometry x="0" y="28" width="370" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n1a" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="469" width="370" height="104" as="geometry" />
+          <mxGeometry x="40" y="484" width="370" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n1a-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n1a">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -824,7 +824,7 @@
           <mxGeometry x="0" y="28" width="370" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n1b" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="591" width="370" height="104" as="geometry" />
+          <mxGeometry x="40" y="606" width="370" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n1b-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n1b">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -836,7 +836,7 @@
           <mxGeometry x="0" y="28" width="370" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n2" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="713" width="370" height="89" as="geometry" />
+          <mxGeometry x="40" y="728" width="370" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n2-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n2">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -848,7 +848,7 @@
           <mxGeometry x="0" y="28" width="370" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n3" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="820" width="370" height="89" as="geometry" />
+          <mxGeometry x="40" y="835" width="370" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n3-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n3">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -860,7 +860,7 @@
           <mxGeometry x="0" y="28" width="370" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n3b" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="927" width="370" height="89" as="geometry" />
+          <mxGeometry x="40" y="942" width="370" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n3b-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n3b">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -872,7 +872,7 @@
           <mxGeometry x="0" y="28" width="370" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n4" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1034" width="370" height="104" as="geometry" />
+          <mxGeometry x="40" y="1049" width="370" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n4-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n4">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -884,7 +884,7 @@
           <mxGeometry x="0" y="28" width="370" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n5" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1156" width="370" height="89" as="geometry" />
+          <mxGeometry x="40" y="1171" width="370" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n5-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n5">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -896,7 +896,7 @@
           <mxGeometry x="0" y="28" width="370" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n6" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1263" width="370" height="119" as="geometry" />
+          <mxGeometry x="40" y="1278" width="370" height="119" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n6-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n6">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -932,7 +932,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n7" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="430" y="362" width="370" height="74" as="geometry" />
+          <mxGeometry x="430" y="377" width="370" height="74" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n7-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n7">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -944,7 +944,7 @@
           <mxGeometry x="0" y="28" width="370" height="46" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n8" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="430" y="454" width="370" height="134" as="geometry" />
+          <mxGeometry x="430" y="469" width="370" height="164" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n8-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n8">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -952,11 +952,11 @@
         <mxCell id="p-cleaning-n8-h" value="8 · Nom et adduit" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#8E24AA;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-cleaning-n8">
           <mxGeometry x="0" y="0" width="370" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-cleaning-n8-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;normalize_name.rs · normalize_adduct.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Énergie et InChIKey écrites à la fin du nom retirées ; énergie lue dans COMMENT.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Adduit lu à la fin du nom s'il manque, puis écrit au format FragHub.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;adduct_to_convert.csv&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-cleaning-n8">
-          <mxGeometry x="0" y="28" width="370" height="106" as="geometry" />
+        <mxCell id="p-cleaning-n8-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;normalize_name.rs · normalize_adduct.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Énergie et InChIKey écrites à la fin du nom retirées ; énergie lue dans COMMENT.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Adduit lu à la fin du nom s'il manque, puis écrit au format FragHub.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;adduct_to_convert.csv&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Mention « (known isomers: N; isobaric peaks: M) » (GNPS) retirée du nom et mise dans COMMENT.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-cleaning-n8">
+          <mxGeometry x="0" y="28" width="370" height="136" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n9" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="430" y="606" width="370" height="89" as="geometry" />
+          <mxGeometry x="430" y="651" width="370" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n9-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n9">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -968,7 +968,7 @@
           <mxGeometry x="0" y="28" width="370" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n10" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="430" y="713" width="370" height="89" as="geometry" />
+          <mxGeometry x="430" y="758" width="370" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n10-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n10">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -980,7 +980,7 @@
           <mxGeometry x="0" y="28" width="370" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n11" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="430" y="820" width="370" height="89" as="geometry" />
+          <mxGeometry x="430" y="865" width="370" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n11-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n11">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -988,11 +988,11 @@
         <mxCell id="p-cleaning-n11-h" value="11 · m/z précurseur manquant" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#8E24AA;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-cleaning-n11">
           <mxGeometry x="0" y="0" width="370" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-cleaning-n11-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;missing_precursormz_re_calculation.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Absent ou invalide : recalculé depuis la structure et l'adduit (RDKit C++).&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-cleaning-n11">
-          <mxGeometry x="0" y="28" width="370" height="61" as="geometry" />
+        <mxCell id="p-cleaning-n11-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;missing_precursormz_re_calculation.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Absent ou invalide : recalculé depuis la structure et l'adduit (RDKit C++) ; écrit avec 8 décimales au plus.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-cleaning-n11">
+          <mxGeometry x="0" y="28" width="370" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n12" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="430" y="927" width="370" height="149" as="geometry" />
+          <mxGeometry x="430" y="987" width="370" height="149" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n12-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n12">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -1004,7 +1004,7 @@
           <mxGeometry x="0" y="28" width="370" height="121" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n13" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="430" y="1094" width="370" height="74" as="geometry" />
+          <mxGeometry x="430" y="1154" width="370" height="74" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n13-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n13">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -1016,7 +1016,7 @@
           <mxGeometry x="0" y="28" width="370" height="46" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n14" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="430" y="1186" width="370" height="89" as="geometry" />
+          <mxGeometry x="430" y="1246" width="370" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n14-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n14">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -1024,11 +1024,11 @@
         <mxCell id="p-cleaning-n14-h" value="14 · Temps de rétention" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#8E24AA;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-cleaning-n14">
           <mxGeometry x="0" y="0" width="370" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-cleaning-n14-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;normalize_retentiontime.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Converti en minutes (unité lue dans la valeur ou dans le nom du champ).&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-cleaning-n14">
-          <mxGeometry x="0" y="28" width="370" height="61" as="geometry" />
+        <mxCell id="p-cleaning-n14-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;normalize_retentiontime.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Converti en minutes (unité lue dans la valeur ou dans le nom du champ) ; valeur convertie arrondie à 8 décimales, valeur déjà en minutes gardée telle quelle.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-cleaning-n14">
+          <mxGeometry x="0" y="28" width="370" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n15" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="430" y="1293" width="370" height="104" as="geometry" />
+          <mxGeometry x="430" y="1368" width="370" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-n15-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-n15">
           <mxGeometry x="0" y="14.0" width="370" height="14.0" as="geometry" />
@@ -1069,15 +1069,15 @@
         <mxCell id="p-cleaning-e21" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="p-cleaning-n6" target="p-cleaning-n7">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="225.0" y="1396" />
-              <mxPoint x="420" y="1396" />
-              <mxPoint x="420" y="350" />
-              <mxPoint x="615.0" y="350" />
+              <mxPoint x="225.0" y="1411" />
+              <mxPoint x="420" y="1471" />
+              <mxPoint x="420" y="365" />
+              <mxPoint x="615.0" y="365" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="p-cleaning-pmz" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="870" y="249" width="470" height="119" as="geometry" />
+          <mxGeometry x="870" y="264" width="470" height="119" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-pmz-s" value="" style="rounded=0;html=1;fillColor=#8E24AA;strokeColor=none;" vertex="1" parent="p-cleaning-pmz">
           <mxGeometry x="0" y="14.0" width="470" height="14.0" as="geometry" />
@@ -1089,7 +1089,7 @@
           <mxGeometry x="0" y="28" width="470" height="91" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-flt" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FDF0E7;strokeColor=#E8590C;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="870" y="386" width="470" height="134" as="geometry" />
+          <mxGeometry x="870" y="401" width="470" height="134" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-flt-s" value="" style="rounded=0;html=1;fillColor=#E8590C;strokeColor=none;" vertex="1" parent="p-cleaning-flt">
           <mxGeometry x="0" y="14.0" width="470" height="14.0" as="geometry" />
@@ -1101,7 +1101,7 @@
           <mxGeometry x="0" y="28" width="470" height="106" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-f1" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FDF0E7;strokeColor=#E8590C;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="870" y="538" width="470" height="89" as="geometry" />
+          <mxGeometry x="870" y="553" width="470" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-f1-s" value="" style="rounded=0;html=1;fillColor=#E8590C;strokeColor=none;" vertex="1" parent="p-cleaning-f1">
           <mxGeometry x="0" y="14.0" width="470" height="14.0" as="geometry" />
@@ -1113,7 +1113,7 @@
           <mxGeometry x="0" y="28" width="470" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-f2" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FDF0E7;strokeColor=#E8590C;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="870" y="645" width="470" height="89" as="geometry" />
+          <mxGeometry x="870" y="660" width="470" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-f2-s" value="" style="rounded=0;html=1;fillColor=#E8590C;strokeColor=none;" vertex="1" parent="p-cleaning-f2">
           <mxGeometry x="0" y="14.0" width="470" height="14.0" as="geometry" />
@@ -1125,7 +1125,7 @@
           <mxGeometry x="0" y="28" width="470" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-f3" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FDF0E7;strokeColor=#E8590C;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="870" y="752" width="470" height="74" as="geometry" />
+          <mxGeometry x="870" y="767" width="470" height="74" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-f3-s" value="" style="rounded=0;html=1;fillColor=#E8590C;strokeColor=none;" vertex="1" parent="p-cleaning-f3">
           <mxGeometry x="0" y="14.0" width="470" height="14.0" as="geometry" />
@@ -1137,7 +1137,7 @@
           <mxGeometry x="0" y="28" width="470" height="46" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-f4" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FDF0E7;strokeColor=#E8590C;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="870" y="844" width="470" height="89" as="geometry" />
+          <mxGeometry x="870" y="859" width="470" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-f4-s" value="" style="rounded=0;html=1;fillColor=#E8590C;strokeColor=none;" vertex="1" parent="p-cleaning-f4">
           <mxGeometry x="0" y="14.0" width="470" height="14.0" as="geometry" />
@@ -1149,7 +1149,7 @@
           <mxGeometry x="0" y="28" width="470" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-f5" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FDF0E7;strokeColor=#E8590C;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="870" y="951" width="470" height="74" as="geometry" />
+          <mxGeometry x="870" y="966" width="470" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-f5-s" value="" style="rounded=0;html=1;fillColor=#E8590C;strokeColor=none;" vertex="1" parent="p-cleaning-f5">
           <mxGeometry x="0" y="14.0" width="470" height="14.0" as="geometry" />
@@ -1157,11 +1157,11 @@
         <mxCell id="p-cleaning-f5-h" value="Intensités normalisées (option)" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#E8590C;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-cleaning-f5">
           <mxGeometry x="0" y="0" width="470" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-cleaning-f5-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;normalize_intensity.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Divisées par la plus forte : le pic de base vaut 1.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-cleaning-f5">
-          <mxGeometry x="0" y="28" width="470" height="46" as="geometry" />
+        <mxCell id="p-cleaning-f5-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;normalize_intensity.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Divisées par la plus forte : le pic de base vaut 1 ; arrondies à 8 décimales (l'entropie et le SPLASH sont calculés sur ces valeurs).&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-cleaning-f5">
+          <mxGeometry x="0" y="28" width="470" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-f6" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FDF0E7;strokeColor=#E8590C;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="870" y="1043" width="470" height="89" as="geometry" />
+          <mxGeometry x="870" y="1073" width="470" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-f6-s" value="" style="rounded=0;html=1;fillColor=#E8590C;strokeColor=none;" vertex="1" parent="p-cleaning-f6">
           <mxGeometry x="0" y="14.0" width="470" height="14.0" as="geometry" />
@@ -1173,7 +1173,7 @@
           <mxGeometry x="0" y="28" width="470" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-ent" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FDF0E7;strokeColor=#E8590C;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="870" y="1150" width="470" height="104" as="geometry" />
+          <mxGeometry x="870" y="1180" width="470" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-ent-s" value="" style="rounded=0;html=1;fillColor=#E8590C;strokeColor=none;" vertex="1" parent="p-cleaning-ent">
           <mxGeometry x="0" y="14.0" width="470" height="14.0" as="geometry" />
@@ -1211,13 +1211,13 @@
         <mxCell id="p-cleaning-e30" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p-cleaning-n15" target="p-cleaning-pmz">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="835.0" y="1345.0" />
-              <mxPoint x="835.0" y="308.5" />
+              <mxPoint x="835.0" y="1435" />
+              <mxPoint x="835.0" y="323.5" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="p-cleaning-next" value="&lt;b&gt;Spectre gardé&lt;/b&gt; → étape 6 · RDKit" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;fillColor=#EEF0FA;strokeColor=#3949AB;fontColor=#263238;fontSize=11;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="955.0" y="1282" width="300" height="40" as="geometry" />
+          <mxGeometry x="955.0" y="1312" width="300" height="40" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-e31" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#455A64;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#455A64;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="p-cleaning-ent" target="p-cleaning-next">
           <mxGeometry relative="1" as="geometry" />
@@ -1289,14 +1289,14 @@
         <mxCell id="p-chemistry-t1" value="Étapes 6 à 11 — chimie, enrichissement, tri et écriture" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=24;fontColor=#263238;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="26" width="1200" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="p-chemistry-t2" value="Branche Rust_FragHub · scripts/fraghub_rust/src · état du code au 12 novembre 2026" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+        <mxCell id="p-chemistry-t2" value="Branche Rust_FragHub · scripts/fraghub_rust/src · état du code au 13 novembre 2026" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="64" width="1200" height="20" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-t3" value="&lt;b&gt;Chimie et enrichissement&lt;/b&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#455A64;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="112" width="560" height="20" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-rb" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="140" width="560" height="134" as="geometry" />
+          <mxGeometry x="40" y="140" width="560" height="149" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-rb-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-chemistry-rb">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1304,11 +1304,11 @@
         <mxCell id="p-chemistry-rb-h" value="6 · Calcul RDKit" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#2E7D32;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-chemistry-rb">
           <mxGeometry x="0" y="0" width="560" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-chemistry-rb-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;rdkit_bridge.rs · process_mols&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Rassemble les molécules uniques (structure, adduit, m/z) : chaque résultat sert à tous les spectres de la même molécule.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Seconde chance si RDKit échoue : SMILES de la base interne pour la même InChIKey, puis nouveau calcul.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#C62828&quot;&gt;✕&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;deleted_no_inchi_smiles_inchikey_after_re_calculation.csv&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-chemistry-rb">
-          <mxGeometry x="0" y="28" width="560" height="106" as="geometry" />
+        <mxCell id="p-chemistry-rb-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;rdkit_bridge.rs · process_mols&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Rassemble les molécules uniques (structure, adduit, m/z) : chaque résultat sert à tous les spectres de la même molécule.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Seconde chance si RDKit échoue : SMILES de la base interne pour la même InChIKey, puis nouveau calcul.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;EXACTMASS&lt;/span&gt; et &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;AVERAGEMASS&lt;/span&gt; écrites avec 8 décimales au plus.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#C62828&quot;&gt;✕&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;deleted_no_inchi_smiles_inchikey_after_re_calculation.csv&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-chemistry-rb">
+          <mxGeometry x="0" y="28" width="560" height="121" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-rn" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="296" width="560" height="89" as="geometry" />
+          <mxGeometry x="40" y="311" width="560" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-rn-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-chemistry-rn">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1320,7 +1320,7 @@
           <mxGeometry x="0" y="28" width="560" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-shim" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="407" width="560" height="164" as="geometry" />
+          <mxGeometry x="40" y="422" width="560" height="164" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-shim-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-chemistry-shim">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1332,7 +1332,7 @@
           <mxGeometry x="0" y="28" width="560" height="136" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-mz" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="593" width="560" height="149" as="geometry" />
+          <mxGeometry x="40" y="608" width="560" height="149" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-mz-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-chemistry-mz">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1344,7 +1344,7 @@
           <mxGeometry x="0" y="28" width="560" height="121" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-dup" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="764" width="560" height="119" as="geometry" />
+          <mxGeometry x="40" y="779" width="560" height="119" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-dup-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="p-chemistry-dup">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1352,11 +1352,11 @@
         <mxCell id="p-chemistry-dup-h" value="6.7 · Doublons" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#3949AB;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-chemistry-dup">
           <mxGeometry x="0" y="0" width="560" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-chemistry-dup-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;duplicatas_remover.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Clé (SPLASH, InChIKey) : garde le spectre aux métadonnées les plus longues ; ses champs vides sont complétés par ceux de ses doublons.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Bases d'origine des doublons retenues pour le rapport (UpSet).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#C62828&quot;&gt;✕&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;duplicatas_removed.csv&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-chemistry-dup">
+        <mxCell id="p-chemistry-dup-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;duplicatas_remover.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Clé (SPLASH des pics écrits, InChIKey) : garde le spectre aux métadonnées les plus longues ; ses champs vides sont complétés par ceux de ses doublons.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Bases d'origine des doublons retenues pour le rapport (UpSet).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#C62828&quot;&gt;✕&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;duplicatas_removed.csv&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-chemistry-dup">
           <mxGeometry x="0" y="28" width="560" height="91" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-pc" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="905" width="560" height="89" as="geometry" />
+          <mxGeometry x="40" y="920" width="560" height="119" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-pc-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-chemistry-pc">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1364,11 +1364,11 @@
         <mxCell id="p-chemistry-pc-h" value="7 · Nom, formule, masses" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#2E7D32;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-chemistry-pc">
           <mxGeometry x="0" y="0" width="560" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-chemistry-pc-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;complete_from_pubchem_datas.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Champs vides complétés d'après l'InChIKey, dans la base interne.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;STATE.compound_db&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-chemistry-pc">
-          <mxGeometry x="0" y="28" width="560" height="61" as="geometry" />
+        <mxCell id="p-chemistry-pc-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;complete_from_pubchem_datas.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;D'après l'InChIKey, dans la base interne : nom toujours repris (le même pour tous les spectres d'une molécule) ; InChI, SMILES, formule et masses seulement si le champ du spectre est vide.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#607D8B&quot;&gt;↳&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;STATE.compound_db&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-chemistry-pc">
+          <mxGeometry x="0" y="28" width="560" height="91" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-onto" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1016" width="560" height="104" as="geometry" />
+          <mxGeometry x="40" y="1061" width="560" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-onto-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-chemistry-onto">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1380,7 +1380,7 @@
           <mxGeometry x="0" y="28" width="560" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-dn" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1142" width="560" height="89" as="geometry" />
+          <mxGeometry x="40" y="1187" width="560" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-dn-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-chemistry-dn">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1635,44 +1635,44 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="p-chemistry-t28" value="Légende" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#263238;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1273" width="300" height="20" as="geometry" />
+          <mxGeometry x="40" y="1318" width="300" height="20" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-l29" value="" style="rounded=1;arcSize=20;fillColor=#2E7D32;strokeColor=#2E7D32;html=1;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1299" width="22" height="12" as="geometry" />
+          <mxGeometry x="40" y="1344" width="22" height="12" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-t30" value="Chimie (RDKit) et base interne" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="70" y="1296" width="270" height="16" as="geometry" />
+          <mxGeometry x="70" y="1341" width="270" height="16" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-l31" value="" style="rounded=1;arcSize=20;fillColor=#3949AB;strokeColor=#3949AB;html=1;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1318" width="22" height="12" as="geometry" />
+          <mxGeometry x="40" y="1363" width="22" height="12" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-t32" value="Orchestration" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="70" y="1315" width="270" height="16" as="geometry" />
+          <mxGeometry x="70" y="1360" width="270" height="16" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-l33" value="" style="rounded=1;arcSize=20;fillColor=#1565C0;strokeColor=#1565C0;html=1;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1337" width="22" height="12" as="geometry" />
+          <mxGeometry x="40" y="1382" width="22" height="12" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-t34" value="Écriture des sorties" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="70" y="1334" width="270" height="16" as="geometry" />
+          <mxGeometry x="70" y="1379" width="270" height="16" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-l35" value="" style="rounded=1;arcSize=20;fillColor=#B7791F;strokeColor=#B7791F;html=1;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1356" width="22" height="12" as="geometry" />
+          <mxGeometry x="40" y="1401" width="22" height="12" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-t36" value="Python (FragHub.py et scripts)" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="70" y="1353" width="270" height="16" as="geometry" />
+          <mxGeometry x="70" y="1398" width="270" height="16" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-t37" value="&lt;span style=&quot;color:#C62828&quot;&gt;✕&lt;/span&gt;&amp;nbsp; supprime des spectres → DELETED_SPECTRUMS/" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1375" width="330" height="16" as="geometry" />
+          <mxGeometry x="40" y="1420" width="330" height="16" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-t38" value="&lt;span style=&quot;color:#607D8B&quot;&gt;↳&lt;/span&gt;&amp;nbsp; lit une donnée partagée ou un fichier" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1393" width="330" height="16" as="geometry" />
+          <mxGeometry x="40" y="1438" width="330" height="16" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-t39" value="&lt;b style=&quot;color:#3949AB&quot;&gt;… →&lt;/b&gt;&amp;nbsp; carte cliquable : ouvre la page de détail" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1411" width="330" height="16" as="geometry" />
+          <mxGeometry x="40" y="1456" width="330" height="16" as="geometry" />
         </mxCell>
         <UserObject id="p-chemistry-back" label="" link="data:page/id,p-overview">
           <mxCell style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
-            <mxGeometry x="400" y="1273" width="300" height="74" as="geometry" />
+            <mxGeometry x="400" y="1318" width="300" height="74" as="geometry" />
           </mxCell>
         </UserObject>
         <mxCell id="p-chemistry-back-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="p-chemistry-back">
@@ -1904,7 +1904,7 @@
           <mxGeometry x="0" y="28" width="560" height="91" as="geometry" />
         </mxCell>
         <mxCell id="p-python-build" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FBF4E6;strokeColor=#B7791F;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="990" y="828" width="560" height="104" as="geometry" />
+          <mxGeometry x="990" y="828" width="560" height="134" as="geometry" />
         </mxCell>
         <mxCell id="p-python-build-s" value="" style="rounded=0;html=1;fillColor=#B7791F;strokeColor=none;" vertex="1" parent="p-python-build">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1912,8 +1912,8 @@
         <mxCell id="p-python-build-h" value="Construction" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#B7791F;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-python-build">
           <mxGeometry x="0" y="0" width="560" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-python-build-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;build_backend.py · build_all.py&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Base interne (téléchargée si absente) → module Rust (maturin) → exécutable &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;FragHub_Backend&lt;/span&gt; (PyInstaller, avec &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;datas/&lt;/span&gt; et les bibliothèques de RDKit C++) → interface Nuxt et installateur Electron.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-python-build">
-          <mxGeometry x="0" y="28" width="560" height="76" as="geometry" />
+        <mxCell id="p-python-build-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;build_backend.py · build_all.py&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Base interne (téléchargée si absente) → module Rust (maturin) → exécutable &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;FragHub_Backend&lt;/span&gt; (PyInstaller, avec &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;datas/&lt;/span&gt; et les bibliothèques de RDKit C++) → interface Nuxt et installateur Electron.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Tests : &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;run_tests.py&lt;/span&gt; (moteur Rust, Python, moteur complet sur une mini-base, bout en bout, interface) ; voir &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;TESTS.md&lt;/span&gt;.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-python-build">
+          <mxGeometry x="0" y="28" width="560" height="106" as="geometry" />
         </mxCell>
         <mxCell id="p-python-e9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#B7791F;strokeWidth=1.5;endArrow=block;endFill=1;endSize=6;fontSize=10;fontColor=#B7791F;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" parent="1" source="p-python-r2" target="p-python-idb">
           <mxGeometry relative="1" as="geometry" />
