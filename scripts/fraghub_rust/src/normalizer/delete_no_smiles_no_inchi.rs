@@ -81,4 +81,21 @@ mod tests {
         assert!(delete_suspect(m("Not a suspect related to anything", "InChI=1S/C2H6O/c1-2-3"), &mut None).is_some());
         assert!(delete_suspect(m("Candidate Trihydroxylated bile acid", "InChI=1S/C24H40O5/c1"), &mut None).is_some());
     }
+
+    #[test]
+    fn sans_aucun_identifiant_supprime() {
+        let fields = |f: &[(&str, &str)]| -> HashMap<String, String> { f.iter().map(|(a, b)| (a.to_string(), b.to_string())).collect() };
+        let mut r = None;
+        // Ni SMILES, ni InChI, ni InChIKey (champs absents ou vides) : supprimé avec son motif
+        assert!(delete_no_smiles_no_inchi_no_inchikey(fields(&[("NAME", "X")]), &mut r).is_none());
+        assert_eq!(r.as_deref(), Some("spectrum deleted because it has neither inchi nor smiles nor inchikey"));
+        assert!(delete_no_smiles_no_inchi_no_inchikey(fields(&[("SMILES", ""), ("INCHI", ""), ("INCHIKEY", "")]), &mut None).is_none());
+        // Un seul des trois suffit : gardé tel quel, sans motif
+        for key in ["SMILES", "INCHI", "INCHIKEY"] {
+            let mut r = None;
+            let kept = delete_no_smiles_no_inchi_no_inchikey(fields(&[("NAME", "X"), (key, "valeur")]), &mut r).expect("gardé");
+            assert_eq!(kept[key], "valeur");
+            assert!(r.is_none());
+        }
+    }
 }

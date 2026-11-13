@@ -16,6 +16,25 @@ pub struct Spectrum {
 /// (`"{:.8} {:.8}"` par pic, séparés par des sauts de ligne). Il n'est plus gardé en mémoire (les pics étaient
 /// stockés deux fois) : il est fabriqué seulement là où il est écrit (fichiers DELETED_SPECTRUMS des étapes qui
 /// suivent le nettoyage) ou compté (choix du doublon gardé).
+/// Nombre de décimales des valeurs CALCULÉES par FragHub (m/z recalculé, masses, temps de rétention converti,
+/// intensités ramenées à 1), comme l'entropie. Une valeur lue dans un fichier n'est jamais arrondie.
+pub const COMPUTED_DECIMALS: f64 = 1e8;
+
+/// Valeur calculée arrondie à 8 décimales. Avant, le résultat d'une division ou d'une somme était écrit avec tous
+/// ses chiffres (« 0.16666666666666666 », « 195.08765155999998 », « 893.6960000000009 »).
+/// Une valeur trop grande pour être arrondie ainsi, ou non finie, est rendue telle quelle.
+pub fn round_computed(x: f64) -> f64 {
+    if !x.is_finite() || x.abs() >= 1e7 {
+        return x;
+    }
+    (x * COMPUTED_DECIMALS).round() / COMPUTED_DECIMALS
+}
+
+/// Texte d'une valeur calculée : 8 décimales au plus, sans zéros inutiles (« 195.08765156 », « 1.5 », « 2 »).
+pub fn computed_text(x: f64) -> String {
+    round_computed(x).to_string()
+}
+
 pub fn peaks_text(peaks: &[(f64, f64)]) -> String {
     let mut text = String::with_capacity(peaks.len() * 24);
     for (i, &(mz, int)) in peaks.iter().enumerate() {
@@ -41,6 +60,23 @@ mod tests {
     fn texte_des_pics_huit_decimales() {
         assert_eq!(peaks_text(&[(100.5, 1.0), (200.123456789, 0.5)]), "100.50000000 1.00000000\n200.12345679 0.50000000");
         assert_eq!(peaks_text(&[]), "");
+    }
+
+    #[test]
+    fn valeurs_calculees_huit_decimales_au_plus() {
+        assert_eq!(computed_text(1.0 / 6.0), "0.16666667");
+        assert_eq!(computed_text(194.08037556 + 1.007276), "195.08765156");      // était 195.08765155999998
+        assert_eq!(computed_text(893.6960000000009), "893.696");
+        assert_eq!(computed_text(70.99 / 60.0), "1.18316667");
+        // Valeurs déjà courtes : inchangées, sans zéros ajoutés
+        assert_eq!(computed_text(0.2), "0.2");
+        assert_eq!(computed_text(1.5), "1.5");
+        assert_eq!(computed_text(2.0), "2");
+        assert_eq!(computed_text(-1.007276), "-1.007276");
+        assert_eq!(computed_text(1234.56789012), "1234.56789012");
+        // Non finie ou très grande : rendue telle quelle
+        assert!(round_computed(f64::NAN).is_nan());
+        assert_eq!(round_computed(1.23456789012e9), 1.23456789012e9);
     }
 
     #[test]

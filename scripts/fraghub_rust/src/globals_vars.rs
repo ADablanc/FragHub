@@ -30,7 +30,20 @@ pub static COMPUTED_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?i)compute
 
 pub static COMMENT_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?i)comment.*").unwrap());
 
-pub static PEAK_LIST_SPLIT_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?:^|\n)(-?\d+\.?\d*(?:[Ee][+-]?\d+)?)(?:\s+|:)(-?\d+[.,]?\d*(?:[Ee][+-]?\d+)?)").unwrap());
+/// Un pic d'une liste MSP ou MGF : m/z (groupe 1 ou 2), puis intensité (groupe 3). Lire avec `peak_pairs`.
+/// - Groupe 1 : m/z écrit avec un point (ou entier). C'est le motif d'origine, inchangé.
+/// - Groupe 2 : m/z écrit avec une virgule décimale (« 56,0495 20 »). L'intensité doit alors suivre sur la même
+///   ligne, après un espace, une tabulation ou « : ». Avant, la virgule n'était acceptée que dans l'intensité :
+///   aucun pic de ces spectres n'était lu, et ils étaient supprimés (« peaks list is empty »).
+pub static PEAK_LIST_SPLIT_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?:^|\n)(?:(-?\d+\.?\d*(?:[Ee][+-]?\d+)?)(?:\s+|:)|(-?\d+,\d+(?:[Ee][+-]?\d+)?)(?:[ \t]+|:))(-?\d+[.,]?\d*(?:[Ee][+-]?\d+)?)").unwrap());
+
+/// Pics d'une liste MSP ou MGF : couples (m/z, intensité) tels qu'ils sont écrits (virgule décimale comprise).
+pub fn peak_pairs<'t>(text: &'t str) -> impl Iterator<Item = (&'t str, &'t str)> + 't {
+    PEAK_LIST_SPLIT_PATTERN.captures_iter(text).filter_map(|c| {
+        let mz = c.get(1).or_else(|| c.get(2))?;
+        Some((mz.as_str(), c.get(3)?.as_str()))
+    })
+}
 
 pub static PEAK_LIST_JSON_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"(-?\d+\.?\d*(?:[Ee][+-]?\d+)?)(?:\s+|:|,|, )(-?\d+[.,]?\d*(?:[Ee][+-]?\d+)?)").unwrap());
 

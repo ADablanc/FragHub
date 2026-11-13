@@ -111,6 +111,12 @@ fn clean_peaks_and_splash(spec: &mut crate::spectrum::Spectrum) -> Option<String
     calculate_splash(&SplashSpectrum::new(spec.peaks.clone()))
 }
 
+/// SPLASH d'une liste de pics déjà nettoyée (None si elle est vide). Sert au nettoyage des spectres : le SPLASH
+/// écrit dans les sorties est celui des pics écrits (spectrum_cleaning.rs).
+pub(crate) fn splash_of_peaks(peaks: &[(f64, f64)]) -> Option<String> {
+    calculate_splash(&SplashSpectrum::new(peaks.to_vec()))
+}
+
 /// Point d'entrée pour la génération parallèle des identifiants SPLASH.
 ///
 /// Pour un développeur Python : Observez `par_iter()` de Rayon, qui découpe intelligemment 
@@ -187,5 +193,33 @@ mod tests_pics_inutilisables {
         let mut c = spec(&[(100.0, 0.0), (f64::NAN, 5.0)]);
         assert_eq!(clean_peaks_and_splash(&mut c), None);
         assert!(c.peaks.is_empty());
+    }
+
+    #[test]
+    fn splash_identique_a_celui_de_mona() {
+        // Spectre réel MoNA022203 (2-Hydroxycyclohexane-1-carboxyl-CoA) : MoNA donne lui-même son SPLASH dans le
+        // fichier (« SPLASH=splash10-000i-0009400030-650e414c79d0b4a3cc98 »). Référence indépendante de FragHub.
+        let mut s = spec(&[(894.19057, 40.040040), (387.19482, 100.0), (428.03724, 45.045045), (508.00357, 5.005005),
+                           (467.16115, 5.005005), (485.17171, 5.005005), (285.12673, 5.005005), (136.06232, 5.005005)]);
+        assert_eq!(clean_peaks_and_splash(&mut s).as_deref(), Some("splash10-000i-0009400030-650e414c79d0b4a3cc98"));
+        // MoNA022998 (même fichier) : « SPLASH=splash10-0006-3000490000-6f61dc84e787f971cf98 »
+        let mut s = spec(&[(1049.20589, 40.040040), (542.21014, 100.0), (428.03724, 45.045045), (508.00357, 5.005005),
+                           (622.17647, 5.005005), (640.18704, 5.005005), (440.14206, 5.005005), (136.06232, 5.005005)]);
+        assert_eq!(clean_peaks_and_splash(&mut s).as_deref(), Some("splash10-0006-3000490000-6f61dc84e787f971cf98"));
+        // L'ordre des pics et l'échelle des intensités ne changent pas le SPLASH
+        let mut a = spec(&[(100.1, 50.0), (150.2, 100.0), (200.3, 20.0)]);
+        let mut b = spec(&[(200.3, 2.0), (100.1, 5.0), (150.2, 10.0)]);
+        assert_eq!(clean_peaks_and_splash(&mut a), clean_peaks_and_splash(&mut b));
+    }
+
+    #[test]
+    fn splash_d_une_liste_de_pics_nettoyee() {
+        // Même résultat que le calcul fait à la lecture, sur les mêmes pics ; liste vide : pas de SPLASH
+        let peaks = [(100.1, 50.0), (150.2, 100.0), (200.3, 20.0)];
+        let mut s = spec(&peaks);
+        assert_eq!(splash_of_peaks(&peaks), clean_peaks_and_splash(&mut s));
+        assert_eq!(splash_of_peaks(&[]), None);
+        // Un pic retiré par un filtre : le SPLASH change (c'est pourquoi il est recalculé après le nettoyage)
+        assert_ne!(splash_of_peaks(&peaks), splash_of_peaks(&peaks[..2]));
     }
 }

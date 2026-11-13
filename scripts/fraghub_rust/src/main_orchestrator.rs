@@ -425,8 +425,9 @@ fn run_orchestrator(
 
         if let Some(cb) = &deletion_callback {
             let report = &deletion_report;
-            // ---> CORRECTION : J'ai ajouté no_or_bad_adduct dans le total des suppressions <---
-            let total_deletions = report.duplicatas_removed + report.previously_cleaned + report.no_peaks_list + report.no_smiles_no_inchi_no_inchikey + report.no_precursor_mz + report.no_or_bad_adduct + report.low_entropy_score + report.minimum_peaks_not_requiered + report.all_peaks_above_precursor_mz + report.no_peaks_in_mz_range + report.minimum_high_peaks_not_requiered;
+            // Tous les compteurs, comme le total du rapport HTML (report.rs). Avant, les suppressions de l'étape
+            // « Mass & Adduct Correction » (MS2 de basse résolution, contrôle chimique des fragments) manquaient.
+            let total_deletions = report.duplicatas_removed + report.previously_cleaned + report.no_peaks_list + report.no_smiles_no_inchi_no_inchikey + report.no_precursor_mz + report.no_or_bad_adduct + report.low_entropy_score + report.minimum_peaks_not_requiered + report.all_peaks_above_precursor_mz + report.no_peaks_in_mz_range + report.minimum_high_peaks_not_requiered + report.low_resolution_ms2 + report.ms2_chemical_crash;
             cb.call1(py, (format!("Total deletions: {}", total_deletions),))?;
         }
 

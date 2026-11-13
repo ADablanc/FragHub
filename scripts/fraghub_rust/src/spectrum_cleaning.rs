@@ -151,6 +151,16 @@ pub fn spectrum_cleaning_processing(
                         }
                     }
 
+                    // SPLASH des pics ÉCRITS (après les filtres), à la place de celui des pics du fichier, calculé à
+                    // l'étape « Generating SPLASH IDs » et qui a servi à la vérification des mises à jour
+                    // (updates.json garde les SPLASH des pics du fichier). Avant, le SPLASH écrit ne correspondait
+                    // plus aux pics écrits dès qu'un filtre en retirait, et deux spectres devenus identiques après
+                    // filtrage gardaient deux SPLASH : ils n'étaient pas dédoublonnés (SPLASH + InChIKey).
+                    // Les spectres supprimés gardent, dans DELETED_SPECTRUMS, le SPLASH des pics de leur fichier.
+                    if let Some(splash) = crate::splash_generator::splash_of_peaks(&peaks) {
+                        valid_meta.insert("SPLASH".to_string(), splash);
+                    }
+
                     valid_meta.insert("NUM PEAKS".to_string(), peaks.len().to_string());
                     // Les pics ne sont plus recopiés en texte dans PEAKS_LIST (ils étaient gardés deux fois en
                     // mémoire) : le texte est fabriqué là où il est écrit (crate::spectrum::peaks_text).

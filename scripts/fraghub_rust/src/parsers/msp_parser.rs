@@ -190,10 +190,8 @@ fn parse_msp_spectrum(spectrum: &str, keys_dict: &HashMap<String, String>) -> Op
 
                 let mut peaks_array = Vec::new();
                 let peaks_str = split_nist_peak_lines(peaks_str);
-                for p in crate::globals_vars::PEAK_LIST_SPLIT_PATTERN.captures_iter(&peaks_str) {
-                    let mz = parse_decimal(p.get(1).unwrap().as_str());
-                    let int = parse_decimal(p.get(2).unwrap().as_str());
-                    peaks_array.push((mz, int)); // ✅ TUPLE AU LIEU D'UN VEC
+                for (mz, int) in crate::globals_vars::peak_pairs(&peaks_str) {
+                    peaks_array.push((parse_decimal(mz), parse_decimal(int))); // ✅ TUPLE AU LIEU D'UN VEC
                 }
 
                 return Some(ParsedSpectrum { metadata: metadata_dict, peaks: peaks_array });
@@ -402,8 +400,31 @@ mod tests {
 
     fn peaks(s: &str) -> Vec<(String, String)> {
         let s = split_nist_peak_lines(s);
-        crate::globals_vars::PEAK_LIST_SPLIT_PATTERN.captures_iter(&s)
-            .map(|c| (c[1].to_string(), c[2].to_string())).collect()
+        crate::globals_vars::peak_pairs(&s).map(|(mz, int)| (mz.to_string(), int.to_string())).collect()
+    }
+
+    /// Ancien motif des pics (avant la virgule décimale dans le m/z), gardé ici pour vérifier que les fichiers
+    /// sans virgule dans le m/z sont lus exactement comme avant
+    fn ancien_motif(s: &str) -> Vec<(String, String)> {
+        let re = regex::Regex::new(r"(?:^|\n)(-?\d+\.?\d*(?:[Ee][+-]?\d+)?)(?:\s+|:)(-?\d+[.,]?\d*(?:[Ee][+-]?\d+)?)").unwrap();
+        re.captures_iter(s).map(|c| (c[1].to_string(), c[2].to_string())).collect()
+    }
+
+    #[test]
+    fn virgule_decimale_dans_le_mz() {
+        // Avant : aucun pic lu (la virgule n'était acceptée que dans l'intensité), spectre supprimé
+        let spec = "FILENAME: a.msp\nName: X\nNum Peaks: 4\n56,0495 20\n69,0447\t15,5\n83,0604  10\n1,100713E2 6e1\n";
+        let k: HashMap<String, String> = HashMap::new();
+        assert_eq!(parse_msp_spectrum(spec, &k).unwrap().peaks, vec![(56.0495, 20.0), (69.0447, 15.5), (83.0604, 10.0), (110.0713, 60.0)]);
+        // Virgule suivie d'un espace : séparateur entre deux nombres, pas une virgule décimale. Comme avant : pas un pic
+        assert!(peaks("85, 999\n").is_empty());
+        // Un seul couple « m/z,intensité » par ligne, sans espace : pas lu comme un m/z à virgule suivi de la ligne
+        // d'après (cela donnerait de faux pics). Comme avant : aucun pic
+        assert!(peaks("85,999\n86,23\n").is_empty());
+        // Fichiers sans virgule dans le m/z : même lecture qu'avec l'ancien motif
+        for s in ["85 999\n86 23\n", "85\t999\n86\t23", "85:999\n86:23\n", "1.5e2 3,5\n100.5 1,5E+02\n", "85\n86 23\n", "-1.5 2\n", "85 999 86 23\n"] {
+            assert_eq!(peaks(s), ancien_motif(s), "{s:?}");
+        }
     }
 
     #[test]
@@ -429,8 +450,8 @@ mod tests {
     #[test]
     fn autres_formats_lus_comme_avant() {
         for s in ["85 999\n86 23\n", "85\t999\n86\t23", "85:999\n86:23\n", "85 999 \"a;b\"\n86 23\n", "85 999;\n86 23\n", "1.5e2 3,5\n"] {
-            let avant: Vec<(String, String)> = crate::globals_vars::PEAK_LIST_SPLIT_PATTERN.captures_iter(s)
-                .map(|c| (c[1].to_string(), c[2].to_string())).collect();
+            let avant: Vec<(String, String)> = crate::globals_vars::peak_pairs(s)
+                .map(|(mz, int)| (mz.to_string(), int.to_string())).collect();
             assert_eq!(peaks(s), avant, "{s:?}");
         }
         // Sans « ; », la chaîne n'est même pas recopiée

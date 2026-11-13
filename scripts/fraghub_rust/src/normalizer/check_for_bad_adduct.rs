@@ -177,4 +177,28 @@ mod tests {
         let m = complete_adduct(fields(&[("PREDICTED", "true"), ("PRECURSORTYPE", "[M+Na]+"), ("IONMODE", "positive")]));
         assert_eq!(m["PRECURSORTYPE"], "[M+Na]+");
     }
+
+    #[test]
+    fn adduit_du_mauvais_mode_supprime() {
+        // Tables des adduits remplies comme par datas/adduct_to_convert.csv
+        let mut c = context();
+        c.adduct_massdiff_pos.insert("[M+H]+".to_string(), 1.007276);
+        c.adduct_massdiff_neg.insert("[M-H]-".to_string(), -1.007276);
+        let run = |adduct: &str, mode: &str| {
+            let mut reason = None;
+            let kept = check_for_bad_adduct(fields(&[("PRECURSORTYPE", adduct), ("IONMODE", mode), ("FILENAME", "a.msp")]), &mut reason, &c).is_some();
+            (kept, reason.unwrap_or_default())
+        };
+        let (kept, reason) = run("[M-H]-", "positive");
+        assert!(!kept && reason.contains("neg adduct in pos ionmode"), "{reason}");
+        let (kept, reason) = run("[M+H]+", "negative");
+        assert!(!kept && reason.contains("pos adduct in neg ionmode"), "{reason}");
+        // Adduit du bon mode, ou adduit bien écrit mais absent des tables : gardé
+        assert!(run("[M+H]+", "positive").0);
+        assert!(run("[M-H]-", "negative").0);
+        assert!(run("[M+Foo]+", "positive").0);
+        // Texte qui n'a pas la forme d'un adduit : supprimé
+        let (kept, reason) = run("pas un adduit", "positive");
+        assert!(!kept && reason.contains("not an adduct"), "{reason}");
+    }
 }

@@ -181,7 +181,7 @@ pub fn process_mols(
         if !clean_mol.is_empty() {
             if let Some(transforms) = cache.get(&cache_key) {
                 for (k, v) in transforms {
-                    spec.metadata.insert(k.clone(), v.clone());
+                    spec.metadata.insert(k.clone(), computed_mass_text(k, v));
                 }
             }
         }
@@ -244,10 +244,44 @@ pub fn process_mols(
 
 /// Calcule les molécules avec RDKit et renvoie le dictionnaire "molécule|adduit|m/z" -> résultats.
 /// Calcul en C++ (src/rdkit_native), réparti sur tous les cœurs.
+/// Masses calculées par RDKit (EXACTMASS, AVERAGEMASS) : écrites avec 8 décimales au plus. La somme des masses des
+/// atomes donnait parfois « 893.1832885220006 » ou « 893.6960000000009 ». Les autres valeurs (InChI, SMILES,
+/// formule...) et une masse illisible sont rendues telles quelles.
+fn computed_mass_text(key: &str, value: &str) -> String {
+    if key == "EXACTMASS" || key == "AVERAGEMASS" {
+        if let Ok(mass) = value.parse::<f64>() {
+            if mass.is_finite() {
+                return crate::spectrum::computed_text(mass);
+            }
+        }
+    }
+    value.to_string()
+}
+
 fn run_rdkit(
     py: Python,
     mols: Vec<(String, String, String)>,
     progress_callback: &Option<PyObject>,
 ) -> PyResult<HashMap<String, HashMap<String, String>>> {
     crate::rdkit_native::run_parallel(py, mols, progress_callback.clone())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn masses_calculees_huit_decimales_au_plus() {
+        // Valeurs réelles (MoNA022203, 2-Hydroxycyclohexane-1-carboxyl-CoA)
+        assert_eq!(computed_mass_text("EXACTMASS", "893.1832885220006"), "893.18328852");
+        assert_eq!(computed_mass_text("AVERAGEMASS", "893.6960000000009"), "893.696");
+        // Déjà courtes : inchangées
+        assert_eq!(computed_mass_text("EXACTMASS", "194.08037556"), "194.08037556");
+        assert_eq!(computed_mass_text("AVERAGEMASS", "194.194"), "194.194");
+        // Masse illisible, et autres champs (même s'ils ressemblent à un nombre) : rendus tels quels
+        assert_eq!(computed_mass_text("EXACTMASS", "nan"), "nan");
+        assert_eq!(computed_mass_text("EXACTMASS", ""), "");
+        assert_eq!(computed_mass_text("FORMULA", "893.1832885220006"), "893.1832885220006");
+        assert_eq!(computed_mass_text("SMILES", "CCO"), "CCO");
+    }
 }

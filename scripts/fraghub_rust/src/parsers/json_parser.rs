@@ -542,3 +542,43 @@ mod tests {
         assert_eq!(mapped(&obj2, "ALL_GNPS.json", &keys)["INCHIKEY"], "CGZKSPLDUIRCIO-RPCRKUJJSA-N");
     }
 }
+
+#[cfg(test)]
+mod tests_pics {
+    use super::*;
+
+    #[test]
+    fn pics_ecrits_dans_un_texte() {
+        // GNPS (« peaks_json ») : les pics sont un texte. Intensité en écriture scientifique (cas réel GNPS)
+        assert_eq!(parse_json_peak_list_rust("[[100.5,20.0],[150.25,1.5E+05],[200.0,3e-1],[2.5e2,7]]"),
+                   vec![(100.5, 20.0), (150.25, 150000.0), (200.0, 0.3), (250.0, 7.0)]);
+        // MoNA (« spectrum ») : « m/z:intensité » séparés par des espaces
+        assert_eq!(parse_json_peak_list_rust("100:3.1 101.5:1.2e2"), vec![(100.0, 3.1), (101.5, 120.0)]);
+        // Nombre seul à la fin : ignoré. Texte vide ou sans nombre : aucun pic
+        assert_eq!(parse_json_peak_list_rust("[[100.5,20.0],[150.25]]"), vec![(100.5, 20.0)]);
+        assert!(parse_json_peak_list_rust("").is_empty());
+        assert!(parse_json_peak_list_rust("[]").is_empty());
+    }
+
+    #[test]
+    fn pics_en_tableau_de_nombres() {
+        let v: serde_json::Value = serde_json::from_str("[[100.5, 20], [150.25, 1.5E+05], [200, 3e-1], [300]]").unwrap();
+        // Couple incomplet ([300]) : ignoré
+        assert_eq!(parse_json_peak_array(&v), vec![(100.5, 20.0), (150.25, 150000.0), (200.0, 0.3)]);
+        assert!(parse_json_peak_array(&serde_json::json!("pas un tableau")).is_empty());
+    }
+
+    #[test]
+    fn champ_des_pics_selon_la_source() {
+        let peaks = |obj: &str| parse_json_spectrum(obj).expect("spectre lu").peaks;
+        // « peaks_json » en texte (GNPS), « peaks » en tableau (MSnLib), « spectrum » en texte : mêmes pics
+        assert_eq!(peaks(r#"{"name":"A","peaks_json":"[[100.5,2e1],[150.25,1.0E2]]"}"#), vec![(100.5, 20.0), (150.25, 100.0)]);
+        assert_eq!(peaks(r#"{"name":"A","peaks":[[100.5,2e1],[150.25,1.0E2]]}"#), vec![(100.5, 20.0), (150.25, 100.0)]);
+        assert_eq!(peaks(r#"{"name":"A","spectrum":"100.5:2e1 150.25:1.0E2"}"#), vec![(100.5, 20.0), (150.25, 100.0)]);
+        // Sans champ de pics : spectre gardé, liste vide (supprimé ensuite avec le motif « peaks list is empty »)
+        let p = parse_json_spectrum(r#"{"name":"A"}"#).expect("spectre lu");
+        assert!(p.peaks.is_empty());
+        // Texte qui n'est pas du JSON : pas un spectre
+        assert!(parse_json_spectrum("ligne quelconque").is_none());
+    }
+}

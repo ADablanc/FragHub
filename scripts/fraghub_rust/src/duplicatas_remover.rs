@@ -248,4 +248,62 @@ mod tests {
         // Rien à compléter
         assert!(values_from_duplicates(&kept, &[], &cols).is_empty());
     }
+
+    fn spectrum(pairs: &[(&str, &str)]) -> Spectrum {
+        let mut s = Spectrum::default();
+        s.metadata = meta(pairs);
+        s.peaks = vec![(100.5, 1.0)];
+        s
+    }
+
+    #[test]
+    fn un_seul_spectre_garde_par_splash_et_inchikey() {
+        let dir = std::env::temp_dir().join(format!("fraghub_doublons_{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        let cols: Vec<String> = ["DATABASE_NAME", "SPLASH", "SPECTRUMID", "NAME", "INCHIKEY", "RT", "PEAKS_LIST"].iter().map(|s| s.to_string()).collect();
+        let key = "RYYVLZVUVIJVGH-UHFFFAOYSA-N";
+        let list = vec![
+            spectrum(&[("SPECTRUMID", "COURT"), ("SPLASH", "s1"), ("INCHIKEY", key), ("DATABASE_NAME", "MoNA"), ("NAME", "Caf"), ("RT", "2.5")]),
+            spectrum(&[("SPECTRUMID", "LONG"), ("SPLASH", "s1"), ("INCHIKEY", key), ("DATABASE_NAME", "GNPS"), ("NAME", "Caffeine, nom le plus long")]),
+            // Même SPLASH, autre molécule : pas un doublon
+            spectrum(&[("SPECTRUMID", "AUTRE_MOLECULE"), ("SPLASH", "s1"), ("INCHIKEY", "REFJWTPEDVJJIY-UHFFFAOYSA-N")]),
+            // Même molécule, autre SPLASH : pas un doublon
+            spectrum(&[("SPECTRUMID", "AUTRES_PICS"), ("SPLASH", "s2"), ("INCHIKEY", key)]),
+            // Sans InChIKey : jamais comparés, tous gardés
+            spectrum(&[("SPECTRUMID", "SANS_CLE_1"), ("SPLASH", "s3"), ("INCHIKEY", "")]),
+            spectrum(&[("SPECTRUMID", "SANS_CLE_2"), ("SPLASH", "s3"), ("INCHIKEY", "nan")]),
+        ];
+        let (kept, removed) = crate::loaders::test_support::with_py(|py| remove_duplicatas_processing(
+            py, list, dir.to_string_lossy().to_string(), cols, false, None, None, None, None)).unwrap();
+
+        assert_eq!(removed, 1);
+        let ids: Vec<&str> = kept.iter().map(|s| s.metadata["SPECTRUMID"].as_str()).collect();
+        assert_eq!(ids, ["LONG", "AUTRE_MOLECULE", "AUTRES_PICS", "SANS_CLE_1", "SANS_CLE_2"]);   // ordre de lecture gardé
+        // Le plus complet est gardé ; son champ vide (RT) est repris du doublon ; ses propres valeurs restent
+        let winner = &kept[0].metadata;
+        assert_eq!((winner["RT"].as_str(), winner["NAME"].as_str(), winner["DATABASE_NAME"].as_str()), ("2.5", "Caffeine, nom le plus long", "GNPS"));
+        // Bases d'origine du groupe, gardées en interne pour le rapport (ordre alphabétique)
+        assert_eq!(winner[crate::globals_vars::ALL_DATABASE_NAMES_KEY], format!("GNPS{}MoNA", crate::globals_vars::INTERNAL_LIST_SEP));
+        assert!(!kept[1].metadata.contains_key(crate::globals_vars::ALL_DATABASE_NAMES_KEY));
+
+        // Le doublon supprimé est écrit avec son motif
+        let text = std::fs::read_to_string(dir.join("DELETED_SPECTRUMS").join("duplicatas_removed.csv")).unwrap();
+        let lines: Vec<&str> = text.lines().collect();
+        assert_eq!(lines.len(), 2);
+        assert_eq!(lines[0], "DATABASE_NAME\tSPLASH\tSPECTRUMID\tNAME\tINCHIKEY\tRT\tPEAKS_LIST\tDELETION_REASON");
+        assert!(lines[1].starts_with("MoNA\ts1\tCOURT\tCaf\t") && lines[1].ends_with("spectrum deleted because it's a duplicate (SPLASH + INCHIKEY)"));
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn sans_doublon_rien_n_est_ecrit() {
+        let dir = std::env::temp_dir().join(format!("fraghub_sans_doublon_{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        let list = vec![spectrum(&[("SPECTRUMID", "A"), ("SPLASH", "s1"), ("INCHIKEY", "K1")]),
+                        spectrum(&[("SPECTRUMID", "B"), ("SPLASH", "s2"), ("INCHIKEY", "K1")])];
+        let (kept, removed) = crate::loaders::test_support::with_py(|py| remove_duplicatas_processing(
+            py, list, dir.to_string_lossy().to_string(), vec!["SPECTRUMID".to_string()], false, None, None, None, None)).unwrap();
+        assert_eq!((kept.len(), removed), (2, 0));
+        assert!(!dir.exists());
+    }
 }

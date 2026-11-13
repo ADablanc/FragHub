@@ -24,7 +24,12 @@ pub fn normalize_intensity(mut peaks: Vec<(f64, f64)>) -> Vec<(f64, f64)> {
     if max_int != 0.0 {
         // On itère avec `&mut` (référence mutable) pour modifier chaque pic in-place.
         for p in &mut peaks {
-            p.1 /= max_int; // p.1 représente la deuxième valeur du tuple (intensité).
+            // Intensité relative arrondie à 8 décimales (« 0.16666667 » et non « 0.16666666666666666 ») : la valeur
+            // gardée en mémoire est celle qui est écrite, donc l'entropie et le SPLASH sont ceux du spectre écrit.
+            // Un pic très faible n'est jamais arrondi à zéro (il garde alors sa valeur exacte).
+            let relative = p.1 / max_int;
+            let rounded = crate::spectrum::round_computed(relative);
+            p.1 = if rounded > 0.0 { rounded } else { relative };
         }
         peaks
     } else {
@@ -40,6 +45,18 @@ mod tests {
     fn pic_le_plus_intense_vaut_1() {
         assert_eq!(normalize_intensity(vec![(50.0, 50.0), (60.0, 200.0), (70.0, 100.0)]),
                    vec![(50.0, 0.25), (60.0, 1.0), (70.0, 0.5)]);
+    }
+
+    #[test]
+    fn intensites_arrondies_a_huit_decimales() {
+        let out = normalize_intensity(vec![(50.0, 10.0), (60.0, 60.0), (70.0, 24.7102), (80.0, 100.0)]);
+        // 10/60 = 0.1666… ; 24.7102/100 donnait 0.24710200000000002
+        let int: Vec<String> = out.iter().map(|p| p.1.to_string()).collect();
+        assert_eq!(int, ["0.1", "0.6", "0.247102", "1"]);
+        assert_eq!(normalize_intensity(vec![(50.0, 1.0), (60.0, 6.0)])[0].1.to_string(), "0.16666667");
+        // Pic un milliard de fois plus faible que le plus intense : pas arrondi à zéro
+        let tiny = normalize_intensity(vec![(50.0, 1.0), (60.0, 1e9)]);
+        assert_eq!(tiny[0].1, 1e-9);
     }
 
     #[test]
