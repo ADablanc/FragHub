@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog, protocol, net } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog, protocol, net, Menu } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import { spawn } from 'child_process'
@@ -225,6 +225,12 @@ app.whenReady().then(() => {
         const filePath = path.join(basePath, '.output', 'public', finalPath);
         return net.fetch(pathToFileURL(filePath).href);
     });
+
+    // Pas de barre de menus (File, Edit, View, Window, Help) sous Windows et Linux.
+    // Sur macOS elle est gardée : c'est elle qui porte Cmd+Q et le copier / coller dans les champs de texte.
+    if (process.platform !== 'darwin') {
+        Menu.setApplicationMenu(null)
+    }
 
     // 1. Splash.html immédiat
     createSplashWindow()
