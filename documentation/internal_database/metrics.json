@@ -1,0 +1,62 @@
+{
+ "version": "2026-11-13",
+ "doi": "10.5281/zenodo.24203577",
+ "summary": {
+  "molecules": 7948489,
+  "fields": {
+   "INCHI": 7472387,
+   "SMILES": 7472387,
+   "FORMULA": 7472386,
+   "NAME": 7749702,
+   "EXACTMASS": 7472388
+  },
+  "ontologies": {
+   "classyfire": {
+    "title": "ClassyFire",
+    "levels": [
+     {
+      "level": "Superclass",
+      "column": "CLASSYFIRE_SUPERCLASS",
+      "classified": 948654,
+      "classes": 25
+     },
+     {
+      "level": "Class",
+      "column": "CLASSYFIRE_CLASS",
+      "classified": 943680,
+      "classes": 480
+     },
+     {
+      "level": "Subclass",
+      "column": "CLASSYFIRE_SUBCLASS",
+      "classified": 821642,
+      "classes": 791
+     }
+    ]
+   },
+   "npclassifier": {
+    "title": "NPClassifier",
+    "levels": [
+     {
+      "level": "Pathway",
+      "column": "NPCLASS_PATHWAY",
+      "classified": 6523593,
+      "classes": 54
+     },
+     {
+      "level": "Superclass",
+      "column": "NPCLASS_SUPERCLASS",
+      "classified": 3732948,
+      "classes": 1136
+     },
+     {
+      "level": "Class",
+      "column": "NPCLASS_CLASS",
+      "classified": 3213028,
+      "classes": 4536
+     }
+    ]
+   }
+  }
+ }
+}
