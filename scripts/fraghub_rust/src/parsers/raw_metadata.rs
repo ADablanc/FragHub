@@ -74,6 +74,11 @@ impl RawMetadata {
             if READER_KEYS.contains(&key.as_str()) {
                 return;
             }
+            // Une InChI valide n'est pas remplacée par une valeur qui n'en est pas une : les Comments du MSP MoNA
+            // donnent "InChI=InChI=1S/..." puis l'indicateur "inchi=1", qui écrasait l'InChI (clé stéréo perdue)
+            if is_inchi(&self.values[&key]) && !is_inchi(&value) {
+                return;
+            }
         } else {
             self.order.push(key.clone());
         }
@@ -250,6 +255,12 @@ const READER_KEYS: &[&str] = &["filename", "filehash"];
 /// Valeur qui a la forme d'une InChIKey (guillemets et espaces autour ignorés).
 fn has_digit(v: &str) -> bool {
     v.chars().any(|c| c.is_ascii_digit())
+}
+
+/// Valeur qui a la forme d'une InChI ("InChI=1S/..." ou "InChI=1/..."), guillemets et espaces autour ignorés.
+fn is_inchi(v: &str) -> bool {
+    let v = v.trim().trim_matches('"').trim();
+    v.starts_with("InChI=1S/") || v.starts_with("InChI=1/")
 }
 
 fn is_inchikey(v: &str) -> bool {
@@ -442,6 +453,20 @@ mod tests {
         assert_eq!(raw.get("smiles").unwrap(), "CO/N=C");
         assert_eq!(raw.get("inchi").unwrap(), "InChI=1S/X");
         assert_eq!(raw.get("formula").unwrap(), "C16H16");
+    }
+
+    #[test]
+    fn inchi_valide_pas_remplacee_par_une_valeur_qui_n_en_est_pas_une() {
+        let mut raw = RawMetadata::default();
+        raw.insert("inchi".into(), "InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3".into());
+        raw.insert("inchi".into(), "1".into());
+        assert_eq!(raw.get("inchi").unwrap(), "InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3");
+        // Une valeur non InChI reste remplaçable, et une InChI valide remplace une InChI valide (inchangé)
+        raw.insert("smiles".into(), "N/A".into());
+        raw.insert("smiles".into(), "CCO".into());
+        assert_eq!(raw.get("smiles").unwrap(), "CCO");
+        raw.insert("inchi".into(), "InChI=1/CH4/h1H4".into());
+        assert_eq!(raw.get("inchi").unwrap(), "InChI=1/CH4/h1H4");
     }
 
     #[test]

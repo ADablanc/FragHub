@@ -331,6 +331,17 @@ mod tests {
     }
 
     #[test]
+    fn mona_msp_indicateur_inchi_1_n_ecrase_pas_l_inchi() {
+        // Extrait réel du MSP MoNA (MoNA022204, octanoyl-CoA) : la vraie InChI ("InChI=InChI=1S/...", avec la
+        // stéréochimie) puis l'indicateur "inchi=1" dans les Comments ; avant, l'indicateur l'écrasait
+        let spec = "FILENAME: mona.msp\nFILEHASH: h\nName: octanoyl-CoA; (Acyl-CoA); [M+H]+;\nDB#: MoNA022204\nInChIKey: KQMZYOXOBSXMII-AJIKYXGBSA-N\nComments: \"InChI=InChI=1S/C29H50N7O17P3S/c1-4-5/h16-18/t18-,22?,23+,24-,28-/m1/s1\" \"computed SMILES=O=C(SCCN=C(O)CCN=C(O)C(O)C(C)(C)COP(=O)(O)O)CCCCCCC\" \"molecular weight=894.22694\" \"inchi=1\" \"MoNA Rating=2.2\"\nNum Peaks: 2\n100 3.1\n101 1.2\n";
+        let out = mapped(spec, &[("smiles", "SMILES"), ("inchi", "INCHI"), ("inchikey", "INCHIKEY"), ("db", "SPECTRUMID")]);
+        assert_eq!(out["INCHI"], "InChI=1S/C29H50N7O17P3S/c1-4-5/h16-18/t18-,22?,23+,24-,28-/m1/s1");
+        assert_eq!(out["INCHIKEY"], "KQMZYOXOBSXMII-AJIKYXGBSA-N");
+        assert_eq!(out["SMILES"], "O=C(SCCN=C(O)CCN=C(O)C(O)C(C)(C)COP(=O)(O)O)CCCCCCC");
+    }
+
+    #[test]
     fn notation_scientifique_gardee_jusqu_au_splash() {
         // Pics en notation scientifique (majuscule ou minuscule, avec ou sans signe) : lus comme des nombres,
         // et gardés par le retrait des pics inutilisables (seuls les pics nuls, négatifs ou non finis partent)
