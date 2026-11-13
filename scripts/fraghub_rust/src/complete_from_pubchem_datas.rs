@@ -8,7 +8,11 @@ use crate::spectrum::Spectrum;
 /// Pour un développeur Python : Au lieu de faire un `.merge()` extrêmement coûteux
 /// en RAM avec Pandas, on itère simplement sur notre liste de spectres (`iter_mut()`).
 /// Si l'INCHIKEY du spectre existe dans la base interne `compound_db` (déjà chargée en RAM
-/// par `loading_db.rs`), on copie instantanément les valeurs manquantes sans recréer de nouvelle table.
+/// par `loading_db.rs`), on complète le spectre sans recréer de nouvelle table (voir `fill_from_db`) :
+/// - NAME : toujours le nom de la base (nom de référence, le même pour tous les spectres d'une molécule) ;
+/// - INCHI, SMILES, FORMULA, EXACTMASS, AVERAGEMASS : seulement si le champ du spectre est vide. RDKit les a
+///   calculés juste avant à partir de la structure du spectre, cohérente avec sa clé ; avant, la base les
+///   écrasait, et une ligne fausse de la base (MoNA CoA : INCHI = « InChI=1 ») passait à tous les spectres.
 pub fn complete_from_pubchem_datas(
     py: Python,
     mut spectrum_list: Vec<Spectrum>,
@@ -46,9 +50,7 @@ pub fn complete_from_pubchem_datas(
                     if let Some(loc) = db.locate(&inchikey) {
                         for (col, column_id) in &column_ids {
                             if let Some(new_val) = column_id.and_then(|id| db.value(loc, id)) {
-                                if !new_val.trim().is_empty() && new_val.to_lowercase() != "nan" {
-                                    spec.metadata.insert(col.to_string(), new_val);
-                                }
+                                fill_from_db(&mut spec.metadata, col, new_val);
                             }
                         }
                     }
@@ -63,4 +65,54 @@ pub fn complete_from_pubchem_datas(
     if let Some(cb) = &progress_callback { cb.call1(py, (total_items,))?; }
 
     Ok(spectrum_list)
+}
+
+/// Colonne prise dans la base même si le spectre a déjà une valeur.
+const ALWAYS_FROM_DB: &[&str] = &["NAME"];
+
+/// Recopie une valeur de la base dans le spectre : toujours pour NAME, sinon seulement si le champ du spectre
+/// est vide (absent, vide ou « vide » écrit : nan, N/A… selon EMPTY_PATTERN). Une valeur vide de la base n'est
+/// jamais recopiée.
+fn fill_from_db(metadata: &mut std::collections::HashMap<String, String>, col: &str, db_value: String) {
+    if db_value.trim().is_empty() || db_value.to_lowercase() == "nan" {
+        return;
+    }
+    let spectrum_empty = metadata.get(col)
+        .map_or(true, |v| crate::globals_vars::EMPTY_PATTERN.is_match(v.trim()));
+    if spectrum_empty || ALWAYS_FROM_DB.contains(&col) {
+        metadata.insert(col.to_string(), db_value);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::HashMap;
+
+    #[test]
+    fn nom_de_la_base_le_reste_seulement_si_vide() {
+        let mut m: HashMap<String, String> = HashMap::new();
+        m.insert("NAME".into(), "octanoyl-CoA; (Acyl-CoA); [M+H]+;".into());
+        m.insert("INCHI".into(), "InChI=1S/C29H50N7O17P3S/t18-/m1/s1".into());
+        m.insert("SMILES".into(), "CCCCCCCC(=O)SCC".into());
+        m.insert("FORMULA".into(), "nan".into());
+        // Nom : celui de la base remplace celui du spectre
+        fill_from_db(&mut m, "NAME", "Octanoyl-CoA".into());
+        assert_eq!(m["NAME"], "Octanoyl-CoA");
+        // Structure du spectre gardée, même si la base en a une autre (ligne fausse « InChI=1 »)
+        fill_from_db(&mut m, "INCHI", "InChI=1".into());
+        fill_from_db(&mut m, "SMILES", "O=C(SCC)CCCCCCC".into());
+        assert_eq!(m["INCHI"], "InChI=1S/C29H50N7O17P3S/t18-/m1/s1");
+        assert_eq!(m["SMILES"], "CCCCCCCC(=O)SCC");
+        // Champ vide (« nan ») ou absent : rempli par la base
+        fill_from_db(&mut m, "FORMULA", "C29H50N7O17P3S".into());
+        fill_from_db(&mut m, "EXACTMASS", "893.21967".into());
+        assert_eq!(m["FORMULA"], "C29H50N7O17P3S");
+        assert_eq!(m["EXACTMASS"], "893.21967");
+        // Valeur vide de la base : rien n'est changé, même pour NAME
+        fill_from_db(&mut m, "NAME", "".into());
+        fill_from_db(&mut m, "AVERAGEMASS", "nan".into());
+        assert_eq!(m["NAME"], "Octanoyl-CoA");
+        assert!(!m.contains_key("AVERAGEMASS"));
+    }
 }
