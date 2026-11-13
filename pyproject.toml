@@ -32,8 +32,8 @@ testpaths = ["tests"]
 # Les modules de scripts/ s'importent comme quand FragHub les lance (import internal_database...)
 pythonpath = [".", "scripts", "scripts/build_dataset"]
 addopts = "-ra"
-# Avertissement interne de la bibliothèque mzspeclib (SQLAlchemy 2), sans rapport avec FragHub
-filterwarnings = ["ignore:.*declarative_base.*"]
+# Avertissements internes des bibliothèques mzspeclib (SQLAlchemy 2) et anyio (pytest 9), sans rapport avec FragHub
+filterwarnings = ["ignore:.*declarative_base.*", "ignore:.*CallSpec2.*"]
 
 [tool.uv.workspace]
 members = [

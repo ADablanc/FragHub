@@ -129,6 +129,7 @@ dependencies = [
 dev = [
     { name = "httpx" },
     { name = "maturin" },
+    { name = "numpy" },
     { name = "pyarrow" },
     { name = "pyinstaller" },
     { name = "pytest" },
@@ -149,6 +150,7 @@ requires-dist = [
 dev = [
     { name = "httpx" },
     { name = "maturin", specifier = ">=1.5,<2.0" },
+    { name = "numpy" },
     { name = "pyarrow" },
     { name = "pyinstaller" },
     { name = "pytest", specifier = ">=8" },
