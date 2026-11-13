@@ -34,7 +34,7 @@ Key features:<br>
 - **Spectra organization**: FragHub separates spectra based on different experimental parameters such as polarity (positive/negative), chromatographic mode (LC/GC, or DI for direct injection without chromatography), and acquisition type (experimental/in silico), facilitating their use and subsequent analysis.![img_8.png](img_8.png)
 - **Compatibility with various analysis software**: Standardized spectra produced by FragHub are compatible with multiple analysis software, including MSdial, MZmine, and Flash Entropy Search, providing users with maximum flexibility in choosing analysis tools.
 
-**Warning**: All spectra deemed inconsistent, i.e., those lacking SMILES and InChI, precursor m/z, and adduct information, are removed during the processing by FragHub.![img_9.png](img_9.png)
+**Warning**: spectra that cannot be used are removed during the processing: no structure (no SMILES, InChI or InChIKey), no valid precursor m/z (when it cannot be recalculated from the adduct and the structure), no valid adduct or ionization mode, no peaks, "suspect" spectra annotated with the structure of a related compound, and duplicates. Each removed spectrum is written, with the reason, in the DELETED_SPECTRUMS folder of the output directory.![img_9.png](img_9.png)
 
 
 ## INTERNAL DATABASE
@@ -106,15 +106,15 @@ To use this programme:
 >NB: If you have a file that contains **only** GC spectra AND this is not specified within the filename or the spectrum, you can simply suffix the filename with "_GC", like this: "GMD_20111121_MDN35_ALK_MSP_GC.msp".<br>
 
 2) FragHub GUI start: **at any time you can move the mouse over 🛈 to view a detailed description**<br>
-   1) First tab: Select single or multiple .json, .csv, .msp, or .mgf files.<br>![img.png](img.png)
+   1) First tab: Select single or multiple .json, .jsonl, .csv, .msp, or .mgf files.<br>![img.png](img.png)
    2) Second tab: Create a new empty directory or Select an existing directory where FragHub has already written files<br>![img_1.png](img_1.png)
    3) Third tab: This area allows users to select specific filters for inclusion during the processing stage. Moreover, it provides the option to adjust the respective parameters of each filters.<br>![img_2.png](img_2.png)
    4) Fourth tab: This area allows the user to choose whether or not to perform the calculation of de novo fragment formulas.<br>![img_13.png](img_13.png)
-   5) Fifth tab: Select the output file format of your preference. By default, all formats are selected.<br>![img_3.png](img_3.png)
+   5) Fifth tab: Select the output file formats of your preference (CSV, MSP, JSON, mzSpecLib JSON). By default, all formats are selected.<br>![img_3.png](img_3.png)
    6) Sixth tab: FragHub saves the SPLASH keys of previous spectra processed.<br>So that at the next update, only new spectra from the database are processed, and added to previous FragHub processes.<br>Resetting the project allows you to delete splash keys and output files from the selected project, in order to start a new project from scratch.<br>The "Write perf logs" switch (off by default) writes a performance log of the run (duration, memory and CPU usage of each step) in the PERF_LOGS sub-folder of the output directory.<br>![img_4.png](img_4.png)
    7) Click on START button to run the programme.
-3) Progress start. At any time you can click on STOP button to close the programme.<br>![img_5.png](img_5.png)
-4) When progress is finished, click on FINISH button to close the programme.<br>![img_6.png](img_6.png)
+3) Progress starts. At any time you can click on the STOP PROCESS button to stop the processing.<br>![img_5.png](img_5.png)
+4) When progress is finished, the HTML RESULT tab shows the report of the run. Click on the CLOSE REPORT button to go back to the settings.<br>![img_6.png](img_6.png)
 5) **DO NOT DELETE FILES INTO YOUR SELECTED OUTPUT DIRECTORY AFTER COPY CLEANED VERSIONS.**
 ---
 
@@ -140,30 +140,34 @@ Please refer to the [CLI Documentation](documentation/Documentation_CLI.md) for 
 
 ## FILTERS
 
-**check_minimum_peak_requiered(peak_array, n_peaks)**<br>
-This function checks whether a given mass spectrum contains a minimum number of peaks. If the spectrum contains fewer peaks than the minimum requirement, the spectrum is ignored.<br>
-<br>
-**remove_peak_above_precursormz(peak_array, precursormz)**<br>
-This function removes all peaks from the spectrum whose m/z value is greater than the precursor's m/z value plus 5 Da.<br>
-<br>
-**reduce_peak_list(peak_array, max_peaks)**<br>
-This function reduces the peak list to a specified maximum number of peaks. The peaks to retain are chosen based on their intensity, with peaks of greater intensity being selected.<br>
-<br>
-**normalize_intensity(peak_array)**<br>
-This function normalizes the intensity of all the peaks in a given spectrum to the maximum intensity.<br>
-<br>
-**keep_mz_in_range(peak_array, mz_from, mz_to)**<br>
-This function takes an array of peak data (representing mass-to-charge ratio, or m/z) and returns a new array containing only those peaks whose m/z value falls between mz_from and mz_to.<br>
+The filters are chosen in the Filters tab; all of them are on by default. Peaks with an m/z or an intensity that is zero, negative or not a number are always removed. The other filters are applied in this order:
 
-**check_minimum_of_high_peaks_requiered(peak_array, intensity_percent, no_peaks)**<br>
-This function is used to check whether a given array containing peak data has a required minimum number of "high peaks". A "high peak" is defined as a peak whose intensity is above a certain percentage (intensity_percent) of the maximum intensity. If the array does not contain a sufficient number of "high peaks", the function ignores the spectrum.<br>
+**remove_peak_above_precursormz**<br>
+Removes the peaks whose m/z is above the precursor m/z + 5 Da. For a multiply charged precursor (e.g. [M+2H]2+), the limit is charge × precursor m/z + 5 Da, since a singly charged fragment can be heavier than its precursor's m/z.<br>
 
-**remove_spectrum_under_entropy_score(score)**<br>
-The Shannon entropy score of the spectrum is calculated during processing. If a spectrum has an entropy score lower than the minimum required, it is deleted.<br>
+**keep_mz_in_range** (default: from 50 to 2000)<br>
+Removes the peaks whose m/z is not between `From` and `To` (both included).<br>
+
+**reduce_peak_list** (default: 500 peaks)<br>
+Keeps only the most intense peaks, up to the maximum number of peaks.<br>
+
+**check_minimum_peak_requiered** (default: 3 peaks)<br>
+Deletes the spectrum if it has fewer peaks than the minimum, counted after the filters above.<br>
+
+**normalize_intensity**<br>
+Divides the intensities by the highest one, so that the most intense peak is 1 (relative intensities rounded to 8 decimals).<br>
+
+**check_minimum_of_high_peaks_requiered** (default: 2 peaks at 5 %)<br>
+Deletes the spectrum if fewer than N peaks reach the given percentage of the highest intensity.<br>
+
+**remove_spectrum_under_entropy_score** (default: 0.5)<br>
+Deletes the spectrum if its normalized spectral entropy (between 0 and 1, [Li et al. 2021](https://doi.org/10.1038/s41592-021-01331-z)), computed on the filtered peaks, is below the score. The entropy of every spectrum is written in the ENTROPY field.<br>
+
+When a filter removes all the peaks of a spectrum, the spectrum is deleted. Deleted spectra are listed in the DELETED_SPECTRUMS folder, one file per reason.
 
 ## REQUIRED CSV FILE
 1) CSV files need to be separated by '**;**' or '**\t**', with quote character '**"**'.<br>
-2) The peaks column needs to be named '**peaks**'.<br>
+2) The peaks column needs to be named '**peaks**' (or '**peaks_list**', in any case).<br>
 3) The '**peaks**' column needs to be formatted with one of the following formats, as a string:
    1) >"[[79.054840, 12486.074219], [79.629868, 854.089905]]"
    2) > "<br>
