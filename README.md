@@ -81,6 +81,21 @@ Inner ring: superclass (ClassyFire) or pathway (NPClassifier); outer ring: class
 
 These figures are computed from the database by `python scripts/build_dataset/database_metrics.py` (to run again for each new version of the database).
 
+### Sources, citations and terms of use
+
+FragHub and its internal database are made for academic research. If you use them, please also cite the resources the database is built on:
+
+- **ClassyFire** (superclass, class, subclass): Djoumbou Feunang Y, Eisner R, Knox C, Chepelev L, Hastings J, Owen G, Fahy E, Steinbeck C, Subramanian S, Bolton E, Greiner R, Wishart DS. *ClassyFire: automated chemical classification with a comprehensive, computable taxonomy.* J. Cheminform. 2016, 8:61. [doi:10.1186/s13321-016-0174-y](https://doi.org/10.1186/s13321-016-0174-y)
+- **NPClassifier** (pathway, superclass, class): Kim HW, Wang M, Leber CA, Nothias L-F, Reher R, Kang KB, van der Hooft JJJ, Dorrestein PC, Gerwick WH, Cottrell GW. *NPClassifier: A Deep Neural Network-Based Structural Classification Tool for Natural Products.* J. Nat. Prod. 2021, 84, 2795–2807. [doi:10.1021/acs.jnatprod.1c00399](https://doi.org/10.1021/acs.jnatprod.1c00399)
+- **COCONUT** (NPClassifier classes of the molecules found in COCONUT): Chandrasekhar V, Rajan K, Kanakam SRS, Sharma N, Weißenborn V, Schaub J, Steinbeck C. *COCONUT 2.0: a comprehensive overhaul and curation of the collection of open natural products database.* Nucleic Acids Res. 2025, 53(D1). [doi:10.1093/nar/gkae1063](https://doi.org/10.1093/nar/gkae1063)
+- **PubChem** (reference names): Kim S, Chen J, Cheng T, Gindulyte A, He J, He S, Li Q, Shoemaker BA, Thiessen PA, Yu B, Zaslavsky L, Zhang J, Bolton EE. *PubChem 2025 update.* Nucleic Acids Res. 2025, 53(D1), D1516–D1525. [doi:10.1093/nar/gkae1059](https://doi.org/10.1093/nar/gkae1059)
+
+**Terms of use.** The internal database is distributed under the CeCILL 2.1 license, like FragHub, **except for its ClassyFire classes** (columns `CLASSYFIRE_SUPERCLASS`, `CLASSYFIRE_CLASS`, `CLASSYFIRE_SUBCLASS`), which remain under the [terms of ClassyFire](http://classyfire.wishartlab.com/about): ClassyFire is freely available, but any use or redistribution of its data, in whole or in part, for commercial purposes requires the explicit permission of the ClassyFire authors, and ClassyFire and its publication must be cited. The NPClassifier models and ontology, and the COCONUT data, are under CC0.
+
+## LICENSE
+
+FragHub is distributed under the [CeCILL 2.1](LICENSE) license (free software, compatible with the GNU GPL). The software made by other authors and shipped with FragHub (Rust, Python and JavaScript libraries, RDKit, Electron) keeps its own license: the installers include `THIRD_PARTY_LICENSES.txt`, which lists them with their license texts (made by `python scripts/third_party_licenses.py`). For the ClassyFire classes of the internal database, see [Sources, citations and terms of use](#sources-citations-and-terms-of-use).
+
 ## CONTACT
 
 * **Developer :** <axel.dablanc@utoulouse.fr>

@@ -13,8 +13,8 @@ import sys
 
 from build_backend import build_pyinstaller, build_rust, ensure_database
 from build_frontend import build_frontend, npm
-from build_utils import (BuildError, DRY_RUN, GUI_DIR, IS_WINDOWS, SCRIPTS_DIR,
-                         main_wrapper, run, step)
+from build_utils import (BuildError, DRY_RUN, GUI_DIR, IS_WINDOWS, ROOT, SCRIPTS_DIR,
+                         main_wrapper, run, step, venv_bin)
 
 
 def build_installer():
@@ -24,6 +24,9 @@ def build_installer():
         raise BuildError(f"Back-end compilé introuvable ({backend}). Lancez d'abord python build_backend.py.")
     if not (GUI_DIR / ".output" / "public" / "index.html").exists() and not DRY_RUN:
         raise BuildError("Front-end compilé introuvable (GUI/.output/public). Lancez d'abord python build_frontend.py.")
+    # Licences des logiciels livrés avec FragHub (copiées dans l'installeur : GUI/package.json, extraResources)
+    run([str(venv_bin("python")), str(SCRIPTS_DIR / "third_party_licenses.py")], cwd=ROOT,
+        title="Licences des logiciels tiers (THIRD_PARTY_LICENSES.txt)")
     run([npm(), "run", "build:electron"], cwd=GUI_DIR, title="Création de l'installeur dans GUI/dist_electron")
 
 

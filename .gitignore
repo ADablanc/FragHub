@@ -63,3 +63,6 @@ Thumbs.db
 # --- Caches des outils de test et d'analyse (pytest, ruff) ---
 .pytest_cache/
 .ruff_cache/
+
+# Licences des logiciels tiers : générées à la construction (scripts/third_party_licenses.py)
+/THIRD_PARTY_LICENSES.txt

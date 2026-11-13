@@ -51,6 +51,14 @@
         "filter": [
           "**/*"
         ]
+      },
+      {
+        "from": "../LICENSE",
+        "to": "LICENSE.txt"
+      },
+      {
+        "from": "../THIRD_PARTY_LICENSES.txt",
+        "to": "THIRD_PARTY_LICENSES.txt"
       }
     ],
     "win": {
