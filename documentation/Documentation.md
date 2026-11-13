@@ -175,7 +175,7 @@ Processing of one molecule (`shim.cc`, `process_single`), in this order:
 ### Internal database
 The InChIKeys of the spectra are looked up in `datas/internal_databases.parquet` (names, ClassyFire and NPClassifier classes): 17 parquet files, one row per InChIKey.
 
-**Where it comes from.** The database is published on Zenodo ([10.5281/zenodo.24171531](https://doi.org/10.5281/zenodo.24171531)) and is not tracked by git. `datas/internal_database.json` says which version FragHub uses: address, size and SHA-256 of the archive, and the list of its files. `scripts/internal_database.py` downloads it when the folder holds no parquet file:
+**Where it comes from.** The database is published on Zenodo ([10.5281/zenodo.24203577](https://doi.org/10.5281/zenodo.24203577)) and is not tracked by git. `datas/internal_database.json` says which version FragHub uses: address, size and SHA-256 of the archive, and the list of its files. `scripts/internal_database.py` downloads it when the folder holds no parquet file:
 * at build time: `build_backend.py` and `build_all.py` check it before compiling, and PyInstaller then copies the whole `datas/` folder into the executable, so **the installers bundle the database** and end users download nothing;
 * from source: at the first start of the interface (the start screen shows the progress) or of the `--cli` mode.
 
