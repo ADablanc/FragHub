@@ -167,3 +167,63 @@ pub fn check_for_update_processing(
     // On renvoie la nouvelle liste, le booléen (y a-t-il eu une MAJ ?), et le nombre de supprimés
     Ok((final_list, update, deleted_count))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::loaders::test_support::with_py;
+
+    fn spectre(splash: &str, name: &str) -> Spectrum {
+        let mut s = Spectrum::default();
+        s.metadata.insert("SPLASH".into(), splash.into());
+        s.metadata.insert("NAME".into(), name.into());
+        s
+    }
+
+    fn noms(list: &[Spectrum]) -> Vec<String> {
+        list.iter().map(|s| s.metadata["NAME"].clone()).collect()
+    }
+
+    #[test]
+    fn spectres_deja_traites_retires_et_nouveaux_notes() {
+        let d = std::env::temp_dir().join(format!("fraghub_updates_{}", std::process::id()));
+        let _ = fs::remove_dir_all(&d);
+        fs::create_dir_all(&d).unwrap();
+        fs::write(d.join("updates.json"), r#"{"SPLASH_LIST":{"splash-ancien":true}}"#).unwrap();
+        let cols = vec!["NAME".to_string(), "SPLASH".to_string()];
+        let list = vec![spectre("splash-ancien", "A"), spectre("splash-nouveau", "B"), spectre("splash-nouveau", "C"), spectre("", "D")];
+        let (kept, updated, deleted) = with_py(|py| check_for_update_processing(
+            py, list, d.to_string_lossy().to_string(), cols.clone(), false, None, None, None, None)).unwrap();
+        assert_eq!(noms(&kept), vec!["B", "C", "D"]);   // ordre gardé ; sans SPLASH : gardé
+        assert!(updated);
+        assert_eq!(deleted, 1);
+        let json: serde_json::Value = serde_json::from_str(&fs::read_to_string(d.join("updates.json")).unwrap()).unwrap();
+        let splashes = json["SPLASH_LIST"].as_object().unwrap();
+        assert_eq!(splashes.len(), 2);   // nouveau SPLASH écrit une seule fois
+        assert!(splashes.contains_key("splash-ancien") && splashes.contains_key("splash-nouveau"));
+        let csv_text = fs::read_to_string(d.join("DELETED_SPECTRUMS").join("previously_cleaned.csv")).unwrap();
+        let lines: Vec<&str> = csv_text.lines().collect();
+        assert_eq!(lines[0], "NAME\tSPLASH\tDELETION_REASON");
+        assert_eq!(lines[1], "A\tsplash-ancien\tspectrum deleted because already processed in a previous run.");
+
+        // Run suivant en mode ajout : B et C sont maintenant connus, la ligne est ajoutée sans nouvel en-tête
+        let (kept, updated, deleted) = with_py(|py| check_for_update_processing(
+            py, vec![spectre("splash-nouveau", "B2")], d.to_string_lossy().to_string(), cols, true, None, None, None, None)).unwrap();
+        assert!(kept.is_empty() && !updated && deleted == 1);
+        let csv_text = fs::read_to_string(d.join("DELETED_SPECTRUMS").join("previously_cleaned.csv")).unwrap();
+        assert_eq!(csv_text.lines().count(), 3);
+        let _ = fs::remove_dir_all(&d);
+    }
+
+    #[test]
+    fn premier_run_sans_fichier_de_mises_a_jour() {
+        let d = std::env::temp_dir().join(format!("fraghub_updates_vide_{}", std::process::id()));
+        let _ = fs::remove_dir_all(&d);
+        fs::create_dir_all(&d).unwrap();
+        let (kept, updated, deleted) = with_py(|py| check_for_update_processing(
+            py, vec![spectre("s1", "A")], d.to_string_lossy().to_string(), vec!["NAME".into()], false, None, None, None, None)).unwrap();
+        assert_eq!((kept.len(), updated, deleted), (1, true, 0));
+        assert!(!d.join("DELETED_SPECTRUMS").exists());
+        let _ = fs::remove_dir_all(&d);
+    }
+}

@@ -32,3 +32,22 @@ pub fn peaks_list_text(spec: &Spectrum) -> String {
         None => peaks_text(&spec.peaks),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn texte_des_pics_huit_decimales() {
+        assert_eq!(peaks_text(&[(100.5, 1.0), (200.123456789, 0.5)]), "100.50000000 1.00000000\n200.12345679 0.50000000");
+        assert_eq!(peaks_text(&[]), "");
+    }
+
+    #[test]
+    fn texte_des_metadonnees_prioritaire() {
+        let mut s = Spectrum { peaks: vec![(100.0, 1.0)], ..Default::default() };
+        assert_eq!(peaks_list_text(&s), "100.00000000 1.00000000");
+        s.metadata.insert("PEAKS_LIST".into(), "100 1 C5H5N5+/0.1".into());
+        assert_eq!(peaks_list_text(&s), "100 1 C5H5N5+/0.1");
+    }
+}

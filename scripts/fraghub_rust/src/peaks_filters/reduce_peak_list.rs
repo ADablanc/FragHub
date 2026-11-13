@@ -31,3 +31,20 @@ pub fn reduce_peak_list(
     }
     peaks
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn garde_les_plus_intenses_tries_par_mz() {
+        let peaks = vec![(300.0, 5.0), (100.0, 50.0), (200.0, 1.0), (150.0, 30.0)];
+        assert_eq!(reduce_peak_list(peaks, 2), vec![(100.0, 50.0), (150.0, 30.0)]);
+    }
+
+    #[test]
+    fn liste_assez_courte_inchangee_dans_son_ordre() {
+        let peaks = vec![(300.0, 5.0), (100.0, 50.0)];
+        assert_eq!(reduce_peak_list(peaks.clone(), 2), peaks);
+    }
+}

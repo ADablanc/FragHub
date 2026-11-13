@@ -28,3 +28,33 @@ pub fn normalize_empties(mut metadata_dict: HashMap<String, String>) -> HashMap<
 
     metadata_dict // Retourne la propriété (ownership) du dictionnaire modifié.
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn valeurs_vides_ecrites_remplacees_par_rien() {
+        let mut m = HashMap::new();
+        for (k, v) in [("a", "nan"), ("b", "N/A"), ("c", "unknown"), ("d", "0"), ("e", "$:00in-source"), ("f", "NA"),
+                       ("g", "?"), ("h", "None"), ("i", "")] {
+            m.insert(k.to_string(), v.to_string());
+        }
+        let out = normalize_empties(m);
+        assert!(out.values().all(|v| v.is_empty()), "{out:?}");
+    }
+
+    #[test]
+    fn vraies_valeurs_gardees() {
+        let mut m = HashMap::new();
+        for (k, v) in [("a", "NaCl"), ("b", "10"), ("c", "Unknown compound 3"), ("d", "x2")] {
+            m.insert(k.to_string(), v.to_string());
+        }
+        let out = normalize_empties(m.clone());
+        assert_eq!(out["a"], "NaCl");
+        assert_eq!(out["b"], "10");
+        assert_eq!(out["d"], "x2");
+        // « unknown » suivi d'un espace et d'autre chose est aussi lu comme vide (règle EMPTY_PATTERN)
+        assert_eq!(out["c"], "");
+    }
+}

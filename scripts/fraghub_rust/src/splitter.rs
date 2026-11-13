@@ -137,4 +137,30 @@ mod tests {
         assert_eq!((libs.pos_lc.len(), libs.pos_di.len(), libs.neg_di_insilico.len(), libs.neg_gc.len(), libs.pos_gc_insilico.len()), (1, 1, 1, 1, 1));
         assert_eq!(libs.all_spectra().count(), 5);
     }
+
+    #[test]
+    fn tri_des_spectres_en_bibliotheques_ordre_garde() {
+        let mut list = Vec::new();
+        for (i, (m, t, p)) in [("positive", "LC-ESI-QTOF", "false"), ("POSITIVE", "LC-ESI-QTOF", "false"),
+                               ("negative", "GC-EI-TOF", "true"), ("", "LC-ESI-QTOF", "false"),
+                               ("positive", "LC-ESI-QTOF", "false")].into_iter().enumerate() {
+            let mut s = spec(m, t, p);
+            s.metadata.insert("NAME".into(), i.to_string());
+            list.push(s);
+        }
+        let libs = crate::loaders::test_support::with_py(|py| master_splitter(py, list, None, None, None, None)).unwrap();
+        let names: Vec<&str> = libs.pos_lc.iter().map(|s| s.metadata["NAME"].as_str()).collect();
+        assert_eq!(names, vec!["0", "1", "4"]);   // mode écrit en majuscules accepté, ordre d'entrée gardé
+        assert_eq!(libs.neg_gc_insilico.len(), 1);
+        assert_eq!(libs.all_spectra().count(), 4);   // sans mode d'ionisation : écarté
+    }
+
+    #[test]
+    fn separation_lue_aussi_dans_le_nom_du_fichier() {
+        let mut s = spec("positive", "ESI-QTOF", "false");
+        s.metadata.insert("FILENAME".into(), "MoNA_GC.msp".into());
+        assert_eq!(separation_of(&s), Separation::Gc);
+        s.metadata.insert("FILENAME".into(), "x.msp".into());
+        assert_eq!(separation_of(&s), Separation::Lc);
+    }
 }

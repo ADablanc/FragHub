@@ -29,3 +29,18 @@ pub fn check_minimum_peak_requiered(
         peaks // Si tout va bien, on retourne la liste de pics intacte (ownership restitué).
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn nombre_minimum_de_pics() {
+        let peaks = vec![(50.0, 1.0), (60.0, 2.0), (70.0, 3.0)];
+        let mut reason = None;
+        assert_eq!(check_minimum_peak_requiered(peaks.clone(), 3, &mut reason), peaks);   // 3 pics pour 3 demandés : gardé
+        assert!(reason.is_none());
+        assert!(check_minimum_peak_requiered(peaks, 4, &mut reason).is_empty());
+        assert!(reason.unwrap().contains("number of peaks is below the threshold"));
+    }
+}

@@ -576,3 +576,17 @@ pub fn generate_report_processing(
     
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn mots_en_majuscule_initiale() {
+        assert_eq!(capitalize_words("lipids and lipid-like molecules"), "Lipids And Lipid-like Molecules");
+        assert_eq!(capitalize_words("  deux   espaces "), "Deux Espaces");
+        assert_eq!(capitalize_words("not found"), "NOT FOUND");
+        assert_eq!(capitalize_words("Unknown"), "NOT FOUND");
+        assert_eq!(capitalize_words("éther"), "Éther");
+    }
+}

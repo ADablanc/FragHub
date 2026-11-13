@@ -223,3 +223,30 @@ pub fn load_and_parse_csv(
 
     Ok(result_list)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn separateur_detecte_sur_la_premiere_ligne() {
+        let d = std::env::temp_dir().join(format!("fraghub_csv_sep_{}", std::process::id()));
+        std::fs::create_dir_all(&d).unwrap();
+        let (tab, semi) = (d.join("tab.csv"), d.join("semi.csv"));
+        std::fs::write(&tab, "NAME\tSMILES\tPEAKS_LIST\nA\tC;C\t[]\n").unwrap();
+        std::fs::write(&semi, "NAME;SMILES;PEAKS_LIST\nA;C\tC;[]\n").unwrap();
+        assert_eq!(detect_separator(tab.to_str().unwrap()), b'\t');
+        assert_eq!(detect_separator(semi.to_str().unwrap()), b';');
+        assert_eq!(detect_separator(d.join("absent.csv").to_str().unwrap()), b';');   // fichier illisible : « ; »
+        let _ = std::fs::remove_dir_all(&d);
+    }
+
+    #[test]
+    fn liste_de_pics_lue() {
+        assert_eq!(parse_peak_list_native("[[100.5, 1.0], [200, 50]]"), vec![(100.5, 1.0), (200.0, 50.0)]);
+        assert_eq!(parse_peak_list_native("100.5 1\n200:3.5e2"), vec![(100.5, 1.0), (200.0, 350.0)]);
+        // virgule décimale (CSV européen) sur l'intensité
+        assert_eq!(parse_peak_list_native("100.5 1,5"), vec![(100.5, 1.5)]);
+        assert!(parse_peak_list_native("").is_empty());
+    }
+}

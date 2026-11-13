@@ -41,3 +41,32 @@ pub fn check_minimum_of_high_peaks_requiered(
         peaks // Spectre valide, on le renvoie tel quel.
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn assez_de_pics_intenses_spectre_garde() {
+        // seuil 10 % de 200 = 20 : 3 pics atteignent le seuil (le pic à 20 compte)
+        let peaks = vec![(50.0, 200.0), (60.0, 20.0), (70.0, 19.9), (80.0, 100.0)];
+        let mut reason = None;
+        assert_eq!(check_minimum_of_high_peaks_requiered(peaks.clone(), 10.0, 3, &mut reason), peaks);
+        assert!(reason.is_none());
+    }
+
+    #[test]
+    fn pas_assez_de_pics_intenses_spectre_supprime() {
+        let mut reason = None;
+        let out = check_minimum_of_high_peaks_requiered(vec![(50.0, 200.0), (60.0, 5.0)], 10.0, 2, &mut reason);
+        assert!(out.is_empty());
+        assert!(reason.unwrap().contains("minimum number of high peaks"));
+    }
+
+    #[test]
+    fn liste_vide_inchangee_sans_motif() {
+        let mut reason = None;
+        assert!(check_minimum_of_high_peaks_requiered(Vec::new(), 10.0, 2, &mut reason).is_empty());
+        assert!(reason.is_none());
+    }
+}

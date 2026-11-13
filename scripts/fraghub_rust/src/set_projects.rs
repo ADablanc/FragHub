@@ -89,3 +89,42 @@ pub fn init_project(output_directory: String) -> PyResult<()> {
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn dossier(nom: &str) -> std::path::PathBuf {
+        let d = std::env::temp_dir().join(format!("fraghub_projet_{}_{}", nom, std::process::id()));
+        let _ = fs::remove_dir_all(&d);
+        d
+    }
+
+    #[test]
+    fn arborescence_du_projet_creee() {
+        let d = dossier("init");
+        init_project(d.to_string_lossy().to_string()).unwrap();
+        assert_eq!(fs::read_to_string(d.join("updates.json")).unwrap(), "{}");
+        for main in ["CSV", "JSON", "MSP"] {
+            for sub in ["NEG", "POS"] {
+                assert!(d.join(main).join(sub).is_dir());
+            }
+        }
+        assert!(d.join("DELETED_SPECTRUMS").is_dir());
+        // deuxième appel : updates.json existant gardé tel quel
+        fs::write(d.join("updates.json"), "{\"SPLASH_LIST\":{\"a\":true}}").unwrap();
+        init_project(d.to_string_lossy().to_string()).unwrap();
+        assert_eq!(fs::read_to_string(d.join("updates.json")).unwrap(), "{\"SPLASH_LIST\":{\"a\":true}}");
+        let _ = fs::remove_dir_all(&d);
+    }
+
+    #[test]
+    fn remise_a_zero_vide_le_dossier() {
+        let d = dossier("reset");
+        init_project(d.to_string_lossy().to_string()).unwrap();
+        fs::write(d.join("CSV").join("POS").join("POS_LC.csv"), "x").unwrap();
+        reset_updates(d.to_string_lossy().to_string()).unwrap();
+        assert!(d.is_dir() && fs::read_dir(&d).unwrap().count() == 0);
+        let _ = fs::remove_dir_all(&d);
+    }
+}

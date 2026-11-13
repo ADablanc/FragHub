@@ -31,3 +31,20 @@ pub fn normalize_intensity(mut peaks: Vec<(f64, f64)>) -> Vec<(f64, f64)> {
         Vec::new()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn pic_le_plus_intense_vaut_1() {
+        assert_eq!(normalize_intensity(vec![(50.0, 50.0), (60.0, 200.0), (70.0, 100.0)]),
+                   vec![(50.0, 0.25), (60.0, 1.0), (70.0, 0.5)]);
+    }
+
+    #[test]
+    fn intensites_toutes_nulles_ou_liste_vide() {
+        assert!(normalize_intensity(vec![(50.0, 0.0), (60.0, 0.0)]).is_empty());
+        assert!(normalize_intensity(Vec::new()).is_empty());
+    }
+}

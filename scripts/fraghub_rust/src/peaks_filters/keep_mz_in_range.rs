@@ -26,3 +26,23 @@ pub fn keep_mz_in_range(
 
     peaks
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn bornes_incluses() {
+        let mut reason = None;
+        let out = keep_mz_in_range(vec![(49.9, 1.0), (50.0, 2.0), (100.0, 3.0), (2000.0, 4.0), (2000.1, 5.0)], 50.0, 2000.0, &mut reason);
+        assert_eq!(out, vec![(50.0, 2.0), (100.0, 3.0), (2000.0, 4.0)]);
+        assert!(reason.is_none());
+    }
+
+    #[test]
+    fn plus_aucun_pic_spectre_supprime() {
+        let mut reason = None;
+        assert!(keep_mz_in_range(vec![(10.0, 1.0)], 50.0, 2000.0, &mut reason).is_empty());
+        assert!(reason.unwrap().contains("out of mz range"));
+    }
+}

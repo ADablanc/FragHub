@@ -384,3 +384,61 @@ pub fn is_valid_peak(formula: &str, target_mass: f64, ppm_tol: f64) -> bool {
 
     !results.is_empty()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn arrondi_comme_python() {
+        // round() de Python : au plus proche, et à égalité vers le chiffre pair
+        assert_eq!(py_round(2.5, 0), 2.0);
+        assert_eq!(py_round(3.5, 0), 4.0);
+        assert_eq!(py_round(-2.5, 0), -2.0);
+        assert_eq!(py_round(1.236, 2), 1.24);
+        assert_eq!(py_round(-0.094, 2), -0.09);
+    }
+
+    #[test]
+    fn nombre_ecrit_comme_python() {
+        assert_eq!(py_format_float(1.0), "1.0");
+        assert_eq!(py_format_float(-0.09), "-0.09");
+        assert_eq!(py_format_float(12.5), "12.5");
+    }
+
+    #[test]
+    fn formule_en_notation_de_hill() {
+        let comp: HashMap<&str, u32> = [("O", 2), ("N", 1), ("H", 8), ("C", 7), ("S", 0), ("Cl", 1)].into_iter().collect();
+        assert_eq!(format_hill_system(&comp), "C7H8ClNO2");
+        let sans_carbone: HashMap<&str, u32> = [("O", 1), ("H", 2)].into_iter().collect();
+        assert_eq!(format_hill_system(&sans_carbone), "H2O");
+    }
+
+    #[test]
+    fn fragment_de_la_cafeine_annote() {
+        // C7H7NO neutre = 121.05276 ; ion [M+H]+ = 122.06059 ; écart de -0.09 ppm
+        let out = process_spectrum_peaks("C8H10N4O2", "122.0606 100\n50 3", 10.0, "positive");
+        assert_eq!(out, "122.0606 100 C7H8NO+/-0.09\n50 3 ");
+    }
+
+    #[test]
+    fn mode_negatif_ion_deprotone() {
+        // même fragment neutre, ion [M-H]- = 120.04494
+        let out = process_spectrum_peaks("C8H10N4O2", "120.0449 100", 10.0, "negative");
+        assert!(out.starts_with("120.0449 100 C7H6NO-/"), "{out}");
+    }
+
+    #[test]
+    fn aucun_pic_annote_texte_inchange() {
+        assert_eq!(process_spectrum_peaks("C8H10N4O2", "999.9 100", 10.0, "positive"), "999.9 100");
+        assert_eq!(process_spectrum_peaks("Xx2", "122.0606 100", 10.0, "positive"), "122.0606 100");   // élément inconnu
+    }
+
+    #[test]
+    fn masse_atteignable_avec_la_formule() {
+        assert!(is_valid_peak("C8H10N4O2", 121.05276, 5.0));
+        assert!(!is_valid_peak("C8H10N4O2", 121.2, 5.0));
+        assert!(!is_valid_peak("C8H10N4O2", 0.0, 5.0));
+        assert!(!is_valid_peak("", 121.05276, 5.0));
+    }
+}

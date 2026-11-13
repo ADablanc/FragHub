@@ -54,3 +54,38 @@ pub fn entropy_calculation(peak_intensities: &[f64]) -> f64 {
 
     entropy / (n_peaks as f64).ln() // normalized entropy, bornee [0, 1]
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn proche(a: f64, b: f64) -> bool { (a - b).abs() < 1e-12 }
+
+    #[test]
+    fn pics_de_meme_intensite_entropie_normalisee_1() {
+        assert!(proche(entropy_calculation(&[5.0, 5.0]), 1.0));
+        assert!(proche(entropy_calculation(&[1.0, 1.0, 1.0, 1.0]), 1.0));
+    }
+
+    #[test]
+    fn valeur_de_reference() {
+        // p = (1/3, 2/3) : S = -(1/3 ln 1/3 + 2/3 ln 2/3) = 0.636514..., divisée par ln 2
+        let s = -(1.0_f64 / 3.0 * (1.0_f64 / 3.0).ln() + 2.0 / 3.0 * (2.0_f64 / 3.0).ln());
+        assert!(proche(entropy_calculation(&[1.0, 2.0]), s / 2.0_f64.ln()));
+        assert!((entropy_calculation(&[1.0, 2.0]) - 0.918296).abs() < 1e-6);
+    }
+
+    #[test]
+    fn un_pic_ou_aucun_vaut_0_et_pics_nuls_ignores() {
+        assert_eq!(entropy_calculation(&[]), 0.0);
+        assert_eq!(entropy_calculation(&[10.0]), 0.0);
+        assert_eq!(entropy_calculation(&[0.0, -1.0]), 0.0);
+        assert!(proche(entropy_calculation(&[5.0, 0.0, 5.0]), 1.0));   // le pic nul ne compte pas dans N
+    }
+
+    #[test]
+    fn toujours_entre_0_et_1() {
+        let e = entropy_calculation(&[1000.0, 1.0, 1.0, 1.0]);
+        assert!(e > 0.0 && e < 0.2);
+    }
+}

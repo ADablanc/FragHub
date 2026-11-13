@@ -82,3 +82,44 @@ pub(crate) fn msp_text(spec: &Spectrum) -> String {
 
     spectrum
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn spectrum(fields: &[(&str, &str)], peaks: Vec<(f64, f64)>) -> Spectrum {
+        let mut s = Spectrum { peaks, ..Default::default() };
+        for (k, v) in fields { s.metadata.insert(k.to_string(), v.to_string()); }
+        s
+    }
+
+    #[test]
+    fn champs_absents_ou_nan_ecrits_not_found() {
+        let text = msp_text(&spectrum(&[("NAME", "Caffeine"), ("RT", "nan"), ("SMILES", "  ")], vec![(138.06, 1.0)]));
+        assert!(text.starts_with("NAME: Caffeine\nPRECURSORMZ: NOT FOUND\n"));
+        assert!(text.contains("\nRT: NOT FOUND\n") && text.contains("\nSMILES: NOT FOUND\n"));
+        assert!(text.ends_with("NUM PEAKS: NOT FOUND\n138.06 1\n"));
+    }
+
+    #[test]
+    fn methode_de_fragmentation_et_commentaire() {
+        let text = msp_text(&spectrum(&[("FRAGMENTATIONMETHODE", "HCD"), ("FILENAME", "a.msp"), ("SPLASH", "splash10-x")], vec![]));
+        assert!(text.contains("\nDISSOCIATIONMETHOD: HCD\n"));
+        assert!(text.contains("\nCOMMENT: FILENAME=a.msp; DATABASE_NAME=NOT FOUND; FILEHASH=NOT FOUND; PREDICTED=NOT FOUND; SPLASH=splash10-x;"));
+        assert!(text.ends_with("NUM PEAKS: NOT FOUND\n\n"));   // aucun pic : rien après NUM PEAKS
+    }
+
+    #[test]
+    fn pics_avec_formules_de_novo() {
+        let peaks = vec![(110.07, 50.0), (138.06, 100.0)];
+        // formules du de novo, autant de lignes que de pics : reprises (« ; » devenu saut de ligne)
+        let s = spectrum(&[("PEAKS_LIST", "110.07 50 C6H8NO+/0.5;138.06 100 C7H8NO+/1.2")], peaks.clone());
+        assert!(msp_text(&s).ends_with("110.07 50 C6H8NO+/0.5\n138.06 100 C7H8NO+/1.2\n"));
+        // nombre de lignes différent du nombre de pics : pics reconstruits
+        let s = spectrum(&[("PEAKS_LIST", "110.07 50 C6H8NO+/0.5")], peaks.clone());
+        assert!(msp_text(&s).ends_with("110.07 50\n138.06 100\n"));
+        // texte sans formule : pics reconstruits
+        let s = spectrum(&[("PEAKS_LIST", "110.07 50\n138.06 100")], peaks);
+        assert!(msp_text(&s).ends_with("110.07 50\n138.06 100\n"));
+    }
+}

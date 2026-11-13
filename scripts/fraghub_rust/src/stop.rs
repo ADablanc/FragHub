@@ -16,10 +16,24 @@ pub const STOP_MESSAGE: &str = "Process stopped by user.";
 static STOP: AtomicBool = AtomicBool::new(false);
 static CTRL_C_PRESSES: AtomicUsize = AtomicUsize::new(0);
 
+/// Tests seulement : fil du test qui a remis l'indicateur à zéro (`reset_stop`). Les tests tournent en parallèle ;
+/// sans cela, un test qui demande l'arrêt faisait échouer au même moment les autres tests qui lisent un fichier ou
+/// écrivent une sortie. Un arrêt demandé n'est vu que par ce test (et par les fils qu'il attend lui-même).
+/// En dehors des tests, rien ne change.
+#[cfg(test)]
+static OWNER: std::sync::Mutex<Option<std::thread::ThreadId>> = std::sync::Mutex::new(None);
+
+/// Tests seulement : à prendre par tout test qui demande l'arrêt, pour qu'ils ne se remettent pas à zéro entre eux.
+#[cfg(test)]
+pub(crate) static TEST_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
 /// Vrai si l'arrêt a été demandé.
 #[inline]
 pub fn requested() -> bool {
-    STOP.load(Ordering::Relaxed)
+    let stop = STOP.load(Ordering::Relaxed);
+    #[cfg(test)]
+    let stop = stop && *OWNER.lock().unwrap() == Some(std::thread::current().id());
+    stop
 }
 
 /// Demande l'arrêt (appelable depuis n'importe quel thread).
@@ -60,6 +74,10 @@ pub fn request_stop() {
 pub fn reset_stop() {
     STOP.store(false, Ordering::Relaxed);
     CTRL_C_PRESSES.store(0, Ordering::Relaxed);
+    #[cfg(test)]
+    {
+        *OWNER.lock().unwrap() = Some(std::thread::current().id());
+    }
 }
 
 /// Ctrl+C dans le terminal (mode CLI) : le premier demande un arrêt propre (dossier de sortie remis comme avant le
@@ -85,6 +103,7 @@ mod tests {
 
     #[test]
     fn indicateur_partage_entre_threads() {
+        let _seul = TEST_LOCK.lock().unwrap_or_else(|e| e.into_inner());
         reset_stop();
         assert!(check().is_ok());
         std::thread::spawn(request).join().unwrap();

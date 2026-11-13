@@ -23,3 +23,19 @@ pub fn normalize_to_not_found_processing(
     });
     Ok(spectrum_list)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::loaders::test_support::with_py;
+
+    #[test]
+    fn valeurs_vides_ecrites_not_found() {
+        let mut s = Spectrum::default();
+        s.metadata.insert("NAME".into(), "Caffeine".into());
+        s.metadata.insert("RT".into(), "".into());
+        let out = with_py(|py| normalize_to_not_found_processing(py, vec![s])).unwrap();
+        assert_eq!(out[0].metadata["NAME"], "Caffeine");
+        assert_eq!(out[0].metadata["RT"], "NOT FOUND");
+    }
+}
