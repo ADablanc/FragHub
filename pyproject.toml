@@ -13,13 +13,24 @@ dependencies = [
     "uvicorn",
 ]
 
-# Outils de compilation (installés aussi par `uv sync`) : maturin pour le moteur Rust,
-# PyInstaller pour l'exécutable.
+# Outils de développement (installés aussi par `uv sync`) : maturin pour le moteur Rust, PyInstaller pour
+# l'exécutable, pytest pour les tests (voir TESTS.md) ; httpx sert aux tests de l'API du serveur (TestClient de
+# FastAPI), pyarrow aux tests des scripts de la base interne (scripts/build_dataset).
 [dependency-groups]
 dev = [
     "maturin>=1.5,<2.0",
     "pyinstaller",
+    "pytest>=8",
+    "httpx",
+    "pyarrow",
 ]
+
+# Tests Python : `python run_tests.py --python` ou `python -m pytest` (voir TESTS.md)
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Les modules de scripts/ s'importent comme quand FragHub les lance (import internal_database...)
+pythonpath = [".", "scripts", "scripts/build_dataset"]
+addopts = "-ra"
 
 [tool.uv.workspace]
 members = [

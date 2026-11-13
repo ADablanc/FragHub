@@ -32,20 +32,37 @@ struct Journal {
     entries: Vec<(PathBuf, Change)>,
     /// Contenu mis de côté par la remise à zéro : (dossier de sortie, dossier de mise de côté, noms déplacés)
     previous: Option<(PathBuf, PathBuf, Vec<std::ffi::OsString>)>,
+    /// Tests seulement : fil qui a ouvert le journal. Les tests tournent en parallèle, chacun dans son fil ;
+    /// sans cela, un test qui écrit des fichiers (writers) les inscrivait dans le journal ouvert au même moment
+    /// par le test de ce module, qui les effaçait en rejouant le retour arrière. En dehors des tests, rien ne change.
+    #[cfg(test)]
+    owner: std::thread::ThreadId,
+}
+
+/// Journal ouvert et utilisable depuis ce fil (en dehors des tests : toujours, s'il est ouvert)
+fn usable(journal: Option<&mut Journal>) -> Option<&mut Journal> {
+    #[cfg(test)]
+    let journal = journal.filter(|j| j.owner == std::thread::current().id());
+    journal
 }
 
 static JOURNAL: Mutex<Option<Journal>> = Mutex::new(None);
 
 /// Début d'un run : journal vide.
 pub fn begin() {
-    *JOURNAL.lock().unwrap() = Some(Journal { entries: Vec::new(), previous: None });
+    *JOURNAL.lock().unwrap() = Some(Journal {
+        entries: Vec::new(),
+        previous: None,
+        #[cfg(test)]
+        owner: std::thread::current().id(),
+    });
 }
 
 /// À appeler avant d'ouvrir `path` en écriture (`append` : ajout à la suite, sinon remplacement).
 /// Sans journal ouvert (tests, outils), ne fait rien.
 pub fn prepare(path: &Path, append: bool) -> std::io::Result<()> {
     let mut guard = JOURNAL.lock().unwrap();
-    let Some(journal) = guard.as_mut() else { return Ok(()) };
+    let Some(journal) = usable(guard.as_mut()) else { return Ok(()) };
     if journal.entries.iter().any(|(p, _)| p == path) {
         return Ok(()); // déjà noté dans ce run : son état d'avant le run est connu
     }
@@ -99,7 +116,7 @@ pub fn set_aside_output_directory(out: &Path) -> std::io::Result<()> {
             moved.push(name);
         }
     }
-    match guard.as_mut() {
+    match usable(guard.as_mut()) {
         Some(journal) => journal.previous = Some((out.to_path_buf(), previous, moved)),
         // Sans journal (appel direct depuis Python) : comportement d'avant, suppression
         None => {
@@ -171,7 +188,8 @@ fn restore_tail(path: &Path, len: u64, tail: &[u8]) -> std::io::Result<()> {
 mod tests {
     use super::*;
 
-    // Les tests partagent le journal global : un seul test, en séquence
+    // Le journal est global ; en test, il n'est utilisé que depuis le fil qui l'a ouvert (voir `usable`) :
+    // les autres tests qui écrivent des fichiers en même temps ne sont pas touchés.
     #[test]
     fn retour_arriere_et_validation() {
         let d = std::env::temp_dir().join(format!("fraghub_guard_{}", std::process::id()));
