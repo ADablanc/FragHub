@@ -43,13 +43,14 @@
             >
               <span class="text-body-2 font-weight-medium mr-3">{{ p.label }}</span>
               <v-text-field
-                  :model-value="parameters[p.key]"
-                  @update:model-value="handleInput($event, p.key)"
+                  :model-value="texts[p.key]"
+                  @update:model-value="update(p.key, $event)"
+                  :error-messages="errorOf(p.key)"
                   type="text"
                   inputmode="decimal"
                   variant="outlined"
                   density="compact"
-                  hide-details
+                  hide-details="auto"
                   bg-color="white"
                   style="width: 80px;"
                   class="param-input text-body-2"
@@ -67,15 +68,9 @@
 
 <script setup>
 import { useState } from '#imports'
+import { useNumberFields } from '~/composables/useNumberFields'
 
 const parameters = useState('parameters')
-
-const handleInput = (val, key) => {
-  // Remplace la virgule par un point
-  const sanitizedValue = val.replace(',', '.');
-  // Met à jour la valeur dans parameters
-  parameters.value[key] = parseFloat(sanitizedValue);
-}
 
 // La liste EXACTE issue du code Python
 const filters = [
@@ -143,6 +138,9 @@ const initDefaults = () => {
 }
 
 initDefaults()
+
+// Champs numériques (virgule décimale acceptée ; saisie invalide signalée, jamais envoyée au serveur)
+const { texts, update, errorOf } = useNumberFields(filters.flatMap((f) => (f.params || []).map((p) => p.key)))
 
 </script>
 

@@ -131,17 +131,24 @@ const fileNames = computed(() => {
   return parameters.value.input_directory.map(path => path.split(/[/\\]/).pop())
 })
 
+// Ajoute des fichiers à la liste, sans doublon : un fichier déjà choisi n'est pas ajouté une deuxième fois. Avant, il
+// était lu deux fois, et en retirer un effaçait le nom de base de l'autre (les noms de base sont rangés par chemin).
+const addFiles = (paths) => {
+  if (!parameters.value.input_directory) parameters.value.input_directory = []
+  if (!parameters.value.input_db_names) parameters.value.input_db_names = {}
+  const known = new Set(parameters.value.input_directory)
+  const added = paths.filter((p) => !known.has(p) && known.add(p))
+  if (added.length === 0) return
+  parameters.value.input_directory = [...parameters.value.input_directory, ...added]
+  added.forEach((p) => {
+    if (!parameters.value.input_db_names[p]) parameters.value.input_db_names[p] = 'Unknown'
+  })
+}
+
 const browseFiles = async () => {
   if (window.electronAPI) {
     const selectedFiles = await window.electronAPI.selectFiles()
-    if (selectedFiles && selectedFiles.length > 0) {
-      if (!parameters.value.input_directory) parameters.value.input_directory = []
-      if (!parameters.value.input_db_names) parameters.value.input_db_names = {}
-      parameters.value.input_directory = [...parameters.value.input_directory, ...selectedFiles]
-      selectedFiles.forEach(f => {
-         if (!parameters.value.input_db_names[f]) parameters.value.input_db_names[f] = 'Unknown'
-      })
-    }
+    if (selectedFiles && selectedFiles.length > 0) addFiles(selectedFiles)
   } else {
     if (fileInput.value) {
       fileInput.value.click()
@@ -151,15 +158,7 @@ const browseFiles = async () => {
 
 const handleFileChange = (event) => {
   const files = Array.from(event.target.files)
-  if (files.length > 0) {
-    const newNames = files.map(f => f.name)
-    if (!parameters.value.input_directory) parameters.value.input_directory = []
-    if (!parameters.value.input_db_names) parameters.value.input_db_names = {}
-    parameters.value.input_directory = [...parameters.value.input_directory, ...newNames]
-    newNames.forEach(name => {
-      if (!parameters.value.input_db_names[name]) parameters.value.input_db_names[name] = 'Unknown'
-    })
-  }
+  if (files.length > 0) addFiles(files.map(f => f.name))
   event.target.value = ''
 }
 

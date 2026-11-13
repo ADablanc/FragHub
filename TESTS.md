@@ -36,7 +36,7 @@ FragHub a trois langages, donc trois outils :
 |---|---|---|
 | Moteur Rust (`scripts/fraghub_rust`) | `cargo test` | dans chaque fichier `.rs`, à la fin, dans le bloc `#[cfg(test)] mod tests` |
 | Python (`scripts/`, scripts de build) | `pytest` | dossier `tests/`, fichiers `test_*.py` |
-| Interface (`GUI/`) | `vitest` | à venir |
+| Interface (`GUI/`) | `vitest` | dossier `GUI/tests/`, fichiers `*.test.js` |
 
 ## Ce qu'il faut installer (une seule fois)
 
@@ -44,7 +44,9 @@ Les mêmes outils que pour compiler FragHub depuis le code source (voir `documen
 - Rust (`cargo`) et RDKit C++ dans `~/rdkit_cpp`, ou dans le dossier donné par la variable `RDKIT_PREFIX` ;
 - l'environnement Python du projet : `uv sync` à la racine. Il installe aussi `pytest` et ce que les tests
   utilisent (groupe `dev` du `pyproject.toml`). `uv sync` peut recompiler le module Rust, ce qui prend quelques
-  minutes.
+  minutes ;
+- pour l'interface : Node.js, puis `npm install` dans `GUI/`. Il installe aussi Vitest et les outils de test
+  (`devDependencies` du `package.json`).
 
 ## Lancer les tests
 
@@ -54,6 +56,7 @@ Depuis la racine du dépôt :
 python run_tests.py                 # tout
 python run_tests.py --rust          # seulement le moteur Rust
 python run_tests.py --python        # seulement les tests Python
+python run_tests.py --gui           # seulement l'interface
 python run_tests.py --rust adduit   # seulement les tests dont le nom contient « adduit »
 ```
 
@@ -175,6 +178,40 @@ même), on peut passer outre : `python -m pytest --allow-stale-engine`.
 
 Les tests Rust (`cargo test`) compilent toujours les sources : ils ne sont pas concernés.
 
+## Les tests de l'interface
+
+`GUI/tests/` contient les tests de l'interface Nuxt / Vuetify, lancés par Vitest (`npm test` dans `GUI/`, ou
+`python run_tests.py --gui`). Chaque composant est monté dans un faux navigateur (happy-dom), avec Vuetify et les
+fonctions de Nuxt, mais **sans Electron ni serveur Python** : les fenêtres de choix de fichiers d'Electron
+(`window.electronAPI`), le serveur (`fetch`) et le socket de progression (`socket.io-client`) sont remplacés par des
+faux qui donnent des réponses connues. Durée : quelques secondes.
+
+| Fichier | Ce qu'il vérifie |
+|---|---|
+| `onglets.test.js` | chaque onglet : chaque interrupteur et chaque champ change le bon réglage, et lui seul ; valeurs par défaut ; choix des fichiers et du dossier ; remise à zéro du projet seulement pour un dossier FragHub |
+| `progression.test.js` | écran de progression : messages du serveur (étapes, suppressions, avancement), tâche figée en vert, message perdu ou en retard, fin du run et rapport HTML, bouton STOP |
+| `application.test.js` | fenêtre principale : onglets, réglages par défaut, START envoie tous les réglages au serveur, message et retour aux réglages si le serveur refuse ou ne répond pas, START bloqué par une saisie invalide |
+| `decimal.test.js` | lecture des nombres saisis (virgule décimale, saisies refusées) et des messages d'erreur du serveur |
+
+`tests/test_interface.py` (pytest) vérifie le lien avec le Python : chaque réglage de l'interface est attendu par
+le serveur (et inversement), et l'interface et la ligne de commande ont les mêmes valeurs par défaut.
+
+Exemple de test d'un onglet :
+
+```js
+it('chaque interrupteur ne change que son format', async () => {
+  const w = await mountSuspended(OutputSettingTab)        // monte l'onglet
+  await w.findAll('input[type="checkbox"]')[0].setValue(false)
+  expect(parameters.value.csv).toBe(0.0)                   // réglage envoyé au serveur
+})
+```
+
+- `mountSuspended` monte un composant avec Nuxt et Vuetify ; `w.find(...)` / `w.findAll(...)` cherchent un élément,
+  `setValue`, `trigger('click')` agissent dessus, `w.text()` donne le texte affiché.
+- `resetParameters()` (dans `GUI/tests/outils.js`) remet les réglages partagés à leurs valeurs par défaut avant
+  chaque test.
+- Les tests de l'interface ne testent pas Electron (`GUI/electron/main.js` : fenêtres, lancement du serveur).
+
 ## Écrire un test
 
 ### En Python
@@ -254,5 +291,6 @@ mod tests {
 | `STATUS_DLL_NOT_FOUND` (`0xc0000135`) | `cargo test` lancé à la main sans le PATH | passer par `run_tests.py` |
 | `RDKit C++ introuvable` | RDKit C++ n'est pas dans `~/rdkit_cpp` | l'installer, ou donner son dossier dans `RDKIT_PREFIX` |
 | `No module named pytest` (ou `httpx`, `pyarrow`) | outils de test pas installés | `uv sync` à la racine |
+| `Outils de test de l'interface absents` | Vitest pas installé | `npm install` dans `GUI/` |
 | `Environnement .venv introuvable` | projet jamais installé | `uv sync` à la racine |
 | `Le moteur Rust installé (...) est plus ancien que ...` | source Rust modifiée depuis la dernière compilation | `python build_backend.py --rust-only` |

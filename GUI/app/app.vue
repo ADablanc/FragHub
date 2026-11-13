@@ -56,11 +56,26 @@
             </v-tabs-window>
           </v-card-text>
 
+          <!-- Erreur du dernier lancement (réglage refusé par le serveur, serveur injoignable) ou saisie invalide :
+               affichée au-dessus du bouton START. Avant, l'interface revenait aux onglets sans rien dire. -->
+          <v-alert
+              v-if="startBlockedText || startError"
+              type="error"
+              variant="elevated"
+              density="compact"
+              class="start-alert"
+              :closable="!startBlockedText"
+              @click:close="startError = ''"
+          >
+            {{ startBlockedText || startError }}
+          </v-alert>
+
           <v-btn
               color="success"
               size="x-large"
               elevation="8"
               class="start-btn text-h6 font-weight-bold"
+              :disabled="!!startBlockedText"
               @click="startExecution"
           >
             START
@@ -75,9 +90,10 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useState } from '#imports'
 import ProgressView from '~/components/ProgressView.vue'
+import { serverErrorText } from '~/utils/decimal'
 
 const activeTab = ref('input')
 const isDarkMode = ref(false)
@@ -111,6 +127,15 @@ const parameters = useState('parameters', () => ({
   write_perf_logs: 0.0
 }))
 
+// Champs numériques dont la saisie n'est pas un nombre (onglets Filters et De Novo, useNumberFields) : START bloqué
+const invalidFields = useState('invalidFields', () => ({}))
+const startBlockedText = computed(() => {
+  const keys = Object.keys(invalidFields.value)
+  return keys.length ? `Invalid value (number expected): ${keys.join(', ')}` : ''
+})
+// Dernière erreur de lancement, effacée au lancement suivant
+const startError = ref('')
+
 watch(isDarkMode, async (val) => {
   const DarkReader = await import('darkreader')
   if (val) {
@@ -126,6 +151,8 @@ onMounted(async () => {
 })
 
 const startExecution = async () => {
+  if (startBlockedText.value) return
+  startError.value = ''
   // Affiche l'écran de progression immédiatement pour que le socket soit prêt
   isExecuting.value = true
 
@@ -137,12 +164,16 @@ const startExecution = async () => {
         body: JSON.stringify(parameters.value),
       })
       if (!response.ok) {
-        const errorData = await response.json()
-        console.error("Erreur serveur :", errorData.detail)
+        // Run refusé : retour aux onglets, avec le message du serveur
+        let detail = `HTTP ${response.status}`
+        try { detail = serverErrorText((await response.json()).detail) } catch { /* réponse sans JSON */ }
+        console.error("Erreur serveur :", detail)
+        startError.value = `FragHub server refused the run: ${detail}`
         isExecuting.value = false
       }
     } catch (err) {
       console.error("Connexion impossible :", err)
+      startError.value = 'FragHub server unreachable (http://127.0.0.1:8000). Please restart FragHub.'
       isExecuting.value = false
     }
   }, 500)
@@ -165,6 +196,7 @@ const startExecution = async () => {
 .modern-tab.v-tab--selected { color: #2196F3 !important; }
 .modern-tab:not(:last-child)::after { content: ''; position: absolute; right: 0; top: 35%; height: 30%; width: 2px; background-color: rgba(255, 255, 255, 0.15); border-radius: 2px; }
 .background-logo { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0; opacity: 0.25; pointer-events: none; width: 100%; display: flex; justify-content: center; }
+.start-alert { position: absolute; bottom: 105px; left: 50%; transform: translateX(-50%); z-index: 10; max-width: 80%; }
 .start-btn { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 10; min-width: 250px; border-radius: 30px; text-transform: uppercase; letter-spacing: 2px; }
 .v-card { z-index: 1; }
 </style>

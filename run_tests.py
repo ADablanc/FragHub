@@ -92,8 +92,10 @@ def gui(env, filters):
         print("  (pas encore de tests pour l'interface : rien à lancer)")
         return None
     npm = require_tool("npm.cmd" if IS_WINDOWS else "npm", "Installez Node.js : https://nodejs.org")
-    if not (GUI_DIR / "node_modules").is_dir() and not DRY_RUN:
-        raise BuildError("Dépendances de l'interface absentes : lancez « npm install » dans GUI/.")
+    # node_modules présent mais sans Vitest (installé avant l'ajout des tests) : même message
+    vitest = GUI_DIR / "node_modules" / ".bin" / ("vitest.cmd" if IS_WINDOWS else "vitest")
+    if not vitest.exists() and not DRY_RUN:
+        raise BuildError("Outils de test de l'interface absents : lancez « npm install » dans GUI/.")
     cmd = [npm, "run", "test"]
     if filters:
         cmd += ["--", "-t", filters[0]]

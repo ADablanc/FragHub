@@ -3,15 +3,6 @@
 
     <div class="d-flex flex-column align-center justify-center">
 
-      <input
-          type="file"
-          ref="folderInput"
-          webkitdirectory
-          directory
-          class="d-none"
-          @change="handleFolderChange"
-      />
-
       <v-btn
           icon
           width="100"

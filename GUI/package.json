@@ -13,14 +13,19 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "electron": "electron electron/main.js",
-    "build:electron": "electron-builder"
+    "build:electron": "electron-builder",
+    "test": "vitest run"
   },
   "devDependencies": {
+    "@nuxt/test-utils": "^4.4.0",
+    "@vue/test-utils": "^2.5.1",
     "darkreader": "^4.9.125",
     "electron": "^40.4.0",
     "electron-builder": "^25.1.8",
+    "happy-dom": "^21.0.4",
     "nuxt": "^4.4.6",
     "socket.io-client": "^4.8.3",
+    "vitest": "^5.1.0",
     "vue": "^3.5.34",
     "vue-router": "^5.0.7",
     "vuetify": "^4.0.8",

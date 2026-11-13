@@ -23,13 +23,14 @@
       <v-col cols="auto" class="d-flex align-center">
         <span class="text-body-1 mr-4">ppm tolerance:</span>
         <v-text-field
-            :value="parameters.de_novo_ppm_tolerance"
-            @input="handleInput($event.target.value, 'de_novo_ppm_tolerance')"
+            :model-value="texts.de_novo_ppm_tolerance"
+            @update:model-value="update('de_novo_ppm_tolerance', $event)"
+            :error-messages="errorOf('de_novo_ppm_tolerance')"
             type="text"
             inputmode="decimal"
             variant="outlined"
             density="compact"
-            hide-details
+            hide-details="auto"
             bg-color="white"
             style="width: 120px;"
         ></v-text-field>
@@ -54,14 +55,9 @@
 
 <script setup>
 import { useState } from '#imports'
+import { useNumberFields } from '~/composables/useNumberFields'
 
 const parameters = useState('parameters')
-
-// Gestion du point décimal pour le champ texte
-const handleInput = (val, key) => {
-  const sanitizedValue = val.replace(',', '.');
-  parameters.value[key] = parseFloat(sanitizedValue) || 0.0;
-}
 
 // Initialisation des valeurs par défaut si elles n'existent pas
 const initDefaults = () => {
@@ -74,4 +70,7 @@ const initDefaults = () => {
 }
 
 initDefaults()
+
+// Tolérance : virgule décimale acceptée ; saisie invalide signalée, jamais envoyée au serveur (avant : 0 ppm)
+const { texts, update, errorOf } = useNumberFields(['de_novo_ppm_tolerance'])
 </script>
