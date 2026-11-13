@@ -1,0 +1,4 @@
+"ID";"CompoundName";"DBID";"PrecursorMZ";"PrecursorType";"Formula";"Smiles";"InchiKey";"InstrumentType";"CollisionEnergy";"RetentionTime";"Ontology";"NumberOfPeak";"peaks";"IONMODE"
+7006298;"L-Glutamic acid";"RP001412";146.0459;"[M-H]-";"C5H9NO4";"C(CC(=O)O)[C@@H](C(=O)O)N";"WHUUTDBJXJRKMK-VKHMYHEASA-N";"LC-ESI-QTOF";"20";"0.601000010967255";"ONTOLOGY: Glutamic acid and derivatives";2;"100.041	47
+102.057	1000
+";"Negative"

@@ -13,6 +13,8 @@ diffèrent. Si le changement est voulu, on régénère la référence et on la c
 
     python -m pytest tests/test_bout_en_bout.py --update-reference
 
+Le run utilise le moteur Rust COMPILÉ installé dans .venv : si une source Rust est plus récente, le test s'arrête
+en le disant (fixture moteur_a_jour de conftest.py ; recompiler avec python build_backend.py --rust-only).
 Le test a besoin de la vraie base interne (datas/internal_databases.parquet, version de référence) : il est sauté
 si elle manque. Les noms et les classes viennent de la base : une nouvelle version de la base demande une nouvelle
 référence (le test le dit). Durée : une à deux minutes (chargement de la base).
@@ -74,7 +76,7 @@ def base_version():
 
 
 @pytest.fixture(scope="module")
-def run_output(tmp_path_factory, base_version):
+def run_output(tmp_path_factory, base_version, moteur_a_jour):
     if not os.path.isdir(INPUT) or not os.listdir(INPUT):
         pytest.fail("jeu d'entrée absent : %s" % INPUT)
     out = tmp_path_factory.mktemp("sortie_fraghub")

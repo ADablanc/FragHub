@@ -1,0 +1,29 @@
+Échantillon créé par scripts/build_dataset
+Source : C:\Users\Axel\Documents\DATAS\FragHub\ReuGMAnov2026\input-Nov2026
+Tirage : 10 spectres par fichier
+Graine : 42
+
+20241003_enamdisc_neg_ms2.mgf : 10 / 48313 spectres (0.0 %), 0.0 Mo (0.1 s)
+20241003_enamdisc_pos_ms2.mgf : 10 / 68287 spectres (0.0 %), 0.0 Mo (0.2 s)
+20241003_enammol_neg_ms2.mgf : 10 / 12825 spectres (0.1 %), 0.0 Mo (0.0 s)
+20241003_enammol_pos_ms2.mgf : 10 / 24352 spectres (0.0 %), 0.0 Mo (0.1 s)
+20241003_mcebio_neg_ms2.mgf : 10 / 37147 spectres (0.0 %), 0.0 Mo (0.1 s)
+20241003_mcebio_pos_ms2.mgf : 10 / 48251 spectres (0.0 %), 0.0 Mo (0.1 s)
+20241003_mcedrug_neg_ms2.mgf : 10 / 10985 spectres (0.1 %), 0.0 Mo (0.0 s)
+20241003_mcedrug_pos_ms2.mgf : 10 / 15268 spectres (0.1 %), 0.0 Mo (0.0 s)
+20241003_mcescaf_neg_ms2.mgf : 10 / 16648 spectres (0.1 %), 0.0 Mo (0.0 s)
+20241003_mcescaf_pos_ms2.mgf : 10 / 26283 spectres (0.0 %), 0.0 Mo (0.1 s)
+20241003_nihnp_neg_ms2.mgf : 10 / 17097 spectres (0.1 %), 0.0 Mo (0.0 s)
+20241003_nihnp_pos_ms2.mgf : 10 / 19241 spectres (0.1 %), 0.0 Mo (0.1 s)
+20241003_otavapep_neg_ms2.mgf : 10 / 6040 spectres (0.2 %), 0.0 Mo (0.0 s)
+20241003_otavapep_pos_ms2.mgf : 10 / 6670 spectres (0.1 %), 0.0 Mo (0.0 s)
+20250828_mcediv_50k_sub_neg_ms2.mgf : 10 / 65879 spectres (0.0 %), 0.0 Mo (0.1 s)
+20250828_mcediv_50k_sub_pos_ms2.mgf : 10 / 120064 spectres (0.0 %), 0.0 Mo (0.3 s)
+20250828_targetmol_hts_np_neg_ms2.mgf : 10 / 8331 spectres (0.1 %), 0.0 Mo (0.0 s)
+20250828_targetmol_hts_np_pos_ms2.mgf : 10 / 8403 spectres (0.1 %), 0.0 Mo (0.0 s)
+ALL_GNPS.json : 10 / 2091500 spectres (0.0 %), 0.0 Mo (10.0 s)
+MSMS-Public_experimentspectra-neg-VS19.msp : 10 / 45483 spectres (0.0 %), 0.0 Mo (0.1 s)
+MSMS-Public_experimentspectra-pos-VS19.msp : 10 / 322191 spectres (0.0 %), 0.0 Mo (0.4 s)
+MassBank_RIKENformat.msp : 10 / 139006 spectres (0.0 %), 0.0 Mo (0.2 s)
+MoNA-export-Experimental_Spectra.msp : 10 / 1754608 spectres (0.0 %), 0.0 Mo (10.5 s)
+spectraverse-1.0.2.mgf : 10 / 488797 spectres (0.0 %), 0.0 Mo (1.5 s)

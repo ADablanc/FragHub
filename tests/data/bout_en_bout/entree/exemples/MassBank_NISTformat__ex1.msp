@@ -1,0 +1,36 @@
+Name: Mevastatin
+Synon: Compactin, Mevastatinum, Mevastatina
+Synon: [(1S,7S,8S,8aR)-8-[2-[(2R,4R)-4-hydroxy-6-oxooxan-2-yl]ethyl]-7-methyl-1,2,3,7,8,8a-hexahydronaphthalen-1-yl] (2S)-2-methylbutanoate
+DB#: MSBNK-AAFC-AC000857
+InChIKey: AJLFOPYRIVGYMJ-INTXDZFKSA-N
+InChI: InChI=1S/C23H34O5/c1-4-14(2)23(26)28-20-7-5-6-16-9-8-15(3)19(22(16)20)11-10-18-12-17(24)13-21(25)27-18/h6,8-9,14-15,17-20,22,24H,4-5,7,10-13H2,1-3H3/t14-,15-,17+,18+,19-,20-,22-/m0/s1
+SMILES: CC[C@H](C)C(=O)O[C@H]1CCC=C2[C@H]1[C@H]([C@H](C=C2)C)CC[C@@H]3C[C@H](CC(=O)O3)O
+Precursor_type: [M+H]+
+Spectrum_type: MS2
+PrecursorMZ: 391.2474
+Instrument_type: LC-ESI-ITFT
+Instrument: Q-Exactive Orbitrap Thermo Scientific
+Ion_mode: POSITIVE
+Collision_energy: 10(NCE)
+Formula: C23H34O5
+MW: 390
+ExactMass: 390.24063
+Comments: Parent=391.2474
+Splash: splash10-009i-0690000000-2f452437ceb865062cfd
+Num Peaks: 16
+107.0491 43
+125.0597 73
+143.0703 158
+145.1012 36
+159.1168 440
+185.1325 999
+187.1481 59
+209.1325 67
+211.1481 397
+225.1638 137
+229.1587 787
+235.1481 138
+253.1587 371
+271.1693 643
+289.1798 107
+391.2479 93

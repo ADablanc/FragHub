@@ -1,0 +1,16 @@
+"ID";"CompoundName";"DBID";"PrecursorMZ";"PrecursorType";"Formula";"Smiles";"InchiKey";"InstrumentType";"CollisionEnergy";"RetentionTime";"Ontology";"NumberOfPeak";"peaks";"IONMODE"
+373020;"1-Methylhistidine";"HMDB0000001";170.09296;"M+H";"C7H11N3O2";"CN1C=NC(C[C@H](N)C(O)=O)=C1";"BRMWTNUJHUMWMS-LURJTMIESA-N";"CFM-ID 4.0";"10.0";0;"Histidine and derivatives";14;"107.06037	29.77
+107.06037	29.77
+124.08692	100.0
+124.08692	100.0
+124.08692	100.0
+124.08692	100.0
+124.08692	100.0
+124.08692	100.0
+170.0924	64.76
+170.0924	64.76
+170.0924	64.76
+170.0924	64.76
+170.0924	64.76
+170.0924	64.76
+";"Positive"

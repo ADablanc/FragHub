@@ -1,0 +1,9 @@
+"ID";"CompoundName";"DBID";"PrecursorMZ";"PrecursorType";"Formula";"Smiles";"InchiKey";"InstrumentType";"CollisionEnergy";"RetentionTime";"Ontology";"NumberOfPeak";"peaks";"IONMODE";"Database";"Index";"DB_Tables";"IonModes";"FullNames";"Min_ID";"Max_ID"
+1;"Chrysin";"BMDMS16";255.09;"[M+H]+";"C15H10O4";"O=C1C=C(OC=2C=C(O)C=C(O)C12)C=3C=CC=CC3";"RTIXKCRFFJGDFG-UHFFFAOYSA-N";"Orbitrap";"10.0";"7.09";"Flavones";7;"197.132	10
+201.105	5
+227.072	5
+255.061	93
+255.093	1000
+255.111	355
+283.099	5
+";"Positive";;;;;;;

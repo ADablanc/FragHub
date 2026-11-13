@@ -1,0 +1,800 @@
+{
+  "analyte_attribute_sets": {
+    "all": []
+  },
+  "attributes": [
+    {
+      "accession": "MS:1003186",
+      "name": "library format version",
+      "value": "1.0"
+    },
+    {
+      "accession": "MS:1003188",
+      "name": "library name",
+      "value": "POS_GC"
+    },
+    {
+      "accession": "MS:1003189",
+      "name": "library description",
+      "value": "Spectral library built by FragHub 2.0.0"
+    }
+  ],
+  "clusters": [],
+  "format_version": "1.0",
+  "interpretation_attribute_sets": {
+    "all": []
+  },
+  "spectra": [
+    {
+      "analytes": {
+        "1": {
+          "attributes": [
+            {
+              "accession": "MS:1000866",
+              "name": "molecular formula",
+              "value": "C6H10O4"
+            },
+            {
+              "accession": "MS:1000868",
+              "name": "SMILES string",
+              "value": "CCOC(=O)C(=O)OCC"
+            },
+            {
+              "accession": "MS:1003403",
+              "name": "InChI",
+              "value": "InChI=1S/C6H10O4/c1-3-9-5(7)6(8)10-4-2/h3-4H2,1-2H3"
+            },
+            {
+              "accession": "MS:1002894",
+              "name": "InChIKey",
+              "value": "WYACBZDAHNBPPB-UHFFFAOYSA-N"
+            },
+            {
+              "accession": "MS:1003637",
+              "cv_param_group": "1",
+              "name": "theoretical neutral monoisotopic mass",
+              "value": 146.0579088
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "dalton",
+              "value_accession": "UO:0000221"
+            },
+            {
+              "accession": "MS:1003638",
+              "cv_param_group": "2",
+              "name": "theoretical neutral average mass",
+              "value": 146.142
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "2",
+              "name": "unit",
+              "value": "dalton",
+              "value_accession": "UO:0000221"
+            }
+          ],
+          "id": "1"
+        }
+      },
+      "attributes": [
+        {
+          "accession": "MS:1003237",
+          "name": "library spectrum key",
+          "value": 1
+        },
+        {
+          "accession": "MS:1003061",
+          "name": "library spectrum name",
+          "value": "Diethyl Oxalate"
+        },
+        {
+          "accession": "MS:1002599",
+          "name": "splash key",
+          "value": "splash10-00di-9000000000-c67521646cabae9ed001"
+        },
+        {
+          "accession": "MS:1003072",
+          "name": "spectrum origin type",
+          "value": "observed spectrum",
+          "value_accession": "MS:1003073"
+        },
+        {
+          "accession": "MS:1000511",
+          "name": "ms level",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000465",
+          "name": "scan polarity",
+          "value": "positive scan",
+          "value_accession": "MS:1000130"
+        },
+        {
+          "accession": "MS:1000008",
+          "name": "ionization type",
+          "value": "electron ionization",
+          "value_accession": "MS:1000389"
+        },
+        {
+          "accession": "MS:1003168",
+          "name": "library spectrum comment",
+          "value": "DB#=MSBNK-Fac_Eng_Univ_Tokyo-JP006142; origin=MassBank"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "1",
+          "name": "other attribute name",
+          "value": "SPECTRUMID"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "1",
+          "name": "other attribute value",
+          "value": "MSBNK-Fac_Eng_Univ_Tokyo-JP006142"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "2",
+          "name": "other attribute name",
+          "value": "FILENAME"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "2",
+          "name": "other attribute value",
+          "value": "MassBank_RIKENformat.msp"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "3",
+          "name": "other attribute name",
+          "value": "FILEHASH"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "3",
+          "name": "other attribute value",
+          "value": "cf115dcd0d1b4a120abb71fdeb5eb9e569e0b3a672063be51e4c7d183d8e61f0"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "4",
+          "name": "other attribute name",
+          "value": "RESOLUTION"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "4",
+          "name": "other attribute value",
+          "value": "LOW"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "5",
+          "name": "other attribute name",
+          "value": "INSTRUMENTTYPE"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "5",
+          "name": "other attribute value",
+          "value": "GC-EI-B"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "6",
+          "name": "other attribute name",
+          "value": "INSTRUMENT"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "6",
+          "name": "other attribute value",
+          "value": "Hitachi M-80"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "7",
+          "name": "other attribute name",
+          "value": "ENTROPY"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "7",
+          "name": "other attribute value",
+          "value": "0.74903544"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "8",
+          "name": "other attribute name",
+          "value": "CLASSYFIRE_SUPERCLASS"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "8",
+          "name": "other attribute value",
+          "value": "Organic acids and derivatives"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "9",
+          "name": "other attribute name",
+          "value": "CLASSYFIRE_CLASS"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "9",
+          "name": "other attribute value",
+          "value": "Carboxylic acids and derivatives"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "10",
+          "name": "other attribute name",
+          "value": "CLASSYFIRE_SUBCLASS"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "10",
+          "name": "other attribute value",
+          "value": "Dicarboxylic acids and derivatives"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "11",
+          "name": "other attribute name",
+          "value": "NPCLASS_PATHWAY"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "11",
+          "name": "other attribute value",
+          "value": "Fatty acids"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "12",
+          "name": "other attribute name",
+          "value": "NPCLASS_SUPERCLASS"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "12",
+          "name": "other attribute value",
+          "value": "Fatty esters"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "13",
+          "name": "other attribute name",
+          "value": "NPCLASS_CLASS"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "13",
+          "name": "other attribute value",
+          "value": "Wax monoesters"
+        },
+        {
+          "accession": "MS:1003059",
+          "name": "number of peaks",
+          "value": 6
+        }
+      ],
+      "intensities": [
+        0.1577381,
+        0.20833333,
+        0.26488095,
+        1.0,
+        0.19047619,
+        0.01488095
+      ],
+      "interpretations": {},
+      "mzs": [
+        56.0,
+        57.0,
+        73.0,
+        74.0,
+        75.0,
+        146.0
+      ],
+      "peak_annotations": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ]
+    },
+    {
+      "analytes": {
+        "1": {
+          "attributes": [
+            {
+              "accession": "MS:1000866",
+              "name": "molecular formula",
+              "value": "C7H12O2"
+            },
+            {
+              "accession": "MS:1000868",
+              "name": "SMILES string",
+              "value": "[2H]C(C)(C)OC(=O)C(=C)C"
+            },
+            {
+              "accession": "MS:1003403",
+              "name": "InChI",
+              "value": "InChI=1S/C7H12O2/c1-5(2)7(8)9-6(3)4/h6H,1H2,2-4H3/i6D"
+            },
+            {
+              "accession": "MS:1002894",
+              "name": "InChIKey",
+              "value": "BOQSSGDQNWEFSX-RAMDWTOOSA-N"
+            },
+            {
+              "accession": "MS:1003637",
+              "cv_param_group": "1",
+              "name": "theoretical neutral monoisotopic mass",
+              "value": 129.09000637
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "dalton",
+              "value_accession": "UO:0000221"
+            },
+            {
+              "accession": "MS:1003638",
+              "cv_param_group": "2",
+              "name": "theoretical neutral average mass",
+              "value": 129.17710178
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "2",
+              "name": "unit",
+              "value": "dalton",
+              "value_accession": "UO:0000221"
+            }
+          ],
+          "id": "1"
+        }
+      },
+      "attributes": [
+        {
+          "accession": "MS:1003237",
+          "name": "library spectrum key",
+          "value": 2
+        },
+        {
+          "accession": "MS:1003061",
+          "name": "library spectrum name",
+          "value": "Methacrylic acid isopropyl ester-D1"
+        },
+        {
+          "accession": "MS:1002599",
+          "name": "splash key",
+          "value": "splash10-014i-9000000000-f21aee427893d39b6cd0"
+        },
+        {
+          "accession": "MS:1003072",
+          "name": "spectrum origin type",
+          "value": "observed spectrum",
+          "value_accession": "MS:1003073"
+        },
+        {
+          "accession": "MS:1000511",
+          "name": "ms level",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000465",
+          "name": "scan polarity",
+          "value": "positive scan",
+          "value_accession": "MS:1000130"
+        },
+        {
+          "accession": "MS:1000008",
+          "name": "ionization type",
+          "value": "electron ionization",
+          "value_accession": "MS:1000389"
+        },
+        {
+          "accession": "MS:1003168",
+          "name": "library spectrum comment",
+          "value": "Parent=-1"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "1",
+          "name": "other attribute name",
+          "value": "SPECTRUMID"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "1",
+          "name": "other attribute value",
+          "value": "MSBNK-Fac_Eng_Univ_Tokyo-JP000992"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "2",
+          "name": "other attribute name",
+          "value": "FILENAME"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "2",
+          "name": "other attribute value",
+          "value": "MassBank_NISTformat__ex3.msp"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "3",
+          "name": "other attribute name",
+          "value": "FILEHASH"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "3",
+          "name": "other attribute value",
+          "value": "d62a7b3da232bd0ac1f7520a3b5bb57b171aec57f960f55b47b1987d4e398f68"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "4",
+          "name": "other attribute name",
+          "value": "RESOLUTION"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "4",
+          "name": "other attribute value",
+          "value": "LOW"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "5",
+          "name": "other attribute name",
+          "value": "SYNON"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "5",
+          "name": "other attribute value",
+          "value": "ISOPROPYL METHACRYLATE-D1"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "6",
+          "name": "other attribute name",
+          "value": "INSTRUMENTTYPE"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "6",
+          "name": "other attribute value",
+          "value": "GC-EI-B"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "7",
+          "name": "other attribute name",
+          "value": "INSTRUMENT"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "7",
+          "name": "other attribute value",
+          "value": "HITACHI RMU-5B"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "8",
+          "name": "other attribute name",
+          "value": "ENTROPY"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "8",
+          "name": "other attribute value",
+          "value": "0.60968235"
+        },
+        {
+          "accession": "MS:1003059",
+          "name": "number of peaks",
+          "value": 13
+        }
+      ],
+      "intensities": [
+        0.01201201,
+        0.04904905,
+        0.14514515,
+        0.01701702,
+        1.0,
+        0.06006006,
+        0.03603604,
+        0.01701702,
+        0.04504505,
+        0.45945946,
+        0.03403403,
+        0.03603604,
+        0.03103103
+      ],
+      "interpretations": {},
+      "mzs": [
+        58.0,
+        59.0,
+        60.0,
+        68.0,
+        69.0,
+        70.0,
+        71.0,
+        84.0,
+        86.0,
+        87.0,
+        88.0,
+        114.0,
+        129.0
+      ],
+      "peak_annotations": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ]
+    },
+    {
+      "analytes": {
+        "1": {
+          "attributes": [
+            {
+              "accession": "MS:1000866",
+              "name": "molecular formula",
+              "value": "C7H12O2"
+            },
+            {
+              "accession": "MS:1000868",
+              "name": "SMILES string",
+              "value": "[2H]C(C)(C)OC(=O)C(=C)C"
+            },
+            {
+              "accession": "MS:1003403",
+              "name": "InChI",
+              "value": "InChI=1S/C7H12O2/c1-5(2)7(8)9-6(3)4/h6H,1H2,2-4H3/i6D"
+            },
+            {
+              "accession": "MS:1002894",
+              "name": "InChIKey",
+              "value": "BOQSSGDQNWEFSX-RAMDWTOOSA-N"
+            },
+            {
+              "accession": "MS:1003637",
+              "cv_param_group": "1",
+              "name": "theoretical neutral monoisotopic mass",
+              "value": 129.09000637
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "dalton",
+              "value_accession": "UO:0000221"
+            },
+            {
+              "accession": "MS:1003638",
+              "cv_param_group": "2",
+              "name": "theoretical neutral average mass",
+              "value": 129.17710178
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "2",
+              "name": "unit",
+              "value": "dalton",
+              "value_accession": "UO:0000221"
+            }
+          ],
+          "id": "1"
+        }
+      },
+      "attributes": [
+        {
+          "accession": "MS:1003237",
+          "name": "library spectrum key",
+          "value": 3
+        },
+        {
+          "accession": "MS:1003061",
+          "name": "library spectrum name",
+          "value": "Methacrylic acid isopropyl ester-D1"
+        },
+        {
+          "accession": "MS:1002599",
+          "name": "splash key",
+          "value": "splash10-014i-9000000000-0f24a7027db913cb5a44"
+        },
+        {
+          "accession": "MS:1003072",
+          "name": "spectrum origin type",
+          "value": "observed spectrum",
+          "value_accession": "MS:1003073"
+        },
+        {
+          "accession": "MS:1000511",
+          "name": "ms level",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000465",
+          "name": "scan polarity",
+          "value": "positive scan",
+          "value_accession": "MS:1000130"
+        },
+        {
+          "accession": "MS:1000008",
+          "name": "ionization type",
+          "value": "electron ionization",
+          "value_accession": "MS:1000389"
+        },
+        {
+          "accession": "MS:1003168",
+          "name": "library spectrum comment",
+          "value": "DB#=MSBNK-Fac_Eng_Univ_Tokyo-JP000992; origin=MassBank"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "1",
+          "name": "other attribute name",
+          "value": "SPECTRUMID"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "1",
+          "name": "other attribute value",
+          "value": "MSBNK-Fac_Eng_Univ_Tokyo-JP000992"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "2",
+          "name": "other attribute name",
+          "value": "FILENAME"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "2",
+          "name": "other attribute value",
+          "value": "MassBank_RIKENformat__ex3.msp"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "3",
+          "name": "other attribute name",
+          "value": "FILEHASH"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "3",
+          "name": "other attribute value",
+          "value": "12132cd6767ee325d35883d25c0b7f5e1d142d60d33c563c39cea29984dcea57"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "4",
+          "name": "other attribute name",
+          "value": "RESOLUTION"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "4",
+          "name": "other attribute value",
+          "value": "LOW"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "5",
+          "name": "other attribute name",
+          "value": "INSTRUMENTTYPE"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "5",
+          "name": "other attribute value",
+          "value": "GC-EI-B"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "6",
+          "name": "other attribute name",
+          "value": "INSTRUMENT"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "6",
+          "name": "other attribute value",
+          "value": "HITACHI RMU-5B"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "7",
+          "name": "other attribute name",
+          "value": "ENTROPY"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "7",
+          "name": "other attribute value",
+          "value": "0.60941052"
+        },
+        {
+          "accession": "MS:1003059",
+          "name": "number of peaks",
+          "value": 13
+        }
+      ],
+      "intensities": [
+        0.01160696,
+        0.04942966,
+        0.14538723,
+        0.01741045,
+        1.0,
+        0.05993596,
+        0.03552131,
+        0.01741045,
+        0.0453272,
+        0.45957575,
+        0.03372023,
+        0.03552131,
+        0.03081849
+      ],
+      "interpretations": {},
+      "mzs": [
+        58.0,
+        59.0,
+        60.0,
+        68.0,
+        69.0,
+        70.0,
+        71.0,
+        84.0,
+        86.0,
+        87.0,
+        88.0,
+        114.0,
+        129.0
+      ],
+      "peak_annotations": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ]
+    }
+  ],
+  "spectrum_attribute_sets": {
+    "all": []
+  }
+}

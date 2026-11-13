@@ -1,0 +1,6 @@
+"ID";"CompoundName";"DBID";"PrecursorMZ";"PrecursorType";"Formula";"Smiles";"InchiKey";"InstrumentType";"CollisionEnergy";"RetentionTime";"Ontology";"NumberOfPeak";"peaks";"IONMODE"
+2153256;"Methylpolysilicone";"HMDB0303263";220.07765;"M-H";"C7H21O2Si3";"C[Si](O[Si](C)(C)C)O[Si](C)(C)C";"SWGZAKPJNWCPRY-UHFFFAOYSA-N";"CFM-ID 4.0";"40.0";0;"Trialkylheterosilanes";4;"56.98021	100.0
+58.99586	40.83
+74.99078	50.14
+89.04282	83.23
+";"Negative"

@@ -1,0 +1,8 @@
+"ID";"CompoundName";"DBID";"PrecursorMZ";"PrecursorType";"Formula";"Smiles";"InchiKey";"InstrumentType";"CollisionEnergy";"RetentionTime";"Ontology";"NumberOfPeak";"peaks";"IONMODE"
+10420212;"SQDG 53:4";"LipidBlast485795";1079.7797;"[M-H]-";"C62H112O12S";"O=C(OCC(OC(=O)CCCCCCCCCCCCC=CCC=CCC=CCC=CCC)COC1OC(CS(=O)(=O)O)C(O)C(O)C1O)CCCCCCCCCCCCCCCCCCCCCCCCCC";"RMNGJPBXIXZPNI-QLXZSTJSSA-N";"in-silico QTOF";"45";0;"";6;"225.0069	20.020020
+387.3261	10.010010
+409.4043	10.010010
+669.3675	10.010010
+691.4457	10.010010
+1079.78	100.000000
+";"Negative"

@@ -1,0 +1,6 @@
+"ID";"CompoundName";"DBID";"PrecursorMZ";"PrecursorType";"Formula";"Smiles";"InchiKey";"InstrumentType";"CollisionEnergy";"RetentionTime";"Ontology";"NumberOfPeak";"peaks";"IONMODE";"Database";"Index";"DB_Tables";"IonModes";"FullNames";"Min_ID";"Max_ID"
+5381685;"CL 32:1_36:4";"MSDIAL_AtlasPos_65291";1416.9904;"[M+NH4]+";"C77H140O17P2";"CCCCCCCCCCCCCC(=O)OC(COC(=O)CCCCCCCC\C=C/C\C=C/C\C=C/C\C=C/CC)COP(O)(=O)OCC(O)COP(O)(=O)OCC(COC(=O)CCCCCCC\C=C/CCCCCCCC)OC(=O)CCCCCCCCCCCCC";"OEUNMWQSTDFYFO-XAMJUSKINA-N";"SCIEX 5600 and 6600";"45";"13.34";"CL";4;"549.4877	999
+599.5034	999
+1399.964	300
+1416.99	50
+";"Positive";;;;;;;

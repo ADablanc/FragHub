@@ -1,0 +1,380 @@
+{
+  "analyte_attribute_sets": {
+    "all": []
+  },
+  "attributes": [
+    {
+      "accession": "MS:1003186",
+      "name": "library format version",
+      "value": "1.0"
+    },
+    {
+      "accession": "MS:1003188",
+      "name": "library name",
+      "value": "POS_GC_insilico"
+    },
+    {
+      "accession": "MS:1003189",
+      "name": "library description",
+      "value": "Spectral library built by FragHub 2.0.0"
+    }
+  ],
+  "clusters": [],
+  "format_version": "1.0",
+  "interpretation_attribute_sets": {
+    "all": []
+  },
+  "spectra": [
+    {
+      "analytes": {
+        "1": {
+          "attributes": [
+            {
+              "accession": "MS:1000866",
+              "name": "molecular formula",
+              "value": "C9H9N3O2"
+            },
+            {
+              "accession": "MS:1000868",
+              "name": "SMILES string",
+              "value": "Cn1c(=O)c2cccnc2n(C)c1=O"
+            },
+            {
+              "accession": "MS:1003403",
+              "name": "InChI",
+              "value": "InChI=1S/C9H9N3O2/c1-11-7-6(4-3-5-10-7)8(13)12(2)9(11)14/h3-5H,1-2H3"
+            },
+            {
+              "accession": "MS:1002894",
+              "name": "InChIKey",
+              "value": "MZEAQWYCKAAGJE-UHFFFAOYSA-N"
+            },
+            {
+              "accession": "MS:1002813",
+              "name": "adduct ion formula",
+              "value": "[M+H]+"
+            },
+            {
+              "accession": "MS:1000041",
+              "name": "charge state",
+              "value": 1
+            },
+            {
+              "accession": "MS:1003637",
+              "cv_param_group": "1",
+              "name": "theoretical neutral monoisotopic mass",
+              "value": 191.06947653
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "dalton",
+              "value_accession": "UO:0000221"
+            },
+            {
+              "accession": "MS:1003638",
+              "cv_param_group": "2",
+              "name": "theoretical neutral average mass",
+              "value": 191.19
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "2",
+              "name": "unit",
+              "value": "dalton",
+              "value_accession": "UO:0000221"
+            }
+          ],
+          "id": "1"
+        }
+      },
+      "attributes": [
+        {
+          "accession": "MS:1003237",
+          "name": "library spectrum key",
+          "value": 1
+        },
+        {
+          "accession": "MS:1003061",
+          "name": "library spectrum name",
+          "value": "1,3-Dimethylpyrido[2,3-d]pyrimidine-2,4(1H,3H)-dione"
+        },
+        {
+          "accession": "MS:1002599",
+          "name": "splash key",
+          "value": "splash10-0563-4900000000-3d47e224dd2314700943"
+        },
+        {
+          "accession": "MS:1003072",
+          "name": "spectrum origin type",
+          "value": "predicted spectrum",
+          "value_accession": "MS:1003074"
+        },
+        {
+          "accession": "MS:1000511",
+          "name": "ms level",
+          "value": 1
+        },
+        {
+          "accession": "MS:1003208",
+          "cv_param_group": "1",
+          "name": "experimental precursor monoisotopic m/z",
+          "value": 192.07675253
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "1",
+          "name": "unit",
+          "value": "m/z",
+          "value_accession": "MS:1000040"
+        },
+        {
+          "accession": "MS:1000465",
+          "name": "scan polarity",
+          "value": "positive scan",
+          "value_accession": "MS:1000130"
+        },
+        {
+          "accession": "MS:1000008",
+          "name": "ionization type",
+          "value": "electron ionization",
+          "value_accession": "MS:1000389"
+        },
+        {
+          "accession": "MS:1003168",
+          "name": "library spectrum comment",
+          "value": "computed SMILES=O=C1C2=CC=CN=C2N(C(=O)N1C)C computed InChI=InChI=1S/C9H9N3O2/c1-11-7-6(4-3-5-10-7)8(13)12(2)9(11)14/h3-5H,1-2H3 computed [2M+H-H2O]+=365.131583056 computed [2M+K]+=421.237253056 computed [M+H]+=192.077446528 computed [2M+Na]+=405.128723056 computed [2M+Cl]-=417.59195305599997 computed [2M+HAc-H]-=441.182983056 computed [M-H20-H]-=172.05108652799998 computed [M-H]-=190.062200528 computed [2M-H]-=381.131677056 computed [M+Na]+=214.059246528 computed [M+H-H2O]+=174.062106528 computed [2M+NH4]+=400.177533056 computed [M+Cl]-=226.522476528 computed [M+NH4]+=209.108056528 computed [M+K]+=230.167776528 computed [2M+H]+=383.146923056 computed [M+HAc-H]-=250.113506528 analytical method    =Theoretical in-silico spectrum (QCEIMS) id=116 group=Group11_ Pyridopyrimidine-(1H,3H)-diones ionization=Electron Impact (EI) computed spectral entropy=3.015847688634568 computed normalized entropy=0.7877070157053968 SPLASH=splash10-0563-5900000000-747582b7e215c6143e4b submitter=submitter = Jesi Lee (UC Davis) MoNA Rating=2.8571428571428568"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "2",
+          "name": "other attribute name",
+          "value": "SPECTRUMID"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "2",
+          "name": "other attribute value",
+          "value": "MoNA041196"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "3",
+          "name": "other attribute name",
+          "value": "FILENAME"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "3",
+          "name": "other attribute value",
+          "value": "MoNA-export-All_Spectra__silico.msp"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "4",
+          "name": "other attribute name",
+          "value": "FILEHASH"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "4",
+          "name": "other attribute value",
+          "value": "3765c3e23aeefaf31c3e27e95895ef627fa688f9652d7efc6746af9fc45dbfb0"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "5",
+          "name": "other attribute name",
+          "value": "INSTRUMENTTYPE"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "5",
+          "name": "other attribute value",
+          "value": "GC-EI"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "6",
+          "name": "other attribute name",
+          "value": "ENTROPY"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "6",
+          "name": "other attribute value",
+          "value": "0.77988761"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "7",
+          "name": "other attribute name",
+          "value": "NPCLASS_PATHWAY"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "7",
+          "name": "other attribute value",
+          "value": "Alkaloids"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "8",
+          "name": "other attribute name",
+          "value": "NPCLASS_SUPERCLASS"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "8",
+          "name": "other attribute value",
+          "value": "Pseudoalkaloids"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "9",
+          "name": "other attribute name",
+          "value": "NPCLASS_CLASS"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "9",
+          "name": "other attribute value",
+          "value": "pteridine alkaloids"
+        },
+        {
+          "accession": "MS:1003059",
+          "name": "number of peaks",
+          "value": 39
+        }
+      ],
+      "intensities": [
+        0.03,
+        0.04,
+        0.01,
+        0.02,
+        0.05,
+        0.06,
+        0.13,
+        0.09,
+        0.09,
+        0.03,
+        0.03,
+        0.01,
+        0.02,
+        0.15,
+        0.24,
+        0.23,
+        0.02,
+        0.06,
+        0.01,
+        0.12,
+        0.03,
+        0.06,
+        0.01,
+        0.03,
+        0.3,
+        0.34,
+        0.08,
+        0.04,
+        0.01,
+        0.02,
+        0.22,
+        1.0,
+        0.14,
+        0.01,
+        0.04,
+        0.01,
+        0.05,
+        0.84,
+        0.09
+      ],
+      "interpretations": {},
+      "mzs": [
+        51.0,
+        53.0,
+        54.0,
+        56.0,
+        57.0,
+        58.0,
+        64.0,
+        65.0,
+        66.0,
+        67.0,
+        68.0,
+        69.0,
+        70.0,
+        77.0,
+        78.0,
+        79.0,
+        80.0,
+        81.0,
+        90.0,
+        91.0,
+        92.0,
+        93.0,
+        94.0,
+        104.0,
+        105.0,
+        106.0,
+        107.0,
+        119.0,
+        120.0,
+        132.0,
+        133.0,
+        134.0,
+        135.0,
+        162.0,
+        163.0,
+        176.0,
+        190.0,
+        191.0,
+        192.0
+      ],
+      "peak_annotations": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ]
+    }
+  ],
+  "spectrum_attribute_sets": {
+    "all": []
+  }
+}

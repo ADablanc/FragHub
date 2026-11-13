@@ -1,0 +1,24 @@
+Name: Bergenin
+Synon: $:00in-source
+DB#: 1000010
+InChIKey: YWJXCIXBAKGUKZ-HJJNZUOJSA-N
+Precursor_type: [M+Cl]-
+Spectrum_type: MS2
+PrecursorMZ: 363.04876708984375
+Ion_mode: N
+Formula: C14H16O9
+MW: 328
+ExactMass: 328.079432092
+Comments: "SMILES=COc1c(O)cc2c(c1O)[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1OC2=O" "computed SMILES=O=C1OC2C(O)C(O)C(OC2c3c(O)c(OC)c(O)cc13)CO" "computed [2M+H-H2O]+=639.151494184" "computed [2M+K]+=695.257164184" "computed [M+H]+=329.087402092" "computed [2M+Na]+=679.148634184" "computed [2M+Cl]-=691.611864184" "computed [2M+HAc-H]-=715.202894184" "computed [M-H20-H]-=309.061042092" "computed [M-H]-=327.072156092" "computed [2M-H]-=655.1515881839999" "computed [M+Na]+=351.069202092" "computed [M+H-H2O]+=311.072062092" "computed [2M+NH4]+=674.197444184" "computed [M+Cl]-=363.532432092" "computed [M+NH4]+=346.118012092" "computed [M+K]+=367.177732092" "computed [2M+H]+=657.166834184" "computed [M+HAc-H]-=387.123462092" "retention time=1.670778949197733" "exact mass=328.07943209199993" "spectrum entropy=1.7772264" "origin=natural_products_neg.msp" "computed spectral entropy=1.7772264171205518" "computed normalized entropy=0.7411609828341288" "computed mass accuracy=1332.2314961520835" "computed mass error=-0.48366500215627184" "SPLASH=splash10-056r-0389000000-a98130901286994571e6" "submitter=submitter = Uri Keshet (UC Davis)" "MoNA Rating=2.7777777777777777"
+Num Peaks: 11
+192.0053253173828 35.693866
+193.01318359375 5.862795
+194.02059936523438 6.433363
+207.02919006347656 76.211860
+209.04534912109375 1.899137
+222.01531982421875 2.171469
+234.01522827148438 12.262184
+237.04014587402344 3.138860
+249.0395965576172 20.347962
+312.0487976074219 19.439162
+327.0718994140625 100.000000

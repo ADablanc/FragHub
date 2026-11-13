@@ -1,0 +1,9 @@
+"ID";"CompoundName";"DBID";"PrecursorMZ";"PrecursorType";"Formula";"Smiles";"InchiKey";"InstrumentType";"CollisionEnergy";"RetentionTime";"Ontology";"NumberOfPeak";"peaks";"IONMODE";"Database";"Index";"DB_Tables";"IonModes";"FullNames";"Min_ID";"Max_ID"
+7228559;"Cer 24:2;2O/30:2";"LipidBlast2022_113765";812.7854;"[M+H]+";"C54H101NO3";"O=C(NC(CO)C(O)C=CCCC=CCCCCCCCCCCCCCCC)CCCCCCCCCCCCCCCCCC=CCC=CCCCCCCC";"ZLSVKVYULJIXBM-DJRDFYSJNA-N";"";"";"0.0";"";7;"334.3468	20.020020
+346.3468	100.000000
+364.3574	20.020020
+448.4513	10.010010
+776.7643	10.010010
+794.7748	10.010010
+812.7854	5.005005
+";"Positive";;;;;;;

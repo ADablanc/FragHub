@@ -1,0 +1,3 @@
+# Fichiers de test copiés tels quels : pas de conversion des fins de ligne par git (la taille d un fichier
+# d entrée entre dans son empreinte FILEHASH, et la sortie de référence est comparée octet par octet)
+tests/data/** -text
