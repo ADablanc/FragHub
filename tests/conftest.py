@@ -21,6 +21,10 @@ if sys.platform == "win32":
     if os.path.isdir(_rdkit_bin):
         os.add_dll_directory(_rdkit_bin)
 
+def pytest_addoption(parser):
+    parser.addoption("--update-reference", action="store_true", default=False,
+                     help="test de bout en bout : remplace la sortie de référence par celle du run (changement voulu)")
+
 
 class _FileHandler(http.server.BaseHTTPRequestHandler):
     """Petit serveur HTTP local : sert un fichier, avec ou sans reprise (en-tête Range), comme Zenodo."""

@@ -32,6 +32,9 @@ testpaths = ["tests"]
 # Les modules de scripts/ s'importent comme quand FragHub les lance (import internal_database...)
 pythonpath = [".", "scripts", "scripts/build_dataset"]
 addopts = "-ra"
+# Test de bout en bout (tout FragHub sur un petit jeu d'entrée, une à deux minutes) : `-m "not bout_en_bout"` pour
+# le sauter (python run_tests.py --python --fast)
+markers = ["bout_en_bout: tout FragHub sur un petit jeu d'entrée, comparé à une sortie de référence"]
 # Avertissements internes des bibliothèques mzspeclib (SQLAlchemy 2) et anyio (pytest 9), sans rapport avec FragHub
 filterwarnings = ["ignore:.*declarative_base.*", "ignore:.*CallSpec2.*"]
 
