@@ -59,3 +59,6 @@ __pycache__/
 .vscode/
 .DS_Store
 Thumbs.db
+# --- Caches des outils de test et d'analyse (pytest, ruff) ---
+.pytest_cache/
+.ruff_cache/
