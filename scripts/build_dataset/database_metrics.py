@@ -35,9 +35,18 @@ ONTOLOGIES = {
 }
 FIELDS = ["INCHI", "SMILES", "FORMULA", "NAME", "EXACTMASS"]
 PLOTLY = "https://cdn.plot.ly/plotly-2.27.0.min.js"
-COLORWAY = ["#2563eb", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#06b6d4", "#f97316", "#84cc16",
-            "#6366f1", "#14b8a6", "#eab308", "#a855f7", "#0ea5e9", "#22c55e", "#e11d48"]
-UNKNOWN_COLOR = "#cbd5e1"
+# Palette qualitative sobre (Tableau 10, lisible sur fond blanc) ; les niveaux inférieurs prennent des teintes plus
+# claires de la couleur de leur premier niveau, pour que la hiérarchie se lise d'un coup d'œil
+COLORWAY = ["#4e79a7", "#f28e2b", "#e15759", "#76b7b2", "#59a14f", "#edc948", "#b07aa1", "#ff9da7", "#9c755f",
+            "#bab0ac"]
+UNKNOWN_COLOR = "#e4e4e4"
+TINTS = {1: (0.0, 0.0), 2: (0.30, 0.45), 3: (0.55, 0.68)}   # part de blanc par niveau, alternée entre voisins
+
+
+def tint(color, white):
+    """Mélange une couleur #rrggbb avec du blanc (white = 0 : couleur pure, 1 : blanc)."""
+    rgb = [int(color[i:i + 2], 16) for i in (1, 3, 5)]
+    return "#" + "".join("%02x" % round(c + (255 - c) * white) for c in rgb)
 
 
 def clean(value):
@@ -87,12 +96,17 @@ def sunburst(paths, keep_unknown):
         else:
             top_color[t] = COLORWAY[i % len(COLORWAY)]
             i += 1
+    rank = collections.Counter()   # rang de chaque case parmi ses sœurs, pour alterner les teintes
     for path in sorted(values, key=lambda p: (len(p), -values[p])):
         ids.append(" / ".join(path))
         labels.append(path[-1])
         parents.append(" / ".join(path[:-1]))
         vals.append(values[path])
-        colors.append(UNKNOWN_COLOR if path[-1] == UNKNOWN else top_color[path[0]])
+        if path[-1] == UNKNOWN or path[0] == UNKNOWN:
+            colors.append(UNKNOWN_COLOR)
+        else:
+            colors.append(tint(top_color[path[0]], TINTS[len(path)][rank[path[:-1]] % 2]))
+        rank[path[:-1]] += 1
     return {"ids": ids, "labels": labels, "parents": parents, "values": vals, "colors": colors}
 
 
@@ -124,23 +138,25 @@ def html_page(meta, charts):
 <title>FragHub internal database</title>
 <script src="%(plotly)s"></script>
 <style>
-:root { --bg:#ffffff; --fg:#1e293b; --muted:#64748b; --line:#e2e8f0; --card:#f8fafc; --accent:#2563eb; }
-@media (prefers-color-scheme: dark) { :root { --bg:#0f172a; --fg:#e2e8f0; --muted:#94a3b8; --line:#334155; --card:#1e293b; --accent:#60a5fa; } }
-body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
-main { max-width:1100px; margin:0 auto; padding:24px 16px 48px; }
-h1 { font-size:1.6rem; margin:0 0 4px; } .sub { color:var(--muted); margin:0 0 24px; }
-a { color:var(--accent); }
-.stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:12px; margin-bottom:24px; }
-.stat { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; }
-.stat b { display:block; font-size:1.35rem; } .stat span { color:var(--muted); font-size:.85rem; }
-table { border-collapse:collapse; width:100%%; margin-bottom:28px; font-size:.9rem; }
-th, td { border-bottom:1px solid var(--line); padding:6px 8px; text-align:left; } td:nth-child(n+3) { text-align:right; font-variant-numeric:tabular-nums; }
-.controls { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:8px; }
-.controls button { font:inherit; border:1px solid var(--line); background:var(--card); color:var(--fg); border-radius:999px; padding:6px 14px; cursor:pointer; }
-.controls button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#fff; }
-.controls .sep { width:1px; height:24px; background:var(--line); margin:0 4px; }
-#chart { width:100%%; height:min(80vh, 760px); }
-.note { color:var(--muted); font-size:.85rem; }
+body { margin:0; background:#ffffff; color:#222; font:15px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif; }
+main { max-width:1000px; margin:0 auto; padding:28px 16px 48px; }
+h1 { font-size:1.5rem; font-weight:600; margin:0 0 2px; } .sub { color:#666; margin:0 0 22px; }
+a { color:#1f5f9e; }
+.stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); border-top:2px solid #222; border-bottom:1px solid #222; margin-bottom:26px; }
+.stat { padding:10px 12px; } .stat + .stat { border-left:1px solid #ddd; }
+.stat b { display:block; font-size:1.3rem; font-weight:600; font-variant-numeric:tabular-nums; } .stat span { color:#666; font-size:.82rem; }
+table { border-collapse:collapse; width:100%%; margin-bottom:30px; font-size:.9rem; border-top:2px solid #222; border-bottom:2px solid #222; }
+caption { caption-side:top; text-align:left; font-weight:600; padding-bottom:6px; }
+th { border-bottom:1px solid #222; font-weight:600; } th, td { padding:5px 10px; text-align:left; }
+th:nth-child(n+3), td:nth-child(n+3) { text-align:right; font-variant-numeric:tabular-nums; }
+tbody tr:nth-child(3) td { border-bottom:1px solid #ccc; }
+.controls { display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin-bottom:6px; }
+.seg { display:inline-flex; border:1px solid #888; border-radius:4px; overflow:hidden; }
+.seg button { font:inherit; font-size:.9rem; border:0; background:#fff; color:#222; padding:5px 14px; cursor:pointer; }
+.seg button + button { border-left:1px solid #888; }
+.seg button[aria-pressed="true"] { background:#222; color:#fff; }
+#chart { width:100%%; height:min(82vh, 780px); }
+.note { color:#555; font-size:.85rem; border-top:1px solid #ccc; padding-top:8px; }
 </style></head>
 <body><main>
 <h1>FragHub internal database</h1>
@@ -152,13 +168,10 @@ th, td { border-bottom:1px solid var(--line); padding:6px 8px; text-align:left; 
   <div class="stat"><b>%(cf)s</b><span>with a ClassyFire superclass</span></div>
   <div class="stat"><b>%(np)s</b><span>with an NPClassifier pathway</span></div>
 </div>
-<table><thead><tr><th>Ontology</th><th>Level</th><th>Molecules classified</th><th>Share</th></tr></thead><tbody>%(rows)s</tbody></table>
+<table><caption>Classified molecules per ontology level</caption><thead><tr><th>Ontology</th><th>Level</th><th>Molecules classified</th><th>Share</th></tr></thead><tbody>%(rows)s</tbody></table>
 <div class="controls" role="toolbar">
-  <button data-o="classyfire" aria-pressed="true">ClassyFire</button>
-  <button data-o="npclassifier" aria-pressed="false">NPClassifier</button>
-  <span class="sep"></span>
-  <button data-u="1" aria-pressed="true">With unknown</button>
-  <button data-u="0" aria-pressed="false">Without unknown</button>
+  <span class="seg"><button data-o="classyfire" aria-pressed="true">ClassyFire</button><button data-o="npclassifier" aria-pressed="false">NPClassifier</button></span>
+  <span class="seg"><button data-u="1" aria-pressed="true">With unknown</button><button data-u="0" aria-pressed="false">Without unknown</button></span>
 </div>
 <div id="chart"></div>
 <p class="note">Click a sector to zoom in, click the centre to zoom out. Two levels are shown at a time. &laquo;&nbsp;Unknown&nbsp;&raquo;: no class in the database (empty or NOT FOUND). Multiple NPClassifier classifications (&laquo;&nbsp;Alkaloids | Terpenoids&nbsp;&raquo;) are kept as written in the database. Without unknown, only the molecules with no class at any level are left out; the others keep their &laquo;&nbsp;Unknown&nbsp;&raquo; sectors at the other levels.</p>
@@ -166,16 +179,15 @@ th, td { border-bottom:1px solid var(--line); padding:6px 8px; text-align:left; 
 <script>
 const CHARTS = %(data)s;
 let ontology = 'classyfire', unknown = '1';
-function dark() { return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; }
 function draw() {
   const c = CHARTS[ontology + (unknown === '1' ? '' : '_known')];
-  const fg = dark() ? '#e2e8f0' : '#1e293b';
   Plotly.react('chart', [{
     type: 'sunburst', ids: c.ids, labels: c.labels, parents: c.parents, values: c.values,
     branchvalues: 'total', maxdepth: 2, insidetextorientation: 'radial', sort: false,
-    marker: { colors: c.colors, line: { color: dark() ? '#0f172a' : '#ffffff', width: 1 } },
+    marker: { colors: c.colors, line: { color: '#ffffff', width: 0.8 } },
     hovertemplate: '<b>%%{label}</b><br>%%{value:,} molecules<br>%%{percentRoot:.1%%} of the chart<br>%%{percentParent:.1%%} of %%{parent}<extra></extra>'
-  }], { margin: { t: 10, l: 0, r: 0, b: 10 }, paper_bgcolor: 'rgba(0,0,0,0)', font: { color: fg, size: 12 } },
+  }], { margin: { t: 10, l: 0, r: 0, b: 10 }, paper_bgcolor: '#ffffff', font: { family: 'Helvetica Neue, Helvetica, Arial, sans-serif', color: '#222', size: 12 },
+    hoverlabel: { bgcolor: '#ffffff', bordercolor: '#888', font: { color: '#222' } } },
   { displaylogo: false, responsive: true });
 }
 document.querySelectorAll('.controls button').forEach((b) => b.addEventListener('click', () => {
@@ -183,7 +195,6 @@ document.querySelectorAll('.controls button').forEach((b) => b.addEventListener(
   if (b.dataset.u) { unknown = b.dataset.u; document.querySelectorAll('[data-u]').forEach((x) => x.setAttribute('aria-pressed', x === b)); }
   draw();
 }));
-if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
 draw();
 </script></body></html>
 """ % {
@@ -207,11 +218,11 @@ def pngs(charts, meta):
         title = ontology + (" (without unknown)" if name.endswith("_known") else " (with unknown)")
         fig = go.Figure(go.Sunburst(ids=c["ids"], labels=c["labels"], parents=c["parents"], values=c["values"],
                                     branchvalues="total", maxdepth=2, insidetextorientation="radial", sort=False,
-                                    marker=dict(colors=c["colors"], line=dict(color="#ffffff", width=1))))
+                                    marker=dict(colors=c["colors"], line=dict(color="#ffffff", width=0.8))))
         fig.update_layout(title=dict(text="%s · FragHub internal database %s" % (title, meta["version"]), x=0.5,
                                      font=dict(size=18)),
                           margin=dict(t=60, l=10, r=10, b=10), paper_bgcolor="#ffffff",
-                          font=dict(family="Helvetica, Arial, sans-serif", size=12, color="#1e293b"))
+                          font=dict(family="Helvetica, Arial, sans-serif", size=12, color="#222222"))
         path = os.path.join(OUT, "sunburst_%s.png" % name)
         try:
             fig.write_image(path, width=900, height=900, scale=2)
