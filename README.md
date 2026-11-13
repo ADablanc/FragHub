@@ -4,16 +4,16 @@
 
 # FragHub  (2.0.0)
 ![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=for-the-badge)
-![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white&style=for-the-badge)
-![Rust](https://img.shields.io/badge/Rust-1.96.0-000000?logo=rust&logoColor=white&style=for-the-badge)
+![Python](https://img.shields.io/badge/Python-3.12.10-3776AB?logo=python&logoColor=white&style=for-the-badge)
+![Rust](https://img.shields.io/badge/Rust-1.99.0-000000?logo=rust&logoColor=white&style=for-the-badge)
 ![Electron](https://img.shields.io/badge/Electron-40.4.0-47848F?logo=electron&logoColor=white&style=for-the-badge)
 ![Nuxt](https://img.shields.io/badge/Nuxt-4.4.7-00C58E?logo=nuxt&logoColor=white&style=for-the-badge)
 ![Vite](https://img.shields.io/badge/Vite-8.0.16-646CFF?logo=vite&logoColor=white&style=for-the-badge)
-![npm](https://img.shields.io/badge/npm-11.13.0-CB3837?logo=npm&logoColor=white&style=for-the-badge)
+![npm](https://img.shields.io/badge/npm-11.19.0-CB3837?logo=npm&logoColor=white&style=for-the-badge)
 ![License: CeCILL](https://img.shields.io/badge/License-CeCILL-yellow.svg?style=for-the-badge)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.17235587-1f73b7?style=for-the-badge)](https://doi.org/10.5281/zenodo.17235587)
 
-## INSTALL INSTRUCTIONS BELLOW
+## INSTALL INSTRUCTIONS BELOW
 [See install instructions](#installation)
 
 ## DESCRIPTION
@@ -29,7 +29,7 @@ Key features:<br>
   - Charges are neutralized when possible.
   - **InChI and InChIKey** are the standard IUPAC identifiers of this desalted, neutralized molecule, so they can be compared with PubChem and other databases.
   - **Output SMILES are normalized with RDKit**: they are written in the RDKit canonical tautomer form (stereochemistry kept), so that the same molecule is always written the same way. When the canonical tautomer would describe a different molecule (different InChI, e.g. keto/enol), the SMILES of the molecule as given is written instead. Output SMILES may therefore differ from the SMILES of the input files.
-- **Ontologies**: FragHub complete ontologic information from PubChem datas bases on Inchikey.
+- **Ontologies**: FragHub completes the name and the chemical classes (ClassyFire and NPClassifier) of each molecule from its internal database, by InChIKey.
   - The internal molecule database used for this (names, ClassyFire and NPClassifier classes of 7.9 million molecules) is archived on Zenodo: [10.5281/zenodo.24203577](https://doi.org/10.5281/zenodo.24203577). It is bundled in the installers. It is not in the git repository: when FragHub runs from source, it downloads the database (1.1 GB) from Zenodo the first time it starts, or when `python build_backend.py` is run. See [Internal database](#internal-database) for its content.
 - **Spectra organization**: FragHub separates spectra based on different experimental parameters such as polarity (positive/negative), chromatographic mode (LC/GC, or DI for direct injection without chromatography), and acquisition type (experimental/in silico), facilitating their use and subsequent analysis.![img_8.png](img_8.png)
 - **Compatibility with various analysis software**: Standardized spectra produced by FragHub are compatible with multiple analysis software, including MSdial, MZmine, and Flash Entropy Search, providing users with maximum flexibility in choosing analysis tools.
@@ -110,17 +110,23 @@ To use this programme:
    2) Second tab: Create a new empty directory or Select an existing directory where FragHub has already written files<br>![img_1.png](img_1.png)
    3) Third tab: This area allows users to select specific filters for inclusion during the processing stage. Moreover, it provides the option to adjust the respective parameters of each filters.<br>![img_2.png](img_2.png)
    4) Fourth tab: This area allows the user to choose whether or not to perform the calculation of de novo fragment formulas.<br>![img_13.png](img_13.png)
-   4) Fifth tab: Select the output file format of your preference. By default, all formats are selected.<br>![img_3.png](img_3.png)
-   5) Sixth tab: FragHub save the splash keys of previous spectra processed.<br>So that at the next update, only new spectra from the database are processed, and added to previous FragHub processes.<br>Reseting project allows you to delete splash keys and output files from the selected project, in order to start a new project from scratch.<br>The "Write perf logs" switch (off by default) writes a performance log of the run (duration, memory and CPU usage of each step) in the PERF_LOGS sub-folder of the output directory.<br>![img_4.png](img_4.png)
-   6) Click on START button to run the programme.
+   5) Fifth tab: Select the output file format of your preference. By default, all formats are selected.<br>![img_3.png](img_3.png)
+   6) Sixth tab: FragHub saves the SPLASH keys of previous spectra processed.<br>So that at the next update, only new spectra from the database are processed, and added to previous FragHub processes.<br>Resetting the project allows you to delete splash keys and output files from the selected project, in order to start a new project from scratch.<br>The "Write perf logs" switch (off by default) writes a performance log of the run (duration, memory and CPU usage of each step) in the PERF_LOGS sub-folder of the output directory.<br>![img_4.png](img_4.png)
+   7) Click on START button to run the programme.
 3) Progress start. At any time you can click on STOP button to close the programme.<br>![img_5.png](img_5.png)
-4) When Progress is finish, click on FINISH button to close the programme.<br>![img_6.png](img_6.png)
+4) When progress is finished, click on FINISH button to close the programme.<br>![img_6.png](img_6.png)
 5) **DO NOT DELETE FILES INTO YOUR SELECTED OUTPUT DIRECTORY AFTER COPY CLEANED VERSIONS.**
 ---
 
 ## TECHNICAL DOCUMENTATION
 
-Please refer to the [technical documentation](documentation/) for comprehensive details regarding the architecture, inner workings, and development of FragHub.
+Please refer to the [technical documentation](documentation/) for comprehensive details regarding the architecture, inner workings, and development of FragHub. To run FragHub from source or build the installers, see the [developer documentation](documentation/Documentation.md).
+
+---
+
+## TESTS
+
+FragHub is checked by automatic tests: unit tests of the Rust engine, tests of the whole engine on hand-written spectra, an end-to-end run compared with a reference output, and tests of the graphical interface. See [TESTS.md](TESTS.md) to run them and read their results.
 
 ---
 
@@ -135,7 +141,7 @@ Please refer to the [CLI Documentation](documentation/Documentation_CLI.md) for 
 ## FILTERS
 
 **check_minimum_peak_requiered(peak_array, n_peaks)**<br>
-This function checks whether a given mass spectrum contains a minimum number of peaks. If the spectrum contains fewer peaks than the minimum requirement, it ignores the spectrum.<br>
+This function checks whether a given mass spectrum contains a minimum number of peaks. If the spectrum contains fewer peaks than the minimum requirement, the spectrum is ignored.<br>
 <br>
 **remove_peak_above_precursormz(peak_array, precursormz)**<br>
 This function removes all peaks from the spectrum whose m/z value is greater than the precursor's m/z value plus 5 Da.<br>
@@ -150,15 +156,15 @@ This function normalizes the intensity of all the peaks in a given spectrum to t
 This function takes an array of peak data (representing mass-to-charge ratio, or m/z) and returns a new array containing only those peaks whose m/z value falls between mz_from and mz_to.<br>
 
 **check_minimum_of_high_peaks_requiered(peak_array, intensity_percent, no_peaks)**<br>
-This function is used to check whether a given array containing peak data has a required minimum number of "high peaks". A "high peak" is defined as a peak whose intensity is above a certain percentage (intensity_percent) of the maximum intensity. If the array does not contain a sufficient number of "high peaks", the function ignore the spectrum.<br>
+This function is used to check whether a given array containing peak data has a required minimum number of "high peaks". A "high peak" is defined as a peak whose intensity is above a certain percentage (intensity_percent) of the maximum intensity. If the array does not contain a sufficient number of "high peaks", the function ignores the spectrum.<br>
 
 **remove_spectrum_under_entropy_score(score)**<br>
 The Shannon entropy score of the spectrum is calculated during processing. If a spectrum has an entropy score lower than the minimum required, it is deleted.<br>
 
-## required csv file
-1) CSV files need to be separated by '**;**' or '**\t**' with quotechar '**"**'.<br>
-2) peaks columns need to be named '**peaks**'.<br>
-3) '**peaks**' column need to be formatted with one of the following format, in string:
+## REQUIRED CSV FILE
+1) CSV files need to be separated by '**;**' or '**\t**', with quote character '**"**'.<br>
+2) The peaks column needs to be named '**peaks**'.<br>
+3) The '**peaks**' column needs to be formatted with one of the following formats, as a string:
    1) >"[[79.054840, 12486.074219], [79.629868, 854.089905]]"
    2) > "<br>
    57.07042529 0.7697591662<br>
