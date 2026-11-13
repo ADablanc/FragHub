@@ -69,17 +69,14 @@ def count(base):
 def sunburst(paths, keep_unknown):
     """Données Plotly (ids, labels, parents, values) d'un sunburst à trois niveaux.
 
-    Sans les inconnus : les molécules dont le premier niveau est inconnu sont retirées, et un niveau inconnu plus bas
-    n'a pas de case (la case du niveau au-dessus garde son total : la part non classée reste visible en creux)."""
+    Sans les inconnus : seules les molécules sans aucune classe (inconnues aux trois niveaux) sont retirées. Une
+    molécule classée à un niveau au moins garde toutes ses cases, « Unknown » compris aux autres niveaux."""
     values = collections.Counter()
     for path, n in paths.items():
-        if not keep_unknown and path[0] == UNKNOWN:
+        if not keep_unknown and all(c == UNKNOWN for c in path):
             continue
         for depth in range(1, 4):
-            sub = path[:depth]
-            if not keep_unknown and sub[-1] == UNKNOWN:
-                break
-            values[sub] += n
+            values[path[:depth]] += n
     ids, labels, parents, vals, colors = [], [], [], [], []
     tops = sorted({p[0] for p in values if len(p) == 1}, key=lambda k: -values[(k,)])
     top_color = {}
@@ -164,7 +161,7 @@ th, td { border-bottom:1px solid var(--line); padding:6px 8px; text-align:left; 
   <button data-u="0" aria-pressed="false">Without unknown</button>
 </div>
 <div id="chart"></div>
-<p class="note">Click a sector to zoom in, click the centre to zoom out. Two levels are shown at a time. &laquo;&nbsp;Unknown&nbsp;&raquo;: no class in the database (empty or NOT FOUND). Multiple NPClassifier classifications (&laquo;&nbsp;Alkaloids | Terpenoids&nbsp;&raquo;) are kept as written in the database. Without unknown, molecules with no class at the first level are left out, and a sector whose children are partly unclassified keeps its full size.</p>
+<p class="note">Click a sector to zoom in, click the centre to zoom out. Two levels are shown at a time. &laquo;&nbsp;Unknown&nbsp;&raquo;: no class in the database (empty or NOT FOUND). Multiple NPClassifier classifications (&laquo;&nbsp;Alkaloids | Terpenoids&nbsp;&raquo;) are kept as written in the database. Without unknown, only the molecules with no class at any level are left out; the others keep their &laquo;&nbsp;Unknown&nbsp;&raquo; sectors at the other levels.</p>
 </main>
 <script>
 const CHARTS = %(data)s;

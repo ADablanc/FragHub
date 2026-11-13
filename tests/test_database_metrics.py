@@ -67,11 +67,16 @@ def test_sunburst_avec_et_sans_inconnus(base):
 
     known = dm.sunburst(paths["classyfire"], False)
     kvalues = dict(zip(known["ids"], known["values"]))
-    assert not any("Unknown" in i for i in known["ids"])
-    # Case gardée entière : « Fatty Acyls » vaut 2 alors que seul un enfant est classé
+    # Seule la molécule sans aucune classe (D) est retirée ; les « Unknown » des niveaux inférieurs restent
     assert kvalues == {"Lipids": 3, "Lipids / Fatty Acyls": 2, "Lipids / Prenol lipids": 1,
-                       "Lipids / Fatty Acyls / Fatty acids": 1}
+                       "Lipids / Fatty Acyls / Fatty acids": 1, "Lipids / Fatty Acyls / Unknown": 1,
+                       "Lipids / Prenol lipids / Unknown": 1}
     assert set(known["parents"]) <= set(known["ids"]) | {""}
+
+    # Premier niveau inconnu mais classe connue plus bas : la molécule reste, sous « Unknown »
+    npk = dict(zip(*[dm.sunburst({("Unknown", "Unknown", "Unknown"): 2, ("Unknown", "Fatty acyls", "Wax"): 1},
+                                 False)[k] for k in ("ids", "values")]))
+    assert npk == {"Unknown": 1, "Unknown / Fatty acyls": 1, "Unknown / Fatty acyls / Wax": 1}
 
 
 def test_page_et_fichiers(base, tmp_path, monkeypatch):

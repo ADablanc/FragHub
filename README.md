@@ -75,7 +75,7 @@ ClassyFire: 25 superclasses, 480 classes, 791 subclasses. NPClassifier: 54 pathw
   </tr>
 </table>
 
-Inner ring: superclass (ClassyFire) or pathway (NPClassifier); outer ring: class (ClassyFire) or superclass (NPClassifier). « Unknown » (grey): no class in the database. Without unknown, molecules with no class at the first level are left out, and the gaps in the outer ring are molecules classified at the first level only.
+Inner ring: superclass (ClassyFire) or pathway (NPClassifier); outer ring: class (ClassyFire) or superclass (NPClassifier). « Unknown » (grey): no class in the database. Without unknown, only the molecules with no class at any level are left out; the others keep their « Unknown » sectors at the lower levels.
 
 > 🔎 **These pictures are static captures.** The interactive version (click a class to zoom in, switch between ClassyFire and NPClassifier, with or without unknown classes, hover to read the counts) is the file [documentation/internal_database/internal_database_metrics.html](documentation/internal_database/internal_database_metrics.html): download it (*Download raw file* on GitHub) and open it in a web browser. An internet connection is needed to load the Plotly library.
 
