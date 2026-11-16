@@ -5,7 +5,7 @@
       <v-img src="~/assets/FragHub_icon.png" width="400" opacity="0.08"></v-img>
     </div>
 
-    <v-card class="w-100 d-flex flex-column border bg-transparent-card" elevation="2" style="z-index: 2; flex: 1 1 auto; min-height: 0;">
+    <v-card class="w-100 d-flex flex-column border bg-transparent-card position-relative" elevation="2" style="z-index: 2; flex: 1 1 auto; min-height: 0;">
 
       <v-tabs v-model="tabReport" bg-color="grey-lighten-4" density="compact" style="flex: 0 0 auto;">
         <v-tab value="report" class="font-weight-bold">EXECUTION REPORT</v-tab>
@@ -19,7 +19,7 @@
         </v-tab>
       </v-tabs>
 
-      <v-card-text class="pa-4 bg-white-transparent" ref="reportContainer" style="flex: 1 1 auto; overflow-y: auto; min-height: 0;">
+      <v-card-text class="pa-4 bg-white-transparent" ref="reportContainer" style="flex: 1 1 auto; overflow-y: auto; min-height: 0;" @scroll.passive="onReportScroll">
         <div v-show="tabReport === 'report'">
           <div v-for="(log, i) in logs" :key="i" class="mb-1">
 
@@ -93,6 +93,19 @@
           </iframe>
         </div>
       </v-card-text>
+
+      <!-- Affiché quand on a remonté le rapport pendant le traitement : revenir en bas et suivre à nouveau -->
+      <v-btn
+          v-if="tabReport === 'report' && !following"
+          class="follow-latest-btn"
+          color="primary"
+          size="small"
+          rounded
+          prepend-icon="mdi-arrow-down"
+          @click="followLatest"
+      >
+        Back to latest
+      </v-btn>
     </v-card>
 
     <div class="d-flex justify-center mt-4" style="z-index: 2; flex: 0 0 auto;">
@@ -174,12 +187,34 @@ const formatTime = (s) => {
   return `${h}:${m}:${sec}`
 }
 
-const scrollToBottom = async () => {
-  await nextTick()
-  if (reportContainer.value) {
-    const el = reportContainer.value.$el || reportContainer.value
-    el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+// Suivi du bas du rapport : on descend avec les nouvelles lignes seulement si on était déjà en bas. Dès qu'on
+// remonte (molette, barre de défilement), le rapport ne bouge plus ; revenir en bas (ou le bouton « Back to
+// latest ») relance le suivi.
+const NEAR_BOTTOM_PX = 40
+const following = ref(true)
+
+const reportElement = () => reportContainer.value ? (reportContainer.value.$el || reportContainer.value) : null
+
+const onReportScroll = () => {
+  const el = reportElement()
+  if (el && tabReport.value === 'report') {
+    following.value = el.scrollHeight - el.scrollTop - el.clientHeight <= NEAR_BOTTOM_PX
   }
+}
+
+// Défilement immédiat (pas « smooth ») : un défilement animé passe par des positions intermédiaires, qui seraient
+// prises pour un défilement de l'utilisateur et couperaient le suivi
+const scrollToBottom = async (force = false) => {
+  await nextTick()
+  const el = reportElement()
+  if (el && (force || following.value)) {
+    el.scrollTo({ top: el.scrollHeight, behavior: 'auto' })
+  }
+}
+
+const followLatest = () => {
+  following.value = true
+  scrollToBottom(true)
 }
 
 watch([logs, progressValue], () => {
@@ -195,6 +230,7 @@ watch(tabReport, async (newVal) => {
     if (newVal === 'html_report') {
       el.scrollTo({ top: 0, behavior: 'auto' })
     } else {
+      following.value = true
       el.scrollTo({ top: el.scrollHeight, behavior: 'auto' })
     }
   }
@@ -347,5 +383,12 @@ onUnmounted(() => {
 
 .blink-tab {
   animation: pulseBlink 1.5s infinite alternate !important;
+}
+
+.follow-latest-btn {
+  position: absolute;
+  right: 24px;
+  bottom: 16px;
+  z-index: 3;
 }
 </style>
