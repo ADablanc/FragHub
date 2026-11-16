@@ -71,7 +71,7 @@
                       <div class="d-flex align-center">
                         <v-combobox
                             v-model="parameters.input_db_names[parameters.input_directory[index]]"
-                            :items="['MoNA', 'GNPS', 'MassBank', 'HMDB', 'NIST', 'Respect']"
+                            :items="DATABASE_NAMES"
                             label="Database Name"
                             density="compact"
                             variant="outlined"
@@ -118,6 +118,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useState } from '#imports'
+import { DATABASE_NAMES, guessDatabaseName } from '~/utils/database_name.js'
 
 const parameters = useState('parameters')
 const fileInput = ref(null)
@@ -140,8 +141,9 @@ const addFiles = (paths) => {
   const added = paths.filter((p) => !known.has(p) && known.add(p))
   if (added.length === 0) return
   parameters.value.input_directory = [...parameters.value.input_directory, ...added]
+  // Base d'origine devinée d'après le nom du fichier (« Unknown » sinon), modifiable ensuite dans la liste
   added.forEach((p) => {
-    if (!parameters.value.input_db_names[p]) parameters.value.input_db_names[p] = 'Unknown'
+    if (!parameters.value.input_db_names[p]) parameters.value.input_db_names[p] = guessDatabaseName(p)
   })
 }
 
