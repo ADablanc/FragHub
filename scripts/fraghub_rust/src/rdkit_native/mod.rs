@@ -18,6 +18,14 @@
 //!   (Avant : `par_iter` de rayon, qui découpe la liste en gros blocs ; mesuré sur 189 752 molécules et
 //!   12 threads, des threads finissaient seuls leur bloc : 311 s au lieu des 201 s possibles.) Les molécules
 //!   les plus longues partent toujours en premier.
+//!
+//! Cache RDKit (base interne) : une molécule de spectre donnée par une InChI qui est EXACTEMENT celle d'une ligne
+//! de la base marquée RDKIT_VERSION = version de RDKit utilisée ici n'est pas recalculée : on reprend INCHI,
+//! INCHIKEY, SMILES, FORMULA, EXACTMASS et AVERAGEMASS de cette ligne. Le résultat est identique au calcul :
+//! la marque n'est posée (scripts/build_dataset/renormalize_db.py) que sur les lignes dont le calcul complet de
+//! leur propre INCHI, sans m/z, redonne cette même INCHI et ces valeurs-là ; pour la même entrée, le calcul est
+//! déterministe. Seulement pour les molécules dont le résultat ne dépend pas de l'adduit ni du m/z (pas de
+//! mélange à dessaler). Désactivable : FRAGHUB_RDKIT_CACHE=0 (pour comparer).
 
 use pyo3::prelude::*;
 use rayon::prelude::*;
@@ -60,6 +68,8 @@ mod ffi {
         fn exact_mass(mol: &str, is_inchi: bool) -> f64;
         fn set_time_limit(max_secs: f64);
         fn take_timed_out() -> bool;
+        fn rdkit_version() -> String;
+        fn inchi_to_inchikey(inchi: &str) -> String;
     }
 }
 
@@ -183,6 +193,78 @@ pub fn native_exact_mass(inchi: &str, smiles: &str) -> Option<f64> {
 }
 
 /// Le résultat dépend-il de l'adduit et du m/z ? Seulement pour une molécule à plusieurs fragments
+/// Version de RDKit utilisée (ex. "2026.09.1").
+pub fn rdkit_version() -> String {
+    ffi::rdkit_version()
+}
+
+/// Colonne de la base qui marque les lignes reprises telles quelles par le cache RDKit.
+pub const RDKIT_VERSION_COLUMN: &str = "RDKIT_VERSION";
+
+/// Cache RDKit : résultats déjà calculés dans la base interne (voir en tête de fichier).
+pub struct DbCache<'a> {
+    db: &'a crate::compound_db::CompoundDb,
+    version: String,
+    inchi: usize,
+    smiles: usize,
+    formula: usize,
+    exact: usize,
+    average: usize,
+    marked: usize,
+}
+
+impl<'a> DbCache<'a> {
+    /// None si le cache est désactivé (FRAGHUB_RDKIT_CACHE=0) ou si la base n'a pas les colonnes nécessaires
+    /// (base sans marque RDKIT_VERSION : tout est calculé, comme avant).
+    pub fn new(db: &'a crate::compound_db::CompoundDb) -> Option<Self> {
+        if std::env::var("FRAGHUB_RDKIT_CACHE").map_or(false, |v| v.trim() == "0") {
+            return None;
+        }
+        Self::with_version(db, rdkit_version())
+    }
+
+    fn with_version(db: &'a crate::compound_db::CompoundDb, version: String) -> Option<Self> {
+        Some(DbCache {
+            db, version,
+            inchi: db.column_id("INCHI")?,
+            smiles: db.column_id("SMILES")?,
+            formula: db.column_id("FORMULA")?,
+            exact: db.column_id("EXACTMASS")?,
+            average: db.column_id("AVERAGEMASS")?,
+            marked: db.column_id(RDKIT_VERSION_COLUMN)?,
+        })
+    }
+
+    /// Résultat de la base pour cette molécule (même forme que `process_single`), ou None : pas une InChI, pas
+    /// dans la base, ligne non marquée pour cette version de RDKit, InChI de la ligne différente (au caractère
+    /// près), ou valeur manquante.
+    pub fn get(&self, mol: &str) -> Option<Vec<(&'static str, String)>> {
+        if !mol.starts_with("InChI=") {
+            return None;
+        }
+        let key = ffi::inchi_to_inchikey(mol);
+        if key.is_empty() {
+            return None;
+        }
+        let loc = self.db.locate(&key)?;
+        if self.db.value(loc, self.marked)? != self.version || self.db.value(loc, self.inchi)? != mol {
+            return None;
+        }
+        let smiles = self.db.value(loc, self.smiles).filter(|s| !s.is_empty())?;
+        let formula = self.db.value(loc, self.formula).filter(|s| !s.is_empty())?;
+        let exact = self.db.value_f64(loc, self.exact)?;
+        let average = self.db.value_f64(loc, self.average)?;
+        Some(vec![
+            ("INCHI", mol.to_string()),
+            ("INCHIKEY", key),
+            ("SMILES", smiles),
+            ("FORMULA", formula),
+            ("EXACTMASS", py_float_str(exact)),
+            ("AVERAGEMASS", py_float_str(average)),
+        ])
+    }
+}
+
 /// (« . ») avec un m/z lisible : c'est la seule branche de process_single qui les utilise.
 fn depends_on_precursor(clean_mol: &str, precursormz_str: &str) -> bool {
     clean_mol.contains('.') && py_float(precursormz_str).is_some()
@@ -191,14 +273,26 @@ fn depends_on_precursor(clean_mol: &str, precursormz_str: &str) -> bool {
 /// Calcule toutes les molécules et renvoie le dictionnaire (voir en tête de fichier).
 /// La barre de progression avance en nombre de molécules d'entrée (comme avant).
 /// Si `progress_callback` lève une exception (bouton stop), le calcul s'arrête et l'erreur est renvoyée.
+/// `db` : base interne pour le cache RDKit (None = tout est calculé).
 pub fn run_parallel(
     py: Python,
     mols_list: Vec<(String, String, String)>,
     progress_callback: Option<PyObject>,
+    db: Option<&crate::compound_db::CompoundDb>,
 ) -> PyResult<HashMap<String, HashMap<String, String>>> {
     let total = mols_list.len();
+    let db_cache = db.and_then(DbCache::new);
+    let from_db = AtomicUsize::new(0);
+    let units = AtomicUsize::new(0);
+    let lookup = |m: &str| -> Option<Vec<(&'static str, String)>> {
+        units.fetch_add(1, Ordering::Relaxed);
+        let r = db_cache.as_ref()?.get(m)?;
+        from_db.fetch_add(1, Ordering::Relaxed);
+        Some(r)
+    };
     let cache = compute_cache(
         mols_list,
+        lookup,
         |done| {
             crate::stop::check()?; // arrêt demandé (stop.rs)
             match &progress_callback {
@@ -211,13 +305,20 @@ pub fn run_parallel(
     if let Some(cb) = &progress_callback {
         cb.call1(py, (total,))?;
     }
+    if db_cache.is_some() {
+        println!("RDKit : {} molécules sur {} reprises de la base interne (cache RDKit {})",
+            from_db.load(Ordering::Relaxed), units.load(Ordering::Relaxed), rdkit_version());
+    }
     Ok(cache)
 }
 
 /// Cœur du calcul, sans Python : `tick(n)` est appelé régulièrement avec le nombre de molécules
 /// d'entrée traitées (une erreur arrête le calcul) ; `wait()` fait patienter entre deux appels.
+/// `lookup(m)` : résultat déjà connu (cache RDKit de la base), essayé seulement pour une molécule dont le résultat
+/// ne dépend ni de l'adduit ni du m/z ; None = calcul.
 fn compute_cache<E>(
     mols_list: Vec<(String, String, String)>,
+    lookup: impl Fn(&str) -> Option<Vec<(&'static str, String)>> + Sync,
     mut tick: impl FnMut(usize) -> Result<(), E>,
     wait: impl Fn(),
 ) -> Result<HashMap<String, HashMap<String, String>>, E> {
@@ -267,7 +368,8 @@ fn compute_cache<E>(
                         let Some(&id) = order.get(i) else { break };
                         let (m, pt, mz) = units[id];
                         let start = t0.elapsed();
-                        let r = process_single(m, pt, mz);
+                        let known = if depends_on_precursor(m, mz) { None } else { lookup(m) };
+                        let r = known.unwrap_or_else(|| process_single(m, pt, mz));
                         let duration = t0.elapsed() - start;
                         done.fetch_add(weights[id], Ordering::Relaxed);
                         mine.push((id, r, Timing { thread: rayon::current_thread_index().unwrap_or(usize::MAX), start, duration }));
@@ -393,7 +495,7 @@ mod tests {
             ("InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3".to_string(), "[M+H]+".to_string(), "".to_string()),
             ("pas une molécule".to_string(), "".to_string(), "".to_string()),
         ];
-        let cache = compute_cache(mols.clone(), |_| Ok::<(), ()>(()), || std::thread::sleep(Duration::from_millis(5))).unwrap();
+        let cache = compute_cache(mols.clone(), |_| None, |_| Ok::<(), ()>(()), || std::thread::sleep(Duration::from_millis(5))).unwrap();
         assert_eq!(cache.len(), mols.len());
         for (m, pt, mz) in &mols {
             let attendu: HashMap<String, String> =
@@ -420,9 +522,9 @@ mod tests {
         let dir = std::env::temp_dir().join(format!("fraghub_timing_test_{}", std::process::id()));
         let mols: Vec<_> = ["CCO", "c1ccccc1O", "CC(=O)Nc1ccc(O)cc1"].iter()
             .map(|m| (m.to_string(), String::new(), String::new())).collect();
-        let sans = compute_cache(mols.clone(), |_| Ok::<(), ()>(()), || std::thread::sleep(Duration::from_millis(2))).unwrap();
+        let sans = compute_cache(mols.clone(), |_| None, |_| Ok::<(), ()>(()), || std::thread::sleep(Duration::from_millis(2))).unwrap();
         std::env::set_var("FRAGHUB_RDKIT_TIMING", &dir);
-        let avec = compute_cache(mols, |_| Ok::<(), ()>(()), || std::thread::sleep(Duration::from_millis(2))).unwrap();
+        let avec = compute_cache(mols, |_| None, |_| Ok::<(), ()>(()), || std::thread::sleep(Duration::from_millis(2))).unwrap();
         std::env::remove_var("FRAGHUB_RDKIT_TIMING");
         assert_eq!(sans, avec);
         // Un fichier avec l'en-tête et une ligne par molécule (d'autres tests peuvent en écrire en parallèle)
@@ -438,8 +540,69 @@ mod tests {
     #[test]
     fn arret_demande_pendant_le_calcul() {
         let mols: Vec<_> = (0..2000).map(|i| (format!("C{}O", "C".repeat(i % 40)), String::new(), String::new())).collect();
-        let r = compute_cache(mols, |_| Err::<(), &str>("stop"), || std::thread::sleep(Duration::from_millis(1)));
+        let r = compute_cache(mols, |_| None, |_| Err::<(), &str>("stop"), || std::thread::sleep(Duration::from_millis(1)));
         assert_eq!(r.unwrap_err(), "stop");
+    }
+
+    /// Petite base passée par la re-normalisation (donc marquée comme la vraie), chargée comme dans FragHub.
+    fn base_marquee(inchis: &[&str]) -> crate::compound_db::CompoundDb {
+        use polars::prelude::*;
+        let n = inchis.len();
+        let df = DataFrame::new(vec![
+            Series::new("INCHIKEY", (0..n).map(|i| format!("CLE{i}")).collect::<Vec<_>>()),
+            Series::new("INCHI", inchis.to_vec()),
+            Series::new("SMILES", vec![None::<&str>; n]),
+            Series::new("FORMULA", vec![None::<&str>; n]),
+            Series::new("EXACTMASS", vec![None::<f64>; n]),
+            Series::new("AVERAGEMASS", vec![None::<f64>; n]),
+            Series::new("NAME", vec!["nom"; n]),
+        ]).unwrap();
+        let (out, _) = crate::database_renormalization::renormalize_frame(&df).unwrap().unwrap();
+        let mut db = crate::compound_db::CompoundDb::default();
+        db.add_dataframe(out, "INCHIKEY");
+        db
+    }
+
+    #[test]
+    fn cache_rdkit_meme_resultat_que_le_calcul() {
+        // InChI standard calculées par RDKit (L-ornithine, stéroïde, iminol -> amide, éthanol)
+        let entrees: Vec<String> = ["NCCC[C@H](N)C(=O)O", "C[C@]12CC[C@H]3[C@@H](CCC4=CC(=O)CC[C@]43C)[C@@H]1CC[C@@H]2O",
+                                    "CC(O)=NCC(=O)O", "CCO"]
+            .iter().map(|s| get(&process_single(s, "", ""), "INCHI").to_string()).collect();
+        // Acétate (InChI chargée) : neutralisé par le calcul, l'InChI change -> ligne non marquée, jamais reprise
+        let acetate = "InChI=1S/C2H4O2/c1-2(3)4/h1H3,(H,3,4)/p-1";
+        let mut toutes: Vec<&str> = entrees.iter().map(|s| s.as_str()).collect();
+        toutes.push(acetate);
+        let db = base_marquee(&toutes);
+        let cache = DbCache::with_version(&db, rdkit_version()).unwrap();
+        for m in &entrees {
+            // Exactement ce que donne le calcul, quels que soient l'adduit et le m/z
+            assert_eq!(cache.get(m), Some(process_single(m, "[M+H]+", "100.0")), "{m}");
+        }
+        assert_eq!(cache.get(acetate), None);
+        assert_eq!(cache.get("CCO"), None);                                   // pas une InChI
+        assert_eq!(cache.get("InChI=1S/C3H8O/c1-2-3-4/h4H,2-3H2,1H3"), None); // propanol : pas dans la base
+        // Autre version de RDKit : rien n'est repris
+        assert_eq!(DbCache::with_version(&db, "1900.01.1".into()).unwrap().get(&entrees[0]), None);
+        // Base sans marque (ancienne base) : pas de cache
+        let mut ancienne = crate::compound_db::CompoundDb::default();
+        {
+            use polars::prelude::*;
+            ancienne.add_dataframe(DataFrame::new(vec![
+                Series::new("INCHIKEY", &["A"]), Series::new("INCHI", &[entrees[0].as_str()])]).unwrap(), "INCHIKEY");
+        }
+        assert!(DbCache::with_version(&ancienne, rdkit_version()).is_none());
+
+        // Calcul complet avec et sans cache : dictionnaires identiques (dont un sel, toujours calculé)
+        let mut mols: Vec<(String, String, String)> = entrees.iter().map(|m| (m.clone(), "[M+H]+".to_string(), "150.0".to_string())).collect();
+        mols.push((acetate.to_string(), "".to_string(), "".to_string()));
+        mols.push(("InChI=1S/C5H14N4.H2O4S/c6-3-1-2-4-9-5(7)8;1-5(2,3)4/h1-4,6H2,(H4,7,8,9);(H2,1,2,3,4)".to_string(), "[M+H]+".to_string(), "131.13".to_string()));
+        let repris = AtomicUsize::new(0);
+        let avec = compute_cache(mols.clone(), |m| { let r = cache.get(m); if r.is_some() { repris.fetch_add(1, Ordering::Relaxed); } r },
+                                 |_| Ok::<(), ()>(()), || std::thread::sleep(Duration::from_millis(2))).unwrap();
+        let sans = compute_cache(mols, |_| None, |_| Ok::<(), ()>(()), || std::thread::sleep(Duration::from_millis(2))).unwrap();
+        assert_eq!(avec, sans);
+        assert_eq!(repris.load(Ordering::Relaxed), entrees.len());
     }
 
     fn get<'a>(out: &'a [(&'static str, String)], k: &str) -> &'a str {

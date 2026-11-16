@@ -74,15 +74,16 @@ pub fn process_mols(
     if let Some(cb) = &total_items_callback { cb.call1(py, (total_unique, 0))?; }
 
     let unique_mols_vec: Vec<(String, String, String)> = unique_mols.into_iter().collect();
-    let mut cache = run_rdkit(py, unique_mols_vec, &progress_callback)?;
+    // Base interne : cache RDKit (passe 1 et 2) et SMILES de secours (passe 2)
+    let state = crate::global_state::STATE.read().unwrap();
+    let db = &state.compound_db;
+    let mut cache = run_rdkit(py, unique_mols_vec, &progress_callback, db)?;
 
     // ==========================================
     // LOGIQUE DE RETRAITEMENT (Fallback PubChem)
     // ==========================================
     if let Some(cb) = &prefix_callback { cb.call1(py, ("Checking failures & fallback PubChem (Pass 2)...",))?; }
 
-    let state = crate::global_state::STATE.read().unwrap();
-    let db = &state.compound_db;
     let smiles_column = db.column_id("SMILES");
     let mut unique_mols_pass2: std::collections::HashSet<(String, String, String)> = std::collections::HashSet::new();
 
@@ -147,7 +148,7 @@ pub fn process_mols(
         if let Some(cb) = &total_items_callback { cb.call1(py, (total_unique2, 0))?; }
         
         let unique_mols_vec2: Vec<(String, String, String)> = unique_mols_pass2.into_iter().collect();
-        let cache2 = run_rdkit(py, unique_mols_vec2, &progress_callback)?;
+        let cache2 = run_rdkit(py, unique_mols_vec2, &progress_callback, db)?;
         
         // Fusion du second cache dans le premier
         cache.extend(cache2);
@@ -301,8 +302,9 @@ fn run_rdkit(
     py: Python,
     mols: Vec<(String, String, String)>,
     progress_callback: &Option<PyObject>,
+    db: &crate::compound_db::CompoundDb,
 ) -> PyResult<HashMap<String, HashMap<String, String>>> {
-    crate::rdkit_native::run_parallel(py, mols, progress_callback.clone())
+    crate::rdkit_native::run_parallel(py, mols, progress_callback.clone(), Some(db))
 }
 
 #[cfg(test)]

@@ -14,6 +14,10 @@
 //! - une molécule illisible par RDKit garde ses valeurs d'origine ;
 //! - deux lignes peuvent tomber sur la même InChIKey : elles sont comptées ; à la lecture, FragHub garde la
 //!   dernière (même règle que pour les doublons déjà présents) ;
+//! - cache RDKit : la colonne RDKIT_VERSION reçoit la version de RDKit (ex. "2026.09.1") sur chaque ligne dont la
+//!   molécule de départ est une InChI et dont le calcul a tout donné (InChI, InChIKey, SMILES, formule, masses)
+//!   avec cette même InChI ; vide sinon. Un spectre qui a exactement cette InChI reçoit alors les valeurs de la
+//!   ligne au lieu d'être recalculé (rdkit_native::DbCache) : c'est le même calcul sur la même entrée ;
 //! - un fichier sans colonne de structure est recopié octet pour octet ;
 //! - les fichiers sont écrits dans un NOUVEAU dossier : la base d'origine n'est jamais modifiée ;
 //! - chaque fichier est d'abord écrit sous un nom temporaire puis renommé : un fichier présent dans le
@@ -59,12 +63,14 @@ pub struct RenormStats {
     pub failed: usize,
     /// InChIKey présentes sur plusieurs lignes après normalisation (calculé sur toute la base)
     pub duplicate_keys: usize,
+    /// Lignes marquées pour le cache RDKit (colonne RDKIT_VERSION)
+    pub rdkit_marked: usize,
 }
 
 impl RenormStats {
     fn add(&mut self, o: &RenormStats) {
         self.rows += o.rows; self.with_structure += o.with_structure; self.key_changed += o.key_changed;
-        self.smiles_changed += o.smiles_changed; self.failed += o.failed;
+        self.smiles_changed += o.smiles_changed; self.failed += o.failed; self.rdkit_marked += o.rdkit_marked;
     }
 }
 
@@ -143,8 +149,16 @@ fn read_too_long(path: &Path) -> std::collections::HashSet<(String, usize)> {
     }).collect()
 }
 
-/// Applique les résultats au tableau : colonnes réécrites et compteurs.
-fn apply_results(df: &DataFrame, results: &[RowResult]) -> PolarsResult<(DataFrame, RenormStats)> {
+/// Ligne utilisable par le cache RDKit : molécule de départ = InChI, et calcul complet qui redonne cette InChI.
+fn cache_ready(target: Option<&str>, result: &RowResult) -> bool {
+    let (Some(t), Some(v)) = (target, result) else { return false };
+    t.starts_with("InChI=")
+        && OUTPUT_KEYS.iter().all(|k| v.iter().any(|x| x.0 == *k && !x.1.is_empty()))
+        && v.iter().any(|x| x.0 == "INCHI" && x.1 == t)
+}
+
+/// Applique les résultats au tableau : colonnes réécrites, marque RDKIT_VERSION (`version`) et compteurs.
+fn apply_results(df: &DataFrame, results: &[RowResult], targets: &[Option<String>], version: &str) -> PolarsResult<(DataFrame, RenormStats)> {
     let n = df.height();
     let keys = text_column(df, "INCHIKEY");
     let smiles = text_column(df, "SMILES");
@@ -181,6 +195,16 @@ fn apply_results(df: &DataFrame, results: &[RowResult]) -> PolarsResult<(DataFra
         }).collect();
         out.replace(col, Series::new(col, values))?;
     }
+    let marks: Vec<Option<&str>> = (0..n).map(|i| {
+        cache_ready(targets.get(i).and_then(|t| t.as_deref()), &results[i]).then_some(version)
+    }).collect();
+    stats.rdkit_marked = marks.iter().filter(|m| m.is_some()).count();
+    let marks = Series::new(crate::rdkit_native::RDKIT_VERSION_COLUMN, marks);
+    if out.column(crate::rdkit_native::RDKIT_VERSION_COLUMN).is_ok() {
+        out.replace(crate::rdkit_native::RDKIT_VERSION_COLUMN, marks)?;
+    } else {
+        out.with_column(marks)?;
+    }
     Ok((out, stats))
 }
 
@@ -188,7 +212,7 @@ fn apply_results(df: &DataFrame, results: &[RowResult]) -> PolarsResult<(DataFra
 pub fn renormalize_frame(df: &DataFrame) -> PolarsResult<Option<(DataFrame, RenormStats)>> {
     let Some(targets) = targets_of(df) else { return Ok(None) };
     let results: Vec<RowResult> = targets.par_iter().map(|t| t.as_deref().map(compute_one)).collect();
-    apply_results(df, &results).map(Some)
+    apply_results(df, &results, &targets, &crate::rdkit_native::rdkit_version()).map(Some)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -533,6 +557,7 @@ pub fn renormalize_database(
         too_long: AtomicUsize::new(0),
     });
     let parts = &shared.parts;
+    let rdkit_version = crate::rdkit_native::rdkit_version();
 
     // Écrit un fichier terminé (sur le thread principal)
     let write_part = |part: &Part, total: &mut RenormStats| -> Result<(), String> {
@@ -541,7 +566,7 @@ pub fn renormalize_database(
         let mut file = fs::File::open(&part.path).map_err(|e| e.to_string())?;
         let df = ParquetReader::new(&mut file).finish().map_err(|e| e.to_string())?;
         let results = std::mem::take(&mut *part.results.lock().unwrap());
-        let (mut out, mut st) = apply_results(&df, &results).map_err(|e| e.to_string())?;
+        let (mut out, mut st) = apply_results(&df, &results, &part.targets, &rdkit_version).map_err(|e| e.to_string())?;
         // Mode retrait : les lignes notées trop longues sont supprimées de la sortie
         let dropped = part.too_long_rows.lock().unwrap().clone();
         if !dropped.is_empty() {
@@ -555,8 +580,8 @@ pub fn renormalize_database(
         fs::rename(&tmp, &part.dest).map_err(|e| e.to_string())?;
         let _ = fs::remove_file(&part.checkpoint);
         part.written.store(true, Ordering::Relaxed);
-        log(&format!("{} : écrit - {} lignes, {} avec structure, {} InChIKey modifiées, {} SMILES modifiés, {} illisibles (gardées){} ({:.0} s d'écriture)",
-            part.name, st.rows, st.with_structure, st.key_changed, st.smiles_changed, st.failed,
+        log(&format!("{} : écrit - {} lignes, {} avec structure, {} InChIKey modifiées, {} SMILES modifiés, {} illisibles (gardées), {} prêtes pour le cache RDKit{} ({:.0} s d'écriture)",
+            part.name, st.rows, st.with_structure, st.key_changed, st.smiles_changed, st.failed, st.rdkit_marked,
             if dropped.is_empty() { String::new() } else { format!(", {} trop longues retirées", dropped.len()) }, t.elapsed().as_secs_f64()));
         total.add(&st);
         Ok(())
@@ -661,8 +686,8 @@ pub fn renormalize_database(
         }
     }
     total.duplicate_keys = seen.values().filter(|&&c| c > 1).count();
-    log(&format!("TOTAL : {} lignes, {} avec structure, {} InChIKey modifiées, {} SMILES modifiés, {} illisibles (gardées), {} InChIKey présentes plusieurs fois - {:.0} min",
-        total.rows, total.with_structure, total.key_changed, total.smiles_changed, total.failed, total.duplicate_keys, t0.elapsed().as_secs_f64() / 60.0));
+    log(&format!("TOTAL : {} lignes, {} avec structure, {} InChIKey modifiées, {} SMILES modifiés, {} illisibles (gardées), {} InChIKey présentes plusieurs fois, {} lignes prêtes pour le cache RDKit {} - {:.0} min",
+        total.rows, total.with_structure, total.key_changed, total.smiles_changed, total.failed, total.duplicate_keys, total.rdkit_marked, rdkit_version, t0.elapsed().as_secs_f64() / 60.0));
     Ok(total)
 }
 
@@ -673,7 +698,7 @@ pub fn renormalize_database(
 /// qui se met à jour.
 #[pyfunction]
 #[pyo3(signature = (input_dir, output_dir, only=None, prefix=String::new()))]
-pub fn renormalize_internal_database(py: Python, input_dir: &str, output_dir: &str, only: Option<Vec<String>>, prefix: String) -> PyResult<(usize, usize, usize, usize, usize, usize)> {
+pub fn renormalize_internal_database(py: Python, input_dir: &str, output_dir: &str, only: Option<Vec<String>>, prefix: String) -> PyResult<(usize, usize, usize, usize, usize, usize, usize)> {
     use std::io::Write;
     let t0 = Instant::now();
     let interrupted: std::sync::Mutex<Option<PyErr>> = std::sync::Mutex::new(None);
@@ -725,7 +750,7 @@ pub fn renormalize_internal_database(py: Python, input_dir: &str, output_dir: &s
         return Err(e);
     }
     match r {
-        Ok(s) => Ok((s.rows, s.with_structure, s.key_changed, s.smiles_changed, s.failed, s.duplicate_keys)),
+        Ok(s) => Ok((s.rows, s.with_structure, s.key_changed, s.smiles_changed, s.failed, s.duplicate_keys, s.rdkit_marked)),
         Err(e) => Err(pyo3::exceptions::PyRuntimeError::new_err(e)),
     }
 }

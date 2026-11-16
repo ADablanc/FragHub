@@ -7,6 +7,11 @@ normalisé (tautomère canonique quand il garde le même InChI).
 Colonnes réécrites : INCHI, INCHIKEY, SMILES, FORMULA, EXACTMASS, AVERAGEMASS. NAME et ontologies
 sont recopiés. Le résultat est écrit dans un NOUVEAU dossier : la base d'origine n'est pas modifiée.
 
+Cache RDKit : la colonne RDKIT_VERSION reçoit la version de RDKit sur chaque ligne dont l'INCHI, recalculée,
+redonne exactement cette INCHI et toutes les valeurs. FragHub reprend alors ces valeurs pour un spectre qui a
+exactement la même InChI, au lieu de recalculer (même résultat, sans la recherche du tautomère). À relancer
+sur toute la base après un changement de version de RDKit (sinon le cache ne sert plus : tout est recalculé).
+
 Le traitement est long (plusieurs heures). Il affiche sa progression et les molécules longues en cours
 (notées aussi dans _molecules_lentes.tsv) ; Ctrl+C l'arrête, et le relancer reprend à la molécule près
 (fichiers <nom>.reprise). L'ordinateur (Windows ou macOS) ne se met pas en veille pendant le calcul.
@@ -101,12 +106,13 @@ t = time.time()
 keep_awake(True)
 try:
     if args.processes <= 1:
-        rows, with_structure, key_changed, smiles_changed, failed, duplicates = fraghub_rust.renormalize_internal_database(src, dst)
+        rows, with_structure, key_changed, smiles_changed, failed, duplicates, marked = fraghub_rust.renormalize_internal_database(src, dst)
         print(f"\nTerminé en {(time.time() - t) / 60:.1f} min.")
         print(f"  {rows} lignes, dont {with_structure} avec une structure")
         print(f"  {key_changed} InChIKey modifiées, {smiles_changed} SMILES modifiés")
         print(f"  {failed} molécules illisibles par RDKit (valeurs d'origine gardées)")
         print(f"  {duplicates} InChIKey présentes sur plusieurs lignes (FragHub garde la dernière lue)")
+        print(f"  {marked} lignes prêtes pour le cache RDKit (colonne RDKIT_VERSION)")
     else:
         n = args.processes
         # Fichiers restant à faire, répartis par taille (le plus gros d'abord vers le processus le moins chargé)

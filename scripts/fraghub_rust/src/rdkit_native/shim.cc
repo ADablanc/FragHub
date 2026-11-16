@@ -29,6 +29,7 @@
 #include <GraphMol/MolStandardize/Tautomer.h>
 #include <GraphMol/inchi.h>
 #include <RDGeneral/RDLog.h>
+#include <RDGeneral/versions.h>
 
 #include <chrono>
 #include <cmath>
@@ -286,6 +287,21 @@ MolResult process_single(rust::Str clean_mol_rs, rust::Str ptype_rs, double prec
 void set_time_limit(double max_secs) {
   tl_deadline = max_secs > 0.0 ? now_secs() + max_secs : 0.0;
   tl_timed_out = false;
+}
+
+// Version de RDKit (ex. "2026.09.1") : un résultat de la base n'est repris tel quel (cache RDKit) que s'il a été
+// calculé avec cette version.
+rust::String rdkit_version() { return rust::String(RDKit::rdkitVersion); }
+
+// InChIKey d'une InChI, calculée directement sur le texte (rapide, sans lire la molécule) ; "" si échec.
+// Sert seulement à trouver une ligne de la base pour le cache RDKit : le résultat écrit vient toujours du calcul
+// complet, ou d'une ligne de la base dont l'InChI est exactement celle du spectre.
+rust::String inchi_to_inchikey(rust::Str inchi_rs) {
+  try {
+    return rust::String(RDKit::InchiToInchiKey(std::string(inchi_rs.data(), inchi_rs.size())));
+  } catch (...) {
+    return rust::String();
+  }
 }
 
 // Vrai si le dernier calcul a été arrêté par le temps limite (et remet l'indicateur à faux)

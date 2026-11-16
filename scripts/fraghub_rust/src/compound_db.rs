@@ -211,6 +211,14 @@ impl CompoundDb {
         Some(RowLocation { frame, row: (global - self.frame_starts[frame]) as usize })
     }
 
+    /// Valeur numérique exacte (f64) d'une colonne de nombres décimaux (EXACTMASS, AVERAGEMASS) ; None si la
+    /// colonne manque, n'est pas en f64, ou si la valeur est nulle. Utilisée par le cache RDKit, qui doit rendre
+    /// exactement le nombre calculé (sans passer par du texte).
+    pub fn value_f64(&self, loc: RowLocation, column_id: usize) -> Option<f64> {
+        let series = self.frames.get(loc.frame)?.columns.get(column_id)?.as_ref()?;
+        series.f64().ok()?.get(loc.row)
+    }
+
     /// Valeur d'une colonne pour un composé, en texte, comme l'ancien `row_dict.get(col)` :
     /// `None` si la colonne n'existe pas dans le fichier du composé, `Some("")` si la valeur est nulle.
     pub fn value(&self, loc: RowLocation, column_id: usize) -> Option<String> {

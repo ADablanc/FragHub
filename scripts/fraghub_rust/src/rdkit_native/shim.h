@@ -10,4 +10,6 @@ MolResult process_single(rust::Str clean_mol, rust::Str ptype, double precursorm
 double exact_mass(rust::Str mol, bool is_inchi);
 void set_time_limit(double max_secs);
 bool take_timed_out();
+rust::String rdkit_version();
+rust::String inchi_to_inchikey(rust::Str inchi);
 }  // namespace fraghub
