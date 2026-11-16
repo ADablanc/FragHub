@@ -7,7 +7,7 @@
         <mxCell id="p-overview-t1" value="FragHub — back-end : vue d'ensemble du pipeline" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=24;fontColor=#263238;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="26" width="1200" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="p-overview-t2" value="Branche Rust_FragHub · scripts/fraghub_rust/src · état du code au 13 novembre 2026" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+        <mxCell id="p-overview-t2" value="Branche Rust_FragHub · scripts/fraghub_rust/src · état du code au 14 novembre 2026" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="64" width="1200" height="20" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-t3" value="&lt;b&gt;Qui lance un run&lt;/b&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#455A64;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
@@ -120,7 +120,7 @@
         </mxCell>
         <UserObject id="p-overview-s6" label="" link="data:page/id,p-chemistry">
           <mxCell style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-            <mxGeometry x="440" y="1013" width="450" height="149" as="geometry" />
+            <mxGeometry x="440" y="1013" width="450" height="179" as="geometry" />
           </mxCell>
         </UserObject>
         <mxCell id="p-overview-s6-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-overview-s6">
@@ -129,12 +129,12 @@
         <mxCell id="p-overview-s6-h" value="6 · Calcul RDKit" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#2E7D32;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-overview-s6">
           <mxGeometry x="0" y="0" width="450" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-overview-s6-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;rdkit_bridge.rs → rdkit_native/ (C++)&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Chaque molécule unique est calculée une fois : dessalage, neutralisation, InChI, InChIKey, formule, masses, SMILES normalisé.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Échec : seconde chance avec la structure de la base interne.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#C62828&quot;&gt;✕&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;deleted_no_inchi_smiles_inchikey_after_re_calculation.csv&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color:#3949AB;font-weight:bold&quot;&gt;Détail : page 4&amp;nbsp;→&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-overview-s6">
-          <mxGeometry x="0" y="28" width="450" height="121" as="geometry" />
+        <mxCell id="p-overview-s6-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;rdkit_bridge.rs → rdkit_native/ (C++)&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Chaque molécule unique est calculée une fois : dessalage, neutralisation, InChI, InChIKey, formule, masses, SMILES normalisé.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Échec : seconde chance avec la structure de la base interne.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Molécule déjà dans la base avec la même InChI (ligne marquée &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;RDKIT_VERSION&lt;/span&gt;) : reprise sans recalcul (cache RDKit).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#C62828&quot;&gt;✕&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;deleted_no_inchi_smiles_inchikey_after_re_calculation.csv&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color:#3949AB;font-weight:bold&quot;&gt;Détail : page 4&amp;nbsp;→&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-overview-s6">
+          <mxGeometry x="0" y="28" width="450" height="151" as="geometry" />
         </mxCell>
         <UserObject id="p-overview-s65" label="" link="data:page/id,p-chemistry">
           <mxCell style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-            <mxGeometry x="440" y="1188" width="450" height="134" as="geometry" />
+            <mxGeometry x="440" y="1218" width="450" height="134" as="geometry" />
           </mxCell>
         </UserObject>
         <mxCell id="p-overview-s65-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-overview-s65">
@@ -147,7 +147,7 @@
           <mxGeometry x="0" y="28" width="450" height="106" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s67" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="1348" width="450" height="104" as="geometry" />
+          <mxGeometry x="440" y="1378" width="450" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s67-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="p-overview-s67">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -159,7 +159,7 @@
           <mxGeometry x="0" y="28" width="450" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s7" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="1478" width="450" height="119" as="geometry" />
+          <mxGeometry x="440" y="1508" width="450" height="119" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s7-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-overview-s7">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -171,7 +171,7 @@
           <mxGeometry x="0" y="28" width="450" height="91" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s8" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="1623" width="450" height="104" as="geometry" />
+          <mxGeometry x="440" y="1653" width="450" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s8-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-overview-s8">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -183,7 +183,7 @@
           <mxGeometry x="0" y="28" width="450" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s9" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="1753" width="450" height="89" as="geometry" />
+          <mxGeometry x="440" y="1783" width="450" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s9-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-overview-s9">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -195,7 +195,7 @@
           <mxGeometry x="0" y="28" width="450" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s95" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="1868" width="450" height="74" as="geometry" />
+          <mxGeometry x="440" y="1898" width="450" height="74" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s95-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="p-overview-s95">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -207,7 +207,7 @@
           <mxGeometry x="0" y="28" width="450" height="46" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s10" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E8F0FA;strokeColor=#1565C0;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="1968" width="450" height="89" as="geometry" />
+          <mxGeometry x="440" y="1998" width="450" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s10-s" value="" style="rounded=0;html=1;fillColor=#1565C0;strokeColor=none;" vertex="1" parent="p-overview-s10">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -220,7 +220,7 @@
         </mxCell>
         <UserObject id="p-overview-s11" label="" link="data:page/id,p-chemistry">
           <mxCell style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E8F0FA;strokeColor=#1565C0;strokeWidth=1.5;" vertex="1" parent="1">
-            <mxGeometry x="440" y="2083" width="450" height="104" as="geometry" />
+            <mxGeometry x="440" y="2113" width="450" height="104" as="geometry" />
           </mxCell>
         </UserObject>
         <mxCell id="p-overview-s11-s" value="" style="rounded=0;html=1;fillColor=#1565C0;strokeColor=none;" vertex="1" parent="p-overview-s11">
@@ -233,7 +233,7 @@
           <mxGeometry x="0" y="28" width="450" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s12" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E8F0FA;strokeColor=#1565C0;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="440" y="2213" width="450" height="119" as="geometry" />
+          <mxGeometry x="440" y="2243" width="450" height="119" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-s12-s" value="" style="rounded=0;html=1;fillColor=#1565C0;strokeColor=none;" vertex="1" parent="p-overview-s12">
           <mxGeometry x="0" y="14.0" width="450" height="14.0" as="geometry" />
@@ -323,7 +323,7 @@
           <mxGeometry x="0" y="28" width="340" height="91" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-cdb" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="960" y="440" width="340" height="104" as="geometry" />
+          <mxGeometry x="960" y="440" width="340" height="134" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-cdb-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-overview-cdb">
           <mxGeometry x="0" y="14.0" width="340" height="14.0" as="geometry" />
@@ -331,11 +331,11 @@
         <mxCell id="p-overview-cdb-h" value="Base interne en mémoire" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#2E7D32;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-overview-cdb">
           <mxGeometry x="0" y="0" width="340" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-overview-cdb-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;compound_db.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Colonnes du parquet gardées telles quelles + index InChIKey → ligne (≈ 3 Go au lieu de 14).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;InChIKey sur plusieurs lignes : la dernière lue gagne.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-overview-cdb">
-          <mxGeometry x="0" y="28" width="340" height="76" as="geometry" />
+        <mxCell id="p-overview-cdb-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;compound_db.rs&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Colonnes du parquet gardées telles quelles + index InChIKey → ligne (≈ 3 Go au lieu de 14).&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;InChIKey sur plusieurs lignes : la dernière lue gagne.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Colonne &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;RDKIT_VERSION&lt;/span&gt; : lignes reprises telles quelles par le cache RDKit.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-overview-cdb">
+          <mxGeometry x="0" y="28" width="340" height="106" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-spec" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF2F4;strokeColor=#546E7A;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="960" y="566" width="340" height="89" as="geometry" />
+          <mxGeometry x="960" y="596" width="340" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-spec-s" value="" style="rounded=0;html=1;fillColor=#546E7A;strokeColor=none;" vertex="1" parent="p-overview-spec">
           <mxGeometry x="0" y="14.0" width="340" height="14.0" as="geometry" />
@@ -347,7 +347,7 @@
           <mxGeometry x="0" y="28" width="340" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-gv" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF2F4;strokeColor=#546E7A;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="960" y="677" width="340" height="104" as="geometry" />
+          <mxGeometry x="960" y="707" width="340" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-gv-s" value="" style="rounded=0;html=1;fillColor=#546E7A;strokeColor=none;" vertex="1" parent="p-overview-gv">
           <mxGeometry x="0" y="14.0" width="340" height="14.0" as="geometry" />
@@ -359,7 +359,7 @@
           <mxGeometry x="0" y="28" width="340" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-del" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF2F4;strokeColor=#546E7A;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="960" y="803" width="340" height="134" as="geometry" />
+          <mxGeometry x="960" y="833" width="340" height="134" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-del-s" value="" style="rounded=0;html=1;fillColor=#546E7A;strokeColor=none;" vertex="1" parent="p-overview-del">
           <mxGeometry x="0" y="14.0" width="340" height="14.0" as="geometry" />
@@ -371,7 +371,7 @@
           <mxGeometry x="0" y="28" width="340" height="106" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-stop" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF2F4;strokeColor=#546E7A;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="960" y="959" width="340" height="104" as="geometry" />
+          <mxGeometry x="960" y="989" width="340" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-stop-s" value="" style="rounded=0;html=1;fillColor=#546E7A;strokeColor=none;" vertex="1" parent="p-overview-stop">
           <mxGeometry x="0" y="14.0" width="340" height="14.0" as="geometry" />
@@ -383,7 +383,7 @@
           <mxGeometry x="0" y="28" width="340" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-guard" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF2F4;strokeColor=#546E7A;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="960" y="1085" width="340" height="104" as="geometry" />
+          <mxGeometry x="960" y="1115" width="340" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-overview-guard-s" value="" style="rounded=0;html=1;fillColor=#546E7A;strokeColor=none;" vertex="1" parent="p-overview-guard">
           <mxGeometry x="0" y="14.0" width="340" height="14.0" as="geometry" />
@@ -522,7 +522,7 @@
         <mxCell id="p-reading-t1" value="Étape 1 — lecture des fichiers d'entrée" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=24;fontColor=#263238;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="26" width="1200" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="p-reading-t2" value="Branche Rust_FragHub · scripts/fraghub_rust/src · état du code au 13 novembre 2026 · parsers/ et loaders/" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+        <mxCell id="p-reading-t2" value="Branche Rust_FragHub · scripts/fraghub_rust/src · état du code au 14 novembre 2026 · parsers/ et loaders/" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="64" width="1200" height="20" as="geometry" />
         </mxCell>
         <mxCell id="p-reading-disp" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#E6F4F2;strokeColor=#00897B;strokeWidth=1.5;" vertex="1" parent="1">
@@ -769,7 +769,7 @@
         <mxCell id="p-cleaning-t1" value="Étape 5 — nettoyage des spectres" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=24;fontColor=#263238;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="26" width="1200" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="p-cleaning-t2" value="Branche Rust_FragHub · scripts/fraghub_rust/src · état du code au 13 novembre 2026 · spectrum_cleaning.rs, normalizer/, peaks_filters/" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+        <mxCell id="p-cleaning-t2" value="Branche Rust_FragHub · scripts/fraghub_rust/src · état du code au 14 novembre 2026 · spectrum_cleaning.rs, normalizer/, peaks_filters/" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="64" width="1200" height="20" as="geometry" />
         </mxCell>
         <mxCell id="p-cleaning-sc" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#F5EAF7;strokeColor=#8E24AA;strokeWidth=1.5;" vertex="1" parent="1">
@@ -1289,14 +1289,14 @@
         <mxCell id="p-chemistry-t1" value="Étapes 6 à 11 — chimie, enrichissement, tri et écriture" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=24;fontColor=#263238;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="26" width="1200" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="p-chemistry-t2" value="Branche Rust_FragHub · scripts/fraghub_rust/src · état du code au 13 novembre 2026" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
+        <mxCell id="p-chemistry-t2" value="Branche Rust_FragHub · scripts/fraghub_rust/src · état du code au 14 novembre 2026" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#607D8B;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="64" width="1200" height="20" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-t3" value="&lt;b&gt;Chimie et enrichissement&lt;/b&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#455A64;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
           <mxGeometry x="40" y="112" width="560" height="20" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-rb" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="140" width="560" height="149" as="geometry" />
+          <mxGeometry x="40" y="140" width="560" height="209" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-rb-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-chemistry-rb">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1304,11 +1304,11 @@
         <mxCell id="p-chemistry-rb-h" value="6 · Calcul RDKit" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#2E7D32;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-chemistry-rb">
           <mxGeometry x="0" y="0" width="560" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-chemistry-rb-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;rdkit_bridge.rs · process_mols&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Rassemble les molécules uniques (structure, adduit, m/z) : chaque résultat sert à tous les spectres de la même molécule.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Seconde chance si RDKit échoue : SMILES de la base interne pour la même InChIKey, puis nouveau calcul.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;EXACTMASS&lt;/span&gt; et &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;AVERAGEMASS&lt;/span&gt; écrites avec 8 décimales au plus.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#C62828&quot;&gt;✕&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;deleted_no_inchi_smiles_inchikey_after_re_calculation.csv&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-chemistry-rb">
-          <mxGeometry x="0" y="28" width="560" height="121" as="geometry" />
+        <mxCell id="p-chemistry-rb-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;rdkit_bridge.rs · process_mols&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Rassemble les molécules uniques (structure, adduit, m/z) : chaque résultat sert à tous les spectres de la même molécule.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Cache RDKit : une InChI identique, au caractère près, à celle d'une ligne de la base interne marquée &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;RDKIT_VERSION&lt;/span&gt; (version de RDKit utilisée) reprend InChI, InChIKey, SMILES, formule et masses de cette ligne, sans recalcul : même résultat. Mélanges à dessaler toujours calculés ; &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;FRAGHUB_RDKIT_CACHE=0&lt;/span&gt; le désactive.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Seconde chance si RDKit échoue sur l'InChI : SMILES du spectre, sinon SMILES de la base interne pour la même InChIKey, puis nouveau calcul.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;EXACTMASS&lt;/span&gt; et &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;AVERAGEMASS&lt;/span&gt; écrites avec 8 décimales au plus.&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px;color:#C62828&quot;&gt;✕&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;deleted_no_inchi_smiles_inchikey_after_re_calculation.csv&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-chemistry-rb">
+          <mxGeometry x="0" y="28" width="560" height="181" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-rn" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="311" width="560" height="89" as="geometry" />
+          <mxGeometry x="40" y="371" width="560" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-rn-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-chemistry-rn">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1320,7 +1320,7 @@
           <mxGeometry x="0" y="28" width="560" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-shim" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="422" width="560" height="164" as="geometry" />
+          <mxGeometry x="40" y="482" width="560" height="164" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-shim-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-chemistry-shim">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1332,7 +1332,7 @@
           <mxGeometry x="0" y="28" width="560" height="136" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-mz" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="608" width="560" height="149" as="geometry" />
+          <mxGeometry x="40" y="668" width="560" height="149" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-mz-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-chemistry-mz">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1344,7 +1344,7 @@
           <mxGeometry x="0" y="28" width="560" height="121" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-dup" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="779" width="560" height="119" as="geometry" />
+          <mxGeometry x="40" y="839" width="560" height="119" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-dup-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="p-chemistry-dup">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1356,7 +1356,7 @@
           <mxGeometry x="0" y="28" width="560" height="91" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-pc" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="920" width="560" height="119" as="geometry" />
+          <mxGeometry x="40" y="980" width="560" height="119" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-pc-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-chemistry-pc">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1368,7 +1368,7 @@
           <mxGeometry x="0" y="28" width="560" height="91" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-onto" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1061" width="560" height="104" as="geometry" />
+          <mxGeometry x="40" y="1121" width="560" height="104" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-onto-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-chemistry-onto">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1380,7 +1380,7 @@
           <mxGeometry x="0" y="28" width="560" height="76" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-dn" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EAF4EA;strokeColor=#2E7D32;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1187" width="560" height="89" as="geometry" />
+          <mxGeometry x="40" y="1247" width="560" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-dn-s" value="" style="rounded=0;html=1;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="p-chemistry-dn">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1635,44 +1635,44 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="p-chemistry-t28" value="Légende" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#263238;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1318" width="300" height="20" as="geometry" />
+          <mxGeometry x="40" y="1378" width="300" height="20" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-l29" value="" style="rounded=1;arcSize=20;fillColor=#2E7D32;strokeColor=#2E7D32;html=1;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1344" width="22" height="12" as="geometry" />
+          <mxGeometry x="40" y="1404" width="22" height="12" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-t30" value="Chimie (RDKit) et base interne" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="70" y="1341" width="270" height="16" as="geometry" />
+          <mxGeometry x="70" y="1401" width="270" height="16" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-l31" value="" style="rounded=1;arcSize=20;fillColor=#3949AB;strokeColor=#3949AB;html=1;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1363" width="22" height="12" as="geometry" />
+          <mxGeometry x="40" y="1423" width="22" height="12" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-t32" value="Orchestration" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="70" y="1360" width="270" height="16" as="geometry" />
+          <mxGeometry x="70" y="1420" width="270" height="16" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-l33" value="" style="rounded=1;arcSize=20;fillColor=#1565C0;strokeColor=#1565C0;html=1;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1382" width="22" height="12" as="geometry" />
+          <mxGeometry x="40" y="1442" width="22" height="12" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-t34" value="Écriture des sorties" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="70" y="1379" width="270" height="16" as="geometry" />
+          <mxGeometry x="70" y="1439" width="270" height="16" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-l35" value="" style="rounded=1;arcSize=20;fillColor=#B7791F;strokeColor=#B7791F;html=1;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1401" width="22" height="12" as="geometry" />
+          <mxGeometry x="40" y="1461" width="22" height="12" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-t36" value="Python (FragHub.py et scripts)" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="70" y="1398" width="270" height="16" as="geometry" />
+          <mxGeometry x="70" y="1458" width="270" height="16" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-t37" value="&lt;span style=&quot;color:#C62828&quot;&gt;✕&lt;/span&gt;&amp;nbsp; supprime des spectres → DELETED_SPECTRUMS/" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1420" width="330" height="16" as="geometry" />
+          <mxGeometry x="40" y="1480" width="330" height="16" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-t38" value="&lt;span style=&quot;color:#607D8B&quot;&gt;↳&lt;/span&gt;&amp;nbsp; lit une donnée partagée ou un fichier" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1438" width="330" height="16" as="geometry" />
+          <mxGeometry x="40" y="1498" width="330" height="16" as="geometry" />
         </mxCell>
         <mxCell id="p-chemistry-t39" value="&lt;b style=&quot;color:#3949AB&quot;&gt;… →&lt;/b&gt;&amp;nbsp; carte cliquable : ouvre la page de détail" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#263238;fontStyle=0;fontFamily=Helvetica;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1456" width="330" height="16" as="geometry" />
+          <mxGeometry x="40" y="1516" width="330" height="16" as="geometry" />
         </mxCell>
         <UserObject id="p-chemistry-back" label="" link="data:page/id,p-overview">
           <mxCell style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#EEF0FA;strokeColor=#3949AB;strokeWidth=1.5;" vertex="1" parent="1">
-            <mxGeometry x="400" y="1318" width="300" height="74" as="geometry" />
+            <mxGeometry x="400" y="1378" width="300" height="74" as="geometry" />
           </mxCell>
         </UserObject>
         <mxCell id="p-chemistry-back-s" value="" style="rounded=0;html=1;fillColor=#3949AB;strokeColor=none;" vertex="1" parent="p-chemistry-back">
@@ -1856,7 +1856,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="p-python-idb" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FBF4E6;strokeColor=#B7791F;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="990" y="354" width="560" height="104" as="geometry" />
+          <mxGeometry x="990" y="354" width="560" height="134" as="geometry" />
         </mxCell>
         <mxCell id="p-python-idb-s" value="" style="rounded=0;html=1;fillColor=#B7791F;strokeColor=none;" vertex="1" parent="p-python-idb">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1864,11 +1864,11 @@
         <mxCell id="p-python-idb-h" value="Base interne : téléchargement" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#B7791F;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-python-idb">
           <mxGeometry x="0" y="0" width="560" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-python-idb-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;scripts/internal_database.py&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Base absente de &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;datas/internal_databases.parquet&lt;/span&gt; : télécharge l'archive Zenodo indiquée par &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;datas/internal_database.json&lt;/span&gt;, vérifie taille et SHA-256, décompresse. Reprise après coupure ; une base présente n'est jamais remplacée.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-python-idb">
-          <mxGeometry x="0" y="28" width="560" height="76" as="geometry" />
+        <mxCell id="p-python-idb-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;scripts/internal_database.py&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;Base absente de &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;datas/internal_databases.parquet&lt;/span&gt; : télécharge l'archive Zenodo indiquée par &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;datas/internal_database.json&lt;/span&gt;, vérifie taille et SHA-256, décompresse. Reprise après coupure. Une version précédente publiée (liste &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;previous_versions&lt;/span&gt;) est remplacée au premier démarrage, l'ancienne restant utilisée si le téléchargement échoue ; une base recalculée localement n'est jamais remplacée.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-python-idb">
+          <mxGeometry x="0" y="28" width="560" height="106" as="geometry" />
         </mxCell>
         <mxCell id="p-python-mzc" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FBF4E6;strokeColor=#B7791F;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="990" y="480" width="560" height="89" as="geometry" />
+          <mxGeometry x="990" y="510" width="560" height="89" as="geometry" />
         </mxCell>
         <mxCell id="p-python-mzc-s" value="" style="rounded=0;html=1;fillColor=#B7791F;strokeColor=none;" vertex="1" parent="p-python-mzc">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1880,7 +1880,7 @@
           <mxGeometry x="0" y="28" width="560" height="61" as="geometry" />
         </mxCell>
         <mxCell id="p-python-perf" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FBF4E6;strokeColor=#B7791F;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="990" y="591" width="560" height="74" as="geometry" />
+          <mxGeometry x="990" y="621" width="560" height="74" as="geometry" />
         </mxCell>
         <mxCell id="p-python-perf-s" value="" style="rounded=0;html=1;fillColor=#B7791F;strokeColor=none;" vertex="1" parent="p-python-perf">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1892,7 +1892,7 @@
           <mxGeometry x="0" y="28" width="560" height="46" as="geometry" />
         </mxCell>
         <mxCell id="p-python-tools" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FBF4E6;strokeColor=#B7791F;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="990" y="687" width="560" height="119" as="geometry" />
+          <mxGeometry x="990" y="717" width="560" height="134" as="geometry" />
         </mxCell>
         <mxCell id="p-python-tools-s" value="" style="rounded=0;html=1;fillColor=#B7791F;strokeColor=none;" vertex="1" parent="p-python-tools">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
@@ -1900,11 +1900,11 @@
         <mxCell id="p-python-tools-h" value="Outils de maintenance de la base" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;fillColor=#B7791F;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="p-python-tools">
           <mxGeometry x="0" y="0" width="560" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="p-python-tools-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;scripts/build_dataset/&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;renormalize_db.py&lt;/span&gt; : même traitement RDKit que les spectres ; &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;npclassifier_db.py&lt;/span&gt; : classes NPClassifier (RDKit 2020) ; &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;dedupe_db.py&lt;/span&gt; : une ligne par InChIKey ; &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;add_new_molecules.py&lt;/span&gt; : molécules nouvelles d'un run ; &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;make_archive.py&lt;/span&gt; : archive à publier sur Zenodo.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-python-tools">
-          <mxGeometry x="0" y="28" width="560" height="91" as="geometry" />
+        <mxCell id="p-python-tools-t" value="&lt;div style=&quot;line-height:15px&quot;&gt;&lt;div style=&quot;font-family:Courier New,monospace;font-weight:bold;color:#263238&quot;&gt;scripts/build_dataset/&lt;/div&gt;&lt;div style=&quot;margin-left:11px;text-indent:-11px&quot;&gt;•&amp;nbsp;&lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;renormalize_db.py&lt;/span&gt; : même traitement RDKit que les spectres, et marque &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;RDKIT_VERSION&lt;/span&gt; des lignes utilisables par le cache RDKit ; &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;npclassifier_db.py&lt;/span&gt; : classes NPClassifier (RDKit 2020) ; &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;dedupe_db.py&lt;/span&gt; : une ligne par InChIKey ; &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;add_new_molecules.py&lt;/span&gt; : molécules nouvelles d'un run ; &lt;span style=&quot;font-family:Courier New,monospace&quot;&gt;make_archive.py&lt;/span&gt; : archive à publier sur Zenodo.&lt;/div&gt;&lt;/div&gt;" style="text;html=1;fillColor=none;strokeColor=none;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=11;spacingRight=8;spacingTop=4;fontSize=11;fontColor=#263238;fontFamily=Helvetica;" vertex="1" parent="p-python-tools">
+          <mxGeometry x="0" y="28" width="560" height="106" as="geometry" />
         </mxCell>
         <mxCell id="p-python-build" value="" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;container=1;collapsible=0;recursiveResize=0;fillColor=#FBF4E6;strokeColor=#B7791F;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="990" y="828" width="560" height="134" as="geometry" />
+          <mxGeometry x="990" y="873" width="560" height="134" as="geometry" />
         </mxCell>
         <mxCell id="p-python-build-s" value="" style="rounded=0;html=1;fillColor=#B7791F;strokeColor=none;" vertex="1" parent="p-python-build">
           <mxGeometry x="0" y="14.0" width="560" height="14.0" as="geometry" />
