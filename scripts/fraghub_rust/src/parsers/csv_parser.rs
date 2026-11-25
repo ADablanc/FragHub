@@ -91,13 +91,7 @@ pub fn load_and_parse_csv(
     item_type_callback: Option<PyObject>,
 ) -> PyResult<Vec<Spectrum>> {
 
-    let total_files = csv_files.len();
-    if let Some(cb) = &total_items_callback { let _ = cb.call1(py, (total_files, 0)); }
-    if let Some(cb) = &prefix_callback { let _ = cb.call1(py, ("Reading CSV files:",)); }
-    if let Some(cb) = &item_type_callback { let _ = cb.call1(py, ("csv_files",)); }
-
     let mut result_list = Vec::new();
-    let mut processed_files = 0;
 
     for file_path in csv_files {
         let db_name = input_db_names.get(&file_path).cloned().unwrap_or_else(|| "Unknown".to_string());
@@ -110,23 +104,12 @@ pub fn load_and_parse_csv(
 
         let separator = detect_separator(&file_path);
 
-        // COMPTAGE RAPIDE DES LIGNES (très rapide via BufReader)
-        let total_records = py.allow_threads(|| {
-            let f = std::fs::File::open(&file_path).map_err(|e| e.to_string())?;
-            let mut reader = std::io::BufReader::with_capacity(1024 * 1024, f);
-            let mut count = 0;
-            let mut buf = Vec::new();
-            while let Ok(n) = std::io::BufRead::read_until(&mut reader, b'\n', &mut buf) {
-                if n == 0 { break; }
-                count += 1;
-                buf.clear();
-            }
-            Ok::<usize, String>(if count > 0 { count - 1 } else { 0 })
-        }).map_err(|e| pyo3::exceptions::PyIOError::new_err(e))?;
-
-        if let Some(cb) = &total_items_callback { let _ = cb.call1(py, (total_records, 0)); }
+        // Progression en octets lus, comme les autres lecteurs (affichée en MB / GB et MB/s / GB/s). Avant, une
+        // première lecture complète du fichier comptait ses lignes, seulement pour le total de la barre.
+        let total_size = std::cmp::max(1, std::fs::metadata(&file_path).map(|m| m.len()).unwrap_or(0));
+        if let Some(cb) = &total_items_callback { let _ = cb.call1(py, (total_size, 0)); }
         if let Some(cb) = &prefix_callback { let _ = cb.call1(py, (format!("Parsing {}", filename),)); }
-        if let Some(cb) = &item_type_callback { let _ = cb.call1(py, ("rows",)); }
+        if let Some(cb) = &item_type_callback { let _ = cb.call1(py, ("bytes",)); }
 
         let mut local_result = py.allow_threads(|| {
             let mut inner_result_list = Vec::new();
@@ -143,13 +126,14 @@ pub fn load_and_parse_csv(
                 .map(|h| h.to_lowercase())
                 .collect();
 
-            let mut current_row = 0;
             let mut last_update = std::time::Instant::now();
 
-            for result in rdr.records() {
+            // Lecture ligne par ligne avec read_record (ce que fait records()), pour pouvoir demander la
+            // position du lecteur pendant la boucle (barre de progression)
+            let mut record = csv::StringRecord::new();
+            loop {
                 crate::stop::check_str()?; // arrêt demandé (stop.rs)
-                current_row += 1;
-                let record = result.map_err(|e| e.to_string())?;
+                if !rdr.read_record(&mut record).map_err(|e| e.to_string())? { break; }
                 let mut spec = Spectrum::default();
 
                 spec.metadata.insert("FILENAME".to_string(), filename.clone());
@@ -198,13 +182,12 @@ pub fn load_and_parse_csv(
 
                 inner_result_list.push(spec);
 
-                // Update progress every 500ms
+                // Progression toutes les 500 ms : position (en octets) du lecteur dans le fichier
                 if last_update.elapsed() > std::time::Duration::from_millis(500) {
                     if let Some(cb) = &progress_callback {
-                        // cb is a PyObject, but we are inside allow_threads, so we need a Python block
-                        // Wait, we can't acquire the GIL here easily unless we use Python::with_gil
+                        let position = rdr.position().byte();
                         Python::with_gil(|py| {
-                            let _ = cb.call1(py, (current_row,));
+                            let _ = cb.call1(py, (position,));
                         });
                     }
                     last_update = std::time::Instant::now();
@@ -215,8 +198,7 @@ pub fn load_and_parse_csv(
         
         result_list.append(&mut local_result);
 
-        processed_files += 1;
-        if let Some(cb) = &progress_callback { let _ = cb.call1(py, (processed_files,)); }
+        if let Some(cb) = &progress_callback { let _ = cb.call1(py, (total_size,)); }
 
         py.allow_threads(|| { std::thread::sleep(std::time::Duration::from_millis(1)); });
     }

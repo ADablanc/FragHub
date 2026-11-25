@@ -55,10 +55,10 @@
 
               <div class="d-flex justify-space-between mt-2">
                 <div class="text-caption text-green-darken-3 font-weight-bold text-left">
-                  {{ log.current }} of {{ log.total }} {{ log.itemType }} &nbsp;|&nbsp; Elapsed: {{ log.elapsed }} &nbsp;|&nbsp; ETA: 00:00:00
+                  {{ log.counts }} &nbsp;|&nbsp; Elapsed: {{ log.elapsed }} &nbsp;|&nbsp; ETA: 00:00:00
                 </div>
                 <div class="text-caption text-green-darken-3 font-weight-bold text-right">
-                  {{ log.speed }} {{ log.itemType }}/s
+                  {{ log.rate }}
                 </div>
               </div>
             </div>
@@ -69,12 +69,10 @@
               v-if="!isFinished"
               :prefix="currentPrefix"
               :progress-percent="progressPercent"
-              :current="progressValue"
-              :total="totalItems"
-              :item-type="itemType"
+              :counts="barTexts.counts"
               :elapsed="formattedElapsed"
               :eta="formattedEta"
-              :speed="speedVal"
+              :rate="barTexts.rate"
           />
 
           <div v-else class="text-center py-8">
@@ -125,6 +123,7 @@ import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { io } from "socket.io-client"
 import { useState } from '#imports'
 import ActiveProgress from '~/components/ActiveProgress.vue'
+import { progressTexts } from '~/utils/progress_format.js'
 
 const socket = io("http://127.0.0.1:8000")
 const isExecuting = useState('isExecuting')
@@ -141,6 +140,8 @@ const finalMessage = ref('')
 
 const progressValue = ref(0)
 const totalItems = ref(0)
+// Octets écrits (étapes d'écriture des sorties), envoyés avec la progression ; null pour les autres tâches
+const writtenBytes = ref(null)
 const htmlReportPath = ref(null)
 let taskFinishedLogged = false
 let currentTask = null // numéro de la tâche en cours, envoyé par le back-end
@@ -163,6 +164,16 @@ const speedVal = computed(() => {
   if (elapsedSec.value < 0.1 && progressValue.value < totalItems.value) return "0.00"
   return (progressValue.value / elapsedSec.value).toFixed(2)
 })
+
+// Textes de la barre : quantité (« 350.2 of 2,048.0 MB », « 1200 of 5000 spectra | 1.42 GB written ») et vitesse
+// (« 120.4 MB/s », « 35.20 spectra/s »)
+const barTexts = computed(() => progressTexts({
+  current: progressValue.value,
+  total: totalItems.value,
+  itemType: itemType.value,
+  elapsedSec: elapsedSec.value,
+  writtenBytes: writtenBytes.value,
+}))
 
 const etaSec = computed(() => {
   const speed = parseFloat(speedVal.value)
@@ -245,11 +256,9 @@ function checkTaskFinished() {
     logs.value.push({
       type: 'progress_finished',
       prefix: currentPrefix.value,
-      current: progressValue.value,
-      total: totalItems.value,
-      itemType: itemType.value,
+      counts: barTexts.value.counts,
       elapsed: formattedElapsed.value,
-      speed: speedVal.value
+      rate: barTexts.value.rate
     })
   }
 }
@@ -269,6 +278,7 @@ onMounted(() => {
     }
     currentTask = meta.task ?? null
     progressValue.value = 0
+    writtenBytes.value = null
     totalItems.value = meta.total ?? 0
     startTime.value = meta.started || Date.now()
     now.value = Date.now()
@@ -283,6 +293,7 @@ onMounted(() => {
       if (val.task !== currentTask) startTask(val)
       if (val.prefix) currentPrefix.value = val.prefix
       if (val.item_type) itemType.value = val.item_type
+      if (typeof val.bytes === 'number') writtenBytes.value = val.bytes
       progressValue.value = val.value
     } else {
       progressValue.value = val

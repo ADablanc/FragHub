@@ -7,7 +7,7 @@ use std::io::Write;
 use std::path::Path;
 use ::csv::WriterBuilder;
 use rayon::prelude::*;
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 use std::sync::Arc;
 
 use super::{WRITE_CHUNK, WRITE_CHUNKS_PER_ROUND};
@@ -49,10 +49,12 @@ pub fn writting_csv_processing(
     if total_items == 0 { return Ok(()); }
 
     if let Some(cb) = &prefix_callback { cb.call1(py, ("Writing CSV files:",))?; }
-    if let Some(cb) = &item_type_callback { cb.call1(py, ("rows",))?; }
+    if let Some(cb) = &item_type_callback { cb.call1(py, ("spectra",))?; }
     if let Some(cb) = &total_items_callback { cb.call1(py, (total_items, 0))?; }
 
     let global_processed = Arc::new(AtomicUsize::new(0));
+    // Octets écrits sur le disque, envoyés avec le nombre de spectres : affichés en MB / GB et MB/s / GB/s
+    let global_bytes = Arc::new(AtomicU64::new(0));
     let progress_cb = progress_callback.clone();
     let prefix_cb = prefix_callback.clone();
 
@@ -65,10 +67,11 @@ pub fn writting_csv_processing(
             let file_path = path_dir.join(filename);
             let is_append = update && file_path.exists();
 
-            write_csv_file(data_list, &ordered_columns, &file_path, is_append, &|n| {
+            write_csv_file(data_list, &ordered_columns, &file_path, is_append, &|n, b| {
                 let current = global_processed.fetch_add(n, Ordering::Relaxed) + n;
+                let bytes = global_bytes.fetch_add(b, Ordering::Relaxed) + b;
                 if let Some(ref cb) = progress_cb {
-                    Python::with_gil(|py| { let _ = cb.call1(py, (current,)); });
+                    Python::with_gil(|py| { let _ = cb.call1(py, (current, bytes)); });
                 }
             })?;
 
@@ -83,7 +86,7 @@ pub fn writting_csv_processing(
         if let Err(e) = res { return Err(crate::stop::io_error(e)); }
     }
 
-    if let Some(cb) = &progress_callback { cb.call1(py, (total_items,))?; }
+    if let Some(cb) = &progress_callback { cb.call1(py, (total_items, global_bytes.load(Ordering::Relaxed)))?; }
     Ok(())
 }
 
@@ -134,23 +137,26 @@ fn csv_builder() -> WriterBuilder {
 }
 
 /// Écrit un fichier CSV (en-tête sauf en mode ajout, puis une ligne par spectre).
-/// `progress(n)` est appelé après l'écriture de n spectres supplémentaires.
+/// `progress(n, octets)` est appelé après l'écriture de n spectres supplémentaires (et des octets correspondants).
 pub(crate) fn write_csv_file(
     data_list: &[Spectrum],
     ordered_columns: &[String],
     file_path: &Path,
     is_append: bool,
-    progress: &(dyn Fn(usize) + Sync),
+    progress: &(dyn Fn(usize, u64) + Sync),
 ) -> Result<(), String> {
     // Noté avant écriture : remis comme avant si le run s'arrête (output_guard.rs)
     crate::output_guard::prepare(file_path, is_append).map_err(|e| e.to_string())?;
+    let mut pending_bytes = 0u64; // en-tête, compté avec le premier paquet
     let file = OpenOptions::new().write(true).create(true).append(is_append).truncate(!is_append).open(file_path).map_err(|e| e.to_string())?;
     let mut file = std::io::BufWriter::with_capacity(1 << 20, file);
 
     if !is_append {
         let mut w = csv_builder().has_headers(false).from_writer(Vec::new());
         w.write_record(ordered_columns).map_err(|e| e.to_string())?;
-        file.write_all(&w.into_inner().map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
+        let header = w.into_inner().map_err(|e| e.to_string())?;
+        pending_bytes += header.len() as u64;
+        file.write_all(&header).map_err(|e| e.to_string())?;
     }
 
     for round in data_list.chunks(WRITE_CHUNK * WRITE_CHUNKS_PER_ROUND) {
@@ -163,9 +169,11 @@ pub(crate) fn write_csv_file(
             w.into_inner().map_err(|e| e.to_string())
         }).collect();
         for buf in buffers {
-            file.write_all(&buf?).map_err(|e| e.to_string())?;
+            let buf = buf?;
+            pending_bytes += buf.len() as u64;
+            file.write_all(&buf).map_err(|e| e.to_string())?;
         }
-        progress(round.len());
+        progress(round.len(), std::mem::take(&mut pending_bytes));
     }
     file.flush().map_err(|e| e.to_string())?;
     Ok(())
@@ -193,10 +201,10 @@ mod tests {
             let (cols, specs) = jeu(n, 42 + n as u64);
             let (a, b) = (d.join(format!("a{n}.csv")), d.join(format!("b{n}.csv")));
             ancien_csv(&specs, &cols, &a, false);
-            write_csv_file(&specs, &cols, &b, false, &|_| {}).unwrap();
+            write_csv_file(&specs, &cols, &b, false, &|_, _| {}).unwrap();
             // mode ajout (mise à jour)
             ancien_csv(&specs[..n / 2], &cols, &a, true);
-            write_csv_file(&specs[..n / 2], &cols, &b, true, &|_| {}).unwrap();
+            write_csv_file(&specs[..n / 2], &cols, &b, true, &|_, _| {}).unwrap();
             assert!(fs::read(&a).unwrap() == fs::read(&b).unwrap(), "CSV différent pour n = {n}");
         }
         let _ = fs::remove_dir_all(&d);
@@ -207,8 +215,12 @@ mod tests {
         let d = dossier("prog");
         let (cols, specs) = jeu(130_005, 3);
         let total = std::sync::atomic::AtomicUsize::new(0);
-        write_csv_file(&specs, &cols, &d.join("p.csv"), false, &|n| { total.fetch_add(n, Ordering::Relaxed); }).unwrap();
+        let bytes = AtomicU64::new(0);
+        let path = d.join("p.csv");
+        write_csv_file(&specs, &cols, &path, false, &|n, b| { total.fetch_add(n, Ordering::Relaxed); bytes.fetch_add(b, Ordering::Relaxed); }).unwrap();
         assert_eq!(total.load(Ordering::Relaxed), 130_005);
+        // Octets annoncés = taille du fichier écrit (en-tête compris)
+        assert_eq!(bytes.load(Ordering::Relaxed), fs::metadata(&path).unwrap().len());
         let _ = fs::remove_dir_all(&d);
     }
 }

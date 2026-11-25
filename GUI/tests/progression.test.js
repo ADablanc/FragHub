@@ -121,6 +121,34 @@ describe('Écran de progression', () => {
     expect(w.find('.active-progress-zone').text()).toContain('30 of 300 rows')
   })
 
+  it('lecture d\'un fichier : avancement en MB ou GB, vitesse en MB/s', async () => {
+    const w = await mountSuspended(ProgressView)
+    const meta = startTask(2_048_000_000, 'loading [ALL_GNPS.json]:', 'bytes')
+    await emit(w, 'total_items', meta)
+    await emit(w, 'progress', progress(meta, 350_200_000))
+    const active = w.find('.active-progress-zone').text()
+    expect(active).toContain('0.35 of 2.05 GB')
+    expect(active).toMatch(/[\d.,]+ (MB|GB)\/s/)
+    expect(active).not.toContain('bytes')
+  })
+
+  it('écriture des sorties : spectres pour le pourcentage, octets écrits et MB/s à côté', async () => {
+    const w = await mountSuspended(ProgressView)
+    const meta = startTask(5000, 'Writing CSV files:', 'spectra')
+    await emit(w, 'total_items', meta)
+    await emit(w, 'progress', { ...progress(meta, 1200), bytes: 1_420_000_000 })
+    const active = w.find('.active-progress-zone').text()
+    expect(active).toContain('1200 of 5000 spectra | 1.42 GB written')
+    expect(active).toMatch(/[\d.,]+ (MB|GB)\/s/)
+    expect(active).not.toContain('spectra/s')
+    // Tâche suivante sans octets : retour à l'affichage en éléments
+    const next = startTask(10, 'Updating ontologies:', 'spectra')
+    await emit(w, 'total_items', next)
+    await emit(w, 'progress', progress(next, 4))
+    expect(w.find('.active-progress-zone').text()).toContain('spectra/s')
+    expect(w.find('.active-progress-zone').text()).not.toContain('written')
+  })
+
   it('progression au-delà du total : barre bloquée à 100 %', async () => {
     const w = await mountSuspended(ProgressView)
     const meta = startTask(4)
@@ -224,8 +252,8 @@ describe('Écran de progression', () => {
 describe('Barre de progression active', () => {
   it('texte de l\'étape sans le « : » final, compte, durée, reste et vitesse', async () => {
     const w = await mountSuspended(ActiveProgress, { props: {
-      prefix: 'Removing duplicates:  ', progressPercent: 37.5, current: 3, total: 8, itemType: 'spectra',
-      elapsed: '00:00:02.500', eta: '00:00:04', speed: '1.20' } })
+      prefix: 'Removing duplicates:  ', progressPercent: 37.5, counts: '3 of 8 spectra',
+      elapsed: '00:00:02.500', eta: '00:00:04', rate: '1.20 spectra/s' } })
     const text = w.text()
     expect(text).toContain('Removing duplicates')
     expect(text).not.toContain('duplicates:')

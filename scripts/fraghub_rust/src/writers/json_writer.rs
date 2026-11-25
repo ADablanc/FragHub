@@ -8,7 +8,7 @@ use std::path::Path;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use rayon::prelude::*;
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 use std::sync::Arc;
 
 use super::{WRITE_CHUNK, WRITE_CHUNKS_PER_ROUND};
@@ -52,10 +52,12 @@ pub fn writting_json_processing(
     if total_items == 0 { return Ok(()); }
 
     if let Some(cb) = &prefix_callback { cb.call1(py, ("Writing JSON files:",))?; }
-    if let Some(cb) = &item_type_callback { cb.call1(py, ("rows",))?; }
+    if let Some(cb) = &item_type_callback { cb.call1(py, ("spectra",))?; }
     if let Some(cb) = &total_items_callback { cb.call1(py, (total_items, 0))?; }
 
     let global_processed = Arc::new(AtomicUsize::new(0));
+    // Octets écrits sur le disque, envoyés avec le nombre de spectres : affichés en MB / GB et MB/s / GB/s
+    let global_bytes = Arc::new(AtomicU64::new(0));
     let progress_cb = progress_callback.clone();
     let prefix_cb = prefix_callback.clone();
 
@@ -67,10 +69,11 @@ pub fn writting_json_processing(
             fs::create_dir_all(&path_dir).map_err(|e| e.to_string())?;
             let file_path = path_dir.join(filename);
 
-            write_json_file(data_list, &ordered_columns, &file_path, update, &|n| {
+            write_json_file(data_list, &ordered_columns, &file_path, update, &|n, b| {
                 let current = global_processed.fetch_add(n, Ordering::Relaxed) + n;
+                let bytes = global_bytes.fetch_add(b, Ordering::Relaxed) + b;
                 if let Some(ref cb) = progress_cb {
-                    Python::with_gil(|py| { let _ = cb.call1(py, (current,)); });
+                    Python::with_gil(|py| { let _ = cb.call1(py, (current, bytes)); });
                 }
             }, &|| {
                 if let Some(ref cb) = prefix_cb {
@@ -85,7 +88,7 @@ pub fn writting_json_processing(
         if let Err(e) = res { return Err(crate::stop::io_error(e)); }
     }
 
-    if let Some(cb) = &progress_callback { cb.call1(py, (total_items,))?; }
+    if let Some(cb) = &progress_callback { cb.call1(py, (total_items, global_bytes.load(Ordering::Relaxed)))?; }
     Ok(())
 }
 
@@ -161,13 +164,14 @@ fn json_item(spec: &Spectrum, columns: &[String]) -> String {
 }
 
 /// Écrit (ou complète en mode mise à jour) un fichier JSON : tableau de spectres.
-/// `progress(n)` après n spectres écrits ; `before_close()` juste avant d'écrire le « ] » final.
+/// `progress(n, octets)` après n spectres écrits (et les octets des spectres) ; `before_close()` juste avant
+/// d'écrire le « ] » final.
 pub(crate) fn write_json_file(
     data_list: &[Spectrum],
     ordered_columns: &[String],
     file_path: &Path,
     update: bool,
-    progress: &(dyn Fn(usize) + Sync),
+    progress: &(dyn Fn(usize, u64) + Sync),
     before_close: &dyn Fn(),
 ) -> Result<(), String> {
     let is_append_mode = update && file_path.exists() && fs::metadata(file_path).map(|m| m.len()).unwrap_or(0) > 2;
@@ -215,10 +219,12 @@ pub(crate) fn write_json_file(
             }
             out
         }).collect();
+        let mut round_bytes = 0u64;
         for buf in buffers {
+            round_bytes += buf.len() as u64;
             file.write_all(&buf).map_err(|e| e.to_string())?;
         }
-        progress(round.len());
+        progress(round.len(), round_bytes);
     }
 
     before_close();
@@ -266,10 +272,10 @@ mod tests {
             let (cols, specs) = jeu(n, 7 + n as u64);
             let (a, b) = (d.join(format!("a{n}.json")), d.join(format!("b{n}.json")));
             ancien_json(&specs, &cols, &a, false);
-            write_json_file(&specs, &cols, &b, false, &|_| {}, &|| {}).unwrap();
+            write_json_file(&specs, &cols, &b, false, &|_, _| {}, &|| {}).unwrap();
             // mode mise à jour : ajout au tableau existant
             ancien_json(&specs[..(n / 2).max(1)], &cols, &a, true);
-            write_json_file(&specs[..(n / 2).max(1)], &cols, &b, true, &|_| {}, &|| {}).unwrap();
+            write_json_file(&specs[..(n / 2).max(1)], &cols, &b, true, &|_, _| {}, &|| {}).unwrap();
             assert!(fs::read(&a).unwrap() == fs::read(&b).unwrap(), "JSON différent pour n = {n}");
         }
         let _ = fs::remove_dir_all(&d);

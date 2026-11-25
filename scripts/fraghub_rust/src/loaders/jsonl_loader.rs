@@ -16,10 +16,10 @@ use super::generate_file_hash;
 /// # Arguments
 /// * `py` (Python) : Token PyO3.
 /// * `json_file_path` (&str) : Le chemin vers le fichier JSONL.
-/// * `progress_callback` (Option<PyObject>) : Callback pour la progression en MB.
-/// * `total_items_callback` (Option<PyObject>) : Callback pour la taille totale en MB.
+/// * `progress_callback` (Option<PyObject>) : Callback pour la progression en octets lus.
+/// * `total_items_callback` (Option<PyObject>) : Callback pour la taille totale en octets.
 /// * `prefix_callback` (Option<PyObject>) : Callback du préfixe.
-/// * `item_type_callback` (Option<PyObject>) : Callback du type d'élément ("MB").
+/// * `item_type_callback` (Option<PyObject>) : Callback du type d'élément ("bytes").
 ///
 /// # Returns
 /// * `PyResult<Vec<String>>` : Une liste de spectres bruts sous forme de chaînes de caractères.
@@ -36,11 +36,12 @@ pub fn load_spectrum_list_json_2(
     let filename = path.file_name().unwrap_or_default().to_string_lossy().to_string();
 
     let total_bytes = std::fs::metadata(json_file_path).map(|m| m.len()).unwrap_or(0);
-    let total_mb = std::cmp::max(1, total_bytes / (1024 * 1024));
+    // Progression en octets : l'interface et la ligne de commande l'affichent en MB / GB et MB/s / GB/s
+    let total_size = std::cmp::max(1, total_bytes);
 
-    if let Some(cb) = &total_items_callback { let _ = cb.call1(py, (total_mb, 0)); }
+    if let Some(cb) = &total_items_callback { let _ = cb.call1(py, (total_size, 0)); }
     if let Some(cb) = &prefix_callback { let _ = cb.call1(py, (format!("loading [{}]:", filename),)); }
-    if let Some(cb) = &item_type_callback { let _ = cb.call1(py, ("MB",)); }
+    if let Some(cb) = &item_type_callback { let _ = cb.call1(py, ("bytes",)); }
 
     let file = File::open(json_file_path)?;
     let mut reader = BufReader::with_capacity(1024 * 1024 * 4, file);
@@ -66,8 +67,8 @@ pub fn load_spectrum_list_json_2(
                     spectrum_list.push(injected);
 
                     if last_update.elapsed() >= Duration::from_millis(50) {
-                        let current_mb = total_consumed / (1024 * 1024);
-                        if let Some(cb) = &progress_callback { let _ = cb.call1(py, (current_mb,)); }
+                        let current_size = total_consumed;
+                        if let Some(cb) = &progress_callback { let _ = cb.call1(py, (current_size,)); }
                         py.allow_threads(|| std::thread::sleep(Duration::from_millis(1)));
                         last_update = Instant::now();
                     }
@@ -77,7 +78,7 @@ pub fn load_spectrum_list_json_2(
         }
     }
     
-    if let Some(cb) = &progress_callback { let _ = cb.call1(py, (total_mb,)); }
+    if let Some(cb) = &progress_callback { let _ = cb.call1(py, (total_size,)); }
     
     Ok(spectrum_list)
 }

@@ -24,10 +24,10 @@
 
     <div class="d-flex justify-space-between mt-2">
       <div class="text-caption text-blue-grey-darken-2 font-weight-bold text-left">
-        {{ current }} of {{ total }} {{ itemType }} &nbsp;|&nbsp; Elapsed: {{ elapsed }} &nbsp;|&nbsp; ETA: {{ eta }}
+        {{ counts }} &nbsp;|&nbsp; Elapsed: {{ elapsed }} &nbsp;|&nbsp; ETA: {{ eta }}
       </div>
       <div class="text-caption text-blue-grey-darken-2 font-weight-bold text-right">
-        {{ speed }} {{ itemType }}/s
+        {{ rate }}
       </div>
     </div>
   </div>
@@ -36,15 +36,15 @@
 <script setup>
 import { computed } from 'vue'
 
+// `counts` et `rate` : textes déjà mis en forme (utils/progress_format.js), en MB / GB pour la lecture et
+// l'écriture des fichiers, en nombre d'éléments pour les autres étapes
 const props = defineProps({
   prefix: { type: String, required: true },
   progressPercent: { type: Number, required: true },
-  current: { type: Number, required: true },
-  total: { type: Number, required: true },
-  itemType: { type: String, required: true },
+  counts: { type: String, required: true },
   elapsed: { type: String, required: true },
   eta: { type: String, required: true },
-  speed: { type: String, required: true }
+  rate: { type: String, required: true }
 })
 
 // Supprime automatiquement les deux-points ":" et les espaces superflus à la fin du texte Python

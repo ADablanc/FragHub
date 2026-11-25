@@ -10,7 +10,7 @@ use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::Path;
 use rayon::prelude::*;
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 use std::sync::Arc;
 
 use super::{WRITE_CHUNK, WRITE_CHUNKS_PER_ROUND};
@@ -55,6 +55,8 @@ pub fn writting_msp_processing(
     if let Some(cb) = &total_items_callback { cb.call1(py, (total_items, 0))?; }
 
     let global_processed = Arc::new(AtomicUsize::new(0));
+    // Octets écrits sur le disque, envoyés avec le nombre de spectres : affichés en MB / GB et MB/s / GB/s
+    let global_bytes = Arc::new(AtomicU64::new(0));
     let progress_cb = progress_callback.clone();
 
     let results: Vec<Result<(), String>> = py.allow_threads(|| {
@@ -65,10 +67,11 @@ pub fn writting_msp_processing(
             fs::create_dir_all(&path_dir).map_err(|e| e.to_string())?;
             let file_path = path_dir.join(filename);
 
-            write_msp_file(data_list, &file_path, update, &|n| {
+            write_msp_file(data_list, &file_path, update, &|n, b| {
                 let current = global_processed.fetch_add(n, Ordering::Relaxed) + n;
+                let bytes = global_bytes.fetch_add(b, Ordering::Relaxed) + b;
                 if let Some(ref cb) = progress_cb {
-                    Python::with_gil(|py| { let _ = cb.call1(py, (current,)); });
+                    Python::with_gil(|py| { let _ = cb.call1(py, (current, bytes)); });
                 }
             })
         }).collect()
@@ -78,17 +81,17 @@ pub fn writting_msp_processing(
         if let Err(e) = res { return Err(crate::stop::io_error(e)); }
     }
 
-    if let Some(cb) = &progress_callback { cb.call1(py, (total_items,))?; }
+    if let Some(cb) = &progress_callback { cb.call1(py, (total_items, global_bytes.load(Ordering::Relaxed)))?; }
     Ok(())
 }
 
 /// Écrit (ou complète en mode mise à jour) un fichier MSP : chaque spectre, suivi d'une ligne vide.
-/// `progress(n)` après n spectres écrits.
+/// `progress(n, octets)` après n spectres écrits (et les octets correspondants).
 pub(crate) fn write_msp_file(
     data_list: &[Spectrum],
     file_path: &Path,
     update: bool,
-    progress: &(dyn Fn(usize) + Sync),
+    progress: &(dyn Fn(usize, u64) + Sync),
 ) -> Result<(), String> {
     // Noté avant écriture : remis comme avant si le run s'arrête (output_guard.rs)
     crate::output_guard::prepare(file_path, update && file_path.exists()).map_err(|e| e.to_string())?;
@@ -105,10 +108,12 @@ pub(crate) fn write_msp_file(
             }
             out
         }).collect();
+        let mut round_bytes = 0u64;
         for buf in buffers {
+            round_bytes += buf.len() as u64;
             file.write_all(&buf).map_err(|e| e.to_string())?;
         }
-        progress(round.len());
+        progress(round.len(), round_bytes);
     }
     file.flush().map_err(|e| e.to_string())?;
     Ok(())
@@ -137,10 +142,10 @@ mod tests {
             let (_cols, specs) = jeu(n, 11 + n as u64);
             let (a, b) = (d.join(format!("a{n}.msp")), d.join(format!("b{n}.msp")));
             ancien_msp(&specs, &a, false);
-            write_msp_file(&specs, &b, false, &|_| {}).unwrap();
+            write_msp_file(&specs, &b, false, &|_, _| {}).unwrap();
             // mode mise à jour : ajout à la suite
             ancien_msp(&specs[..(n / 2).max(1)], &a, true);
-            write_msp_file(&specs[..(n / 2).max(1)], &b, true, &|_| {}).unwrap();
+            write_msp_file(&specs[..(n / 2).max(1)], &b, true, &|_, _| {}).unwrap();
             assert!(fs::read(&a).unwrap() == fs::read(&b).unwrap(), "MSP différent pour n = {n}");
         }
         let _ = fs::remove_dir_all(&d);

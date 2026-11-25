@@ -47,9 +47,14 @@ pub fn sending_mzspeclib_processing(
     if let Some(cb) = &total_items_callback { cb.call1(py, (total_items, 0))?; }
 
     let mut done = 0usize;
+    // Octets écrits : c'est le Python qui écrit les fichiers, on regarde donc leur taille sur le disque (ce qu'ils
+    // ont gagné depuis le début de leur écriture). Envoyés avec le nombre de spectres : affichés en MB/s, GB/s.
+    let size_of = |p: &Path| std::fs::metadata(p).map(|m| m.len()).unwrap_or(0);
+    let mut finished_bytes = 0u64;
     for (data_list, name, mode) in tasks.iter() {
         if data_list.is_empty() { continue; }
         let file_path = Path::new(output_directory).join("mzSpecLib").join(mode).join(format!("{name}.mzSpecLib.json"));
+        let initial_size = size_of(&file_path);
         if let Some(cb) = &prefix_callback { cb.call1(py, (format!("Writing {name}.mzSpecLib.json to disk..."),))?; }
         sink.call_method1(py, "begin", (file_path.to_string_lossy().to_string(), *name, update, env!("CARGO_PKG_VERSION")))?;
         for chunk in data_list.chunks(SEND_CHUNK) {
@@ -63,10 +68,12 @@ pub fn sending_mzspeclib_processing(
             });
             sink.call_method1(py, "add", (texts,))?;
             done += chunk.len();
-            if let Some(cb) = &progress_callback { cb.call1(py, (done,))?; }
+            let bytes = finished_bytes + size_of(&file_path).saturating_sub(initial_size);
+            if let Some(cb) = &progress_callback { cb.call1(py, (done, bytes))?; }
         }
         sink.call_method0(py, "end")?;
+        finished_bytes += size_of(&file_path).saturating_sub(initial_size);
     }
-    if let Some(cb) = &progress_callback { cb.call1(py, (total_items,))?; }
+    if let Some(cb) = &progress_callback { cb.call1(py, (total_items, finished_bytes))?; }
     Ok(())
 }
