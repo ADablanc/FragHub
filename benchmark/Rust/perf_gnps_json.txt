@@ -1,0 +1,57 @@
+FragHub — journal de performances
+Date      : 2026-11-25 18:23:53   (run « rust-gnps »)
+Statut    : --- TOTAL TIME: 00:01:07 ---
+Durée     : 68.2 s
+Mémoire   : max pendant le run 6992 Mo, pic du processus depuis son lancement 7040 Mo
+Entrée    : 1 fichier(s), 1929 Mo
+            ALL_GNPS.json (1929 Mo)
+Sortie    : C:\Users\Axel\Documents\DATAS\FragHub\ReuGMAnov2026\OUT_BENCH_RUST
+Paramètres: calculate_de_novo=0.0, check_minimum_of_high_peaks_requiered=1.0, check_minimum_of_high_peaks_requiered_intensity_percent=5.0, check_minimum_of_high_peaks_requiered_no_peaks=2.0, check_minimum_peak_requiered=1.0, check_minimum_peak_requiered_n_peaks=3.0, cli=True, csv=1.0, de_novo_ppm_tolerance=10.0, json=1.0, keep_mz_in_range=1.0, keep_mz_in_range_from_mz=50.0, keep_mz_in_range_to_mz=2000.0, msp=1.0, mzspeclib_json=0.0, normalize_intensity=1.0, quiet=False, reduce_peak_list=1.0, reduce_peak_list_max_peaks=500.0, remove_peak_above_precursormz=1.0, remove_spectrum_under_entropy_score=1.0, remove_spectrum_under_entropy_score_value=0.5, reset_updates=1.0, write_perf_logs=1.0
+
+ n  etape                                  tache                                                  nb_elements  unite       traites  debut_s  duree_s  rss_fin_mo  rss_max_mo  coeurs_cpu_moyen
+ 0  Démarrage                              Chargement des bases internes (au lancement de l'app)                                                3.30        4038                              
+ 1  -- PARSING JSON TO DICT --             loading [ALL_GNPS.json]                                 2022385992  bytes    2022385992     0.02     3.07        6084        6084               0.9
+ 2  -- PARSING JSON TO DICT --             Parsing JSON spectrums                                      418054  spectra      418054     3.08     4.92        6779        6779               2.8
+ 3  Generating SPLASH IDs                  Generating SPLASH IDs for [JSON]                            418054  spectra      418054     8.02     0.62        6700        6779               7.0
+ 4  Generating SPLASH IDs                  Merging files (Please wait)...                                   1                    1     8.64     0.13        6719        6719               0.1
+ 5  Checking for Updates                   Checking for updates                                        418054  spectra      418054     8.78     0.17        6734        6735               0.9
+ 6  Checking for Updates                   Saving updates and logs...                                                                  8.95     0.44        6729        6741               0.3
+ 7  Cleaning Spectrums                     cleaning spectrums                                          418054  spectra      418054     9.40     3.06        6065        6745               9.3
+ 8  Cleaning Spectrums                                                                                 191966  rows         191966    12.47     0.03        6086        6086              10.3
+ 9  RDKit Derivation and Mass Calculation  derivation and calculation (RDKit via Rust)                 226088  rows                   12.51     0.09        5978        6086               5.6
+10  RDKit Derivation and Mass Calculation  RDKit calculation                                           135889               135889    12.59    46.70        6085        6992              15.0
+11  RDKit Derivation and Mass Calculation  Checking failures & fallback PubChem (Pass 2)...                                           59.29     0.35        6085        6085               1.0
+12  RDKit Derivation and Mass Calculation  Processing molecules (Pass 2)...                                22                   22    59.64     0.70        6031        6107               2.0
+13  RDKit Derivation and Mass Calculation  applying RDKit results to all spectra...                    226088               226088    60.34     0.76        6076        6076               1.0
+14  Mass & Adduct Correction               Mass & Adduct Correction                                    225948  spectra      225948    61.11     0.99        5781        6078              12.2
+15  Removing Duplicates                    Removing duplicates                                         213571  spectra      213571    62.11     0.86        5877        5877               5.0
+16  Completing from PubChem Datas          Enriching data from PubChem                                 202651  rows         202651    62.98     0.16        5847        5877              13.1
+17  Ontologies Completion                  Updating ontologies                                         202651  rows         202651    63.14     0.13        5847        5847               7.3
+18  Splitting Spectrums                    Splitting spectra into categories                           202651  spectra      202651    63.28     0.04        5925        5925              12.7
+19  Writing CSV                            Writing CSV files                                           202651  spectra         189    63.34     0.01        5944        5944              14.5
+20  Writing CSV                            Writing NEG_DI.csv to disk...                                                              63.35     0.00        5949        5949              50.0
+21  Writing CSV                            Writing POS_DI.csv to disk...                                                     25177    63.35     0.19        6119        6119              14.7
+22  Writing CSV                            Writing NEG_LC.csv to disk...                                                    202651    63.54     0.30        6175        6175               4.4
+23  Writing CSV                            Writing POS_LC.csv to disk...                                                    202651    63.85     0.01        6175        6175               0.0
+24  Writing MSP                            Writing MSP files                                           202651  spectra      202651    63.87     0.59        6189        6189               7.0
+25  Writing JSON                           Writing JSON files                                          202651  spectra          14    64.47     0.00        6180        6189               0.0
+26  Writing JSON                           Writing NEG_DI.json to disk...                                                      189    64.48     0.03        6133        6180              17.8
+27  Writing JSON                           Writing POS_DI.json to disk...                                                    25177    64.51     0.58        6308        6308              16.0
+28  Writing JSON                           Writing NEG_LC.json to disk...                                                   202651    65.09     0.98        6232        6308               4.8
+29  Writing JSON                           Writing POS_LC.json to disk...                                                   202651    66.07     0.01        6232        6232               0.0
+
+Messages de suppression :
+  previously cleaned: 0
+  No peaks list: 160
+                No smiles, no inchi, no inchikey: 82472
+                No precursor mz: 0
+                No or bad adduct: 1244
+                Low entropy score: 72730
+                Minimum peaks not required: 18062
+                All peaks above precursor mz: 1826
+                No peaks in mz range: 226
+                Minimum high peaks not required: 15246
+  No smiles, no inchi, no inchikey (updated): 82612
+  Deleted by mz mismatch (NO_MATCH): 1843
+  duplicatas removed: 10920
+  Total deletions: 215403
