@@ -29,7 +29,9 @@ All notable changes to this project will be documented in this file.
   - **GC spectra without ion mode** set to positive, except in negative chemical ionization.
   - **Lower memory use, same results**: memory peak 29.9 GB -> 20.2 GB on the full test set.
   - **Stop button and Ctrl+C** stop a run within about a second and restore the output folder.
-  - **Interface**: invalid fields shown and blocking START, server errors shown, no duplicate input file, source database guessed from the file name, progress report keeps its position when scrolled up; `Total deletions` complete.
+  - **Interface**: invalid fields shown and blocking START, server errors shown, no duplicate input file, source database guessed from the file name, progress report keeps its position when scrolled up; `Total deletions` complete; file reading and writing progress shown in MB/s or GB/s.
+  - **HTML report redesigned**: sober layout with numbered sections, tables readable offline (input files, parameters, removed spectra, output libraries, classified spectra) and figures (removal reasons, library tree, source databases and their intersections, chemical classes, instruments, metadata completeness); internal database version and DOI, RDKit version; broken layout and library tree fixed.
+  - **Command line**: source database guessed from the file name (same rules as the interface); output redirected to a file no longer stops on the progress bar characters (UTF-8).
   - **Automatic tests**: `python run_tests.py` (Rust, Python, interface and end-to-end tests).
   - **Documentation**: README checked against the application, internal database metrics and sunbursts, snapshots of the component diagrams.
   - Details of all these changes: [documentation/CHANGES_2.0.0.md](documentation/CHANGES_2.0.0.md).
