@@ -1,6 +1,8 @@
 # Benchmark — FragHub Python (1.5, `develop` branch)
 
 Full per-task measurements of the old Python version of FragHub (pandas, numba, RDKit for Python).
+
+Several steps use threads (`concurrent.futures.ThreadPoolExecutor`), but they run Python code under the global interpreter lock (GIL), so the "CPU cores" column stays close to 1.
 The comparison with the Rust version is in [../README.md](../README.md).
 
 ## GNPS JSON run (25 November 2026)

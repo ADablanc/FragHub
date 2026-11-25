@@ -45,7 +45,7 @@ The two versions do not split their work the same way, so tasks are grouped into
 | JSON writing | 51.03 s | 1.60 s | × 32 | 1.0 / 5 |
 | Other (time between tasks, report) | 0.36 s | 2.28 s | | |
 
-- The old version runs almost everything on a single CPU core; the Rust version spreads most steps over all cores.
+- The old version does use multithreading (`concurrent.futures.ThreadPoolExecutor` for parsing, SPLASH, cleaning, MSP conversion…), but its threads run Python code and are held back by Python's global interpreter lock (GIL): the measured average stays around one CPU core. The Rust version runs its threads in parallel without that lock (rayon) and spreads most steps over all cores.
 - **The molecule step (RDKit) is now the main cost of the Rust run**: 48.6 s out of 68.2 s (71 %). It is also where the gain is smallest (× 3.0).
   The Rust version reuses the RDKit results stored in its internal database (RDKit cache), which the Python version does not have.
 
