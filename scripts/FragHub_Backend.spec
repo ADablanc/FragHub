@@ -20,11 +20,23 @@ if os.path.isdir(_rdkit_libs):
     os.environ[_path_var] = _rdkit_libs + os.pathsep + os.environ.get(_path_var, '')
 
 
+# Fichiers de datas/ embarqués : seulement ceux que FragHub lit (scripts/fraghub_rust/src/loading_db.rs,
+# scripts/internal_database.py). Avant, tout datas/ était copié, y compris des dossiers de travail (sauvegarde de la
+# base « internal_databases.parquet.bak », modèles NPClassifier) : l'installeur dépassait 2 Go, la limite de NSIS
+# (« failed creating mmap »). Dans le dossier de la base, seuls les fichiers .parquet sont pris.
+DATAS = os.path.join(SPECPATH, '..', 'datas')
+_datas = [(os.path.join(DATAS, f), 'datas') for f in
+          ('adduct_to_convert.csv', 'key_to_convert.csv', 'instruments_tree.json', 'internal_database.json')]
+_db = os.path.join(DATAS, 'internal_databases.parquet')
+_datas += [(os.path.join(_db, f), 'datas/internal_databases.parquet')
+           for f in sorted(os.listdir(_db)) if f.endswith('.parquet')]
+
+
 a = Analysis(
     ['FragHub.py'],
     pathex=['.'],
     binaries=[],
-    datas=[('../datas', 'datas'), ('GUI/assets', 'GUI/assets')],
+    datas=_datas + [('GUI/assets', 'GUI/assets')],
     hiddenimports=['uvicorn.logging', 'uvicorn.loops', 'uvicorn.loops.auto', 'uvicorn.protocols.http.auto', 'uvicorn.protocols.websockets.auto', 'mzspeclib_converter'],
     hookspath=[],
     hooksconfig={},
