@@ -35,6 +35,11 @@ le programme se termine sans les attendre.
 Retrait (FRAGHUB_RENORM_DROP_TOO_LONG=1, avec le temps limite) : les molécules notées dans
 _molecules_trop_longues.tsv sont RETIRÉES de la base de sortie et leurs fichiers sont écrits. À n'utiliser
 qu'après avoir vérifié qu'aucune n'est un produit naturel (COCONUT, LOTUS) : celles-là se calculent sans limite.
+Garde (FRAGHUB_RENORM_KEEP_TOO_LONG=1, avec le temps limite) : les molécules notées dans _molecules_trop_longues.tsv
+GARDENT leurs valeurs d'origine, sans marque RDKIT_VERSION (le cache ne les réutilise jamais), et leurs fichiers sont
+écrits. Exemple sous Windows (PowerShell), après un lancement avec le temps limite :
+  $env:FRAGHUB_RENORM_MAX_SECS = "300"; $env:FRAGHUB_RENORM_KEEP_TOO_LONG = "1"
+  .venv\\Scripts\\python.exe scripts\\build_dataset\\renormalize_db.py
 """
 import argparse
 import os

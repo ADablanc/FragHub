@@ -38,7 +38,11 @@
 //!   notées en cours, le programme se termine sans les attendre ;
 //! - retrait (FRAGHUB_RENORM_DROP_TOO_LONG=1, avec le temps limite) : les molécules notées trop longues sont
 //!   RETIRÉES de la base de sortie (ligne supprimée) et leur fichier est écrit. À n'utiliser qu'après avoir
-//!   vérifié qu'aucune n'est un produit naturel (COCONUT, LOTUS) : celles-là se calculent sans temps limite.
+//!   vérifié qu'aucune n'est un produit naturel (COCONUT, LOTUS) : celles-là se calculent sans temps limite ;
+//! - garde (FRAGHUB_RENORM_KEEP_TOO_LONG=1, avec le temps limite) : les molécules notées trop longues GARDENT
+//!   leurs valeurs d'origine, sans marque RDKIT_VERSION (comme une molécule illisible), et leur fichier est
+//!   écrit. Le cache RDKit ne les réutilise donc jamais : un spectre de cette molécule est toujours calculé.
+//!   Incompatible avec le retrait.
 use polars::prelude::*;
 use pyo3::prelude::*;
 use rayon::prelude::*;
@@ -127,14 +131,32 @@ pub struct RenormOptions {
     /// Avec le temps limite : les molécules notées trop longues sont retirées de la sortie au lieu de
     /// bloquer l'écriture de leur fichier
     pub drop_too_long: bool,
+    /// Avec le temps limite : les molécules notées trop longues gardent leurs valeurs d'origine (sans marque
+    /// RDKIT_VERSION) au lieu de bloquer l'écriture de leur fichier
+    pub keep_too_long: bool,
 }
 
 impl RenormOptions {
-    /// Réglages lus dans l'environnement : FRAGHUB_RENORM_MAX_SECS=N et FRAGHUB_RENORM_DROP_TOO_LONG=1.
+    /// Réglages lus dans l'environnement : FRAGHUB_RENORM_MAX_SECS=N, FRAGHUB_RENORM_DROP_TOO_LONG=1 et
+    /// FRAGHUB_RENORM_KEEP_TOO_LONG=1.
     pub fn from_env() -> Self {
         let max_secs = std::env::var("FRAGHUB_RENORM_MAX_SECS").ok().and_then(|v| v.trim().parse::<f64>().ok()).filter(|&s| s > 0.0);
-        let drop = std::env::var("FRAGHUB_RENORM_DROP_TOO_LONG").map(|v| matches!(v.trim(), "1" | "true" | "oui")).unwrap_or(false);
-        RenormOptions { max_secs, drop_too_long: drop && max_secs.is_some() }
+        let flag = |name: &str| std::env::var(name).map(|v| matches!(v.trim(), "1" | "true" | "oui")).unwrap_or(false);
+        RenormOptions {
+            max_secs,
+            drop_too_long: flag("FRAGHUB_RENORM_DROP_TOO_LONG") && max_secs.is_some(),
+            keep_too_long: flag("FRAGHUB_RENORM_KEEP_TOO_LONG") && max_secs.is_some(),
+        }
+    }
+
+    /// Une molécule notée trop longue ne retient plus l'écriture de son fichier (retrait ou garde)
+    fn releases_too_long(&self) -> bool { self.drop_too_long || self.keep_too_long }
+
+    /// Sort des molécules notées trop longues, pour les messages
+    fn too_long_fate(&self) -> &'static str {
+        if self.drop_too_long { "retirées de la sortie" }
+        else if self.keep_too_long { "gardées avec leurs valeurs d'origine, sans marque RDKIT_VERSION" }
+        else { "non écrites" }
     }
 }
 
@@ -375,7 +397,7 @@ impl Shared {
             let _ = f.flush();
         }
         part.too_long_rows.lock().unwrap().insert(row);
-        if self.opts.drop_too_long { part.remaining.fetch_sub(1, Ordering::Relaxed); }
+        if self.opts.releases_too_long() { part.remaining.fetch_sub(1, Ordering::Relaxed); }
         self.too_long.fetch_add(1, Ordering::Relaxed);
         self.done.fetch_add(1, Ordering::Relaxed);
     }
@@ -443,6 +465,9 @@ pub fn renormalize_database(
 ) -> Result<RenormStats, String> {
     use std::io::Write;
     if input_dir == output_dir { return Err("le dossier de sortie doit être différent du dossier d'entrée".into()); }
+    if opts.drop_too_long && opts.keep_too_long {
+        return Err("FRAGHUB_RENORM_DROP_TOO_LONG et FRAGHUB_RENORM_KEEP_TOO_LONG : choisir l'un ou l'autre".into());
+    }
     fs::create_dir_all(output_dir).map_err(|e| e.to_string())?;
     let mut paths: Vec<_> = fs::read_dir(input_dir).map_err(|e| e.to_string())?
         .filter_map(|e| e.ok().map(|e| e.path()))
@@ -506,7 +531,7 @@ pub fn renormalize_database(
     let already_too_long = if limit.is_some() { read_too_long(&too_long_path) } else { Default::default() };
     if let Some(s) = limit {
         log(&format!("Mode diagnostic : recherche du tautomère arrêtée après {s:.0} s ; molécules trop longues notées dans {} ({})",
-            too_long_path.display(), if opts.drop_too_long { "retirées de la sortie" } else { "non écrites" }));
+            too_long_path.display(), opts.too_long_fate()));
     }
     let mut skipped = 0usize;
     let mut queue: Vec<(usize, usize)> = Vec::new();
@@ -518,8 +543,8 @@ pub fn renormalize_database(
             if already_too_long.contains(&(part.name.clone(), i)) {
                 skipped += 1;
                 part.too_long_rows.lock().unwrap().insert(i);
-                // En mode retrait, une molécule déjà notée ne retient plus l'écriture du fichier
-                if opts.drop_too_long { part.remaining.fetch_sub(1, Ordering::Relaxed); }
+                // En mode retrait ou garde, une molécule déjà notée ne retient plus l'écriture du fichier
+                if opts.releases_too_long() { part.remaining.fetch_sub(1, Ordering::Relaxed); }
                 continue;
             }
             let atoms = heavy_atoms(part.targets[i].as_ref().unwrap());
@@ -529,7 +554,7 @@ pub fn renormalize_database(
         queue.extend(rows.into_iter().map(|r| (p, r)));
     }
     if skipped > 0 {
-        log(&format!("{skipped} molécules déjà notées trop longues : {}", if opts.drop_too_long { "retirées de la sortie" }
+        log(&format!("{skipped} molécules déjà notées trop longues : {}", if opts.releases_too_long() { opts.too_long_fate() }
             else { "sautées (relancer sans FRAGHUB_RENORM_MAX_SECS pour les calculer)" }));
     }
     if !big_queue.is_empty() {
@@ -567,8 +592,11 @@ pub fn renormalize_database(
         let df = ParquetReader::new(&mut file).finish().map_err(|e| e.to_string())?;
         let results = std::mem::take(&mut *part.results.lock().unwrap());
         let (mut out, mut st) = apply_results(&df, &results, &part.targets, &rdkit_version).map_err(|e| e.to_string())?;
-        // Mode retrait : les lignes notées trop longues sont supprimées de la sortie
-        let dropped = part.too_long_rows.lock().unwrap().clone();
+        // Mode retrait : les lignes notées trop longues sont supprimées de la sortie. Mode garde : elles n'ont
+        // pas de résultat, apply_results leur laisse donc leurs valeurs d'origine, sans marque RDKIT_VERSION.
+        let too_long_rows = part.too_long_rows.lock().unwrap().clone();
+        let dropped = if opts.drop_too_long { too_long_rows.clone() } else { Default::default() };
+        let kept = if opts.keep_too_long { too_long_rows.len() } else { 0 };
         if !dropped.is_empty() {
             let keep: BooleanChunked = (0..out.height()).map(|i| !dropped.contains(&i)).collect();
             out = out.filter(&keep).map_err(|e| e.to_string())?;
@@ -582,7 +610,9 @@ pub fn renormalize_database(
         part.written.store(true, Ordering::Relaxed);
         log(&format!("{} : écrit - {} lignes, {} avec structure, {} InChIKey modifiées, {} SMILES modifiés, {} illisibles (gardées), {} prêtes pour le cache RDKit{} ({:.0} s d'écriture)",
             part.name, st.rows, st.with_structure, st.key_changed, st.smiles_changed, st.failed, st.rdkit_marked,
-            if dropped.is_empty() { String::new() } else { format!(", {} trop longues retirées", dropped.len()) }, t.elapsed().as_secs_f64()));
+            if !dropped.is_empty() { format!(", {} trop longues retirées", dropped.len()) }
+            else if kept > 0 { format!(", {kept} trop longues gardées telles quelles") } else { String::new() },
+            t.elapsed().as_secs_f64()));
         total.add(&st);
         Ok(())
     };
@@ -669,7 +699,9 @@ pub fn renormalize_database(
         let left = parts.iter().filter(|p| !p.written.load(Ordering::Relaxed)).count();
         let still = shared.running.lock().unwrap().iter().flatten().filter(|r| r.noted).count();
         log(&format!("Mode diagnostic : {too_long} molécules trop longues cette fois ({still} encore en calcul, abandonnées), {skipped} déjà notées ; {} (voir {})",
-            if opts.drop_too_long { format!("{} lignes retirées de la sortie", too_long + skipped) } else { format!("{left} fichiers non écrits") },
+            if opts.drop_too_long { format!("{} lignes retirées de la sortie", too_long + skipped) }
+            else if opts.keep_too_long { format!("{} lignes gardées avec leurs valeurs d'origine", too_long + skipped) }
+            else { format!("{left} fichiers non écrits") },
             too_long_path.display()));
     }
 
@@ -910,7 +942,7 @@ mod tests {
         let dir = std::env::temp_dir().join(format!("fraghub_renorm_watch_{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir).unwrap();
-        let sh = shared_for_test(&dir, RenormOptions { max_secs: Some(300.0), drop_too_long: false });
+        let sh = shared_for_test(&dir, RenormOptions { max_secs: Some(300.0), ..Default::default() });
         let now = Instant::now();
         let long_ago = now.checked_sub(Duration::from_secs(400)).unwrap();
         let remaining = sh.parts[0].remaining.load(Ordering::Relaxed);
@@ -950,7 +982,7 @@ mod tests {
         assert_eq!(tsv().lines().count(), 2);
         assert_eq!(sh.too_long.load(Ordering::Relaxed), 2);
         // Mode retrait : la molécule notée ne retient plus le fichier
-        let sh2 = shared_for_test(&dir, RenormOptions { max_secs: Some(300.0), drop_too_long: true });
+        let sh2 = shared_for_test(&dir, RenormOptions { max_secs: Some(300.0), drop_too_long: true, ..Default::default() });
         sh2.active.store(1, Ordering::Relaxed);
         sh2.running.lock().unwrap()[0] = Some(Running { start: long_ago, part: 0, row: 1, noted: false });
         assert!(sh2.watch_running(now));
@@ -980,7 +1012,7 @@ mod tests {
         ParquetWriter::new(fs::File::create(src2.join("part_0000.parquet")).unwrap()).finish(&mut sans).unwrap();
         renormalize_database(&src2, &ref_, None, RenormOptions::default(), &|_| {}, &|_: &Progress| true).unwrap();
 
-        let diag = RenormOptions { max_secs: Some(3.0), drop_too_long: false };
+        let diag = RenormOptions { max_secs: Some(3.0), ..Default::default() };
         let st = renormalize_database(&src, &dst, None, diag, &|_| {}, &|_: &Progress| true).unwrap();
         assert_eq!(st.rows, 0, "fichier non écrit : rien compté");
         assert!(!dst.join("part_0000.parquet").exists());
@@ -1008,6 +1040,51 @@ mod tests {
         let same_cols = |d: &DataFrame| d.select(["INCHIKEY", "INCHI", "NAME"]).unwrap();
         assert!(same_cols(&out).equals_missing(&same_cols(&reference)));
         assert_eq!(out.column("SMILES").unwrap().str().unwrap().get(1), reference.column("SMILES").unwrap().str().unwrap().get(1));
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn garde_des_molecules_trop_longues() {
+        // Même fichier que pour le retrait. Diagnostic (3 s) puis garde : fichier écrit avec ses trois lignes ;
+        // le géant garde exactement ses valeurs d'origine, sans marque RDKIT_VERSION ; les deux autres lignes
+        // sont calculées normalement. Retrait et garde ensemble : refusé.
+        let dir = std::env::temp_dir().join(format!("fraghub_renorm_keep_{}", std::process::id()));
+        let (src, dst) = (dir.join("in"), dir.join("out"));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&src).unwrap();
+        let mut df = DataFrame::new(vec![
+            Series::new("INCHIKEY", &[Some("LFQSCWFLJHTTHZ-UHFFFAOYSA-N"), Some("AAAAAAAAAAAAAA-UHFFFAOYSA-N"), Some("QTBSBXVTEAMEQO-UHFFFAOYSA-M")]),
+            Series::new("INCHI", &[Some("InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"), Some(GEANT), None]),
+            Series::new("SMILES", &[Some("CCO"), Some("SMILES_GEANT_ORIGINE"), Some("CC(=O)[O-]")]),
+            Series::new("FORMULA", &[Some("C2H6O"), Some("FORMULE_ORIGINE"), Some("C2H3O2")]),
+            Series::new("NAME", &[Some("ethanol"), Some("geant"), Some("acetate")]),
+        ]).unwrap();
+        ParquetWriter::new(fs::File::create(src.join("part_0000.parquet")).unwrap()).finish(&mut df).unwrap();
+
+        let both = RenormOptions { max_secs: Some(3.0), drop_too_long: true, keep_too_long: true };
+        assert!(renormalize_database(&src, &dst, None, both, &|_| {}, &|_: &Progress| true).is_err());
+
+        let diag = RenormOptions { max_secs: Some(3.0), ..Default::default() };
+        renormalize_database(&src, &dst, None, diag, &|_| {}, &|_: &Progress| true).unwrap();
+        assert!(!dst.join("part_0000.parquet").exists(), "sans garde ni retrait : fichier non écrit");
+        let st = renormalize_database(&src, &dst, None, RenormOptions { keep_too_long: true, ..diag }, &|_| {}, &|_: &Progress| true).unwrap();
+        assert_eq!((st.rows, st.with_structure, st.rdkit_marked), (3, 2, 1), "le géant n'est ni calculé ni marqué");
+        assert_eq!(fs::read_to_string(dst.join("_molecules_trop_longues.tsv")).unwrap().lines().count(), 1, "pas notée de nouveau");
+        assert!(!dst.join("part_0000.parquet.reprise").exists());
+
+        let read = |p: &Path| { let mut f = fs::File::open(p).unwrap(); ParquetReader::new(&mut f).finish().unwrap() };
+        let out = read(&dst.join("part_0000.parquet"));
+        assert_eq!(out.height(), 3);
+        // Le géant : toutes ses valeurs d'origine, sans marque
+        let geant_out = out.slice(1, 1).select(["INCHIKEY", "INCHI", "SMILES", "FORMULA", "NAME"]).unwrap();
+        let geant_in = df.slice(1, 1).select(["INCHIKEY", "INCHI", "SMILES", "FORMULA", "NAME"]).unwrap();
+        assert!(geant_out.equals_missing(&geant_in));
+        assert_eq!(out.column(crate::rdkit_native::RDKIT_VERSION_COLUMN).unwrap().str().unwrap().get(1), None);
+        // Les deux autres : calculées normalement (éthanol marquée pour le cache, acétate calculée depuis son SMILES)
+        let direct = |i: usize, col: &str| out.column(col).unwrap().str().unwrap().get(i).map(|s| s.to_string());
+        assert_eq!(direct(0, "SMILES").as_deref(), Some("CCO"));
+        assert_eq!(direct(0, "INCHIKEY").as_deref(), Some("LFQSCWFLJHTTHZ-UHFFFAOYSA-N"));
+        assert!(direct(2, "INCHIKEY").is_some());
         let _ = fs::remove_dir_all(&dir);
     }
 
