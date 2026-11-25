@@ -65,6 +65,15 @@
       "target": "nsis",
       "icon": "app/assets/FragHub_icon.png"
     },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "FragHub",
+      "runAfterFinish": true,
+      "uninstallDisplayName": "FragHub ${version}"
+    },
     "mac": {
       "target": "dmg",
       "icon": "app/assets/FragHub_icon.icns"
