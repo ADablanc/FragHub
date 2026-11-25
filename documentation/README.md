@@ -10,6 +10,7 @@ This folder describes how FragHub is built and how it works inside. To use FragH
 | [Backend_component_diagram.drawio](Backend_component_diagram.drawio) | Diagram of the processing engine (Rust), 5 pages |
 | [Frontend_component_diagram.drawio](Frontend_component_diagram.drawio) | Diagram of the graphical interface (Electron + Nuxt), 5 pages |
 | [internal_database/](internal_database/) | Metrics and sunbursts of the internal molecule database (see the main README) |
+| [CHANGES_2.0.0.md](CHANGES_2.0.0.md) | Detailed changes of version 2.0.0 and their reasons (the [CHANGELOG](../CHANGELOG.md) gives the short version) |
 | [../TESTS.md](../TESTS.md) | Automatic tests: how to run them and read their results |
 
 ## Component diagrams
