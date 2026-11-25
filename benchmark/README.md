@@ -6,6 +6,17 @@ Both versions record every step with the same module (`scripts/perf_log.py`): du
 - [Python/](Python/README.md) — old version (`develop` branch: pandas, numba, RDKit for Python), full per-task detail
 - [Rust/](Rust/README.md) — new version (`Rust_FragHub` branch: Rust engine, polars, rayon, RDKit C++), full per-task detail
 
+## Test machine
+
+| | |
+|---|---|
+| CPU | Intel Core i5-14600K — 14 cores (6 performance + 8 efficiency) / 20 threads |
+| RAM | 64 GB (4 × 16 GB, 4000 MT/s) |
+| OS | Windows 11 Pro (10.0.26200) |
+| Storage | SSD (input files and outputs on drive C:) |
+
+Both runs were made on this machine, one after the other.
+
 ## Input
 
 `ALL_GNPS.json` (GNPS, JSON format) — **1 929 MB, 418 054 spectra**.

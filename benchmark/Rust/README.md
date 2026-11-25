@@ -8,6 +8,7 @@ The comparison with the Python version is in [../README.md](../README.md).
 | | |
 |---|---|
 | Code | `Rust_FragHub` branch (version 2.0.0) |
+| Machine | Intel Core i5-14600K (14 cores / 20 threads), 64 GB RAM, Windows 11 Pro — see [../README.md](../README.md#test-machine) |
 | Input | `ALL_GNPS.json` — 1 929 MB, 418 054 spectra |
 | Filters | default values, de novo off, outputs CSV + MSP + JSON (mzSpecLib off: the Python version has no such output), `reset_updates` on |
 | Internal database loading (before the run) | **3.3 s** (RSS 4 038 MB) |

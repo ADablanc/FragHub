@@ -10,6 +10,7 @@ The comparison with the Rust version is in [../README.md](../README.md).
 | | |
 |---|---|
 | Code | `benchmark` branch (copy of `develop`, commit `7d0abe0`) + `scripts/bench_cli.py` |
+| Machine | Intel Core i5-14600K (14 cores / 20 threads), 64 GB RAM, Windows 11 Pro — see [../README.md](../README.md#test-machine) |
 | Input | `ALL_GNPS.json` — 1 929 MB, 418 054 spectra |
 | Filters | default values (same as the Rust CLI), de novo off, outputs CSV + MSP + JSON, `reset_updates` on |
 | Internal databases loading (before the run) | **19.6 s** (RSS 4 398 MB) |
