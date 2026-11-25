@@ -25,6 +25,8 @@ if sys.platform == 'win32' and not getattr(sys, 'frozen', False):
         os.add_dll_directory(_rdkit_bin)
 
 import fraghub_rust
+import progress_format  # textes des barres de progression de la ligne de commande (MB/s, GB/s...)
+import database_name  # nom de la base deviné d'après le nom du fichier (ligne de commande)
 import perf_log  # PERF_LOG : journal de performances temporaire (voir perf_log.py)
 import internal_database  # base interne de molécules : téléchargée depuis Zenodo si elle n'est pas sur le disque
 
@@ -38,6 +40,14 @@ else:
 
 is_cli_mode = "--cli" in sys.argv
 is_quiet_mode = "--quiet" in sys.argv
+
+# Ligne de commande dont la sortie est redirigée (fichier, « | Tee-Object »...) : Python écrirait dans l'encodage
+# local de Windows (cp1252), qui n'a pas les caractères des barres de progression (▶, █) : le run s'arrêtait sur
+# une erreur « charmap ». La sortie redirigée est écrite en UTF-8 ; un caractère impossible est remplacé.
+if is_cli_mode:
+    for _stream in (sys.stdout, sys.stderr):
+        if _stream is not None and hasattr(_stream, "reconfigure") and not _stream.isatty():
+            _stream.reconfigure(encoding="utf-8", errors="replace")
 # Sous Windows (et dans l'exécutable), chaque processus de la conversion mzSpecLib relit ce fichier
 # au démarrage : la bannière et la redirection du journal ne doivent se faire que dans le processus
 # principal (sinon la bannière est répétée et chaque processus vide fraghub_debug.txt).
@@ -148,7 +158,11 @@ def progress_callback(*args):
         if args[0] >= current_total_items:
             last_emit_time = 0
 
-        emit_to_frontend('progress', {'value': args[0], **task_meta()})
+        message = {'value': args[0], **task_meta()}
+        # Étapes d'écriture : le moteur envoie aussi les octets écrits (affichés en MB / GB et MB/s / GB/s)
+        if len(args) > 1:
+            message['bytes'] = args[1]
+        emit_to_frontend('progress', message)
 
 def total_items_callback(*args):
     global last_emit_time, current_total_items
@@ -431,7 +445,9 @@ if __name__ == "__main__":
             args_dict[key] = 1.0 if args_dict[key] == 'yes' else 0.0
             
         args_dict['input_directory'] = resolved_files
-        args_dict['input_db_names'] = {}
+        # Nom de la base de chaque fichier, deviné d'après son nom comme dans l'onglet INPUT de l'interface
+        # (« Unknown » si rien n'est reconnu). Avant, tous les spectres de la ligne de commande étaient « Unknown ».
+        args_dict['input_db_names'] = {f: database_name.guess_database_name(f) for f in resolved_files}
         parameters_dict.update(args_dict)
         
         if not args.quiet:
@@ -458,14 +474,17 @@ if __name__ == "__main__":
         cli_current_prefix = [""]
         cli_start_time = [0.0]
         
+        cli_item_type = ["items"]
+
         def cli_progress_callback(*cb_args):
             if cb_args: perf_log.on_progress(cb_args[0])  # PERF_LOG
             if args.quiet or not cb_args: return
             val = cb_args[0]
+            written = cb_args[1] if len(cb_args) > 1 else None  # octets écrits (étapes d'écriture)
             total = cli_total_items[0]
             start_t = cli_start_time[0]
             if total > 0:
-                percent = val / total
+                percent = min(val / total, 1.0)
                 bar_length = 30
                 filled_length = int(bar_length * percent)
                 bar = '█' * filled_length + '░' * (bar_length - filled_length)
@@ -474,6 +493,7 @@ if __name__ == "__main__":
                 elapsed = time.time() - start_t
                 speed = val / elapsed if elapsed > 0 else 0
                 remaining = (total - val) / speed if speed > 0 else 0
+                counts, rate = progress_format.progress_texts(val, total, cli_item_type[0], elapsed, written)
                 
                 def format_time(seconds):
                     if seconds == float('inf') or seconds < 0: return "--:--"
@@ -486,10 +506,10 @@ if __name__ == "__main__":
                 color = '\033[96m' if val < total else '\033[92m'
                 reset = '\033[0m'
                 
-                stats = f"[{format_time(elapsed)} < {format_time(remaining)}, {speed:.1f} it/s]"
+                stats = f"[{format_time(elapsed)} < {format_time(remaining)}, {rate}]"
                 
                 # \033[K permet d'effacer le reste de la ligne pour éviter les artefacts visuels
-                print(f"\r  {color}[{bar}]{reset} {percent*100:.1f}% | {val}/{total} {stats}\033[K", end="", flush=True)
+                print(f"\r  {color}[{bar}]{reset} {percent*100:.1f}% | {counts} {stats}\033[K", end="", flush=True)
                 if val >= total:
                     print() # Nouvelle ligne à 100%
                     
@@ -508,8 +528,9 @@ if __name__ == "__main__":
             print(f"\n\033[1;37m▶ {prefix}\033[0m")
             
         def cli_item_type_callback(*cb_args):
-            if cb_args: perf_log.on_item_type(cb_args[0])  # PERF_LOG
-            pass # Non nécessaire en CLI
+            if cb_args:
+                perf_log.on_item_type(cb_args[0])  # PERF_LOG
+                cli_item_type[0] = str(cb_args[0])  # unité de la barre : octets (MB/s) ou éléments
             
         def cli_step_callback(*cb_args):
             if cb_args: perf_log.on_step(cb_args[0])  # PERF_LOG

@@ -191,6 +191,16 @@ def test_chaque_progression_porte_l_etat_de_la_tache(messages):
     assert messages[-1][1]["task"] == 2   # nouvelle tâche : numéro suivant
 
 
+def test_octets_ecrits_transmis_avec_la_progression(messages):
+    """Étapes d'écriture : le moteur envoie (spectres, octets) ; l'interface reçoit les octets dans « bytes »."""
+    fh.item_type_callback("spectra")
+    fh.total_items_callback(100)
+    fh.progress_callback(40, 123_456_789)
+    assert messages[-1][1]["value"] == 40 and messages[-1][1]["bytes"] == 123_456_789
+    fh.progress_callback(41)                    # autres étapes : pas d'octets
+    assert "bytes" not in messages[-1][1]
+
+
 def test_progression_arretee_par_l_utilisateur(messages, monkeypatch):
     monkeypatch.setattr(fh, "global_stop_flag", True)
     with pytest.raises(Exception, match="stopped by user"):
