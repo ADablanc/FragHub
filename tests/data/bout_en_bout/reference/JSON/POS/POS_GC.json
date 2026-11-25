@@ -1,7 +1,7 @@
 [
   {
     "FILENAME": "MassBank_RIKENformat.msp",
-    "DATABASE_NAME": "NOT FOUND",
+    "DATABASE_NAME": "MassBank",
     "FILEHASH": "cf115dcd0d1b4a120abb71fdeb5eb9e569e0b3a672063be51e4c7d183d8e61f0",
     "PREDICTED": "false",
     "SPLASH": "splash10-00di-9000000000-c67521646cabae9ed001",
@@ -45,7 +45,7 @@
   },
   {
     "FILENAME": "MassBank_NISTformat__ex3.msp",
-    "DATABASE_NAME": "NOT FOUND",
+    "DATABASE_NAME": "MassBank",
     "FILEHASH": "d62a7b3da232bd0ac1f7520a3b5bb57b171aec57f960f55b47b1987d4e398f68",
     "PREDICTED": "false",
     "SPLASH": "splash10-014i-9000000000-f21aee427893d39b6cd0",
@@ -96,7 +96,7 @@
   },
   {
     "FILENAME": "MassBank_RIKENformat__ex3.msp",
-    "DATABASE_NAME": "NOT FOUND",
+    "DATABASE_NAME": "MassBank",
     "FILEHASH": "12132cd6767ee325d35883d25c0b7f5e1d142d60d33c563c39cea29984dcea57",
     "PREDICTED": "false",
     "SPLASH": "splash10-014i-9000000000-0f24a7027db913cb5a44",

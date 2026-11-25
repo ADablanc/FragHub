@@ -174,71 +174,83 @@
           "accession": "MS:1003275",
           "cv_param_group": "4",
           "name": "other attribute name",
-          "value": "FILEHASH"
+          "value": "DATABASE_NAME"
         },
         {
           "accession": "MS:1003276",
           "cv_param_group": "4",
           "name": "other attribute value",
-          "value": "3765c3e23aeefaf31c3e27e95895ef627fa688f9652d7efc6746af9fc45dbfb0"
+          "value": "MoNA"
         },
         {
           "accession": "MS:1003275",
           "cv_param_group": "5",
+          "name": "other attribute name",
+          "value": "FILEHASH"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "5",
+          "name": "other attribute value",
+          "value": "3765c3e23aeefaf31c3e27e95895ef627fa688f9652d7efc6746af9fc45dbfb0"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "INSTRUMENTTYPE"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "5",
+          "cv_param_group": "6",
           "name": "other attribute value",
           "value": "GC-EI"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "6",
+          "cv_param_group": "7",
           "name": "other attribute name",
           "value": "ENTROPY"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "6",
+          "cv_param_group": "7",
           "name": "other attribute value",
           "value": "0.77988761"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "7",
+          "cv_param_group": "8",
           "name": "other attribute name",
           "value": "NPCLASS_PATHWAY"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "7",
+          "cv_param_group": "8",
           "name": "other attribute value",
           "value": "Alkaloids"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "8",
+          "cv_param_group": "9",
           "name": "other attribute name",
           "value": "NPCLASS_SUPERCLASS"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "8",
+          "cv_param_group": "9",
           "name": "other attribute value",
           "value": "Pseudoalkaloids"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "9",
+          "cv_param_group": "10",
           "name": "other attribute name",
           "value": "NPCLASS_CLASS"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "9",
+          "cv_param_group": "10",
           "name": "other attribute value",
           "value": "pteridine alkaloids"
         },

@@ -181,23 +181,35 @@
           "accession": "MS:1003275",
           "cv_param_group": "5",
           "name": "other attribute name",
-          "value": "FILEHASH"
+          "value": "DATABASE_NAME"
         },
         {
           "accession": "MS:1003276",
           "cv_param_group": "5",
           "name": "other attribute value",
-          "value": "a142832c40dfb4b20f965c8822574a41a333be125fa010660b52494061515d6b"
+          "value": "MoNA"
         },
         {
           "accession": "MS:1003275",
           "cv_param_group": "6",
           "name": "other attribute name",
-          "value": "ENTROPY"
+          "value": "FILEHASH"
         },
         {
           "accession": "MS:1003276",
           "cv_param_group": "6",
+          "name": "other attribute value",
+          "value": "a142832c40dfb4b20f965c8822574a41a333be125fa010660b52494061515d6b"
+        },
+        {
+          "accession": "MS:1003275",
+          "cv_param_group": "7",
+          "name": "other attribute name",
+          "value": "ENTROPY"
+        },
+        {
+          "accession": "MS:1003276",
+          "cv_param_group": "7",
           "name": "other attribute value",
           "value": "0.73850991"
         },
