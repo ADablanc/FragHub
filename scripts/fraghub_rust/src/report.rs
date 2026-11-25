@@ -1,36 +1,25 @@
 // src/report.rs
+//! Rapport HTML de fin de run (`report_<date>.html` dans le dossier de sortie).
+//!
+//! Toutes les données du rapport sont réunies dans UN objet JSON (`{REPORT_DATA}` du gabarit
+//! report_template.html) : le gabarit en fait les tableaux (JavaScript sans bibliothèque, lisibles hors ligne) et les
+//! graphiques (Plotly et ECharts, chargés depuis Internet). Les nombres sont calculés ici, une seule fois.
 use pyo3::prelude::*;
 use crate::spectrum::Spectrum;
+use serde_json::{json, Value};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
-// Fonction utilitaire pour extraire la taille et les INCHIKEYs uniques d'un Vec<Spectrum>
-
-fn get_df_stats(list: &Vec<Spectrum>) -> PyResult<(usize, usize)> {
-    let length = list.len();
-    let mut unique = 0;
-    if length > 0 {
-        let mut unique_set = std::collections::HashSet::new();
-        for spec in list {
-            if let Some(val) = spec.metadata.get("INCHIKEY") {
-                let s = val.to_string();
-                if !s.is_empty() && s.to_lowercase() != "nan" {
-                    unique_set.insert(s);
-                }
-            }
-        }
-        unique = unique_set.len();
-    }
-    Ok((length, unique))
+/// Nombre de spectres et nombre d'InChIKey différentes d'une bibliothèque.
+fn get_df_stats(list: &[Spectrum]) -> (usize, usize) {
+    let unique: HashSet<&str> = list.iter().filter_map(|spec| spec.metadata.get("INCHIKEY"))
+        .map(|s| s.as_str()).filter(|s| !s.is_empty() && !s.eq_ignore_ascii_case("nan")).collect();
+    (list.len(), unique.len())
 }
 
-
-/// Génère le rapport final (report.txt) récapitulant les paramètres et le résultat du nettoyage.
-///
-/// Pour un développeur Python : Ce fichier contient le formatage d'une très longue chaîne.
-/// En Rust, on utilise `format!(r#"..."#)` pour manipuler du texte brut multi-lignes ("raw strings") 
-/// sans avoir besoin d'échapper les guillemets ou caractères spéciaux.
+/// Mots avec une majuscule initiale (noms de marques et d'instruments de l'arbre) ; vide ou inconnu : « NOT FOUND ».
 fn capitalize_words(s: &str) -> String {
     if s.to_uppercase() == "NOT FOUND" || s.to_uppercase() == "UNKNOWN" {
         return "NOT FOUND".to_string();
@@ -47,534 +36,300 @@ fn capitalize_words(s: &str) -> String {
      .join(" ")
 }
 
+/// Valeur de classe lisible : vide, « nan », « unknown » ou « NOT FOUND » donnent « Unknown ».
+fn class_value(s: Option<&String>) -> String {
+    let t = s.map(|s| s.trim().trim_matches('"').trim()).unwrap_or("");
+    if t.is_empty() || t.eq_ignore_ascii_case("nan") || t.eq_ignore_ascii_case("unknown") || t.eq_ignore_ascii_case("not found") {
+        "Unknown".to_string()
+    } else {
+        t.to_string()
+    }
+}
+
+/// Hiérarchie (racine → niveaux) en listes ids / labels / parents / values pour un sunburst ou un arbre.
+#[derive(Default)]
+struct Hierarchy {
+    counts: BTreeMap<String, usize>,
+    labels: HashMap<String, String>,
+    parents: HashMap<String, String>,
+}
+
+impl Hierarchy {
+    fn add(&mut self, root: &str, levels: &[String]) {
+        *self.counts.entry(root.to_string()).or_insert(0) += 1;
+        self.labels.insert(root.to_string(), root.to_string());
+        self.parents.insert(root.to_string(), String::new());
+        let mut parent = root.to_string();
+        for level in levels {
+            let id = format!("{parent}|{level}");
+            *self.counts.entry(id.clone()).or_insert(0) += 1;
+            self.labels.insert(id.clone(), level.clone());
+            self.parents.insert(id.clone(), parent.clone());
+            parent = id;
+        }
+    }
+
+    fn to_json(&self) -> Value {
+        let ids: Vec<&String> = self.counts.keys().collect();
+        json!({
+            "ids": ids,
+            "labels": ids.iter().map(|id| self.labels[*id].clone()).collect::<Vec<_>>(),
+            "parents": ids.iter().map(|id| self.parents[*id].clone()).collect::<Vec<_>>(),
+            "values": ids.iter().map(|id| self.counts[*id]).collect::<Vec<_>>(),
+        })
+    }
+}
+
+/// Format d'un fichier d'entrée d'après son extension.
+fn input_format(path: &str) -> String {
+    Path::new(path).extension().map(|e| e.to_string_lossy().to_uppercase()).unwrap_or_default()
+}
+
+#[allow(clippy::too_many_arguments)]
 pub fn generate_report_processing(
     _py: Python,
     output_directory: String,
     date_str: String,
     total_time_str: String,
-    parameters_dict: &std::collections::HashMap<String, f64>,
+    parameters_dict: &HashMap<String, f64>,
     input_paths: &Vec<String>,
+    input_db_names: &HashMap<String, String>,
     deletion_report: &crate::deletion_report::DeletionReport,
     libs: &crate::splitter::Libraries,
 ) -> PyResult<()> {
-    let (pos_lc, pos_lc_insilico, pos_gc, pos_gc_insilico) = (&libs.pos_lc, &libs.pos_lc_insilico, &libs.pos_gc, &libs.pos_gc_insilico);
-    let (neg_lc, neg_lc_insilico, neg_gc, neg_gc_insilico) = (&libs.neg_lc, &libs.neg_lc_insilico, &libs.neg_gc, &libs.neg_gc_insilico);
-
-    // 1. Extraction des statistiques des 8 DataFrames
-    let (pos_lc_len, pos_lc_uniq) = get_df_stats(pos_lc)?;
-    let (pos_lc_in_len, pos_lc_in_uniq) = get_df_stats(pos_lc_insilico)?;
-    let (pos_gc_len, pos_gc_uniq) = get_df_stats(pos_gc)?;
-    let (pos_gc_in_len, pos_gc_in_uniq) = get_df_stats(pos_gc_insilico)?;
-    let (neg_lc_len, neg_lc_uniq) = get_df_stats(neg_lc)?;
-    let (neg_lc_in_len, neg_lc_in_uniq) = get_df_stats(neg_lc_insilico)?;
-    let (neg_gc_len, neg_gc_uniq) = get_df_stats(neg_gc)?;
-    let (neg_gc_in_len, neg_gc_in_uniq) = get_df_stats(neg_gc_insilico)?;
-
-    // Injection directe (DI)
-    let (pos_di_len, pos_di_uniq) = get_df_stats(&libs.pos_di)?;
-    let (pos_di_in_len, pos_di_in_uniq) = get_df_stats(&libs.pos_di_insilico)?;
-    let (neg_di_len, neg_di_uniq) = get_df_stats(&libs.neg_di)?;
-    let (neg_di_in_len, neg_di_in_uniq) = get_df_stats(&libs.neg_di_insilico)?;
-
-    let total_spectra = pos_lc_len + pos_lc_in_len + pos_gc_len + pos_gc_in_len + neg_lc_len + neg_lc_in_len + neg_gc_len + neg_gc_in_len
-        + pos_di_len + pos_di_in_len + neg_di_len + neg_di_in_len;
-    let total_unique = pos_lc_uniq + pos_lc_in_uniq + pos_gc_uniq + pos_gc_in_uniq + neg_lc_uniq + neg_lc_in_uniq + neg_gc_uniq + neg_gc_in_uniq
-        + pos_di_uniq + pos_di_in_uniq + neg_di_uniq + neg_di_in_uniq;
-
-    // 2. Formatage des chaînes (Equivalent exact de votre Python)
-
-    // Helpers natifs
-    let get_bool = |key: &str| -> bool {
-        parameters_dict.get(key).cloned().unwrap_or(0.0) == 1.0
-    };
-    let get_f64 = |key: &str| -> f64 {
-        parameters_dict.get(key).cloned().unwrap_or(0.0)
-    };
-
-    
-    
-    let mut msp_files = String::new();
-    let mut json_files = String::new();
-    let mut csv_files = String::new();
-    let mut mgf_files = String::new();
-
-    for file_str in input_paths {
-        let formatted = format!("<li>{}</li>", file_str);
-        if file_str.ends_with(".msp") { msp_files.push_str(&formatted); }
-        else if file_str.ends_with(".json") { json_files.push_str(&formatted); }
-        else if file_str.ends_with(".csv") { csv_files.push_str(&formatted); }
-        else if file_str.ends_with(".mgf") { mgf_files.push_str(&formatted); }
-    }
-
-    if msp_files.is_empty() { msp_files = "<li>-- no file --</li>".to_string(); }
-    if json_files.is_empty() { json_files = "<li>-- no file --</li>".to_string(); }
-    if csv_files.is_empty() { csv_files = "<li>-- no file --</li>".to_string(); }
-    if mgf_files.is_empty() { mgf_files = "<li>-- no file --</li>".to_string(); }
-
-    let get_bool_str = |key: &str| -> &str { if get_bool(key) { "ON" } else { "OFF" } };
-    let get_class_str = |key: &str| -> &str { if get_bool(key) { "on" } else { "off" } };
-
-    let total_deletions = deletion_report.duplicatas_removed +
-        deletion_report.previously_cleaned +
-        deletion_report.no_peaks_list +
-        deletion_report.no_smiles_no_inchi_no_inchikey +
-        deletion_report.no_precursor_mz +
-        deletion_report.no_or_bad_adduct +
-        deletion_report.low_entropy_score +
-        deletion_report.minimum_peaks_not_requiered +
-        deletion_report.all_peaks_above_precursor_mz +
-        deletion_report.no_peaks_in_mz_range +
-        deletion_report.minimum_high_peaks_not_requiered +
-        deletion_report.low_resolution_ms2 +
-        deletion_report.ms2_chemical_crash;
-
-    let total_input = total_spectra + total_deletions;
-    let max_h = if total_input > 0 { total_input as f64 } else { 1.0 };
-    let pct_del = (total_deletions as f64 / max_h) * 100.0;
-    let pct_out = (total_spectra as f64 / max_h) * 100.0;
-
-    let calc_h = |val: usize| {
-        if total_deletions > 0 { (val as f64 / total_deletions as f64) * 100.0 } else { 0.0 }
-    };
-
-    let parts: Vec<&str> = date_str.split("__").collect();
-    let display_date = if parts.len() == 2 {
-        let d = parts[0].replace("_", "-");
-        let t = parts[1].replace("_", ":");
-        format!("{} at {}", d, t)
-    } else {
-        date_str.replace("_", " ")
-    };
-
-    let mut html = String::from(include_str!("report_template.html"));
-    html = html.replace("{TOTAL_TIME}", &total_time_str);
-
-    html = html.replace("{DATE}", &display_date);
-    html = html.replace("{MSP}", &msp_files);
-    html = html.replace("{JSON}", &json_files);
-    html = html.replace("{CSV}", &csv_files);
-    html = html.replace("{MGF}", &mgf_files);
-    html = html.replace("{OUT_DIR}", &output_directory);
-    html = html.replace("{OUT_CSV}", if get_bool("csv") { "YES" } else { "NO" });
-    html = html.replace("{OUT_MSP}", if get_bool("msp") { "YES" } else { "NO" });
-    html = html.replace("{OUT_JSON}", if get_bool("json") { "YES" } else { "NO" });
-    html = html.replace("{OUT_MZSPECLIB_JSON}", if get_bool("mzspeclib_json") { "YES" } else { "NO" });
-
-    html = html.replace("{V1}", get_bool_str("normalize_intensity")).replace("{C1}", get_class_str("normalize_intensity"));
-    html = html.replace("{V2}", get_bool_str("remove_peak_above_precursormz")).replace("{C2}", get_class_str("remove_peak_above_precursormz"));
-    html = html.replace("{V3}", get_bool_str("check_minimum_peak_requiered")).replace("{C3}", get_class_str("check_minimum_peak_requiered"));
-    html = html.replace("{V3_1}", &get_f64("check_minimum_peak_requiered_n_peaks").to_string());
-    html = html.replace("{V4}", get_bool_str("reduce_peak_list")).replace("{C4}", get_class_str("reduce_peak_list"));
-    html = html.replace("{V4_1}", &get_f64("reduce_peak_list_max_peaks").to_string());
-    html = html.replace("{V5}", get_bool_str("remove_spectrum_under_entropy_score")).replace("{C5}", get_class_str("remove_spectrum_under_entropy_score"));
-    html = html.replace("{V5_1}", &get_f64("remove_spectrum_under_entropy_score_value").to_string());
-    html = html.replace("{V6}", get_bool_str("keep_mz_in_range")).replace("{C6}", get_class_str("keep_mz_in_range"));
-    html = html.replace("{V6_1}", &get_f64("keep_mz_in_range_from_mz").to_string()).replace("{V6_2}", &get_f64("keep_mz_in_range_to_mz").to_string());
-    html = html.replace("{V7}", get_bool_str("check_minimum_of_high_peaks_requiered")).replace("{C7}", get_class_str("check_minimum_of_high_peaks_requiered"));
-    html = html.replace("{V7_1}", &get_f64("check_minimum_of_high_peaks_requiered_intensity_percent").to_string());
-    html = html.replace("{V7_2}", &get_f64("check_minimum_of_high_peaks_requiered_no_peaks").to_string());
-    html = html.replace("{V8}", get_bool_str("reset_updates")).replace("{C8}", get_class_str("reset_updates"));
-
-    html = html.replace("{TOTAL_IN}", &total_input.to_string());
-    html = html.replace("{TOTAL_DEL}", &total_deletions.to_string());
-    html = html.replace("{TOTAL_OUT}", &total_spectra.to_string());
-    html = html.replace("{TOTAL_UNIQ}", &total_unique.to_string());
-    
-    html = html.replace("{PCT_DEL}", &pct_del.to_string());
-    html = html.replace("{PCT_OUT}", &pct_out.to_string());
-
-    html = html.replace("{H_PEAKS}", &calc_h(deletion_report.no_peaks_list).to_string());
-    html = html.replace("{V_PEAKS}", &deletion_report.no_peaks_list.to_string());
-    html = html.replace("{H_SMILES}", &calc_h(deletion_report.no_smiles_no_inchi_no_inchikey).to_string());
-    html = html.replace("{V_SMILES}", &deletion_report.no_smiles_no_inchi_no_inchikey.to_string());
-    html = html.replace("{H_PRECURSOR}", &calc_h(deletion_report.no_precursor_mz).to_string());
-    html = html.replace("{V_PRECURSOR}", &deletion_report.no_precursor_mz.to_string());
-    html = html.replace("{H_ADDUCT}", &calc_h(deletion_report.no_or_bad_adduct).to_string());
-    html = html.replace("{V_ADDUCT}", &deletion_report.no_or_bad_adduct.to_string());
-    html = html.replace("{H_ENTROPY}", &calc_h(deletion_report.low_entropy_score).to_string());
-    html = html.replace("{V_ENTROPY}", &deletion_report.low_entropy_score.to_string());
-    html = html.replace("{H_MIN_PEAKS}", &calc_h(deletion_report.minimum_peaks_not_requiered).to_string());
-    html = html.replace("{V_MIN_PEAKS}", &deletion_report.minimum_peaks_not_requiered.to_string());
-    html = html.replace("{H_ABOVE_PREC}", &calc_h(deletion_report.all_peaks_above_precursor_mz).to_string());
-    html = html.replace("{V_ABOVE_PREC}", &deletion_report.all_peaks_above_precursor_mz.to_string());
-    html = html.replace("{H_RANGE}", &calc_h(deletion_report.no_peaks_in_mz_range).to_string());
-    html = html.replace("{V_RANGE}", &deletion_report.no_peaks_in_mz_range.to_string());
-    html = html.replace("{H_HIGH_PEAKS}", &calc_h(deletion_report.minimum_high_peaks_not_requiered).to_string());
-    html = html.replace("{V_HIGH_PEAKS}", &deletion_report.minimum_high_peaks_not_requiered.to_string());
-    html = html.replace("{H_DUP}", &calc_h(deletion_report.duplicatas_removed).to_string());
-    html = html.replace("{V_DUP}", &deletion_report.duplicatas_removed.to_string());
-    html = html.replace("{H_PREV}", &calc_h(deletion_report.previously_cleaned).to_string());
-    html = html.replace("{V_PREV}", &deletion_report.previously_cleaned.to_string());
-    html = html.replace("{H_LOW_RES}", &calc_h(deletion_report.low_resolution_ms2).to_string());
-    html = html.replace("{V_LOW_RES}", &deletion_report.low_resolution_ms2.to_string());
-    html = html.replace("{H_CRASH}", &calc_h(deletion_report.ms2_chemical_crash).to_string());
-    html = html.replace("{V_CRASH}", &deletion_report.ms2_chemical_crash.to_string());
-
-
-    let lc_pos_tot = pos_lc_len + pos_lc_in_len;
-    let lc_neg_tot = neg_lc_len + neg_lc_in_len;
-    let gc_pos_tot = pos_gc_len + pos_gc_in_len;
-    let gc_neg_tot = neg_gc_len + neg_gc_in_len;
-    let lc_tot = lc_pos_tot + lc_neg_tot;
-    let gc_tot = gc_pos_tot + gc_neg_tot;
-
-    let lc_pos_uniq = pos_lc_uniq + pos_lc_in_uniq;
-    let lc_neg_uniq = neg_lc_uniq + neg_lc_in_uniq;
-    let gc_pos_uniq = pos_gc_uniq + pos_gc_in_uniq;
-    let gc_neg_uniq = neg_gc_uniq + neg_gc_in_uniq;
-    let lc_uniq = lc_pos_uniq + lc_neg_uniq;
-    let gc_uniq = gc_pos_uniq + gc_neg_uniq;
-
-    html = html.replace("{LC_TOT}", &lc_tot.to_string());
-    html = html.replace("{GC_TOT}", &gc_tot.to_string());
-    html = html.replace("{LC_POS_TOT}", &lc_pos_tot.to_string());
-    html = html.replace("{LC_NEG_TOT}", &lc_neg_tot.to_string());
-    html = html.replace("{GC_POS_TOT}", &gc_pos_tot.to_string());
-    html = html.replace("{GC_NEG_TOT}", &gc_neg_tot.to_string());
-
-    html = html.replace("{LC_UNIQ}", &lc_uniq.to_string());
-    html = html.replace("{GC_UNIQ}", &gc_uniq.to_string());
-    html = html.replace("{LC_POS_UNIQ}", &lc_pos_uniq.to_string());
-    html = html.replace("{LC_NEG_UNIQ}", &lc_neg_uniq.to_string());
-    html = html.replace("{GC_POS_UNIQ}", &gc_pos_uniq.to_string());
-    html = html.replace("{GC_NEG_UNIQ}", &gc_neg_uniq.to_string());
-
-    html = html.replace("{T1}", &pos_lc_len.to_string()); html = html.replace("{U1}", &pos_lc_uniq.to_string());
-    html = html.replace("{T2}", &neg_lc_len.to_string()); html = html.replace("{U2}", &neg_lc_uniq.to_string());
-    html = html.replace("{T3}", &pos_lc_in_len.to_string()); html = html.replace("{U3}", &pos_lc_in_uniq.to_string());
-    html = html.replace("{T4}", &neg_lc_in_len.to_string()); html = html.replace("{U4}", &neg_lc_in_uniq.to_string());
-    html = html.replace("{T5}", &pos_gc_len.to_string()); html = html.replace("{U5}", &pos_gc_uniq.to_string());
-    html = html.replace("{T6}", &neg_gc_len.to_string()); html = html.replace("{U6}", &neg_gc_uniq.to_string());
-    html = html.replace("{T7}", &pos_gc_in_len.to_string()); html = html.replace("{U7}", &pos_gc_in_uniq.to_string());
-    html = html.replace("{T8}", &neg_gc_in_len.to_string()); html = html.replace("{U8}", &neg_gc_in_uniq.to_string());
-
-    // Injection directe (DI)
-    let di_pos_tot = pos_di_len + pos_di_in_len;
-    let di_neg_tot = neg_di_len + neg_di_in_len;
-    let di_pos_uniq = pos_di_uniq + pos_di_in_uniq;
-    let di_neg_uniq = neg_di_uniq + neg_di_in_uniq;
-    html = html.replace("{DI_TOT}", &(di_pos_tot + di_neg_tot).to_string());
-    html = html.replace("{DI_UNIQ}", &(di_pos_uniq + di_neg_uniq).to_string());
-    html = html.replace("{DI_POS_TOT}", &di_pos_tot.to_string());
-    html = html.replace("{DI_NEG_TOT}", &di_neg_tot.to_string());
-    html = html.replace("{DI_POS_UNIQ}", &di_pos_uniq.to_string());
-    html = html.replace("{DI_NEG_UNIQ}", &di_neg_uniq.to_string());
-    html = html.replace("{T9}", &pos_di_len.to_string()); html = html.replace("{U9}", &pos_di_uniq.to_string());
-    html = html.replace("{T10}", &neg_di_len.to_string()); html = html.replace("{U10}", &neg_di_uniq.to_string());
-    html = html.replace("{T11}", &pos_di_in_len.to_string()); html = html.replace("{U11}", &pos_di_in_uniq.to_string());
-    html = html.replace("{T12}", &neg_di_in_len.to_string()); html = html.replace("{U12}", &neg_di_in_uniq.to_string());
-
-    
-    let all_spectra = libs.all_spectra(); // LC, GC puis DI
-
-    let mut cf_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
-    let mut np_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
-    let mut inst_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
-    let mut db_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
-
-    let root_cf = "ClassyFire";
-    let root_np = "NPClassifier";
-    let root_inst = "Instrument";
-    let root_db = "Databases";
-
-    cf_counts.insert(root_cf.to_string(), 0);
-    np_counts.insert(root_np.to_string(), 0);
-    db_counts.insert(root_db.to_string(), 0);
-
-    let mut cf_parents: std::collections::HashMap<String, String> = std::collections::HashMap::new();
-    let mut cf_labels: std::collections::HashMap<String, String> = std::collections::HashMap::new();
-
-    let mut np_parents: std::collections::HashMap<String, String> = std::collections::HashMap::new();
-    let mut np_labels: std::collections::HashMap<String, String> = std::collections::HashMap::new();
-
-    let mut db_parents: std::collections::HashMap<String, String> = std::collections::HashMap::new();
-    let mut db_labels: std::collections::HashMap<String, String> = std::collections::HashMap::new();
-
-    cf_parents.insert(root_cf.to_string(), "".to_string());
-    cf_labels.insert(root_cf.to_string(), root_cf.to_string());
-
-    np_parents.insert(root_np.to_string(), "".to_string());
-    np_labels.insert(root_np.to_string(), root_np.to_string());
-
-    db_parents.insert(root_db.to_string(), "".to_string());
-    db_labels.insert(root_db.to_string(), root_db.to_string());
-
-    let clean_str = |s: &str| -> String {
-        let t = s.trim().trim_matches('"').trim().to_string();
-        if t.is_empty() || t.to_lowercase() == "nan" || t.to_lowercase() == "unknown" { "NOT FOUND".to_string() } else { t }
-    };
-
-    for spec in all_spectra {
-        let cf_sup = clean_str(spec.metadata.get("CLASSYFIRE_SUPERCLASS").map(|s| s.as_str()).unwrap_or(""));
-        let cf_cla = clean_str(spec.metadata.get("CLASSYFIRE_CLASS").map(|s| s.as_str()).unwrap_or(""));
-        let cf_sub = clean_str(spec.metadata.get("CLASSYFIRE_SUBCLASS").map(|s| s.as_str()).unwrap_or(""));
-
-        let p1 = format!("{}|{}", root_cf, cf_sup);
-        let p2 = format!("{}|{}", p1, cf_cla);
-        let p3 = format!("{}|{}", p2, cf_sub);
-
-        cf_labels.insert(p1.clone(), cf_sup);
-        cf_parents.insert(p1.clone(), root_cf.to_string());
-        
-        cf_labels.insert(p2.clone(), cf_cla);
-        cf_parents.insert(p2.clone(), p1.clone());
-
-        cf_labels.insert(p3.clone(), cf_sub);
-        cf_parents.insert(p3.clone(), p2.clone());
-
-        *cf_counts.entry(root_cf.to_string()).or_insert(0) += 1;
-        *cf_counts.entry(p1).or_insert(0) += 1;
-        *cf_counts.entry(p2).or_insert(0) += 1;
-        *cf_counts.entry(p3).or_insert(0) += 1;
-
-        let np_path = clean_str(spec.metadata.get("NPCLASS_PATHWAY").map(|s| s.as_str()).unwrap_or(""));
-        let np_sup = clean_str(spec.metadata.get("NPCLASS_SUPERCLASS").map(|s| s.as_str()).unwrap_or(""));
-        let np_cla = clean_str(spec.metadata.get("NPCLASS_CLASS").map(|s| s.as_str()).unwrap_or(""));
-
-        let n1 = format!("{}|{}", root_np, np_path);
-        let n2 = format!("{}|{}", n1, np_sup);
-        let n3 = format!("{}|{}", n2, np_cla);
-
-        np_labels.insert(n1.clone(), np_path);
-        np_parents.insert(n1.clone(), root_np.to_string());
-
-        np_labels.insert(n2.clone(), np_sup);
-        np_parents.insert(n2.clone(), n1.clone());
-
-        np_labels.insert(n3.clone(), np_cla);
-        np_parents.insert(n3.clone(), n2.clone());
-
-        *np_counts.entry(root_np.to_string()).or_insert(0) += 1;
-        *np_counts.entry(n1).or_insert(0) += 1;
-        *np_counts.entry(n2).or_insert(0) += 1;
-        *np_counts.entry(n3).or_insert(0) += 1;
-
-        let db_name = clean_str(spec.metadata.get("DATABASE_NAME").map(|s| s.as_str()).unwrap_or(""));
-        let p1_db = format!("{}|{}", root_db, db_name);
-
-        db_labels.insert(p1_db.clone(), db_name);
-        db_parents.insert(p1_db.clone(), root_db.to_string());
-
-        *db_counts.entry(root_db.to_string()).or_insert(0) += 1;
-        *db_counts.entry(p1_db).or_insert(0) += 1;
-
-        let t_marque = capitalize_words(spec.metadata.get("TREE_MARQUE").map(|s| s.as_str()).unwrap_or("NOT FOUND"));
-        let t_modele = capitalize_words(spec.metadata.get("TREE_MODELE").map(|s| s.as_str()).unwrap_or("NOT FOUND"));
-        let t_spec = capitalize_words(spec.metadata.get("TREE_SPECTYPE").map(|s| s.as_str()).unwrap_or("NOT FOUND"));
-        let t_inst = capitalize_words(spec.metadata.get("TREE_INSTYPE").map(|s| s.as_str()).unwrap_or("NOT FOUND"));
-        let t_ioni = capitalize_words(spec.metadata.get("TREE_IONI").map(|s| s.as_str()).unwrap_or("NOT FOUND"));
-
-        let p1_inst = format!("{}|{}", root_inst, t_marque);
-        let p2_inst = format!("{}|{}", p1_inst, t_modele);
-        let p3_inst = format!("{}|{}", p2_inst, t_spec);
-        let p4_inst = format!("{}|{}", p3_inst, t_inst);
-        let p5_inst = format!("{}|{}", p4_inst, t_ioni);
-
-        *inst_counts.entry(root_inst.to_string()).or_insert(0) += 1;
-        *inst_counts.entry(p1_inst).or_insert(0) += 1;
-        *inst_counts.entry(p2_inst).or_insert(0) += 1;
-        *inst_counts.entry(p3_inst).or_insert(0) += 1;
-        *inst_counts.entry(p4_inst).or_insert(0) += 1;
-        *inst_counts.entry(p5_inst).or_insert(0) += 1;
-    }
-
-    let mut cf_ids_list = Vec::new();
-    let mut cf_labels_list = Vec::new();
-    let mut cf_parents_list = Vec::new();
-    let mut cf_values_list = Vec::new();
-
-    for (id, val) in &cf_counts {
-        if *val == 0 { continue; }
-        cf_ids_list.push(id.clone());
-        cf_labels_list.push(cf_labels.get(id).cloned().unwrap_or_else(|| "".to_string()));
-        cf_parents_list.push(cf_parents.get(id).cloned().unwrap_or_else(|| "".to_string()));
-        cf_values_list.push(*val);
-    }
-
-    let mut np_ids_list = Vec::new();
-    let mut np_labels_list = Vec::new();
-    let mut np_parents_list = Vec::new();
-    let mut np_values_list = Vec::new();
-
-    for (id, val) in &np_counts {
-        if *val == 0 { continue; }
-        np_ids_list.push(id.clone());
-        np_labels_list.push(np_labels.get(id).cloned().unwrap_or_else(|| "".to_string()));
-        np_parents_list.push(np_parents.get(id).cloned().unwrap_or_else(|| "".to_string()));
-        np_values_list.push(*val);
-    }
-
-    let mut inst_ids = Vec::new();
-    let mut inst_labels = Vec::new();
-    let mut inst_parents = Vec::new();
-    let mut inst_values = Vec::new();
-
-    for (id, val) in &inst_counts {
-        if *val == 0 { continue; }
-        inst_ids.push(id.clone());
-        inst_values.push(*val);
-        
-        if id == root_inst {
-            inst_labels.push(root_inst.to_string());
-            inst_parents.push("".to_string());
-        } else {
-            let parts: Vec<&str> = id.split('|').collect();
-            inst_labels.push(parts.last().unwrap().to_string());
-            let parent_id = parts[..parts.len() - 1].join("|");
-            inst_parents.push(parent_id);
-        }
-    }
-
-    let mut db_ids_list = Vec::new();
-    let mut db_labels_list = Vec::new();
-    let mut db_parents_list = Vec::new();
-    let mut db_values_list = Vec::new();
-
-    for (id, val) in &db_counts {
-        if *val == 0 { continue; }
-        db_ids_list.push(id.clone());
-        db_labels_list.push(db_labels.get(id).cloned().unwrap_or_else(|| "".to_string()));
-        db_parents_list.push(db_parents.get(id).cloned().unwrap_or_else(|| "".to_string()));
-        db_values_list.push(*val);
-    }
-
-    let cf_labels_json = serde_json::to_string(&cf_labels_list).unwrap_or_else(|_| "[]".to_string());
-    let cf_parents_json = serde_json::to_string(&cf_parents_list).unwrap_or_else(|_| "[]".to_string());
-    let cf_values_json = serde_json::to_string(&cf_values_list).unwrap_or_else(|_| "[]".to_string());
-    let cf_ids_json = serde_json::to_string(&cf_ids_list).unwrap_or_else(|_| "[]".to_string());
-
-    let np_labels_json = serde_json::to_string(&np_labels_list).unwrap_or_else(|_| "[]".to_string());
-    let np_parents_json = serde_json::to_string(&np_parents_list).unwrap_or_else(|_| "[]".to_string());
-    let np_values_json = serde_json::to_string(&np_values_list).unwrap_or_else(|_| "[]".to_string());
-    let np_ids_json = serde_json::to_string(&np_ids_list).unwrap_or_else(|_| "[]".to_string());
-
-    let db_labels_json = serde_json::to_string(&db_labels_list).unwrap_or_else(|_| "[]".to_string());
-    let db_parents_json = serde_json::to_string(&db_parents_list).unwrap_or_else(|_| "[]".to_string());
-    let db_values_json = serde_json::to_string(&db_values_list).unwrap_or_else(|_| "[]".to_string());
-    let db_ids_json = serde_json::to_string(&db_ids_list).unwrap_or_else(|_| "[]".to_string());
-
-    html = html.replace("{CF_LABELS}", &cf_labels_json);
-    html = html.replace("{CF_PARENTS}", &cf_parents_json);
-    html = html.replace("{CF_VALUES}", &cf_values_json);
-    html = html.replace("{CF_IDS}", &cf_ids_json);
-
-    html = html.replace("{NP_LABELS}", &np_labels_json);
-    html = html.replace("{NP_PARENTS}", &np_parents_json);
-    html = html.replace("{NP_VALUES}", &np_values_json);
-    html = html.replace("{NP_IDS}", &np_ids_json);
-
-    html = html.replace("{DB_LABELS}", &db_labels_json);
-    html = html.replace("{DB_PARENTS}", &db_parents_json);
-    html = html.replace("{DB_VALUES}", &db_values_json);
-    html = html.replace("{DB_IDS}", &db_ids_json);
-
-    let inst_labels_json = serde_json::to_string(&inst_labels).unwrap_or_else(|_| "[]".to_string());
-    let inst_parents_json = serde_json::to_string(&inst_parents).unwrap_or_else(|_| "[]".to_string());
-    let inst_values_json = serde_json::to_string(&inst_values).unwrap_or_else(|_| "[]".to_string());
-    let inst_ids_json = serde_json::to_string(&inst_ids).unwrap_or_else(|_| "[]".to_string());
-
-    html = html.replace("{INST_LABELS}", &inst_labels_json);
-    html = html.replace("{INST_PARENTS}", &inst_parents_json);
-    html = html.replace("{INST_VALUES}", &inst_values_json);
-    html = html.replace("{INST_IDS}", &inst_ids_json);
-    
-    
-    let mut combinations_map: std::collections::HashMap<Vec<String>, usize> = std::collections::HashMap::new();
-    let mut spec_to_dbs: std::collections::HashMap<String, std::collections::HashSet<String>> = std::collections::HashMap::new();
-    let mut db_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
-
-    let all_spectra_2 = libs.all_spectra(); // LC, GC puis DI
-
-    for spec in all_spectra_2 {
-        let splash = spec.metadata.get("SPLASH").map(|s| s.as_str()).unwrap_or("");
-        let inchikey = spec.metadata.get("INCHIKEY").map(|s| s.as_str()).unwrap_or("");
-        let dbname = spec.metadata.get("DATABASE_NAME").map(|s| s.as_str()).unwrap_or("Unknown").to_string();
-
-        // Bases de tous les doublons retirés (clé interne posée par le dédoublonnage), sinon la base du spectre.
-        // Un nom vide ou "Unknown" s'affiche "NOT FOUND", comme DATABASE_NAME dans les sorties.
-        let dbnames: Vec<String> = match spec.metadata.get(crate::globals_vars::ALL_DATABASE_NAMES_KEY) {
-            Some(list) if list != "NOT FOUND" => list
-                .split(crate::globals_vars::INTERNAL_LIST_SEP)
-                .map(|name| {
-                    let name = name.trim();
-                    if crate::globals_vars::EMPTY_PATTERN.is_match(name) { "NOT FOUND".to_string() } else { name.to_string() }
-                })
-                .collect::<std::collections::BTreeSet<String>>()
-                .into_iter()
-                .collect(),
-            _ => vec![dbname],
-        };
-
-        let id = format!("{}_{}", splash, inchikey);
-        for name in dbnames {
-            spec_to_dbs.entry(id.clone()).or_default().insert(name.clone());
-            *db_counts.entry(name).or_insert(0) += 1;
-        }
-    }
-
-    let mut dbs_vec: Vec<(String, usize)> = db_counts.into_iter().collect();
-    dbs_vec.sort_by(|a, b| b.1.cmp(&a.1));
-    let top_dbs: std::collections::HashSet<String> = dbs_vec.into_iter().take(30).map(|(f, _)| f).collect();
-
-    for (_, dbs) in spec_to_dbs {
-        let mut sorted_dbs: Vec<String> = dbs.into_iter().filter(|f| top_dbs.contains(f)).collect();
-        if sorted_dbs.is_empty() { continue; }
-        sorted_dbs.sort();
-        *combinations_map.entry(sorted_dbs).or_insert(0) += 1;
-    }
-
-    let mut upset_data = Vec::new();
-    for (dbs, count) in combinations_map {
-        upset_data.push(serde_json::json!({"sets": dbs, "count": count}));
-    }
-    let upset_json = serde_json::to_string(&upset_data).unwrap_or_else(|_| "[]".to_string());
-    
-    html = html.replace("{UPSET_DATA}", &upset_json);
-
-    let final_cols = vec!["FILENAME", "FILEHASH", "PREDICTED", "SPLASH", "SPECTRUMID", "RESOLUTION", "SYNON", "IONIZATION", "MSLEVEL", "FRAGMENTATIONMETHODE", "NAME", "PRECURSORMZ", "EXACTMASS", "AVERAGEMASS", "PRECURSORTYPE", "INSTRUMENTTYPE", "INSTRUMENT", "SMILES", "INCHI", "INCHIKEY", "COLLISIONENERGY", "FORMULA", "RT", "IONMODE", "COMMENT", "ENTROPY", "CLASSYFIRE_SUPERCLASS", "CLASSYFIRE_CLASS", "CLASSYFIRE_SUBCLASS", "NPCLASS_PATHWAY", "NPCLASS_SUPERCLASS", "NPCLASS_CLASS", "NUM PEAKS", "PEAKS_LIST"];
-    let mut col_counts: std::collections::HashMap<&str, usize> = std::collections::HashMap::new();
-    let mut total_spectra_count = 0;
-
-    let all_spectra_3 = libs.all_spectra(); // LC, GC puis DI
-
-    for spec in all_spectra_3 {
-        total_spectra_count += 1;
-        for &col in &final_cols {
-            if col == "NUM PEAKS" || col == "PEAKS_LIST" {
-                if !spec.peaks.is_empty() {
-                    *col_counts.entry(col).or_insert(0) += 1;
-                }
-            } else if let Some(val) = spec.metadata.get(col) {
-                let s = val.trim();
-                let lower = s.to_lowercase();
-                if !s.is_empty() && lower != "nan" && lower != "not found" && lower != "unknown" {
-                    *col_counts.entry(col).or_insert(0) += 1;
-                }
-            }
-        }
-    }
-
-    let mut col_stats_json = Vec::new();
-    for &col in &final_cols {
-        let count = *col_counts.get(col).unwrap_or(&0);
-        let pct = if total_spectra_count > 0 { (count as f64 / total_spectra_count as f64) * 100.0 } else { 0.0 };
-        col_stats_json.push(serde_json::json!({
-            "column": col,
-            "count": count,
-            "percentage": pct
-        }));
-    }
-    let col_stats_str = serde_json::to_string(&col_stats_json).unwrap_or_else(|_| "[]".to_string());
-    html = html.replace("{COLUMNS_DATA}", &col_stats_str);
-
+    let html = build_report_html(&output_directory, &date_str, &total_time_str, parameters_dict, input_paths,
+                                 input_db_names, deletion_report, libs);
     let file_name = format!("report_{}.html", date_str);
     let report_path = Path::new(&output_directory).join(file_name);
     // Noté avant écriture : retiré si le run s'arrête (output_guard.rs)
     crate::output_guard::prepare(&report_path, false)?;
     let mut file = File::create(report_path)?;
     file.write_all(html.as_bytes())?;
-    
     Ok(())
+}
+
+/// Texte HTML complet du rapport (sans écriture : testable).
+#[allow(clippy::too_many_arguments)]
+fn build_report_html(
+    output_directory: &str,
+    date_str: &str,
+    total_time_str: &str,
+    parameters_dict: &HashMap<String, f64>,
+    input_paths: &[String],
+    input_db_names: &HashMap<String, String>,
+    deletion_report: &crate::deletion_report::DeletionReport,
+    libs: &crate::splitter::Libraries,
+) -> String {
+    let data = report_data(output_directory, date_str, total_time_str, parameters_dict, input_paths, input_db_names,
+                           deletion_report, libs);
+    // « </ » dans une chaîne (nom de fichier...) fermerait la balise <script> : écrit « <\/ », même valeur en JSON
+    let data_text = serde_json::to_string(&data).unwrap_or_else(|_| "{}".to_string()).replace("</", "<\\/");
+    include_str!("report_template.html").replace("{REPORT_DATA}", &data_text)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn report_data(
+    output_directory: &str,
+    date_str: &str,
+    total_time_str: &str,
+    parameters_dict: &HashMap<String, f64>,
+    input_paths: &[String],
+    input_db_names: &HashMap<String, String>,
+    d: &crate::deletion_report::DeletionReport,
+    libs: &crate::splitter::Libraries,
+) -> Value {
+    let get_bool = |key: &str| parameters_dict.get(key).cloned().unwrap_or(0.0) == 1.0;
+    let get_f64 = |key: &str| parameters_dict.get(key).cloned().unwrap_or(0.0);
+
+    // --- En-tête ---
+    let parts: Vec<&str> = date_str.split("__").collect();
+    let display_date = if parts.len() == 2 {
+        format!("{} {}", parts[0].replace('_', "-"), parts[1].replace('_', ":"))
+    } else {
+        date_str.replace('_', " ")
+    };
+    let (db_version, db_doi) = crate::global_state::STATE.read()
+        .map(|s| (s.internal_db_version.clone(), s.internal_db_doi.clone())).unwrap_or_default();
+    let meta = json!({
+        "date": display_date,
+        "duration": total_time_str,
+        "fraghub_version": env!("CARGO_PKG_VERSION"),
+        "rdkit_version": crate::rdkit_native::rdkit_version(),
+        "database_version": db_version,
+        "database_doi": db_doi,
+        "output_directory": output_directory,
+    });
+
+    // --- Bibliothèques de sortie (12) ---
+    let library_list: [(&str, &str, &str, &[Spectrum]); 12] = [
+        ("LC", "POS", "Experimental", &libs.pos_lc), ("LC", "POS", "In silico", &libs.pos_lc_insilico),
+        ("LC", "NEG", "Experimental", &libs.neg_lc), ("LC", "NEG", "In silico", &libs.neg_lc_insilico),
+        ("GC", "POS", "Experimental", &libs.pos_gc), ("GC", "POS", "In silico", &libs.pos_gc_insilico),
+        ("GC", "NEG", "Experimental", &libs.neg_gc), ("GC", "NEG", "In silico", &libs.neg_gc_insilico),
+        ("DI", "POS", "Experimental", &libs.pos_di), ("DI", "POS", "In silico", &libs.pos_di_insilico),
+        ("DI", "NEG", "Experimental", &libs.neg_di), ("DI", "NEG", "In silico", &libs.neg_di_insilico),
+    ];
+    let libraries: Vec<Value> = library_list.iter().map(|(sep, mode, kind, list)| {
+        let (n, u) = get_df_stats(list);
+        json!({"separation": sep, "ionmode": mode, "type": kind, "spectra": n, "inchikeys": u})
+    }).collect();
+    // InChIKey différentes par groupe (une molécule de deux bibliothèques ne compte qu'une fois)
+    let unique_in = |filter: &dyn Fn(&str, &str, &str) -> bool| -> usize {
+        let mut keys: HashSet<&str> = HashSet::new();
+        for (sep, mode, kind, list) in library_list.iter() {
+            if !filter(sep, mode, kind) { continue; }
+            for spec in list.iter() {
+                if let Some(k) = spec.metadata.get("INCHIKEY") {
+                    if !k.is_empty() && !k.eq_ignore_ascii_case("nan") { keys.insert(k.as_str()); }
+                }
+            }
+        }
+        keys.len()
+    };
+    let mut groups = serde_json::Map::new();
+    for sep in ["LC", "GC", "DI"] {
+        groups.insert(sep.to_string(), json!(unique_in(&|s, _, _| s == sep)));
+        for mode in ["POS", "NEG"] {
+            groups.insert(format!("{sep}|{mode}"), json!(unique_in(&|s, m, _| s == sep && m == mode)));
+        }
+    }
+    let total_kept: usize = library_list.iter().map(|(_, _, _, l)| l.len()).sum();
+    let total_unique = unique_in(&|_, _, _| true);
+
+    // --- Suppressions ---
+    let deletions = vec![
+        ("Previously cleaned (update)", d.previously_cleaned, "previously_cleaned.csv"),
+        ("No peak list", d.no_peaks_list, "no_peaks_list.csv"),
+        ("No SMILES, InChI or InChIKey", d.no_smiles_no_inchi_no_inchikey, "no_smiles_no_inchi_no_inchikey.csv"),
+        ("No precursor m/z", d.no_precursor_mz, "no_precursor_mz.csv"),
+        ("No or bad adduct", d.no_or_bad_adduct, "no_or_bad_adduct.csv"),
+        ("Low entropy score", d.low_entropy_score, "low_entropy_score.csv"),
+        ("Too few peaks", d.minimum_peaks_not_requiered, "minimum_peaks_not_requiered.csv"),
+        ("All peaks above precursor m/z", d.all_peaks_above_precursor_mz, "all_peaks_above_precursor_mz.csv"),
+        ("No peak in m/z range", d.no_peaks_in_mz_range, "no_peaks_in_mz_range.csv"),
+        ("Too few high peaks", d.minimum_high_peaks_not_requiered, "minimum_high_peaks_not_requiered.csv"),
+        ("Low resolution MS2", d.low_resolution_ms2, "low_resolution_ms2.csv"),
+        ("MS2 chemical crash test", d.ms2_chemical_crash, "ms2_chemical_crash_test.csv"),
+        ("Duplicates removed", d.duplicatas_removed, "duplicatas_removed.csv"),
+    ];
+    let total_deleted: usize = deletions.iter().map(|(_, n, _)| n).sum();
+    let deletions_json: Vec<Value> = deletions.iter().map(|(r, n, _)| json!({"reason": r, "count": n})).collect();
+
+    // --- Paramètres ---
+    let on_off = |key: &str| if get_bool(key) { "on" } else { "off" };
+    let num = |x: f64| if x.fract() == 0.0 { format!("{}", x as i64) } else { format!("{x}") };
+    let parameters = json!([
+        {"name": "Normalize intensity", "state": on_off("normalize_intensity"), "value": ""},
+        {"name": "Remove peaks above precursor m/z", "state": on_off("remove_peak_above_precursormz"), "value": ""},
+        {"name": "Minimum number of peaks", "state": on_off("check_minimum_peak_requiered"),
+         "value": num(get_f64("check_minimum_peak_requiered_n_peaks"))},
+        {"name": "Maximum number of peaks kept", "state": on_off("reduce_peak_list"),
+         "value": num(get_f64("reduce_peak_list_max_peaks"))},
+        {"name": "Minimum normalized entropy", "state": on_off("remove_spectrum_under_entropy_score"),
+         "value": num(get_f64("remove_spectrum_under_entropy_score_value"))},
+        {"name": "m/z range", "state": on_off("keep_mz_in_range"),
+         "value": format!("{} – {}", num(get_f64("keep_mz_in_range_from_mz")), num(get_f64("keep_mz_in_range_to_mz")))},
+        {"name": "Minimum number of high peaks", "state": on_off("check_minimum_of_high_peaks_requiered"),
+         "value": format!("{} peaks ≥ {} % of the base peak", num(get_f64("check_minimum_of_high_peaks_requiered_no_peaks")),
+                          num(get_f64("check_minimum_of_high_peaks_requiered_intensity_percent")))},
+        {"name": "De novo formulas", "state": on_off("calculate_de_novo"),
+         "value": format!("{} ppm", num(get_f64("de_novo_ppm_tolerance")))},
+        {"name": "Reset updates", "state": on_off("reset_updates"), "value": ""},
+    ]);
+    let formats: Vec<&str> = [("csv", "CSV"), ("msp", "MSP"), ("json", "JSON"), ("mzspeclib_json", "mzSpecLib")]
+        .iter().filter(|(k, _)| get_bool(k)).map(|(_, n)| *n).collect();
+
+    // --- Fichiers d'entrée : spectres gardés par fichier (nom du fichier d'entrée de chaque spectre) ---
+    let mut kept_by_file: HashMap<&str, usize> = HashMap::new();
+    for spec in libs.all_spectra() {
+        *kept_by_file.entry(crate::globals_vars::input_filename(&spec.metadata)).or_insert(0) += 1;
+    }
+    let inputs: Vec<Value> = input_paths.iter().map(|p| {
+        let path = Path::new(p);
+        let name = path.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_else(|| p.clone());
+        let database = input_db_names.get(p).map(|s| s.as_str()).filter(|s| !s.is_empty()).unwrap_or("Unknown");
+        json!({
+            "name": name,
+            "folder": path.parent().map(|f| f.to_string_lossy().to_string()).unwrap_or_default(),
+            "format": input_format(p),
+            "database": database,
+            "size": std::fs::metadata(path).map(|m| m.len()).unwrap_or(0),
+            "kept": kept_by_file.get(name.as_str()).copied().unwrap_or(0),
+        })
+    }).collect();
+
+    // --- Ontologies, bases d'origine, instruments, remplissage des colonnes ---
+    let mut classyfire = Hierarchy::default();
+    let mut npclassifier = Hierarchy::default();
+    let mut instruments = Hierarchy::default();
+    let mut databases: BTreeMap<String, usize> = BTreeMap::new();
+    let mut spec_to_dbs: HashMap<String, std::collections::BTreeSet<String>> = HashMap::new();
+    let final_cols = ["FILENAME", "FILEHASH", "PREDICTED", "SPLASH", "SPECTRUMID", "RESOLUTION", "SYNON", "IONIZATION",
+        "MSLEVEL", "FRAGMENTATIONMETHODE", "NAME", "PRECURSORMZ", "EXACTMASS", "AVERAGEMASS", "PRECURSORTYPE",
+        "INSTRUMENTTYPE", "INSTRUMENT", "SMILES", "INCHI", "INCHIKEY", "COLLISIONENERGY", "FORMULA", "RT", "IONMODE",
+        "COMMENT", "ENTROPY", "CLASSYFIRE_SUPERCLASS", "CLASSYFIRE_CLASS", "CLASSYFIRE_SUBCLASS", "NPCLASS_PATHWAY",
+        "NPCLASS_SUPERCLASS", "NPCLASS_CLASS", "PEAKS_LIST"];
+    let mut col_counts: HashMap<&str, usize> = HashMap::new();
+
+    for spec in libs.all_spectra() {
+        let m = &spec.metadata;
+        classyfire.add("ClassyFire", &[class_value(m.get("CLASSYFIRE_SUPERCLASS")), class_value(m.get("CLASSYFIRE_CLASS")),
+                                       class_value(m.get("CLASSYFIRE_SUBCLASS"))]);
+        npclassifier.add("NPClassifier", &[class_value(m.get("NPCLASS_PATHWAY")), class_value(m.get("NPCLASS_SUPERCLASS")),
+                                           class_value(m.get("NPCLASS_CLASS"))]);
+        let tree = |k: &str| capitalize_words(m.get(k).map(|s| s.as_str()).unwrap_or("NOT FOUND"));
+        instruments.add("Instrument", &[tree("TREE_MARQUE"), tree("TREE_MODELE"), tree("TREE_INSTYPE")]);
+
+        // Bases de tous les doublons retirés (clé interne posée par le dédoublonnage), sinon la base du spectre
+        let own = class_value(m.get("DATABASE_NAME"));
+        let names: std::collections::BTreeSet<String> = match m.get(crate::globals_vars::ALL_DATABASE_NAMES_KEY) {
+            Some(list) if list != "NOT FOUND" => list.split(crate::globals_vars::INTERNAL_LIST_SEP)
+                .map(|n| { let n = n.trim(); if crate::globals_vars::EMPTY_PATTERN.is_match(n) { "Unknown".to_string() } else { n.to_string() } })
+                .collect(),
+            _ => std::iter::once(own).collect(),
+        };
+        for n in &names { *databases.entry(n.clone()).or_insert(0) += 1; }
+        let id = format!("{}_{}", m.get("SPLASH").map(|s| s.as_str()).unwrap_or(""), m.get("INCHIKEY").map(|s| s.as_str()).unwrap_or(""));
+        spec_to_dbs.entry(id).or_default().extend(names);
+
+        for &col in &final_cols {
+            let filled = if col == "PEAKS_LIST" { !spec.peaks.is_empty() } else {
+                m.get(col).map(|v| {
+                    let s = v.trim();
+                    !s.is_empty() && !s.eq_ignore_ascii_case("nan") && !s.eq_ignore_ascii_case("not found") && !s.eq_ignore_ascii_case("unknown")
+                }).unwrap_or(false)
+            };
+            if filled { *col_counts.entry(col).or_insert(0) += 1; }
+        }
+    }
+
+    // Intersections des bases (UpSet) : combinaisons de bases d'un même spectre (SPLASH + InChIKey)
+    let mut combinations: HashMap<Vec<String>, usize> = HashMap::new();
+    for (_, set) in spec_to_dbs {
+        *combinations.entry(set.into_iter().collect()).or_insert(0) += 1;
+    }
+    let mut upset: Vec<(Vec<String>, usize)> = combinations.into_iter().collect();
+    upset.sort_by(|a, b| b.1.cmp(&a.1).then(a.0.cmp(&b.0)));
+    let upset_json: Vec<Value> = upset.into_iter().map(|(sets, count)| json!({"sets": sets, "count": count})).collect();
+
+    let columns: Vec<Value> = final_cols.iter().map(|c| json!({"column": c, "count": col_counts.get(c).copied().unwrap_or(0)})).collect();
+
+    json!({
+        "meta": meta,
+        "inputs": inputs,
+        "formats": formats,
+        "parameters": parameters,
+        "totals": {"input": total_kept + total_deleted, "deleted": total_deleted, "kept": total_kept, "inchikeys": total_unique},
+        "deletions": deletions_json,
+        "libraries": libraries,
+        "groups": groups,
+        "classyfire": classyfire.to_json(),
+        "npclassifier": npclassifier.to_json(),
+        "instruments": instruments.to_json(),
+        "databases": databases,
+        "upset": upset_json,
+        "columns": columns,
+    })
 }
 
 #[cfg(test)]
@@ -588,5 +343,57 @@ mod tests {
         assert_eq!(capitalize_words("not found"), "NOT FOUND");
         assert_eq!(capitalize_words("Unknown"), "NOT FOUND");
         assert_eq!(capitalize_words("éther"), "Éther");
+    }
+
+    fn spectre(inchikey: &str, db: &str, cf: &str, file: &str) -> Spectrum {
+        let mut s = Spectrum::default();
+        for (k, v) in [("INCHIKEY", inchikey), ("DATABASE_NAME", db), ("CLASSYFIRE_SUPERCLASS", cf), ("SPLASH", "s"),
+                       ("FILENAME", file), ("NAME", "x")] {
+            s.metadata.insert(k.to_string(), v.to_string());
+        }
+        s.peaks = vec![(100.0, 1.0)];
+        s
+    }
+
+    #[test]
+    fn donnees_du_rapport() {
+        let mut libs = crate::splitter::Libraries::default();
+        libs.pos_lc = vec![spectre("AAA", "MoNA", "Lipids", "a.msp"), spectre("BBB", "GNPS", "NOT FOUND", "b.mgf")];
+        libs.neg_lc = vec![spectre("AAA", "MoNA", "", "a.msp")];
+        libs.pos_di = vec![spectre("CCC", "", "Benzenoids", "a.msp")];
+        let d = crate::deletion_report::DeletionReport { duplicatas_removed: 2, low_entropy_score: 5, ..Default::default() };
+        let params: HashMap<String, f64> = [("csv".to_string(), 1.0), ("keep_mz_in_range".to_string(), 1.0),
+            ("keep_mz_in_range_from_mz".to_string(), 50.0), ("keep_mz_in_range_to_mz".to_string(), 2000.0)].into_iter().collect();
+        let inputs = vec!["/d/a.msp".to_string(), "/d/b.mgf".to_string()];
+        let names: HashMap<String, String> = [("/d/a.msp".to_string(), "MoNA".to_string())].into_iter().collect();
+        let data = report_data("/sortie", "25_11_2026__15_14_36", "00:04:00", &params, &inputs, &names, &d, &libs);
+
+        assert_eq!(data["meta"]["date"], "25-11-2026 15:14:36");
+        assert_eq!(data["totals"], json!({"input": 11, "deleted": 7, "kept": 4, "inchikeys": 3}));
+        // InChIKey différentes : AAA (LC POS et NEG) compte une fois pour LC
+        assert_eq!(data["groups"]["LC"], 2);
+        assert_eq!(data["groups"]["LC|POS"], 2);
+        assert_eq!(data["groups"]["DI"], 1);
+        assert_eq!(data["inputs"][0]["database"], "MoNA");
+        assert_eq!(data["inputs"][1]["database"], "Unknown");
+        assert_eq!(data["inputs"][0]["kept"], 3);
+        assert_eq!(data["formats"], json!(["CSV"]));
+        // Base vide et classe « NOT FOUND » : « Unknown »
+        assert_eq!(data["databases"], json!({"GNPS": 1, "MoNA": 2, "Unknown": 1}));
+        let labels: Vec<&str> = data["classyfire"]["labels"].as_array().unwrap().iter().map(|v| v.as_str().unwrap()).collect();
+        assert!(labels.contains(&"Unknown") && !labels.contains(&"NOT FOUND"));
+        let reasons: Vec<&str> = data["deletions"].as_array().unwrap().iter().map(|v| v["reason"].as_str().unwrap()).collect();
+        assert!(reasons.contains(&"Duplicates removed"));
+    }
+
+    #[test]
+    fn texte_hors_balise_script() {
+        // Un texte contenant « </script> » (ici un nom de base) ne doit pas fermer la balise des données
+        let libs = crate::splitter::Libraries::default();
+        let d = crate::deletion_report::DeletionReport::default();
+        let names: HashMap<String, String> = [("/x/a.msp".to_string(), "</script><b>".to_string())].into_iter().collect();
+        let html = build_report_html("/s", "d", "t", &HashMap::new(), &["/x/a.msp".to_string()], &names, &d, &libs);
+        assert!(!html.contains("</script><b>"));
+        assert!(html.contains("<\\/script><b>"));
     }
 }

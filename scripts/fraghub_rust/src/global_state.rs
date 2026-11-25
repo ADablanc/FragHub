@@ -21,6 +21,9 @@ pub struct GlobalState {
     pub keys_dict: HashMap<String, String>,
     pub keys_list: Vec<String>,
     pub instrument_tree: serde_json::Value,
+    /// Version et DOI de la base interne, lus dans datas/internal_database.json (affichés dans le rapport HTML)
+    pub internal_db_version: String,
+    pub internal_db_doi: String,
 }
 
 impl GlobalState {
@@ -50,6 +53,8 @@ impl GlobalState {
                 crate::globals_vars::IN_SILICO_HINTS_KEY.to_string()
             ],
             instrument_tree: serde_json::Value::Null,
+            internal_db_version: String::new(),
+            internal_db_doi: String::new(),
         }
     }
 }

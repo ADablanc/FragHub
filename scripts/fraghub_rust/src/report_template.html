@@ -1,697 +1,438 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FragHub Processing Report</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@400;500;600&display=swap');
-        
-        :root {
-            --bg: #f4f7fb; --surface: rgba(255, 255, 255, 0.85); --text: #334155; --primary: #0ea5e9;
-            --border: rgba(226, 232, 240, 0.8); --danger: #ef4444; --success: #10b981;
-            --glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        }
-        body { 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
-            background-color: var(--bg); color: var(--text); line-height: 1.6; padding: 2rem; margin: 0; 
-            background-image: radial-gradient(circle at 15% 50%, rgba(14, 165, 233, 0.05), transparent 25%), radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.05), transparent 25%);
-            background-attachment: fixed;
-        }
-        .container { max-width: 100%; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 3rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
-        .header h1 { font-family: 'Outfit', sans-serif; margin: 0; color: var(--primary); font-size: 3rem; font-weight: 700; text-shadow: 0 2px 10px rgba(14, 165, 233, 0.15); letter-spacing: -0.5px; }
-        .header p { color: #64748b; font-size: 1.1rem; }
-        .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; margin-bottom: 2rem; }
-        .card { 
-            background: var(--surface); padding: 2rem; border-radius: 16px; 
-            box-shadow: var(--glass-shadow); border: 1px solid var(--border); 
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-        }
-        .card h2 { font-family: 'Outfit', sans-serif; margin-top: 0; font-size: 1.5rem; color: #1e293b; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
-        .card h2::before { content: ''; display: block; width: 4px; height: 24px; background: var(--primary); border-radius: 4px; box-shadow: 0 0 8px rgba(14, 165, 233, 0.4); }
-        .files-list { margin: 0 0 1rem 0; padding-left: 1.5rem; color: #475569; word-break: break-all; overflow-wrap: break-word; }
-        .badge { display: inline-block; padding: 0.35rem 0.8rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; }
-        .badge.on { background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 2px 4px rgba(16, 185, 129, 0.05); }
-        .badge.off { background: rgba(100, 116, 139, 0.05); color: #64748b; border: 1px solid rgba(100, 116, 139, 0.1); }
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-        th, td { text-align: left; padding: 1rem; border-bottom: 1px solid var(--border); }
-        th { color: #64748b; font-weight: 600; background: rgba(241, 245, 249, 0.5); }
-        .param-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; }
-        .param-row span:first-child { color: #475569; }
-        
-        /* Interactive Chart Styles */
-        .chart-wrapper { position: relative; height: 350px; margin: 2.5rem 0 2rem 0; }
-        .y-axis { position: absolute; top: 0; left: 0; bottom: 30px; width: 40px; display: flex; flex-direction: column; justify-content: space-between; color: #64748b; font-size: 0.8rem; text-align: right; padding-right: 10px; font-family: monospace; }
-        .y-axis span { transform: translateY(-50%); }
-        .grid-lines { position: absolute; top: 0; left: 50px; right: 20px; bottom: 30px; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
-        .grid-line { border-top: 1px dashed rgba(0,0,0,0.05); width: 100%; height: 0; }
-        .grid-line:last-child { border-top: 2px solid rgba(0,0,0,0.15); }
-        .chart-bars { position: absolute; top: 0; left: 50px; right: 20px; bottom: 30px; display: flex; align-items: flex-end; justify-content: center; gap: 4rem; z-index: 5; }
-        
-        .bar-group { display: flex; flex-direction: column; align-items: center; width: 80px; height: 100%; justify-content: flex-end; position: relative; }
-        .bar { width: 100%; border-radius: 6px 6px 0 0; overflow: hidden; position: relative; cursor: pointer; transition: filter 0.3s, transform 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .bar:hover { filter: brightness(1.1); transform: translateY(-4px); }
-        
-        .bar-label { position: absolute; bottom: 100%; margin-bottom: 0.75rem; font-weight: bold; font-size: 1.1rem; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
-        .bar-title { position: absolute; bottom: -30px; font-weight: 600; color: #475569; text-align: center; font-size: 0.95rem; white-space: nowrap; }
-        
-        .bar-tooltip { position: absolute; bottom: calc(100% + 12px); background: rgba(30,41,59,0.9); color: white; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; opacity: 0; pointer-events: none; white-space: nowrap; transition: opacity 0.2s; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.1); z-index: 20; backdrop-filter: blur(4px); }
-        .bar:hover + .bar-title + .bar-tooltip, .bar:hover .bar-tooltip, .bar-group:hover .bar-tooltip { opacity: 1; }
-        
-        .stack-bar { display: flex; flex-direction: column; justify-content: flex-end; background: transparent !important; box-shadow: none !important; overflow: visible !important; }
-        .stack-bar:hover { transform: none; filter: none; }
-        .stack-segment { width: 100%; position: relative; transition: opacity 0.2s, transform 0.2s; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2); }
-        .stack-bar:hover .stack-segment:not(:hover) { opacity: 0.4; }
-        .stack-segment:hover { transform: scaleX(1.1); z-index: 10; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-        
-        .seg-tooltip { position: absolute; left: calc(100% + 15px); top: 50%; transform: translateY(-50%); background: rgba(30,41,59,0.95); color: white; padding: 6px 10px; border-radius: 6px; font-size: 0.85rem; opacity: 0; pointer-events: none; white-space: nowrap; z-index: 25; font-weight: bold; border-left: 3px solid; box-shadow: 0 4px 10px rgba(0,0,0,0.1); backdrop-filter: blur(4px); }
-        .stack-segment:hover .seg-tooltip { opacity: 1; }
-        
-        .legend-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; font-size: 0.9rem; margin-top: 1.5rem; background: rgba(248,250,252,0.6); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); }
-        .legend-item { display: flex; align-items: center; gap: 0.75rem; color: #475569; }
-        .legend-color { width: 16px; height: 16px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-
-        /* Tree Diagram Styles */
-        .tree-container { overflow-x: auto; padding: 2rem 0; margin-top: 2rem; margin-bottom: 2rem; border-top: 1px solid var(--border); }
-        .tree, .tree ul, .tree li { margin: 0; padding: 0; list-style: none; }
-        .tree { display: inline-flex; }
-        .tree ul { display: flex; flex-direction: column; margin-left: 40px; position: relative; justify-content: center; }
-        .tree li { display: flex; align-items: center; position: relative; padding: 16px 0; }
-        
-        .tree ul::before { content: ''; position: absolute; left: -40px; top: 50%; width: 40px; border-top: 2px solid var(--border); }
-        .tree li::before, .tree li::after { content: ''; position: absolute; left: -40px; border-left: 2px solid var(--border); }
-        .tree li::before { top: 0; bottom: 50%; }
-        .tree li::after { top: 50%; bottom: 0; }
-        .tree li:first-child::before { border-left: none; }
-        .tree li:last-child::after { border-left: none; }
-        
-        .tree li::after { border-top: 2px solid var(--border); width: 40px; }
-        .tree li:last-child::after { border-top: none; }
-        .tree li:last-child::before { border-bottom: 2px solid var(--border); width: 40px; }
-        .tree > li::before, .tree > li::after { display: none; }
-        .tree > li > ul::before { display: none; }
-
-        .node {
-            padding: 10px 20px; border-radius: 8px; background: rgba(255,255,255,0.9); border: 1px solid var(--border);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center;
-            min-width: 120px; flex: 0 0 auto; box-sizing: border-box; position: relative; z-index: 2; transition: all 0.2s ease;
-            backdrop-filter: blur(5px);
-        }
-        .node-subvalue { font-size: 0.8rem; color: #9333ea; font-weight: 600; margin-top: 6px; border-top: 1px dashed rgba(0,0,0,0.1); padding-top: 6px; width: 100%; text-align: center; }
-        .node:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 15px rgba(0,0,0,0.1); border-color: var(--primary); }
-        .node-title { font-size: 0.8rem; color: #64748b; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; }
-        .node-value { font-size: 1.25rem; color: var(--primary); font-weight: bold; }
-        .node-root { background: rgba(220, 252, 231, 0.6); border-color: #86efac; border-width: 2px; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.1); }
-        .node-root .node-value { color: #16a34a; }
-        .node.leaf { background: rgba(248, 250, 252, 0.8); }
-        .node.leaf .node-value { font-size: 1.1rem; color: #334155; }
-        .node.leaf .node-title { color: #94a3b8; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FragHub processing report</title>
+<!--
+  Rapport de fin de run de FragHub. Les données sont dans l'objet REPORT (écrit par src/report.rs) ; les tableaux et
+  le schéma des bibliothèques sont faits ici sans bibliothèque (lisibles hors ligne), les graphiques avec Plotly
+  (chargé depuis Internet).
+-->
+<style>
+  :root {
+    --text: #1d232a; --muted: #5b6672; --faint: #8a949e; --rule: #d9dee3; --rule-light: #eceff2;
+    --head: #f4f6f8; --kept: #4e79a7; --removed: #e15759; --unknown: #d9d9d9; --link: #2f5d8a;
+  }
+  * { box-sizing: border-box; }
+  html { background: #ffffff; }
+  body { margin: 0; color: var(--text); background: #ffffff;
+         font: 14px/1.5 "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif; }
+  .page { max-width: 1120px; margin: 0 auto; padding: 40px 32px 64px; }
+  a { color: var(--link); }
+  header { border-bottom: 2px solid var(--text); padding-bottom: 16px; margin-bottom: 24px; }
+  h1 { font-size: 24px; font-weight: 600; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .subtitle { color: var(--muted); margin: 0 0 16px; }
+  .meta { display: grid; grid-template-columns: max-content 1fr; gap: 2px 24px; margin: 0; font-size: 13px; }
+  .meta dt { color: var(--muted); }
+  .meta dd { margin: 0; overflow-wrap: anywhere; }
+  .figures { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--rule); margin: 24px 0 8px; }
+  .figure-cell { padding: 14px 16px; border-right: 1px solid var(--rule); }
+  .figure-cell:last-child { border-right: none; }
+  .figure-cell .value { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .figure-cell .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .figure-cell .share { color: var(--muted); font-size: 12px; }
+  section { margin-top: 40px; }
+  h2 { font-size: 18px; font-weight: 600; margin: 0 0 4px; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+  h2 .num { color: var(--faint); font-weight: 400; margin-right: 10px; }
+  .intro { color: var(--muted); margin: 8px 0 14px; max-width: 860px; }
+  h3 { font-size: 14px; font-weight: 600; margin: 20px 0 6px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { padding: 6px 10px; border-bottom: 1px solid var(--rule-light); text-align: left; vertical-align: top; }
+  th { background: var(--head); font-weight: 600; border-bottom: 1px solid var(--rule); }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr.zero td { color: var(--faint); }
+  tr.total td { font-weight: 600; border-top: 1px solid var(--rule); }
+  .sub { color: var(--muted); font-size: 12px; }
+  .state-on { color: #2e7d4f; font-weight: 600; }
+  .state-off { color: var(--faint); }
+  figure { margin: 18px 0 0; }
+  figcaption { color: var(--muted); font-size: 12.5px; margin-top: 6px; }
+  figcaption b { color: var(--text); font-weight: 600; }
+  .chart { width: 100%; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .offline { display: none; color: var(--removed); font-size: 12.5px; margin-top: 6px; }
+  .no-charts .offline { display: block; }
+  footer { margin-top: 56px; padding-top: 12px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 12px; }
+  #library-tree text { font-family: inherit; }
+  @media (max-width: 800px) { .two, .figures { grid-template-columns: 1fr; } .figure-cell { border-right: none; border-bottom: 1px solid var(--rule); } }
+  @media print { .page { padding: 0; } section { break-inside: avoid; } }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>FragHub Processing Report</h1>
-            <p>Generated on: {DATE} &nbsp;•&nbsp; Total Processing Time: <strong>{TOTAL_TIME}</strong></p>
-            <p style="font-size: 0.95rem; color: #64748b; margin-top: 1rem; max-width: 650px; margin-left: auto; margin-right: auto; line-height: 1.5; background: rgba(14, 165, 233, 0.05); padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid rgba(14, 165, 233, 0.1);">
-                💡 <strong>Interactive Report:</strong> This document is fully dynamic. You can hover over charts for details, click on elements to filter/zoom, and explore the data visually. <br>
-                <span style="font-size: 0.85rem; opacity: 0.8;"><em>Note: An active internet connection is required to load the visualization libraries.</em></span>
-            </p>
-        </div>
+<div class="page">
 
-        <div class="grid">
-            <div class="card">
-                <h2>Files & Output</h2>
-                
-                <h3 style="font-size: 1rem; color: #334155; margin-bottom: 0.75rem;">Input Files</h3>
-                <strong>MSP:</strong> <ul class="files-list">{MSP}</ul>
-                <strong>JSON:</strong> <ul class="files-list">{JSON}</ul>
-                <strong>CSV:</strong> <ul class="files-list">{CSV}</ul>
-                <strong>MGF:</strong> <ul class="files-list">{MGF}</ul>
+<header>
+  <h1>FragHub processing report</h1>
+  <p class="subtitle">Standardization, filtering and sorting of tandem mass spectra from open spectral libraries</p>
+  <dl class="meta" id="meta"></dl>
+  <div class="figures" id="key-figures"></div>
+</header>
 
-                <h3 style="font-size: 1rem; color: #334155; margin-top: 1.5rem; margin-bottom: 0.75rem;">Output Format & Directory</h3>
-                <div class="param-row"><span>CSV:</span> <strong>{OUT_CSV}</strong></div>
-                <div class="param-row"><span>MSP:</span> <strong>{OUT_MSP}</strong></div>
-                <div class="param-row"><span>JSON:</span> <strong>{OUT_JSON}</strong></div>
-                <div class="param-row"><span>mzSpecLib (JSON):</span> <strong>{OUT_MZSPECLIB_JSON}</strong></div>
-                <div style="margin-top: 1rem;">
-                    <span style="font-family: monospace; font-size: 0.85em; word-break: break-all; color: #0284c7; background: rgba(14, 165, 233, 0.05); padding: 0.75rem; border-radius: 6px; display: block; border: 1px solid rgba(14, 165, 233, 0.1);">{OUT_DIR}</span>
-                </div>
-            </div>
+<section>
+  <h2><span class="num">1</span>Input files</h2>
+  <p class="intro">Spectral library files read in this run, with the source database given to each file and the number of its spectra kept in the outputs (after filtering and removal of duplicates).</p>
+  <table id="inputs-table"></table>
+</section>
 
-            <div class="card">
-                <h2>Processing Parameters</h2>
-                <div class="param-row"><span>Normalize Intensity:</span> <span class="badge {C1}">{V1}</span></div>
-                <div class="param-row"><span>Remove Peak Above Precursor m/z:</span> <span class="badge {C2}">{V2}</span></div>
-                <div class="param-row" style="margin-top: 1rem;"><span>Check Minimum Peaks:</span> <span class="badge {C3}">{V3}</span></div>
-                <div class="param-row" style="padding-left: 1rem; font-size: 0.9em; color: #64748b;"><span>Required Peaks:</span> <strong>{V3_1}</strong></div>
-                <div class="param-row" style="margin-top: 1rem;"><span>Reduce Peak List:</span> <span class="badge {C4}">{V4}</span></div>
-                <div class="param-row" style="padding-left: 1rem; font-size: 0.9em; color: #64748b;"><span>Max Peaks:</span> <strong>{V4_1}</strong></div>
-                <div class="param-row" style="margin-top: 1rem;"><span>Filter by Entropy Score:</span> <span class="badge {C5}">{V5}</span></div>
-                <div class="param-row" style="padding-left: 1rem; font-size: 0.9em; color: #64748b;"><span>Minimum Score:</span> <strong>{V5_1}</strong></div>
-                <div class="param-row" style="margin-top: 1rem;"><span>Keep m/z in Range:</span> <span class="badge {C6}">{V6}</span></div>
-                <div class="param-row" style="padding-left: 1rem; font-size: 0.9em; color: #64748b;"><span>Range:</span> <strong>{V6_1} - {V6_2}</strong></div>
-                <div class="param-row" style="margin-top: 1rem;"><span>Check High Peaks:</span> <span class="badge {C7}">{V7}</span></div>
-                <div class="param-row" style="padding-left: 1rem; font-size: 0.9em; color: #64748b;"><span>Intensity % / Min Peaks:</span> <strong>{V7_1}% / {V7_2}</strong></div>
-                <div class="param-row" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);"><span>Reset Updates:</span> <span class="badge {C8}">{V8}</span></div>
-            </div>
-        </div>
+<section>
+  <h2><span class="num">2</span>Processing parameters</h2>
+  <p class="intro">Filters applied to each spectrum, in the order FragHub applies them, and output formats.</p>
+  <table id="parameters-table"></table>
+</section>
 
-        <div class="card" style="margin-bottom: 1.5rem;">
-            <h2>Data Flow Overview</h2>
-            
-            <div class="chart-wrapper">
-                <div class="y-axis">
-                    <span>100%</span>
-                    <span>75%</span>
-                    <span>50%</span>
-                    <span>25%</span>
-                    <span>0%</span>
-                </div>
-                <div class="grid-lines">
-                    <div class="grid-line"></div>
-                    <div class="grid-line"></div>
-                    <div class="grid-line"></div>
-                    <div class="grid-line"></div>
-                    <div class="grid-line"></div>
-                </div>
-                
-                <div class="chart-bars">
-                    <div class="bar-group">
-                        <span class="bar-label" style="color: var(--primary);">{TOTAL_IN}</span>
-                        <div class="bar" style="height: 100%; background: var(--primary);">
-                            <div class="bar-tooltip" style="bottom: 100%;">{TOTAL_IN} Input Spectra</div>
-                        </div>
-                        <span class="bar-title">Input</span>
-                    </div>
-                    
-                    <div class="bar-group">
-                        <span class="bar-label" style="color: var(--danger); bottom: calc({PCT_DEL}% + 0.5rem);">{TOTAL_DEL}</span>
-                        <div class="bar-tooltip" style="bottom: calc({PCT_DEL}% + 2rem);">{TOTAL_DEL} Deleted Spectra</div>
-                        <div class="bar stack-bar" style="height: {PCT_DEL}%;">
-                            <div class="stack-segment" style="height: {H_PEAKS}%; background: #ef4444;"><span class="seg-tooltip" style="border-color:#ef4444;">No peaks list: {V_PEAKS}</span></div>
-                            <div class="stack-segment" style="height: {H_SMILES}%; background: #f97316;"><span class="seg-tooltip" style="border-color:#f97316;">No SMILES / InChIKey: {V_SMILES}</span></div>
-                            <div class="stack-segment" style="height: {H_PRECURSOR}%; background: #eab308;"><span class="seg-tooltip" style="border-color:#eab308;">No precursor m/z: {V_PRECURSOR}</span></div>
-                            <div class="stack-segment" style="height: {H_ADDUCT}%; background: #84cc16;"><span class="seg-tooltip" style="border-color:#84cc16;">No or bad adduct: {V_ADDUCT}</span></div>
-                            <div class="stack-segment" style="height: {H_ENTROPY}%; background: #10b981;"><span class="seg-tooltip" style="border-color:#10b981;">Low entropy score: {V_ENTROPY}</span></div>
-                            <div class="stack-segment" style="height: {H_MIN_PEAKS}%; background: #06b6d4;"><span class="seg-tooltip" style="border-color:#06b6d4;">Minimum peaks not required: {V_MIN_PEAKS}</span></div>
-                            <div class="stack-segment" style="height: {H_ABOVE_PREC}%; background: #3b82f6;"><span class="seg-tooltip" style="border-color:#3b82f6;">All peaks above precursor m/z: {V_ABOVE_PREC}</span></div>
-                            <div class="stack-segment" style="height: {H_RANGE}%; background: #6366f1;"><span class="seg-tooltip" style="border-color:#6366f1;">No peaks in m/z range: {V_RANGE}</span></div>
-                            <div class="stack-segment" style="height: {H_HIGH_PEAKS}%; background: #8b5cf6;"><span class="seg-tooltip" style="border-color:#8b5cf6;">Minimum high peaks not required: {V_HIGH_PEAKS}</span></div>
-                            <div class="stack-segment" style="height: {H_DUP}%; background: #d946ef;"><span class="seg-tooltip" style="border-color:#d946ef;">Duplicates removed: {V_DUP}</span></div>
-                            <div class="stack-segment" style="height: {H_PREV}%; background: #f43f5e;"><span class="seg-tooltip" style="border-color:#f43f5e;">Previously cleaned: {V_PREV}</span></div>
-                            <div class="stack-segment" style="height: {H_LOW_RES}%; background: #ec4899;"><span class="seg-tooltip" style="border-color:#ec4899;">Low resolution MS2: {V_LOW_RES}</span></div>
-                            <div class="stack-segment" style="height: {H_CRASH}%; background: #9f1239;"><span class="seg-tooltip" style="border-color:#9f1239;">MS2 chemical crash: {V_CRASH}</span></div>
-                        </div>
-                        <span class="bar-title" style="color: var(--danger);">Deleted</span>
-                    </div>
-                    
-                    <div class="bar-group">
-                        <span class="bar-label" style="color: var(--success); bottom: calc({PCT_OUT}% + 0.5rem);">{TOTAL_OUT}</span>
-                        <div class="bar" style="height: {PCT_OUT}%; background: var(--success);">
-                            <div class="bar-tooltip" style="bottom: 100%;">{TOTAL_OUT} Saved Spectra</div>
-                        </div>
-                        <span class="bar-title" style="color: var(--success);">Saved</span>
-                    </div>
-                </div>
-            </div>
+<section>
+  <h2><span class="num">3</span>Spectrum filtering</h2>
+  <p class="intro">Each removed spectrum is written, with its reason, in the <code>DELETED_SPECTRUMS</code> folder of the output directory.</p>
+  <figure>
+    <div id="deletion-chart" class="chart"></div>
+    <figcaption><b>Figure 1.</b> Spectra removed, by reason (share of the input spectra).</figcaption>
+    <div class="offline">Charts need an internet connection (Plotly library); the tables are complete.</div>
+  </figure>
+  <h3>Table 1. Removed spectra</h3>
+  <table id="deletion-table"></table>
+</section>
 
-            <h3 style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;">Deletion Reasons Breakdown</h3>
-            <div class="legend-grid">
-                <div class="legend-item"><div class="legend-color" style="background:#ef4444;"></div><span><strong>{V_PEAKS}</strong> No peaks list</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#f97316;"></div><span><strong>{V_SMILES}</strong> No SMILES / InChIKey</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#eab308;"></div><span><strong>{V_PRECURSOR}</strong> No precursor m/z</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#84cc16;"></div><span><strong>{V_ADDUCT}</strong> No or bad adduct</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#10b981;"></div><span><strong>{V_ENTROPY}</strong> Low entropy score</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#06b6d4;"></div><span><strong>{V_MIN_PEAKS}</strong> Minimum peaks not required</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#3b82f6;"></div><span><strong>{V_ABOVE_PREC}</strong> All peaks above precursor m/z</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#6366f1;"></div><span><strong>{V_RANGE}</strong> No peaks in m/z range</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#8b5cf6;"></div><span><strong>{V_HIGH_PEAKS}</strong> Minimum high peaks not required</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#d946ef;"></div><span><strong>{V_DUP}</strong> Duplicates removed</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#f43f5e;"></div><span><strong>{V_PREV}</strong> Previously cleaned</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#ec4899;"></div><span><strong>{V_LOW_RES}</strong> Low resolution MS2</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#9f1239;"></div><span><strong>{V_CRASH}</strong> MS2 chemical crash</span></div>
-            </div>
-        </div>
+<section>
+  <h2><span class="num">4</span>Output libraries</h2>
+  <p class="intro">Kept spectra are sorted by separation (LC: liquid chromatography, GC: gas chromatography, DI: direct injection), ion mode and origin (experimental or predicted in silico). Each leaf is one output library. InChIKeys: number of distinct molecules.</p>
+  <figure>
+    <div id="library-tree-box" style="overflow-x:auto"><svg id="library-tree"></svg></div>
+    <figcaption><b>Figure 2.</b> Output libraries: spectra and distinct InChIKeys at each level.</figcaption>
+  </figure>
+  <h3>Table 2. Spectra per output library <span class="sub">(distinct InChIKeys below)</span></h3>
+  <table id="library-table"></table>
+</section>
 
-        <div class="card">
-            <h2>Final Output Data</h2>
-            <div class="tree-container">
-                <ul class="tree">
-                    <li>
-                        <div class="node node-root">
-                            <span class="node-title" style="margin-bottom: 5px;">Total Spectra</span>
-                            <span class="node-value">{TOTAL_OUT}</span>
-                            <span class="node-subvalue" style="border-top: none;">Unique InChIKey: {TOTAL_UNIQ}</span>
-                        </div>
-                        <ul>
-                            <li>
-                                <div class="node">
-                                    <span class="node-title">LC</span>
-                                    <span class="node-value">{LC_TOT}</span>
-                                    <span class="node-subvalue">Unique InChIKey: {LC_UNIQ}</span>
-                                </div>
-                                <ul>
-                                    <li>
-                                        <div class="node">
-                                            <span class="node-title">POS</span>
-                                            <span class="node-value">{LC_POS_TOT}</span>
-                                            <span class="node-subvalue">Unique InChIKey: {LC_POS_UNIQ}</span>
-                                        </div>
-                                        <ul>
-                                            <li><div class="node leaf"><span class="node-title">Exp</span><span class="node-value">{T1}</span><span class="node-subvalue">Unique InChIKey: {U1}</span></div></li>
-                                            <li><div class="node leaf"><span class="node-title">In-Silico</span><span class="node-value">{T3}</span><span class="node-subvalue">Unique InChIKey: {U3}</span></div></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <div class="node">
-                                            <span class="node-title">NEG</span>
-                                            <span class="node-value">{LC_NEG_TOT}</span>
-                                            <span class="node-subvalue">Unique InChIKey: {LC_NEG_UNIQ}</span>
-                                        </div>
-                                        <ul>
-                                            <li><div class="node leaf"><span class="node-title">Exp</span><span class="node-value">{T2}</span><span class="node-subvalue">Unique InChIKey: {U2}</span></div></li>
-                                            <li><div class="node leaf"><span class="node-title">In-Silico</span><span class="node-value">{T4}</span><span class="node-subvalue">Unique InChIKey: {U4}</span></div></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <div class="node">
-                                    <span class="node-title">GC</span>
-                                    <span class="node-value">{GC_TOT}</span>
-                                    <span class="node-subvalue">Unique InChIKey: {GC_UNIQ}</span>
-                                </div>
-                                <ul>
-                                    <li>
-                                        <div class="node">
-                                            <span class="node-title">POS</span>
-                                            <span class="node-value">{GC_POS_TOT}</span>
-                                            <span class="node-subvalue">Unique InChIKey: {GC_POS_UNIQ}</span>
-                                        </div>
-                                        <ul>
-                                            <li><div class="node leaf"><span class="node-title">Exp</span><span class="node-value">{T5}</span><span class="node-subvalue">Unique InChIKey: {U5}</span></div></li>
-                                            <li><div class="node leaf"><span class="node-title">In-Silico</span><span class="node-value">{T7}</span><span class="node-subvalue">Unique InChIKey: {U7}</span></div></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <div class="node">
-                                            <span class="node-title">NEG</span>
-                                            <span class="node-value">{GC_NEG_TOT}</span>
-                                            <span class="node-subvalue">Unique InChIKey: {GC_NEG_UNIQ}</span>
-                                        </div>
-                                        <ul>
-                                            <li><div class="node leaf"><span class="node-title">Exp</span><span class="node-value">{T6}</span><span class="node-subvalue">Unique InChIKey: {U6}</span></div></li>
-                                            <li><div class="node leaf"><span class="node-title">In-Silico</span><span class="node-value">{T8}</span><span class="node-subvalue">Unique InChIKey: {U8}</span></div></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <div class="node">
-                                    <span class="node-title">DI</span>
-                                    <span class="node-value">{DI_TOT}</span>
-                                    <span class="node-subvalue">Unique InChIKey: {DI_UNIQ}</span>
-                                </div>
-                                <ul>
-                                    <li>
-                                        <div class="node">
-                                            <span class="node-title">POS</span>
-                                            <span class="node-value">{DI_POS_TOT}</span>
-                                            <span class="node-subvalue">Unique InChIKey: {DI_POS_UNIQ}</span>
-                                        </div>
-                                        <ul>
-                                            <li><div class="node leaf"><span class="node-title">Exp</span><span class="node-value">{T9}</span><span class="node-subvalue">Unique InChIKey: {U9}</span></div></li>
-                                            <li><div class="node leaf"><span class="node-title">In-Silico</span><span class="node-value">{T11}</span><span class="node-subvalue">Unique InChIKey: {U11}</span></div></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <div class="node">
-                                            <span class="node-title">NEG</span>
-                                            <span class="node-value">{DI_NEG_TOT}</span>
-                                            <span class="node-subvalue">Unique InChIKey: {DI_NEG_UNIQ}</span>
-                                        </div>
-                                        <ul>
-                                            <li><div class="node leaf"><span class="node-title">Exp</span><span class="node-value">{T10}</span><span class="node-subvalue">Unique InChIKey: {U10}</span></div></li>
-                                            <li><div class="node leaf"><span class="node-title">In-Silico</span><span class="node-value">{T12}</span><span class="node-subvalue">Unique InChIKey: {U12}</span></div></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="card" style="margin-top: 1.5rem; margin-bottom: 2rem;">
-            <h2>Databases Distribution</h2>
-            <div style="border: 1px solid var(--border); border-radius: 12px; padding: 1rem; background: rgba(248,250,252,0.5); display: flex; justify-content: center;">
-                <div id="database-chart" style="width: 100%; max-width: 800px; height: 500px;"></div>
-            </div>
-        </div>
-        <div class="card" style="margin-top: 1.5rem; margin-bottom: 2rem;">
-            <h2>Chemical Ontologies Distribution</h2>
-            <div class="grid" style="margin-bottom: 0;">
-                <div style="border: 1px solid var(--border); border-radius: 12px; padding: 1rem; background: rgba(248,250,252,0.5);">
-                    <h3 style="text-align: center; margin-top: 0; color: #475569;">ClassyFire</h3>
-                    <div id="classyfire-chart" style="width: 100%; height: 500px;"></div>
-                </div>
-                <div style="border: 1px solid var(--border); border-radius: 12px; padding: 1rem; background: rgba(248,250,252,0.5);">
-                    <h3 style="text-align: center; margin-top: 0; color: #475569;">NPClassifier</h3>
-                    <div id="npclassifier-chart" style="width: 100%; height: 500px;"></div>
-                </div>
-            </div>
+<section>
+  <h2><span class="num">5</span>Source databases</h2>
+  <p class="intro">Database of origin of the kept spectra. A spectrum found in several databases (duplicates merged) counts for each of them.</p>
+  <figure>
+    <div id="database-chart" class="chart"></div>
+    <figcaption><b>Figure 3.</b> Kept spectra per source database.</figcaption>
+  </figure>
+  <figure id="upset-figure">
+    <div id="upset-chart" class="chart"></div>
+    <figcaption><b>Figure 4.</b> Intersections between source databases (UpSet plot): number of distinct spectra (SPLASH and InChIKey) found in exactly the marked databases; the 20 largest intersections.</figcaption>
+  </figure>
+</section>
 
-        <div class="card" style="margin-top: 1.5rem; margin-bottom: 2rem;">
-            <h2>Databases Intersections (UpSet Plot)</h2>
-            <div style="border: 1px solid var(--border); border-radius: 12px; padding: 1rem; background: rgba(248,250,252,0.5); display: flex; justify-content: center; overflow-x: auto;">
-                <div id="upset-chart" style="width: 100%; min-height: 500px;"></div>
-            </div>
-            <p style="text-align: center; font-size: 0.8rem; color: #64748b; margin-top: 1rem;">Shows the number of unique spectra intersecting between databases.</p>
-        </div>
-        
-            <div class="card" style="margin-top: 1.5rem; margin-bottom: 2rem;">
-            <h2>Instrument Distribution</h2>
-            <div style="border: 1px solid var(--border); border-radius: 12px; padding: 1rem; background: rgba(248,250,252,0.5); display: flex; justify-content: center;">
-                <div id="instrument-chart" style="width: 100%; max-width: 800px; height: 500px;"></div>
-            </div>
-        <div class="card" style="margin-top: 1.5rem; margin-bottom: 2rem;">
-            <h2>Dataset Columns Completion</h2>
-            <div style="border: 1px solid var(--border); border-radius: 12px; padding: 1rem; background: rgba(248,250,252,0.5); display: flex; justify-content: center; overflow-x: auto;">
-                <div id="columns-chart" style="width: 100%; min-height: 500px;"></div>
-            </div>
-            <p style="text-align: center; font-size: 0.8rem; color: #64748b; margin-top: 1rem;">Shows the number of non-null values for each metadata column in the final dataset.</p>
-        </div>
-        <p style="text-align: center; font-size: 0.8rem; color: #94a3b8; margin-top: 1rem;">Note: Interactive charts require an internet connection to load the Plotly.js library.</p>
-        </div>
-    </div>
-    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
-            <script>
-                var inst_labels = {INST_LABELS};
-        var inst_parents = {INST_PARENTS};
-        var inst_values = {INST_VALUES};
-        var inst_ids = {INST_IDS};
+<section>
+  <h2><span class="num">6</span>Chemical classes</h2>
+  <p class="intro">Chemical classes of the kept spectra, from the internal database: ClassyFire (superclass, class, subclass) and NPClassifier (pathway, superclass, class). Unknown (grey): no class in the database. Click a sector to zoom in, click the centre to zoom out.</p>
+  <div class="two">
+    <figure>
+      <div id="classyfire-chart" class="chart"></div>
+      <figcaption><b>Figure 5.</b> ClassyFire: superclass (inner ring) and class (outer ring).</figcaption>
+    </figure>
+    <figure>
+      <div id="npclassifier-chart" class="chart"></div>
+      <figcaption><b>Figure 6.</b> NPClassifier: pathway (inner ring) and superclass (outer ring).</figcaption>
+    </figure>
+  </div>
+  <h3>Table 3. Classified spectra per level</h3>
+  <table id="classes-table"></table>
+</section>
 
-        if (inst_labels && inst_labels.length > 0) {
-            var nodeMap = {};
-            for (var i = 0; i < inst_ids.length; i++) {
-                nodeMap[inst_ids[i]] = {
-                    name: inst_labels[i] + '\n(' + inst_values[i] + ')',
-                    value: inst_values[i],
-                    children: [],
-                    itemStyle: {
-                        color: (inst_labels[i].toUpperCase() === "NOT FOUND" || inst_labels[i].toUpperCase() === "UNKNOWN") ? '#ef4444' : '#0ea5e9',
-                        borderColor: (inst_labels[i].toUpperCase() === "NOT FOUND" || inst_labels[i].toUpperCase() === "UNKNOWN") ? '#b91c1c' : '#0284c7'
-                    }
-                };
-            }
-            
-            var treeData = [];
-            for (var i = 0; i < inst_ids.length; i++) {
-                var parentId = inst_parents[i];
-                if (parentId && nodeMap[parentId]) {
-                    nodeMap[parentId].children.push(nodeMap[inst_ids[i]]);
-                } else {
-                    treeData.push(nodeMap[inst_ids[i]]);
-                }
-            }
+<section>
+  <h2><span class="num">7</span>Instruments</h2>
+  <p class="intro">Instrument manufacturer and model recognized for the kept spectra (FragHub instrument tree). Not found: instrument missing in the file or not recognized.</p>
+  <div class="two">
+    <figure>
+      <div id="manufacturer-chart" class="chart"></div>
+      <figcaption><b>Figure 7.</b> Kept spectra per manufacturer.</figcaption>
+    </figure>
+    <figure>
+      <div id="model-chart" class="chart"></div>
+      <figcaption><b>Figure 8.</b> The 20 most frequent instrument models.</figcaption>
+    </figure>
+  </div>
+</section>
 
-            var chartDom = document.getElementById('instrument-chart');
-            var myChart = echarts.init(chartDom);
-            var option = {
-                tooltip: {
-                    trigger: 'item',
-                    triggerOn: 'mousemove',
-                    formatter: function (info) {
-                        return info.name.replace('\n', ' ');
-                    }
-                },
-                series: [
-                    {
-                        type: 'tree',
-                        data: treeData,
-                        top: '1%',
-                        left: '7%',
-                        bottom: '1%',
-                        right: '20%',
-                        symbolSize: function(val, params) {
-                            var baseSize = 10;
-                            if (params.data.value) {
-                                baseSize = Math.max(10, Math.min(40, Math.log10(params.data.value) * 10));
-                            }
-                            return baseSize;
-                        },
-                        label: {
-                            position: 'left',
-                            verticalAlign: 'middle',
-                            align: 'right',
-                            fontSize: 12,
-                            fontFamily: 'Inter, sans-serif',
-                            color: '#334155'
-                        },
-                        leaves: {
-                            label: {
-                                position: 'right',
-                                verticalAlign: 'middle',
-                                align: 'left'
-                            }
-                        },
-                        expandAndCollapse: true,
-                        animationDuration: 550,
-                        animationDurationUpdate: 750
-                    }
-                ]
-            };
-            myChart.setOption(option);
-            window.addEventListener('resize', function() {
-                myChart.resize();
-            });
-        }
+<section>
+  <h2><span class="num">8</span>Metadata completeness</h2>
+  <p class="intro">Share of the kept spectra with a value in each output column (empty, NaN and NOT FOUND count as missing).</p>
+  <figure>
+    <div id="columns-chart" class="chart"></div>
+    <figcaption><b>Figure 9.</b> Filled values per output column.</figcaption>
+  </figure>
+</section>
 
-        var upset_data = {UPSET_DATA};
-        if (upset_data && upset_data.length > 0) {
-            upset_data.sort(function(a, b) { return b.count - a.count; });
-            upset_data = upset_data.slice(0, 40); // Standard UpSet max 40 intersections
+<footer id="footer"></footer>
+</div>
 
-            var allSets = [];
-            upset_data.forEach(function(d) {
-                d.sets.forEach(function(s) {
-                    if (allSets.indexOf(s) === -1) allSets.push(s);
-                });
-            });
+<!-- Plotly avant le script du rapport : sans Internet, il manque et seuls les graphiques sont absents -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script>
+var REPORT = {REPORT_DATA};
+</script>
+<script>
+(function () {
+  'use strict';
+  var R = REPORT;
+  // Palette qualitative (Tableau 10), la même que les sunbursts du README de FragHub ; inconnu en gris clair
+  var PALETTE = ['#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f', '#edc948', '#b07aa1', '#ff9da7', '#9c755f', '#bab0ac'];
+  var UNKNOWN = '#d9d9d9';
+  var FONT = { family: '"Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif', size: 12, color: '#1d232a' };
 
-            var colorPalette = [
-                '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
-                '#393b79', '#5254a3', '#6b6ecf', '#9c9ede', '#637939', '#8ca252', '#b5cf6b', '#cedb9c', '#8c6d31', '#bd9e39'
-            ];
-            var setColors = {};
-            allSets.forEach(function(s, i) { setColors[s] = colorPalette[i % colorPalette.length]; });
-            var bar_x = upset_data.map(function(d, i) { return 'C' + i; });
-            var bar_y = upset_data.map(function(d) { return d.count; });
-            var hover_texts = upset_data.map(function(d) { return d.sets.join(' + ') + '<br>Count: ' + d.count; });
+  function el(tag, attrs, children) {
+    var e = document.createElement(tag);
+    for (var k in (attrs || {})) { if (k === 'text') e.textContent = attrs[k]; else if (k === 'html') e.innerHTML = attrs[k]; else e.setAttribute(k, attrs[k]); }
+    (children || []).forEach(function (c) { if (c) e.appendChild(c); });
+    return e;
+  }
+  function fmt(n) { return Number(n).toLocaleString('en-US'); }
+  function pct(n, total) { return total > 0 ? (100 * n / total).toFixed(1) + ' %' : '–'; }
+  function size(bytes) { return bytes >= 1e9 ? (bytes / 1e9).toFixed(2) + ' GB' : (bytes / 1e6).toFixed(1) + ' MB'; }
+  function isUnknown(label) { var l = String(label).toUpperCase(); return l === 'UNKNOWN' || l === 'NOT FOUND'; }
+  function row(cells, cls) {
+    var tr = el('tr', cls ? { 'class': cls } : {});
+    cells.forEach(function (c) { tr.appendChild(el(c.th ? 'th' : 'td', c.n ? { 'class': 'n', text: c.t } : (c.h !== undefined ? { html: c.h } : { text: c.t }))); });
+    return tr;
+  }
+  function fillTable(id, header, rows) {
+    var t = document.getElementById(id);
+    t.appendChild(row(header.map(function (h) { return { th: true, t: h.t, n: h.n }; })));
+    rows.forEach(function (r) { t.appendChild(r); });
+  }
 
+  // --- En-tête et chiffres clés ---
+  var m = R.meta, meta = document.getElementById('meta');
+  var dbText = m.database_version ? m.database_version : 'local (no reference)';
+  [['Date', m.date], ['Processing time', m.duration], ['FragHub', m.fraghub_version], ['RDKit', m.rdkit_version],
+   ['Internal database', null], ['Output directory', m.output_directory]].forEach(function (p) {
+    meta.appendChild(el('dt', { text: p[0] }));
+    if (p[1] === null) {
+      var dd = el('dd', { text: dbText + (m.database_doi ? ' · ' : '') });
+      if (m.database_doi) dd.appendChild(el('a', { href: 'https://doi.org/' + m.database_doi, text: 'doi:' + m.database_doi }));
+      meta.appendChild(dd);
+    } else meta.appendChild(el('dd', { text: p[1] }));
+  });
+  var T = R.totals, figs = document.getElementById('key-figures');
+  [['Input spectra', T.input, ''], ['Removed', T.deleted, pct(T.deleted, T.input) + ' of input'],
+   ['Kept', T.kept, pct(T.kept, T.input) + ' of input'], ['Distinct InChIKeys', T.inchikeys, 'in the kept spectra']].forEach(function (f) {
+    figs.appendChild(el('div', { 'class': 'figure-cell' }, [el('div', { 'class': 'label', text: f[0] }),
+      el('div', { 'class': 'value', text: fmt(f[1]) }), el('div', { 'class': 'share', text: f[2] })]));
+  });
 
-            var bar_colors = upset_data.map(function(d) {
-                return d.sets.length === 1 ? setColors[d.sets[0]] : '#94a3b8'; // Grey for intersections
-            });
+  // --- 1. Fichiers d'entrée ---
+  var inputs = R.inputs.slice().sort(function (a, b) { return a.database.localeCompare(b.database) || a.name.localeCompare(b.name); });
+  var folders = {}; inputs.forEach(function (f) { folders[f.folder] = 1; });
+  var oneFolder = Object.keys(folders).length === 1;
+  fillTable('inputs-table', [{ t: 'File' }, { t: 'Format' }, { t: 'Database' }, { t: 'Size', n: 1 }, { t: 'Spectra kept', n: 1 }],
+    inputs.map(function (f) {
+      var name = oneFolder ? f.name : f.folder + '/' + f.name;
+      return row([{ t: name }, { t: f.format }, { t: f.database }, { t: size(f.size), n: 1 }, { t: fmt(f.kept), n: 1 }]);
+    }).concat(inputs.length > 1 ? [row([{ t: inputs.length + ' files' }, { t: '' }, { t: '' },
+      { t: size(inputs.reduce(function (s, f) { return s + f.size; }, 0)), n: 1 }, { t: fmt(T.kept), n: 1 }], 'total')] : []));
+  if (oneFolder && inputs.length) {
+    var cap = el('p', { 'class': 'sub', text: 'Folder: ' + inputs[0].folder });
+    document.getElementById('inputs-table').after(cap);
+  }
 
-            var trace1 = {
-                x: bar_x,
-                y: bar_y,
-                text: bar_y,
-                textposition: 'outside',
-                hoverinfo: 'text',
-                hovertext: hover_texts,
-                type: 'bar',
-                marker: { color: bar_colors },
-                name: 'Size'
-            };
+  // --- 2. Paramètres ---
+  fillTable('parameters-table', [{ t: 'Filter' }, { t: 'Applied' }, { t: 'Setting' }], R.parameters.map(function (p) {
+    return row([{ t: p.name }, { h: '<span class="state-' + p.state + '">' + (p.state === 'on' ? 'yes' : 'no') + '</span>' },
+      { t: p.state === 'on' ? p.value : '' }], p.state === 'on' ? '' : 'zero');
+  }).concat([row([{ t: 'Output formats' }, { t: '' }, { t: R.formats.length ? R.formats.join(', ') : 'none' }])]));
 
-            var scatter_x = [];
-            var scatter_y = [];
-            var scatter_colors = [];
-            var bg_x = [];
-            var bg_y = [];
-            var shapes = [];
+  // --- 3. Suppressions (tableau) ---
+  var dels = R.deletions.slice().sort(function (a, b) { return b.count - a.count; });
+  fillTable('deletion-table', [{ t: 'Reason' }, { t: 'Spectra', n: 1 }, { t: 'Share of input', n: 1 }],
+    dels.map(function (d) { return row([{ t: d.reason }, { t: fmt(d.count), n: 1 }, { t: pct(d.count, T.input), n: 1 }], d.count ? '' : 'zero'); })
+      .concat([row([{ t: 'Total removed' }, { t: fmt(T.deleted), n: 1 }, { t: pct(T.deleted, T.input), n: 1 }], 'total'),
+               row([{ t: 'Kept' }, { t: fmt(T.kept), n: 1 }, { t: pct(T.kept, T.input), n: 1 }], 'total')]));
 
-            upset_data.forEach(function(d, i) {
-                var y_vals = [];
-                allSets.forEach(function(s, s_idx) {
-                    if (d.sets.indexOf(s) !== -1) {
-                        scatter_x.push('C' + i);
-                        scatter_y.push(s);
-                        scatter_colors.push(setColors[s]);
-                        y_vals.push(s_idx);
-                    } else {
-                        bg_x.push('C' + i);
-                        bg_y.push(s);
-                    }
-                });
+  // --- 4. Bibliothèques : tableau ---
+  var L = R.libraries;
+  function lib(sep, mode, type) { return L.filter(function (x) { return x.separation === sep && x.ionmode === mode && x.type === type; })[0]; }
+  function cell(x) { return { h: fmt(x.spectra) + '<br><span class="sub">' + fmt(x.inchikeys) + '</span>', n: 1 }; }
+  var libRows = ['LC', 'GC', 'DI'].map(function (sep) {
+    var parts = [lib(sep, 'POS', 'Experimental'), lib(sep, 'POS', 'In silico'), lib(sep, 'NEG', 'Experimental'), lib(sep, 'NEG', 'In silico')];
+    var tot = parts.reduce(function (s, x) { return s + x.spectra; }, 0);
+    var cells = [{ t: sep }].concat(parts.map(function (x) {
+      return { h: fmt(x.spectra) + '<br><span class="sub">' + fmt(x.inchikeys) + '</span>' };
+    })).concat([{ h: '<b>' + fmt(tot) + '</b><br><span class="sub">' + fmt(R.groups[sep]) + '</span>' }]);
+    var tr = row(cells, tot ? '' : 'zero');
+    for (var i = 1; i < tr.children.length; i++) tr.children[i].className = 'n';
+    return tr;
+  });
+  fillTable('library-table', [{ t: 'Separation' }, { t: 'POS experimental', n: 1 }, { t: 'POS in silico', n: 1 },
+    { t: 'NEG experimental', n: 1 }, { t: 'NEG in silico', n: 1 }, { t: 'Total', n: 1 }],
+    libRows.concat([(function () {
+      var tr = row([{ t: 'Total' }, { t: '' }, { t: '' }, { t: '' }, { t: '' },
+        { h: fmt(T.kept) + '<br><span class="sub">' + fmt(T.inchikeys) + '</span>' }], 'total');
+      tr.lastChild.className = 'n'; return tr;
+    })()]));
 
-                if (y_vals.length > 1) {
-                    var min_y = allSets[Math.min.apply(null, y_vals)];
-                    var max_y = allSets[Math.max.apply(null, y_vals)];
-                    shapes.push({
-                        type: 'line',
-                        x0: 'C' + i, y0: min_y,
-                        x1: 'C' + i, y1: max_y,
-                        line: { color: '#cbd5e1', width: 3 },
-                        layer: 'below'
-                    });
-                }
-            });
+  // --- 4. Bibliothèques : schéma en arbre (SVG, traits à angle droit) ---
+  (function () {
+    var root = { label: 'All kept spectra', spectra: T.kept, keys: T.inchikeys, children: [] };
+    ['LC', 'GC', 'DI'].forEach(function (sep) {
+      var s = { label: sep, keys: R.groups[sep], children: [] };
+      ['POS', 'NEG'].forEach(function (mode) {
+        var mnode = { label: sep + ' ' + mode, keys: R.groups[sep + '|' + mode], children: [] };
+        ['Experimental', 'In silico'].forEach(function (type) {
+          var x = lib(sep, mode, type);
+          mnode.children.push({ label: sep + ' ' + mode + ' ' + (type === 'Experimental' ? 'exp.' : 'in silico'), spectra: x.spectra, keys: x.inchikeys, children: [] });
+        });
+        mnode.spectra = mnode.children.reduce(function (a, c) { return a + c.spectra; }, 0);
+        s.children.push(mnode);
+      });
+      s.spectra = s.children.reduce(function (a, c) { return a + c.spectra; }, 0);
+      root.children.push(s);
+    });
+    var W = 222, H = 42, GAPX = 44, GAPY = 8, leafY = 0;
+    function place(n, depth) {
+      n.x = depth * (W + GAPX);
+      if (!n.children.length) { n.y = leafY; leafY += H + GAPY; }
+      else { n.children.forEach(function (c) { place(c, depth + 1); }); n.y = (n.children[0].y + n.children[n.children.length - 1].y) / 2; }
+    }
+    place(root, 0);
+    var svg = document.getElementById('library-tree'), NS = 'http://www.w3.org/2000/svg';
+    var width = 4 * W + 3 * GAPX + 2, height = leafY;
+    svg.setAttribute('width', width); svg.setAttribute('height', height); svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
+    function add(tag, attrs, text) {
+      var e = document.createElementNS(NS, tag);
+      for (var k in attrs) e.setAttribute(k, attrs[k]);
+      if (text !== undefined) e.textContent = text;
+      svg.appendChild(e); return e;
+    }
+    function draw(n) {
+      n.children.forEach(function (c) {
+        var x1 = n.x + W, y1 = n.y + H / 2, x2 = c.x, y2 = c.y + H / 2, xm = x1 + GAPX / 2;
+        add('path', { d: 'M' + x1 + ',' + y1 + ' H' + xm + ' V' + y2 + ' H' + x2, fill: 'none', stroke: '#8a949e', 'stroke-width': 1.2 });
+        draw(c);
+      });
+      var empty = !n.spectra;
+      add('rect', { x: n.x + 0.5, y: n.y + 0.5, width: W - 1, height: H - 1, rx: 3, fill: empty ? '#f7f8f9' : '#ffffff',
+                    stroke: empty ? '#d9dee3' : (n.children.length ? '#1d232a' : '#4e79a7'), 'stroke-width': n === root ? 1.6 : 1 });
+      add('text', { x: n.x + 10, y: n.y + 17, 'font-size': 12.5, 'font-weight': 600, fill: empty ? '#8a949e' : '#1d232a' }, n.label);
+      add('text', { x: n.x + 10, y: n.y + 33, 'font-size': 11.5, fill: empty ? '#8a949e' : '#5b6672' },
+          fmt(n.spectra) + ' spectra · ' + fmt(n.keys) + ' InChIKeys');
+    }
+    draw(root);
+  })();
 
-            var trace2 = {
-                x: scatter_x,
-                y: scatter_y,
-                mode: 'markers',
-                type: 'scatter',
-                marker: { size: 14, color: scatter_colors },
-                hoverinfo: 'skip',
-                xaxis: 'x',
-                yaxis: 'y2'
-            };
+  // --- Graphiques (Plotly) ---
+  var CONFIG = { displayModeBar: false, responsive: true };
+  function hbar(id, labels, values, colors, opts) {
+    opts = opts || {};
+    var total = opts.total || 0;
+    var text = values.map(function (v) { return fmt(v) + (total ? '  (' + pct(v, total) + ')' : ''); });
+    Plotly.newPlot(id, [{ type: 'bar', orientation: 'h', y: labels, x: values, text: text, textposition: 'outside', cliponaxis: false,
+      marker: { color: colors }, hovertemplate: '%{y}: %{x:,}<extra></extra>' }],
+      { height: Math.max(160, 26 * labels.length + 60), margin: { l: opts.left || 220, r: 110, t: 10, b: 40 }, font: FONT,
+        xaxis: { title: { text: opts.xtitle || 'Spectra' }, gridcolor: '#eceff2', zeroline: false, tickformat: ',d', range: opts.range },
+        yaxis: { autorange: 'reversed', automargin: true }, bargap: 0.25, paper_bgcolor: '#ffffff', plot_bgcolor: '#ffffff' }, CONFIG);
+  }
 
-            var trace_bg = {
-                x: bg_x,
-                y: bg_y,
-                mode: 'markers',
-                type: 'scatter',
-                marker: { size: 14, color: '#e2e8f0' },
-                hoverinfo: 'skip',
-                xaxis: 'x',
-                yaxis: 'y2'
-            };
+  function charts() {
+    // Figure 1 : motifs de suppression
+    var nz = dels.filter(function (d) { return d.count > 0; });
+    if (nz.length) hbar('deletion-chart', nz.map(function (d) { return d.reason; }), nz.map(function (d) { return d.count; }),
+                        '#e15759', { total: T.input });
+    else document.getElementById('deletion-chart').textContent = 'No spectrum removed.';
 
-            var layout = {
-                height: 600,
-                shapes: shapes,
-                xaxis: { showticklabels: false, fixedrange: true, gridcolor: 'transparent', zeroline: false },
-                yaxis: { title: 'Intersection Size', domain: [0.35, 1], fixedrange: true, color: '#334155', gridcolor: 'rgba(0,0,0,0.05)' },
-                yaxis2: { domain: [0, 0.30], fixedrange: true, showgrid: true, gridcolor: 'rgba(0,0,0,0.05)', color: '#334155' },
-                showlegend: false,
-                margin: { t: 40, b: 20, l: 150, r: 20 },
-                plot_bgcolor: 'transparent',
-                paper_bgcolor: 'transparent',
-                font: { color: '#334155', family: 'Inter' }
-            };
+    // Figure 3 et 4 : bases d'origine
+    var dbs = Object.keys(R.databases).sort(function (a, b) { return R.databases[b] - R.databases[a]; });
+    var dbColor = {}; dbs.forEach(function (d, i) { dbColor[d] = isUnknown(d) ? UNKNOWN : PALETTE[i % PALETTE.length]; });
+    if (dbs.length) hbar('database-chart', dbs, dbs.map(function (d) { return R.databases[d]; }), dbs.map(function (d) { return dbColor[d]; }), { total: T.kept, left: 140 });
+    var up = R.upset.slice(0, 20);
+    if (dbs.length > 1 && up.length) {
+      var cols = up.map(function (_, i) { return 'I' + i; });
+      var sets = dbs.slice().reverse();
+      var on = { x: [], y: [], c: [] }, off = { x: [], y: [] }, lines = [];
+      up.forEach(function (u, i) {
+        var idx = [];
+        sets.forEach(function (s, j) {
+          if (u.sets.indexOf(s) >= 0) { on.x.push(cols[i]); on.y.push(s); on.c.push('#1d232a'); idx.push(j); }
+          else { off.x.push(cols[i]); off.y.push(s); }
+        });
+        if (idx.length > 1) lines.push({ type: 'line', xref: 'x', yref: 'y2', x0: cols[i], x1: cols[i], y0: sets[Math.min.apply(null, idx)],
+                                         y1: sets[Math.max.apply(null, idx)], line: { color: '#1d232a', width: 2 }, layer: 'below' });
+      });
+      Plotly.newPlot('upset-chart', [
+        { type: 'bar', x: cols, y: up.map(function (u) { return u.count; }), marker: { color: '#4e79a7' }, text: up.map(function (u) { return fmt(u.count); }),
+          textposition: 'outside', cliponaxis: false, hovertext: up.map(function (u) { return u.sets.join(' ∩ ') + ': ' + fmt(u.count); }), hoverinfo: 'text' },
+        { type: 'scatter', mode: 'markers', x: off.x, y: off.y, yaxis: 'y2', marker: { size: 11, color: '#e3e7eb' }, hoverinfo: 'skip' },
+        { type: 'scatter', mode: 'markers', x: on.x, y: on.y, yaxis: 'y2', marker: { size: 11, color: on.c }, hoverinfo: 'skip' }
+      ], { height: 260 + 24 * sets.length, showlegend: false, shapes: lines, font: FONT, margin: { l: 140, r: 20, t: 20, b: 10 },
+           xaxis: { showticklabels: false, fixedrange: true },
+           yaxis: { domain: [0.42, 1], title: { text: 'Distinct spectra' }, tickformat: ',d', gridcolor: '#eceff2', fixedrange: true },
+           yaxis2: { domain: [0, 0.36], fixedrange: true, categoryorder: 'array', categoryarray: sets },
+           paper_bgcolor: '#ffffff', plot_bgcolor: '#ffffff' }, CONFIG);
+    } else document.getElementById('upset-figure').style.display = 'none';
 
-            Plotly.newPlot('upset-chart', [trace1, trace_bg, trace2], layout, {displayModeBar: false, responsive: true});
-        }
+    // Figures 5 et 6 : ontologies, couleur du premier niveau éclaircie aux niveaux suivants
+    function tint(hex, f) {
+      var c = parseInt(hex.slice(1), 16), r = c >> 16, g = (c >> 8) & 255, b = c & 255;
+      return 'rgb(' + Math.round(r + (255 - r) * f) + ',' + Math.round(g + (255 - g) * f) + ',' + Math.round(b + (255 - b) * f) + ')';
+    }
+    function sunburst(id, h) {
+      if (!h.ids.length) return;
+      var depth = {}, top = {}, idx = {};
+      h.ids.forEach(function (id, i) { idx[id] = i; depth[id] = id.split('|').length - 1; });
+      var firsts = h.ids.filter(function (id) { return depth[id] === 1; })
+        .sort(function (a, b) { return h.values[idx[b]] - h.values[idx[a]]; });
+      var k = 0; firsts.forEach(function (id) { top[id] = isUnknown(h.labels[idx[id]]) ? UNKNOWN : PALETTE[k++ % PALETTE.length]; });
+      var colors = h.ids.map(function (id, i) {
+        if (depth[id] === 0) return '#ffffff';
+        if (isUnknown(h.labels[i])) return UNKNOWN;
+        var first = id.split('|').slice(0, 2).join('|');
+        return depth[id] === 1 ? top[first] : tint(top[first] === UNKNOWN ? '#bab0ac' : top[first], depth[id] === 2 ? 0.35 : 0.6);
+      });
+      Plotly.newPlot(id, [{ type: 'sunburst', ids: h.ids, labels: h.labels, parents: h.parents, values: h.values, branchvalues: 'total',
+        maxdepth: 3, sort: false, insidetextorientation: 'radial', marker: { colors: colors, line: { color: '#ffffff', width: 0.8 } },
+        hovertemplate: '%{label}<br>%{value:,} spectra<br>%{percentParent:.1%} of parent<extra></extra>' }],
+        { height: 520, margin: { l: 0, r: 0, t: 0, b: 0 }, font: FONT, paper_bgcolor: '#ffffff' }, CONFIG);
+    }
+    sunburst('classyfire-chart', R.classyfire);
+    sunburst('npclassifier-chart', R.npclassifier);
 
-        var cf_labels = {CF_LABELS};
-        var cf_parents = {CF_PARENTS};
-        var cf_values = {CF_VALUES};
-        var cf_ids = {CF_IDS};
+    // Figures 7 et 8 : instruments
+    var I = R.instruments, byBrand = {}, byModel = {};
+    I.ids.forEach(function (id, i) {
+      var p = id.split('|');
+      if (p.length === 2) byBrand[p[1]] = I.values[i];
+      if (p.length === 3 && !isUnknown(p[2])) byModel[(isUnknown(p[1]) ? '' : p[1] + ' ') + p[2]] = I.values[i];
+    });
+    var brands = Object.keys(byBrand).sort(function (a, b) { return byBrand[b] - byBrand[a]; }).slice(0, 15);
+    if (brands.length) hbar('manufacturer-chart', brands.map(function (b) { return isUnknown(b) ? 'Not found' : b; }),
+      brands.map(function (b) { return byBrand[b]; }), brands.map(function (b) { return isUnknown(b) ? UNKNOWN : '#4e79a7'; }), { total: T.kept, left: 120 });
+    var models = Object.keys(byModel).sort(function (a, b) { return byModel[b] - byModel[a]; }).slice(0, 20);
+    if (models.length) hbar('model-chart', models, models.map(function (x) { return byModel[x]; }), '#76b7b2', { total: T.kept, left: 200 });
 
-        var np_labels = {NP_LABELS};
-        var np_parents = {NP_PARENTS};
-        var np_values = {NP_VALUES};
-        var np_ids = {NP_IDS};
+    // Figure 9 : remplissage des colonnes
+    var C = R.columns.slice().sort(function (a, b) { return b.count - a.count; });
+    if (T.kept) hbar('columns-chart', C.map(function (c) { return c.column; }), C.map(function (c) { return 100 * c.count / T.kept; }),
+      C.map(function (c) { return c.count / T.kept >= 0.95 ? '#4e79a7' : (c.count / T.kept >= 0.5 ? '#76b7b2' : '#e3a75a'); }),
+      { left: 200, xtitle: 'Kept spectra with a value (%)', range: [0, 115] });
+    if (T.kept) Plotly.restyle('columns-chart', { text: [C.map(function (c) { return (100 * c.count / T.kept).toFixed(1) + ' %'; })],
+                                                   hovertemplate: '%{y}: %{x:.1f} %<extra></extra>' });
+  }
 
-        var db_labels = {DB_LABELS};
-        var db_parents = {DB_PARENTS};
-        var db_values = {DB_VALUES};
-        var db_ids = {DB_IDS};
+  // Tableau 3 : spectres classés par niveau (hors « Unknown »)
+  (function () {
+    function classified(h, level) {
+      var n = 0;
+      h.ids.forEach(function (id, i) { var p = id.split('|'); if (p.length === level + 1 && !isUnknown(p[level])) n += h.values[i]; });
+      return n;
+    }
+    var rows = [];
+    [['ClassyFire', R.classyfire, ['Superclass', 'Class', 'Subclass']], ['NPClassifier', R.npclassifier, ['Pathway', 'Superclass', 'Class']]]
+      .forEach(function (o) { o[2].forEach(function (lv, i) { var n = classified(o[1], i + 1);
+        rows.push(row([{ t: i === 0 ? o[0] : '' }, { t: lv }, { t: fmt(n), n: 1 }, { t: pct(n, T.kept), n: 1 }])); }); });
+    fillTable('classes-table', [{ t: 'Ontology' }, { t: 'Level' }, { t: 'Classified spectra', n: 1 }, { t: 'Share of kept spectra', n: 1 }], rows);
+  })();
 
-        var layout = {
-            margin: {l: 0, r: 0, b: 0, t: 0},
-            sunburstcolorway: ["#0ea5e9", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#06b6d4", "#f97316"],
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            font: { color: '#334155', family: 'Inter' }
-        };
+  document.getElementById('footer').innerHTML = 'Generated by FragHub ' + m.fraghub_version + ' on ' + m.date +
+    '. Chemical classes: ClassyFire (Djoumbou Feunang et al., J. Cheminform. 2016) and NPClassifier (Kim et al., J. Nat. Prod. 2021). ' +
+    'Interactive charts use Plotly.js, loaded from the internet.';
 
-        var cf_display_labels = cf_labels ? cf_labels.map(function(l) { return l.toUpperCase() === "NOT FOUND" ? '<b><span style="color:#ef4444;">NOT FOUND</span></b>' : l; }) : [];
-        var cf_marker_colors = cf_labels ? cf_labels.map(function(l) { return l.toUpperCase() === "NOT FOUND" ? '#334155' : null; }) : [];
-
-        if (cf_labels && cf_labels.length > 0) {
-            var data_cf = [{
-                type: "sunburst",
-                ids: cf_ids,
-                labels: cf_display_labels,
-                parents: cf_parents,
-                values: cf_values,
-                branchvalues: "total",
-                marker: { colors: cf_marker_colors },
-                textinfo: "label+percent parent",
-                insidetextorientation: "radial",
-                hoverinfo: "label+value+percent parent"
-            }];
-            Plotly.newPlot('classyfire-chart', data_cf, layout, {displayModeBar: false, responsive: true});
-        }
-
-        var np_display_labels = np_labels ? np_labels.map(function(l) { return l.toUpperCase() === "NOT FOUND" ? '<b><span style="color:#ef4444;">NOT FOUND</span></b>' : l; }) : [];
-        var np_marker_colors = np_labels ? np_labels.map(function(l) { return l.toUpperCase() === "NOT FOUND" ? '#334155' : null; }) : [];
-
-        if (np_labels && np_labels.length > 0) {
-            var data_np = [{
-                type: "sunburst",
-                ids: np_ids,
-                labels: np_display_labels,
-                parents: np_parents,
-                values: np_values,
-                branchvalues: "total",
-                marker: { colors: np_marker_colors },
-                textinfo: "label+percent parent",
-                insidetextorientation: "radial",
-                hoverinfo: "label+value+percent parent"
-            }];
-            Plotly.newPlot('npclassifier-chart', data_np, layout, {displayModeBar: false, responsive: true});
-        }
-
-        var db_display_labels = db_labels ? db_labels.map(function(l) { return l.toUpperCase() === "NOT FOUND" ? '<b><span style="color:#ef4444;">NOT FOUND</span></b>' : l; }) : [];
-        var db_marker_colors = db_labels ? db_labels.map(function(l) { return l.toUpperCase() === "NOT FOUND" ? '#334155' : null; }) : [];
-
-        if (db_labels && db_labels.length > 0) {
-            var data_db = [{
-                type: "sunburst",
-                ids: db_ids,
-                labels: db_display_labels,
-                parents: db_parents,
-                values: db_values,
-                branchvalues: "total",
-                marker: { colors: db_marker_colors },
-                textinfo: "label+percent parent",
-                insidetextorientation: "radial",
-                hoverinfo: "label+value+percent parent"
-            }];
-            Plotly.newPlot('database-chart', data_db, layout, {displayModeBar: false, responsive: true});
-        }
-
-        var columnsData = {COLUMNS_DATA};
-        if (columnsData && columnsData.length > 0) {
-            columnsData.sort(function(a, b) { return b.count - a.count; });
-            var colNames = columnsData.map(function(d) { return d.column; });
-            var colCounts = columnsData.map(function(d) { return d.count; });
-            var colPcts = columnsData.map(function(d) { return d.count === 0 ? '<span style="color:#cbd5e1">' + d.percentage.toFixed(1) + '%</span>' : d.percentage.toFixed(1) + '%'; });
-
-            var traceCol = {
-                x: colNames,
-                y: colCounts,
-                type: 'bar',
-                text: colPcts,
-                textposition: 'auto',
-                marker: {
-                    color: colCounts,
-                    colorscale: 'Blues',
-                    reversescale: true
-                }
-            };
-
-            var layoutCol = {
-                margin: {b: 150},
-                xaxis: { tickangle: -45, automargin: true },
-                yaxis: { title: 'Non-null Count' },
-                paper_bgcolor: 'rgba(0,0,0,0)',
-                plot_bgcolor: 'rgba(0,0,0,0)',
-                font: { color: '#334155', family: 'Inter' }
-            };
-
-            Plotly.newPlot('columns-chart', [traceCol], layoutCol, {displayModeBar: false, responsive: true});
-        }
-    </script>
+  if (window.Plotly) { try { charts(); } catch (e) { console.error(e); } }
+  else document.body.classList.add('no-charts');
+})();
+</script>
 </body>
 </html>

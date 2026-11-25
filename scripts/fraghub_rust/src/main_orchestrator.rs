@@ -447,7 +447,7 @@ fn run_orchestrator(
         let secs_r = elapsed_for_report % 60;
         let total_time_str = format!("{:02}:{:02}:{:02}", hours_r, mins_r, secs_r);
 
-        generate_report_processing(py, output_directory, current_datetime, total_time_str, &params_f64, &input_paths, &deletion_report, &libs)?;
+        generate_report_processing(py, output_directory, current_datetime, total_time_str, &params_f64, &input_paths, &input_db_names, &deletion_report, &libs)?;
 
         if let Some(cb) = &completion_callback {
             let elapsed = start_time.elapsed().unwrap().as_secs();

@@ -94,7 +94,14 @@ pub fn load_internal_databases(_py: Python, base_dir: &str) -> PyResult<()> {
     };
 
     // Update global state
+    // Version et DOI de la base (référence datas/internal_database.json), pour le rapport HTML ; vides si absents
+    let reference: serde_json::Value = fs::read_to_string(base_path.join("datas").join("internal_database.json"))
+        .ok().and_then(|t| serde_json::from_str(&t).ok()).unwrap_or(serde_json::Value::Null);
+    let text_of = |key: &str| reference.get(key).and_then(|v| v.as_str()).unwrap_or("").to_string();
+
     if let Ok(mut state) = STATE.write() {
+        state.internal_db_version = text_of("version");
+        state.internal_db_doi = text_of("doi");
         state.compound_db = compound_db;
         state.adduct_dict_pos = adduct_dict_pos;
         state.adduct_massdiff_dict_pos = adduct_massdiff_dict_pos;
