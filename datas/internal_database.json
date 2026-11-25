@@ -1,97 +1,171 @@
 {
-  "version": "2026-11-13",
-  "doi": "10.5281/zenodo.24203577",
-  "url": "https://zenodo.org/records/24203577/files/internal_database_2026-11-13.zip?download=1",
-  "size": 1084590556,
-  "sha256": "8c43118a195f930b33ce9c24930304d95e500955684d8e09192b2bf8e8d2fdf0",
+  "version": "2026-11-25",
+  "doi": "10.5281/zenodo.24535407",
+  "url": "https://zenodo.org/records/24535407/files/internal_database_2026-11-25.zip?download=1",
+  "size": 1077642327,
+  "sha256": "1a407e4094e4db069cf426f8ff42aa1e76aa96941c28df9b52b08ed404aa3300",
   "files": [
     {
       "name": "part_0000.parquet",
-      "size": 71761810,
-      "sha256": "1d9a98e545e8d64e30cedfe4682b9c0ee501c49d4ca865cf8e03e6ae39e8a38d"
+      "size": 71761498,
+      "sha256": "82b606c0a4bed6a848ff2d72db6698cb2d8d9a22f4d2bb842acf62887d1a3d6b"
     },
     {
       "name": "part_0001.parquet",
-      "size": 71374275,
-      "sha256": "7da6bde8263ffd0128a9f104274aca82d3e4ba8474876bf4e8e674a0b9c75837"
+      "size": 71374059,
+      "sha256": "175ed3f15fc188d0bd3680b46d5c2afaea7a2981bd0b0b1c568fd983dfc35e9d"
     },
     {
       "name": "part_0002.parquet",
-      "size": 71398052,
-      "sha256": "6dd5d93119db893d032d11307fccf71779f6896135466789d9c51a8697065cff"
+      "size": 71398897,
+      "sha256": "db85f8f9ab0328766c37019c286f4c5a63d897a1824659d20dcc736fc0817ae4"
     },
     {
       "name": "part_0003.parquet",
-      "size": 71583259,
-      "sha256": "4aadae96edea3179535fcb0a09a15da5d523922a30d2967d51ee275159996238"
+      "size": 71583994,
+      "sha256": "8310fe0ed6b5b2d05f63bf76f2112d588320505270a9755b36e95523bf0185d2"
     },
     {
       "name": "part_0004.parquet",
-      "size": 71501977,
-      "sha256": "568ddbdae8918db606b9bc3286b0cd09d7760e15168e95ca8200767577c104e9"
+      "size": 71511691,
+      "sha256": "8eb0975561a05ee20a0949471b9c30e9ca4ed76fe25b24d64c3c43e87a645362"
     },
     {
       "name": "part_0005.parquet",
-      "size": 71753197,
-      "sha256": "a68c4138ac8d3295300ae77058794fe92d7b5a07e4feb25bad2bfb4f727cb76f"
+      "size": 71753700,
+      "sha256": "0a457708391172624610e61e9a066c94ba7aca90711269ef08b6b2f616f6b576"
     },
     {
       "name": "part_0006.parquet",
-      "size": 71328330,
-      "sha256": "98caa6c6f19581657b6fc839c9c8e112db642815f509a4dba327b50b15082ac6"
+      "size": 71338833,
+      "sha256": "0c85d90ecd236b119f75ef8ea0c3362bf4b2f3c23e4bc39c172103d4fb2b2784"
     },
     {
       "name": "part_0007.parquet",
-      "size": 71820249,
-      "sha256": "06b7bd8b250f34d7cd22005c82f117b80f89b7c1be34ed671f1757d1b4da927f"
+      "size": 71820000,
+      "sha256": "81fb0929a7a12a5f7bd8d7b70085016649aee5b28211176e8e2eb105a005e23d"
     },
     {
       "name": "part_0008.parquet",
-      "size": 71680015,
-      "sha256": "3218be0167cf8e37949e0b3fc51e6749252b29cda638699bc83035e256835897"
+      "size": 71681610,
+      "sha256": "d8c322af10ee204299daf2e10fa2e1942da480122340f0efcb07a3553020af69"
     },
     {
       "name": "part_0009.parquet",
-      "size": 71397412,
-      "sha256": "088d6096ad2bbea46d6777fc179c6813863cc75623f737054ea43fe00976f5ed"
+      "size": 64454629,
+      "sha256": "96694e172e218803948797a5357091c6508e1b5b40c46719e6be1a7caafecf6f"
     },
     {
       "name": "part_0010.parquet",
-      "size": 71589592,
-      "sha256": "b793283e0da21abc2d4a52d7adfa2a163bf15d041b6a7a119c93bfb16c16860b"
+      "size": 71589814,
+      "sha256": "972c6b8977135f832a4a1173471f0b07f6be48a9985cbc309bcedc5a30019f20"
     },
     {
       "name": "part_0011.parquet",
-      "size": 71480186,
-      "sha256": "6761a0cf1bdf7d9a094975bc18aa8d0c920895013668a80cc89a637056030cc0"
+      "size": 71480973,
+      "sha256": "39a1973397602456f093bd7940e665b878cd440bb1a3a23da9d6973bece71ad5"
     },
     {
       "name": "part_0012.parquet",
-      "size": 71408821,
-      "sha256": "a2a312521fd3c05cc6be1efb36a396d3da8b163d59a3f90a13f71906ed200913"
+      "size": 71409822,
+      "sha256": "7f6c7a3da701ef077d30947256c900c5f9b97e9e7eca77f6e89a98121ec0bfaf"
     },
     {
       "name": "part_0013.parquet",
-      "size": 71784370,
-      "sha256": "a929068d0fe8dbdb0bf8ed7bd2a438e6d2a67ca262dcb433c43765358c6f70fc"
+      "size": 71784248,
+      "sha256": "77021302c3bb15fb25907b22af48c1ae79254f6101ba3c0fe044ea6be7231eb2"
     },
     {
       "name": "part_0014.parquet",
-      "size": 37575529,
-      "sha256": "b9bb9233cb36a18de955c2c7728cecbce3595ab69fb2f22e39656d37db0ac9bb"
+      "size": 37557515,
+      "sha256": "59be0b71f5d6297596e333b5094b1c772572116fa1141760a3b2c56d5cbab941"
     },
     {
       "name": "part_0015.parquet",
-      "size": 5905552,
-      "sha256": "2fac39c82b101ddaacf53997f4d5da5b6180372bc43d74056bf6c7c942a595af"
+      "size": 5905736,
+      "sha256": "694533235a4955c74b71067b820c2e886a59544cbe888655147dba8b970f0231"
     },
     {
       "name": "part_0016.parquet",
-      "size": 39245698,
-      "sha256": "6e0aa4f7e450241e2023381f0d02a3cb55cf488241af352ce4762f643388031c"
+      "size": 39233076,
+      "sha256": "c785718195f6fdb5da92ff3870e7244311b28de7c0f86dd3af8023a91b9a94ea"
     }
   ],
   "previous_versions": [
+    {
+      "version": "2026-11-13",
+      "doi": "10.5281/zenodo.24203577",
+      "files": [
+        {
+          "name": "part_0000.parquet",
+          "size": 71761810
+        },
+        {
+          "name": "part_0001.parquet",
+          "size": 71374275
+        },
+        {
+          "name": "part_0002.parquet",
+          "size": 71398052
+        },
+        {
+          "name": "part_0003.parquet",
+          "size": 71583259
+        },
+        {
+          "name": "part_0004.parquet",
+          "size": 71501977
+        },
+        {
+          "name": "part_0005.parquet",
+          "size": 71753197
+        },
+        {
+          "name": "part_0006.parquet",
+          "size": 71328330
+        },
+        {
+          "name": "part_0007.parquet",
+          "size": 71820249
+        },
+        {
+          "name": "part_0008.parquet",
+          "size": 71680015
+        },
+        {
+          "name": "part_0009.parquet",
+          "size": 71397412
+        },
+        {
+          "name": "part_0010.parquet",
+          "size": 71589592
+        },
+        {
+          "name": "part_0011.parquet",
+          "size": 71480186
+        },
+        {
+          "name": "part_0012.parquet",
+          "size": 71408821
+        },
+        {
+          "name": "part_0013.parquet",
+          "size": 71784370
+        },
+        {
+          "name": "part_0014.parquet",
+          "size": 37575529
+        },
+        {
+          "name": "part_0015.parquet",
+          "size": 5905552
+        },
+        {
+          "name": "part_0016.parquet",
+          "size": 39245698
+        }
+      ]
+    },
     {
       "version": "2026-11-12",
       "doi": "10.5281/zenodo.24171531",

@@ -30,7 +30,7 @@ Key features:<br>
   - **InChI and InChIKey** are the standard IUPAC identifiers of this desalted, neutralized molecule, so they can be compared with PubChem and other databases.
   - **Output SMILES are normalized with RDKit**: they are written in the RDKit canonical tautomer form (stereochemistry kept), so that the same molecule is always written the same way. When the canonical tautomer would describe a different molecule (different InChI, e.g. keto/enol), the SMILES of the molecule as given is written instead. Output SMILES may therefore differ from the SMILES of the input files.
 - **Ontologies**: FragHub completes the name and the chemical classes (ClassyFire and NPClassifier) of each molecule from its internal database, by InChIKey.
-  - The internal molecule database used for this (names, ClassyFire and NPClassifier classes of 7.9 million molecules) is archived on Zenodo: [10.5281/zenodo.24203577](https://doi.org/10.5281/zenodo.24203577). It is bundled in the installers. It is not in the git repository: when FragHub runs from source, it downloads the database (1.1 GB) from Zenodo the first time it starts, or when `python build_backend.py` is run, and downloads it again when a new version of FragHub uses a newer database. See [Internal database](#internal-database) for its content.
+  - The internal molecule database used for this (names, ClassyFire and NPClassifier classes of 7.9 million molecules) is archived on Zenodo: [10.5281/zenodo.24535407](https://doi.org/10.5281/zenodo.24535407). It is bundled in the installers. It is not in the git repository: when FragHub runs from source, it downloads the database (1.1 GB) from Zenodo the first time it starts, or when `python build_backend.py` is run, and downloads it again when a new version of FragHub uses a newer database. See [Internal database](#internal-database) for its content.
 - **Spectra organization**: FragHub separates spectra based on different experimental parameters such as polarity (positive/negative), chromatographic mode (LC/GC, or DI for direct injection without chromatography), and acquisition type (experimental/in silico), facilitating their use and subsequent analysis.![img_8.png](img_8.png)
 - **Compatibility with various analysis software**: Standardized spectra produced by FragHub are compatible with multiple analysis software, including MSdial, MZmine, and Flash Entropy Search, providing users with maximum flexibility in choosing analysis tools.
 
@@ -41,18 +41,18 @@ Key features:<br>
 
 FragHub completes every spectrum from an internal database of molecules, indexed by InChIKey: reference name, structure (InChI, SMILES), formula, exact and average masses, and chemical classes from two ontologies, [ClassyFire](https://doi.org/10.1186/s13321-016-0174-y) and [NPClassifier](https://doi.org/10.1021/acs.jnatprod.1c00399).
 
-[![Zenodo](https://img.shields.io/badge/Zenodo-10.5281%2Fzenodo.24203577-1f73b7?style=for-the-badge)](https://doi.org/10.5281/zenodo.24203577)
+[![Zenodo](https://img.shields.io/badge/Zenodo-10.5281%2Fzenodo.24535407-1f73b7?style=for-the-badge)](https://doi.org/10.5281/zenodo.24535407)
 
-- **Version 2026-11-13**, archived on Zenodo: [10.5281/zenodo.24203577](https://doi.org/10.5281/zenodo.24203577) (17 Parquet files, 1.1 GB).
+- **Version 2026-11-25**, archived on Zenodo: [10.5281/zenodo.24535407](https://doi.org/10.5281/zenodo.24535407) (17 Parquet files, 1.1 GB).
 - Bundled in the installers; downloaded automatically from Zenodo when FragHub runs from source (`datas/internal_database.json` gives the version to use), and replaced at the first start when a new version of FragHub uses a newer database.
 
 | | Molecules | Share |
 |---|---:|---:|
-| Molecules (InChIKey) | 7 948 489 | 100 % |
-| With a structure (InChI, SMILES) | 7 472 387 | 94.0 % |
-| With a name | 7 749 702 | 97.5 % |
-| ClassyFire superclass / class / subclass | 948 654 / 943 680 / 821 642 | 11.9 % / 11.9 % / 10.3 % |
-| NPClassifier pathway / superclass / class | 6 523 593 / 3 732 948 / 3 213 028 | 82.1 % / 47.0 % / 40.4 % |
+| Molecules (InChIKey) | 7 948 412 | 100 % |
+| With a structure (InChI, SMILES) | 7 472 352 | 94.0 % |
+| With a name | 7 749 667 | 97.5 % |
+| ClassyFire superclass / class / subclass | 948 641 / 943 667 / 821 636 | 11.9 % / 11.9 % / 10.3 % |
+| NPClassifier pathway / superclass / class | 6 523 527 / 3 732 900 / 3 212 988 | 82.1 % / 47.0 % / 40.4 % |
 
 ClassyFire: 25 superclasses, 480 classes, 791 subclasses. NPClassifier: 54 pathways, 1 136 superclasses, 4 536 classes (multiple classifications such as « Alkaloids | Terpenoids » counted as written in the database).
 

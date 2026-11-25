@@ -192,7 +192,6 @@ pub fn native_exact_mass(inchi: &str, smiles: &str) -> Option<f64> {
     exact_mass(inchi, smiles)
 }
 
-/// Le résultat dépend-il de l'adduit et du m/z ? Seulement pour une molécule à plusieurs fragments
 /// Version de RDKit utilisée (ex. "2026.09.1").
 pub fn rdkit_version() -> String {
     ffi::rdkit_version()
@@ -265,9 +264,29 @@ impl<'a> DbCache<'a> {
     }
 }
 
-/// (« . ») avec un m/z lisible : c'est la seule branche de process_single qui les utilise.
+/// Le résultat dépend-il de l'adduit et du m/z ? Seulement pour une molécule à plusieurs composants avec un m/z
+/// lisible : c'est la seule branche de process_single qui les utilise (dessalage).
 fn depends_on_precursor(clean_mol: &str, precursormz_str: &str) -> bool {
-    clean_mol.contains('.') && py_float(precursormz_str).is_some()
+    has_several_components(clean_mol) && py_float(precursormz_str).is_some()
+}
+
+/// Molécule à plusieurs composants : SMILES ou InChI avec un « . », ou InChI dont la couche formule commence par
+/// un multiplicateur. L'InChI écrit les composants de même formule sous une seule formule précédée de leur nombre
+/// (`InChI=1S/2C42H80NO10P/c…;…` pour deux isomères) : il n'y a alors aucun point. Avant, ces mélanges étaient
+/// calculés une seule fois, avec le m/z du premier spectre rencontré (ordre variable d'un lancement à l'autre).
+fn has_several_components(clean_mol: &str) -> bool {
+    if clean_mol.contains('.') {
+        return true;
+    }
+    // Même règle que le C++ (process_single) pour reconnaître un InChI : « InChI= » n'importe où
+    match clean_mol.find("InChI=") {
+        Some(start) => clean_mol[start..]
+            .split('/')
+            .nth(1)
+            .and_then(|formula| formula.chars().next())
+            .map_or(false, |c| c.is_ascii_digit()),
+        None => false,
+    }
 }
 
 /// Calcule toutes les molécules et renvoie le dictionnaire (voir en tête de fichier).
@@ -482,6 +501,33 @@ mod tests {
         assert!(!depends_on_precursor("CCO.Cl", ""));
         assert!(depends_on_precursor("CCO.Cl", "100.0000"));
         assert!(depends_on_precursor("CCO.Cl", "NaN")); // float("NaN") réussit en Python
+        // InChI : composants séparés par un point dans la formule, ou de même formule (multiplicateur)
+        assert!(depends_on_precursor("InChI=1S/C20H24N2O2.H2O4S/c1/h1", "100.0"));
+        assert!(depends_on_precursor("InChI=1S/2C42H80NO10P/c1-2;1-3/h1;1", "788.54"));
+        assert!(!depends_on_precursor("InChI=1S/2C42H80NO10P/c1-2;1-3/h1;1", ""));
+        assert!(!depends_on_precursor("InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3", "47.0491"));
+        assert!(!depends_on_precursor("InChI=1S/H2O/h1H2", "19.0"));
+        assert!(!depends_on_precursor("InChI=1S/C12H22O11/c13-1-4-6(16)8(18)9(19)11(21)22-4", "343.1"));
+    }
+
+    #[test]
+    fn melange_inchi_de_meme_formule_calcule_avec_son_mz() {
+        // Éthanol + diméthyléther : même formule, l'InChI du mélange s'écrit « 2C2H6O » sans point
+        let inchi = process_single("CCO.COC", "", "").into_iter().find(|(k, _)| *k == "INCHI").unwrap().1;
+        assert!(inchi.starts_with("InChI=1S/2C2H6O/") && !inchi.contains('.'), "{inchi}");
+        // Avec un m/z, RDKit dessale : le résultat dépend du m/z, il ne doit pas être partagé entre spectres
+        let formula = |mz: &str| process_single(&inchi, "[M+H]+", mz).into_iter().find(|(k, _)| *k == "FORMULA").unwrap().1;
+        assert_eq!(formula("47.0491"), "C2H6O");
+        assert_eq!(formula(""), "C4H12O2");
+        assert!(depends_on_precursor(&inchi, "47.0491"));
+        // Deux spectres de ce mélange, l'un avec m/z, l'autre sans : deux calculs, chacun son résultat
+        let mols = vec![
+            (inchi.clone(), "[M+H]+".to_string(), "".to_string()),
+            (inchi.clone(), "[M+H]+".to_string(), "47.0491".to_string()),
+        ];
+        let cache = compute_cache(mols, |_| None, |_| Ok::<(), ()>(()), || std::thread::sleep(Duration::from_millis(5))).unwrap();
+        assert_eq!(cache[&format!("{inchi}|[M+H]+|")]["FORMULA"], "C4H12O2");
+        assert_eq!(cache[&format!("{inchi}|[M+H]+|47.0491")]["FORMULA"], "C2H6O");
     }
 
     #[test]

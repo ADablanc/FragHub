@@ -1,14 +1,14 @@
 {
- "version": "2026-11-13",
- "doi": "10.5281/zenodo.24203577",
+ "version": "2026-11-25",
+ "doi": "10.5281/zenodo.24535407",
  "summary": {
-  "molecules": 7948489,
+  "molecules": 7948412,
   "fields": {
-   "INCHI": 7472387,
-   "SMILES": 7472387,
-   "FORMULA": 7472386,
-   "NAME": 7749702,
-   "EXACTMASS": 7472388
+   "INCHI": 7472352,
+   "SMILES": 7472352,
+   "FORMULA": 7472351,
+   "NAME": 7749667,
+   "EXACTMASS": 7472353
   },
   "ontologies": {
    "classyfire": {
@@ -17,19 +17,19 @@
      {
       "level": "Superclass",
       "column": "CLASSYFIRE_SUPERCLASS",
-      "classified": 948654,
+      "classified": 948641,
       "classes": 25
      },
      {
       "level": "Class",
       "column": "CLASSYFIRE_CLASS",
-      "classified": 943680,
+      "classified": 943667,
       "classes": 480
      },
      {
       "level": "Subclass",
       "column": "CLASSYFIRE_SUBCLASS",
-      "classified": 821642,
+      "classified": 821636,
       "classes": 791
      }
     ]
@@ -40,19 +40,19 @@
      {
       "level": "Pathway",
       "column": "NPCLASS_PATHWAY",
-      "classified": 6523593,
+      "classified": 6523527,
       "classes": 54
      },
      {
       "level": "Superclass",
       "column": "NPCLASS_SUPERCLASS",
-      "classified": 3732948,
+      "classified": 3732900,
       "classes": 1136
      },
      {
       "level": "Class",
       "column": "NPCLASS_CLASS",
-      "classified": 3213028,
+      "classified": 3212988,
       "classes": 4536
      }
     ]

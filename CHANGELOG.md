@@ -18,9 +18,9 @@ All notable changes to this project will be documented in this file.
   - **Fragmentation method**: read from the instrument, origin or name when its field is empty.
   - **Instruments**: instrument tree regenerated from the corrected spreadsheet; LC/GC completed from the ionization; better search when several brands are cited; `QQ` searched as `QQQ`.
   - **Direct injection**: new `POS_DI` / `NEG_DI` libraries; MALDI, FAB and FD spectra are DI.
-  - **Molecule normalization**: standard InChI / InChIKey of the desalted, neutralized molecule; SMILES written as the RDKit canonical tautomer; the spectrum's own SMILES is tried before the database's.
+  - **Molecule normalization**: standard InChI / InChIKey of the desalted, neutralized molecule; SMILES written as the RDKit canonical tautomer; the spectrum's own SMILES is tried before the database's; InChI mixtures of same-formula components (`2C…`) are desalted with the m/z of each spectrum.
   - **RDKit cache**: rows of the internal database marked `RDKIT_VERSION` are reused instead of being recomputed, with identical results (`FRAGHUB_RDKIT_CACHE=0` turns it off).
-  - **Internal database**: re-normalized like the spectra, NPClassifier classes recomputed, one row per InChIKey, 325 112 molecules added, names cleaned with PubChem. Published on Zenodo ([10.5281/zenodo.24203577](https://doi.org/10.5281/zenodo.24203577)), downloaded at first start and updated with FragHub.
+  - **Internal database**: re-normalized like the spectra, NPClassifier classes recomputed, one row per InChIKey, 325 112 molecules added, names cleaned with PubChem. Version 2026-11-25 published on Zenodo ([10.5281/zenodo.24535407](https://doi.org/10.5281/zenodo.24535407)), downloaded at first start and updated with FragHub.
   - **Completion from the internal database**: the name always comes from the database; InChI, SMILES, formula and masses only fill empty fields.
   - **Duplicates**: the spectrum kept gets the values of its removed duplicates for its empty fields.
   - **Deleted spectra**: GNPS "suspect" spectra (structure of a related compound) are deleted (`suspect_related_structure.csv`); spectra without peaks are reported in `DELETED_SPECTRUMS` instead of being dropped silently.
